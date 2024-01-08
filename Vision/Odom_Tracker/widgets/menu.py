@@ -4,7 +4,8 @@ from kivy.uix.button import Button
 from tools import nt_manager
 
 class Menu(GridLayout):
-    def __init__(self):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
         self.rio_address_input = TextInput(hint_text = "RoboRIO Address", multiline = False, on_text_validate = self.connect_to_rio)
         self.rio_connect_button = Button(on_press = self.connect_to_rio)
 
