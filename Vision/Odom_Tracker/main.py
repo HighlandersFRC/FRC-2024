@@ -3,6 +3,12 @@ from kivy.clock import Clock
 from kivy.config import Config
 from kivy.core.window import Window
 from odom_tracker import OdomTracker
+import argparse
+
+parser = argparse.ArgumentParser(description = "Tool for visualizing robot odometry in real time")
+parser.add_argument("-a", "--address", required = False, default = "10.44.99.2")
+
+args = parser.parse_args()
 
 TITLE = "2024 Real-Time Odometry Tracker - Team 4499 The Highlanders"
 ICON = "images/4499Icon.ico"
@@ -12,7 +18,7 @@ class OdomTrackerApp(App):
         Clock.schedule_interval(self.execute, 1 / 60)
         self.title = TITLE
         self.icon = ICON
-        self.odom_tracker = OdomTracker()
+        self.odom_tracker = OdomTracker(args.address)
         Window.maximize()
         return self.odom_tracker
 

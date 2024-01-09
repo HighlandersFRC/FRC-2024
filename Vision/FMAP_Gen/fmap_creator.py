@@ -1,4 +1,4 @@
-import json
+import json as jason
 import math
 import argparse
 
@@ -21,7 +21,7 @@ def in_to_m(inches: float):
     return inches / 39.37
 
 with open(f'input/{in_file}') as fi:
-    data_in = json.load(fi)
+    data_in = jason.load(fi)
     poses = data_in['poses']
     transforms = []
     for pose in poses:
@@ -58,7 +58,7 @@ with open(f'input/{in_file}') as fi:
             'transform': transform['transform']
         })
     fo = open(f'output/{out_file}', 'w')
-    json.dump(data_out, fo, indent = 2)
+    jason.dump(data_out, fo, indent = 2)
     fo.close()
     fi.close()
     print("Finished successfully!")
