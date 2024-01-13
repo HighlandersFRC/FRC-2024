@@ -136,6 +136,37 @@ public class Drive extends SubsystemBase {
     m_odometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d((Math.toRadians(peripherals.getPigeonAngle()))), swerveModulePositions, m_pose);
   }
 
+  public void init(String fieldSide){
+    // sets configurations when run on robot initalization
+    this.fieldSide = fieldSide;
+
+    frontRight.init();
+    frontLeft.init();
+    backRight.init();
+    backLeft.init();
+
+    frontRightAngleMotor.setInverted(true);
+    frontLeftAngleMotor.setInverted(true);
+    backRightAngleMotor.setInverted(true);
+    backLeftAngleMotor.setInverted(true);
+
+    frontRightDriveMotor.setInverted(false);
+    frontLeftDriveMotor.setInverted(false);
+    backRightDriveMotor.setInverted(false);
+    backLeftDriveMotor.setInverted(false);
+
+    xPID.setMinOutput(-4.9);
+    xPID.setMaxOutput(4.9);
+
+    yPID.setMinOutput(-4.9);
+    yPID.setMaxOutput(4.9);
+
+    thetaPID.setMinOutput(-(Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+    thetaPID.setMaxOutput((Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+
+    setDefaultCommand(new DriveDefault(this));
+  }
+
   // method to zeroIMU mid match and reset odometry with zeroed angle
   public void zeroIMU(){
     peripherals.zeroPigeon();
@@ -164,35 +195,6 @@ public class Drive extends SubsystemBase {
     frontLeft.setWheelPID(0.0, 0.0);
     backLeft.setWheelPID(0.0, 0.0);
     backRight.setWheelPID(0.0, 0.0);
-  }
-
-  public void init(){
-    // sets configurations when run on robot initalization
-    frontRight.init();
-    frontLeft.init();
-    backRight.init();
-    backLeft.init();
-
-    frontRightAngleMotor.setInverted(true);
-    frontLeftAngleMotor.setInverted(true);
-    backRightAngleMotor.setInverted(true);
-    backLeftAngleMotor.setInverted(true);
-
-    frontRightDriveMotor.setInverted(false);
-    frontLeftDriveMotor.setInverted(false);
-    backRightDriveMotor.setInverted(false);
-    backLeftDriveMotor.setInverted(false);
-
-    xPID.setMinOutput(-4.9);
-    xPID.setMaxOutput(4.9);
-
-    yPID.setMinOutput(-4.9);
-    yPID.setMaxOutput(4.9);
-
-    thetaPID.setMinOutput(-(Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
-    thetaPID.setMaxOutput((Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
-
-    setDefaultCommand(new DriveDefault(this));
   }
 
   public void autoInit(JSONArray pathPoints){
@@ -316,6 +318,36 @@ public class Drive extends SubsystemBase {
   public double getOdometryAngle() {
     return m_odometry.getEstimatedPosition().getRotation().getRadians();
   }
+
+  public void driveAutoAligned(double degreesFromPlacement) {
+    updateOdometryFusedArray();
+
+    double turn = degreesFromPlacement;
+
+    double originalX = -(Math.copySign(OI.getDriverLeftY() * OI.getDriverLeftY(), OI.getDriverLeftY()));
+    double originalY = -(Math.copySign(OI.getDriverLeftX() * OI.getDriverLeftX(), OI.getDriverLeftX()));
+
+    if(Math.abs(originalX) < 0.05) {
+        originalX = 0;
+    }
+    if(Math.abs(originalY) < 0.05) {
+        originalY = 0;
+    }
+
+    double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
+    double xPower = getAdjustedX(originalX, originalY);
+    double yPower = getAdjustedY(originalX, originalY);
+
+    double xSpeed = xPower * Constants.Physical.TOP_SPEED;
+    double ySpeed = yPower * Constants.Physical.TOP_SPEED;
+
+    Vector controllerVector = new Vector(xSpeed, ySpeed);
+
+    frontLeft.drive(controllerVector, turn, pigeonAngle);
+    frontRight.drive(controllerVector, turn, pigeonAngle);
+    backLeft.drive(controllerVector, turn, pigeonAngle);
+    backRight.drive(controllerVector, turn, pigeonAngle);
+}
   
   public void teleopDrive() {
     updateOdometryFusedArray();
@@ -473,11 +505,11 @@ public class Drive extends SubsystemBase {
   public double getAdjustedY(double originalX, double originalY){
     double adjustedY = originalY * Math.sqrt((1-(Math.pow(originalX, 2))/2));
     return adjustedY;
-}
+  }
 
-// get Joystick adjusted x-value
-public double getAdjustedX(double originalX, double originalY){
+  // get Joystick adjusted x-value
+  public double getAdjustedX(double originalX, double originalY){
     double adjustedX = originalX * Math.sqrt((1-(Math.pow(originalY, 2))/2));
     return adjustedX;
-}
+  }
 }

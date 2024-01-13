@@ -4,55 +4,98 @@
 
 package frc.robot;
 
+import java.io.File;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import edu.wpi.first.net.PortForwarder;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.ZeroAngleMidMatch;
+import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Peripherals;
 
-/**
- * The VM is configured to automatically run this class, and to call the functions corresponding to
- * each mode, as described in the TimedRobot documentation. If you change the name of this class or
- * the package after creating this project, you must also update the build.gradle file in the
- * project.
- */
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
-  private RobotContainer m_robotContainer;
+  private Lights lights = new Lights();
+  private Peripherals peripherals = new Peripherals(lights);
+  private Drive drive = new Drive(peripherals);
+  
+  File pathingFile;
+  String pathString;
 
-  /**
-   * This function is run when the robot is first started up and should be used for any
-   * initialization code.
-   */
+  JSONObject pathRead;
+  JSONArray pathJSON;
+
+  String fieldSide;
+
+  SequentialCommandGroup auto;
+
   @Override
   public void robotInit() {
+    if (OI.isRedSide()) {
+      System.out.println("ON RED SIDE");
+      fieldSide = "red";
+    } else if (OI.isBlueSide()) {
+      System.out.println("ON BLUE SIDE");
+      fieldSide = "blue";
+    }
+
+    lights.init(fieldSide);
+    peripherals.init();
+    drive.init(fieldSide);
+
+    PortForwarder.add(5800, "limelight-front.local", 5800);
+    PortForwarder.add(5801, "limelight-front.local", 5801);
+
+    PortForwarder.add(5800, "limelight-back.local", 5800);
+    PortForwarder.add(5801, "limelight-back.local", 5801);
+
+    PortForwarder.add(5800, "limelight.local", 5800);
+    PortForwarder.add(5801, "limelight.local", 5801);
+
+    PortForwarder.add(5800, "10.44.99.39", 5800);
+    PortForwarder.add(5801, "10.44.99.39", 5801);
+
+    PortForwarder.add(5800, "10.44.99.40", 5800);
+    PortForwarder.add(5801, "10.44.99.40", 5801);
+
+    //Auto selection here...
   }
 
-  /**
-   * This function is called every 20 ms, no matter the mode. Use this for items like diagnostics
-   * that you want ran during disabled, autonomous, teleoperated and test.
-   *
-   * <p>This runs after the mode specific periodic functions, but before LiveWindow and
-   * SmartDashboard integrated updating.
-   */
   @Override
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
+
+    lights.periodic();
   }
 
-  /** This function is called once each time the robot enters Disabled mode. */
   @Override
-  public void disabledInit() {}
+  public void disabledInit() {
+    OI.driverController.setRumble(RumbleType.kBothRumble, 0);
+    OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
+  }
 
   @Override
   public void disabledPeriodic() {}
 
-  /** This autonomous runs the autonomous command selected by your {@link RobotContainer} class. */
   @Override
   public void autonomousInit() {
-    
+    try {
+      this.auto.schedule();
+    } catch (Exception e){
+      System.out.println("No auto is selected");
+    } 
+    drive.autoInit(this.pathJSON);
   }
 
-  /** This function is called periodically during autonomous. */
   @Override
   public void autonomousPeriodic() {}
 
@@ -61,9 +104,12 @@ public class Robot extends TimedRobot {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
+
+    //CONTROLS
+    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
   }
 
-  /** This function is called periodically during operator control. */
   @Override
   public void teleopPeriodic() {}
 
@@ -72,15 +118,12 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().cancelAll();
   }
 
-  /** This function is called periodically during test mode. */
   @Override
   public void testPeriodic() {}
 
-  /** This function is called once when the robot is first started up. */
   @Override
   public void simulationInit() {}
 
-  /** This function is called periodically whilst in simulation. */
   @Override
   public void simulationPeriodic() {}
 }

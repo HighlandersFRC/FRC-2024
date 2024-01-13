@@ -68,4 +68,11 @@ public class OI {
         return driverController.getPOV();
     }
 
+    public static boolean isRedSide() {
+        return autoChooser.getRawButton(6);
+    }
+
+    public static boolean isBlueSide() {
+        return autoChooser.getRawButton(8);
+    }
 }

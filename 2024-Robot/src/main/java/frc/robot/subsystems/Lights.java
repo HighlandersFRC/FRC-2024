@@ -8,10 +8,18 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Lights extends SubsystemBase {
   /** Creates a new Lights. */
-  public Lights() {}
+  private String fieldSide = "red";
+
+  public Lights() {
+
+  }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+  }
+
+  public void init(String fieldSide){
+    this.fieldSide = fieldSide;
   }
 }
