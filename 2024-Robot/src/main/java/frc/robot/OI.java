@@ -45,7 +45,7 @@ public class OI {
     public static Joystick autoChooser = new Joystick(2);
 
     public static double getDriverLeftX() {
-        return driverController.getLeftX();
+        return -driverController.getLeftX();
     }
 
     public static double getDriverLeftY() {

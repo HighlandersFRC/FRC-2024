@@ -68,9 +68,17 @@ public class SwerveModule extends SubsystemBase {
     TalonFXConfiguration angleMotorConfig = new TalonFXConfiguration();
     TalonFXConfiguration driveMotorConfig = new TalonFXConfiguration();
 
-    angleMotorConfig.Slot0.kP = 300.0;
+    // angleMotorConfig.Slot0.kP = 300.0;
+    // angleMotorConfig.Slot0.kI = 0.0;
+    // angleMotorConfig.Slot0.kD = 7.5;
+
+    // angleMotorConfig.Slot1.kP = 3.0;
+    // angleMotorConfig.Slot1.kI = 0.0;
+    // angleMotorConfig.Slot1.kD = 0.0;
+
+    angleMotorConfig.Slot0.kP = 350.0;
     angleMotorConfig.Slot0.kI = 0.0;
-    angleMotorConfig.Slot0.kD = 7.5;
+    angleMotorConfig.Slot0.kD = 15;
 
     angleMotorConfig.Slot1.kP = 3.0;
     angleMotorConfig.Slot1.kI = 0.0;
@@ -223,7 +231,7 @@ public class SwerveModule extends SubsystemBase {
   
   // main drive method
   public void drive(Vector vector, double turnValue, double navxAngle){
-    if(Math.abs(vector.getI()) < 0.0001 && Math.abs(vector.getJ()) < 0.0001 && Math.abs(turnValue) < 0.01) {
+    if(Math.abs(vector.getI()) < 0.001 && Math.abs(vector.getJ()) < 0.001 && Math.abs(turnValue) < 0.01) {
       // stops motors when joysticks are at 0
       driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(0.0));
       angleMotor.setControl(velocityTorqueFOCRequestAngleMotor.withVelocity(0.0));

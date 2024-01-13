@@ -24,13 +24,9 @@ public class DriveAutoAligned extends CommandBase {
 
   private double set = 0;
 
-  private double kP = 0.2;
+  private double kP = 0.07;
   private double kI = 0;
-  private double kD = 0.01;
-
-  // private double kP = 0.5;
-  // private double kI = 0;
-  // private double kD = 2;
+  private double kD = 0.02;
 
   private int angleSettled = 0;
 
