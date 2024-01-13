@@ -1,5 +1,6 @@
 from networktables import NetworkTables
 import time
+import json
 
 class NTManager:
     def __init__(self, update_value_func, update_connection_func, address: str):
@@ -11,7 +12,7 @@ class NTManager:
         NetworkTables.initialize(server = address)
         NetworkTables.addConnectionListener(self.connection_callback)
 
-        self.odom_table = NetworkTables.getTable("Odometry")
+        self.odom_table = NetworkTables.getTable("odometry_tracking")
         self.odom_table.addEntryListener(self.value_change_callback)
         
     def value_change_callback(self, table: str, key: str, value, is_new: bool):

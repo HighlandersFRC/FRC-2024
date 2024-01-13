@@ -23,5 +23,5 @@ class OdomTracker(BoxLayout):
         self.field_display.draw_trail(dt)
 
     def update_value(self, key: str, value):
-        if key == "odom":
+        if key == "odometry_data":
             self.field_display.update_trail_values(value)
