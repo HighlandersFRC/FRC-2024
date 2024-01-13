@@ -13,6 +13,7 @@ public final class Constants {
     public static final double ROBOT_RADIUS = inchesToMeters(15.375);
     public static final double WHEEL_DIAMETER = inchesToMeters(4);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
+    public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
     public static final double TOP_SPEED = feetToMeters(20);
     public static final double GEAR_RATIO = 6.75;
@@ -77,5 +78,17 @@ public final class Constants {
 
   public static double getDistance(double x1, double y1, double x2, double y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-}
+  }
+
+  public static double rotationsToRadians(double rotations){
+    return rotations * 2 * Math.PI;
+  }
+
+  public static double angleToUnitVectorI(double angle){
+    return (Math.cos(angle));
+  }
+
+  public static double angleToUnitVectorJ(double angle){
+    return (Math.sin(angle));
+  }
 }
