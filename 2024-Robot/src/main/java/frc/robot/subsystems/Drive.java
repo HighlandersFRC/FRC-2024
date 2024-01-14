@@ -20,6 +20,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,6 +66,10 @@ public class Drive extends SubsystemBase {
   Translation2d m_frontRightLocation = new Translation2d(moduleX, -moduleY);
   Translation2d m_backLeftLocation = new Translation2d(-moduleX, moduleY);
   Translation2d m_backRightLocation = new Translation2d(-moduleX, -moduleY);
+
+  //Odometry tracker
+  private NetworkTable odometryTrackerTable = NetworkTableInstance.getDefault().getTable("odometry_tracking");
+  private NetworkTableEntry odometryTrackerData = odometryTrackerTable.getEntry("odometry_data");
 
   // odometry
   private double currentX = 0;
@@ -280,6 +287,10 @@ public class Drive extends SubsystemBase {
         JSONObject allCamResults = peripherals.getCameraMeasurements();
         JSONObject backCamResults = allCamResults.getJSONObject("BackCam");
         JSONObject frontCamResults = allCamResults.getJSONObject("FrontCam");
+        double backCamTL = backCamResults.getDouble("tl");
+        double backCamCL = backCamResults.getDouble("cl");
+        double frontCamTL = frontCamResults.getDouble("tl");
+        double frontCamCL = frontCamResults.getDouble("cl");
 
         //fiducial data from all cameras
         JSONArray fiducialResults = new JSONArray();
@@ -345,8 +356,8 @@ public class Drive extends SubsystemBase {
             }
             //pose to add to horizontalTagPoses
             JSONObject pose = new JSONObject();
-            pose.put("x", Constants.Vision.TAG_POSES[id][0] - cameraOffsetX);
-            pose.put("y", Constants.Vision.TAG_POSES[id][1] - cameraOffsetY);
+            pose.put("x", Constants.Vision.TAG_POSES[id - 1][0] - cameraOffsetX);
+            pose.put("y", Constants.Vision.TAG_POSES[id - 1][1] - cameraOffsetY);
             pose.put("theta", -fiducial.getDouble("tx") * Constants.Vision.LIMELIGHT_HFOV_RAD + cameraOffsetTheta);
             pose.put("camera", camera);
             pose.put("id", id);
@@ -355,9 +366,9 @@ public class Drive extends SubsystemBase {
             //distance info to add to verticalTagDistances
             double verticalAngle = -fiducial.getDouble("ty") * Constants.Vision.LIMELIGHT_VFOV_RAD + cameraOffsetPitch;
             JSONObject dist = new JSONObject();
-            dist.put("x", Constants.Vision.TAG_POSES[id][0] - cameraOffsetX);
-            dist.put("y", Constants.Vision.TAG_POSES[id][1] - cameraOffsetY);
-            dist.put("dist", (Constants.Vision.TAG_POSES[id][2] - cameraOffsetZ) / Math.tan(verticalAngle));
+            dist.put("x", Constants.Vision.TAG_POSES[id - 1][0] - cameraOffsetX);
+            dist.put("y", Constants.Vision.TAG_POSES[id - 1][1] - cameraOffsetY);
+            dist.put("dist", (Constants.Vision.TAG_POSES[id - 1][2] - cameraOffsetZ) / Math.tan(verticalAngle));
             dist.put("camera", camera);
             dist.put("id", id);
             verticalTagDistances.add(dist);
@@ -401,6 +412,11 @@ public class Drive extends SubsystemBase {
             if (robotFieldPose.length() == 6){
                 double x = (double) robotFieldPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
                 double y = (double) robotFieldPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
+                if (fiducial.getString("camera") == "back_cam"){
+                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), backCamTL + backCamCL);
+                } else if (fiducial.getString("camera") == "front_cam"){
+                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), frontCamTL + frontCamCL);
+                }
             }
         }
 
@@ -422,8 +438,17 @@ public class Drive extends SubsystemBase {
         pose.put("theta", fieldPigeonAngle);
         //list of tags tracked by which cameras
         JSONArray tracks = new JSONArray();
+        for (int i = 0; i < numTracks; i ++){
+          JSONObject track = new JSONObject();
+          JSONObject fiducial = (JSONObject) fiducialResults.get(i);
+          track.put("camera", fiducial.getString("camera"));
+          track.put("fID", fiducial.getInt("fID"));
+          tracks.put(track);
+        }
+        trackerData.put("time", Timer.getFPGATimestamp());
         trackerData.put("pose", pose);
         trackerData.put("tracks", tracks);
+        odometryTrackerData.setString(trackerData.toString());
   }
 
   public double[] getModuleStates(){
@@ -663,7 +688,7 @@ public class Drive extends SubsystemBase {
   
   @Override
   public void periodic() {
-
+    updateOdometryFusedArray();
   }
 
   // get Joystick adjusted y-value

@@ -5,6 +5,7 @@ from kivy.uix.label import Label
 from kivy.graphics import *
 from tools import constants
 import random
+import json
 
 class FieldDisplay(Image):
     def __init__(self, **kwargs):
@@ -16,6 +17,8 @@ class FieldDisplay(Image):
         self.current_point = None
         # Length of trail before ending (seconds)
         self.trail_length = 3
+
+        self.current_tracks = []
 
         self.field_image = Rectangle(source = "images/CrescendoField.png", pos = self.pos, size = self.size)
 
@@ -34,7 +37,7 @@ class FieldDisplay(Image):
         # Info lable
         self.info_label.text = f"[b]PX:[/b] {constants.get_cursor_pos_pixels()[0]}, [b]PY: {constants.get_cursor_pos_pixels()[1]}[/b]\n[b]X:[/b] {round(constants.get_cursor_pos_meters()[0], 3)}, [b]Y:[/b] {round(constants.get_cursor_pos_meters()[1], 3)}\n[b]Length:[/b] {self.trail_length} sec."
         if self.info_label.texture != None:
-            self.info_rect = Rectangle(texture = self.info_label.texture, size = list(self.info_label.texture.size), pos = (50, 700))
+            self.info_rect = Rectangle(texture = self.info_label.texture, size = list(self.info_label.texture.size), pos = (50, 800))
             self.canvas.add(self.info_rect)
 
         # Trail
@@ -49,6 +52,19 @@ class FieldDisplay(Image):
             pixel_list.append(constants.meters_to_pixels_y(odom[2]))
         self.canvas.add(Color(0, 0, 0, 1))
         self.canvas.add(Line(points = pixel_list, width = 2, cap = "round", joint = "round"))
+
+        if len(self.trail_points) > 0:
+            pose = self.trail_points[-1]
+            for track in self.current_tracks:
+                camera_pos = (0, 0)
+                fid = track["fID"]
+                if track["camera"] == "back_cam":
+                    camera_pos = (pose[1] + constants.BACK_CAMERA_POSITION_POLAR[0] * math.cos(constants.BACK_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.BACK_CAMERA_POSITION_POLAR[0] * math.sin(constants.BACK_CAMERA_POSITION_POLAR[1] + pose[3]))
+                elif track["camera"] == "front_cam":
+                    camera_pos = (pose[1] + constants.FRONT_CAMERA_POSITION_POLAR[0] * math.cos(constants.FRONT_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.FRONT_CAMERA_POSITION_POLAR[0] * math.sin(constants.FRONT_CAMERA_POSITION_POLAR[1] + pose[3]))
+                camera_pos_pixels = constants.meters_to_pixels(camera_pos)
+                self.canvas.add(Color(0, 0.8, 0, 1))
+                self.canvas.add(Line(points = [camera_pos_pixels[0], camera_pos_pixels[1], constants.meters_to_pixels_x(constants.TAG_POSES[fid - 1][0]), constants.meters_to_pixels_y(constants.TAG_POSES[fid - 1][1])], width = 2, cap = "round", joint = "round"))
 
         # Robot
         if len(self.trail_points) > 0:
@@ -72,8 +88,11 @@ class FieldDisplay(Image):
     def set_trail_length(self, length: float):
         self.trail_length = length
 
-    def update_trail_values(self, odom: tuple[float]):
-        self.trail_points.append(odom)
+    def update_trail_values(self, odom: str):
+        odom_data = json.loads(odom)
+        pose = [odom_data["time"], odom_data["pose"]["x"], odom_data["pose"]["y"], odom_data["pose"]["theta"]]
+        self.trail_points.append(pose)
+        self.current_tracks = odom_data["tracks"]
 
     def toggle_sonic(self, event):
         if self.sonic == False:

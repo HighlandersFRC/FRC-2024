@@ -75,6 +75,8 @@ public class Robot extends TimedRobot {
     CommandScheduler.getInstance().run();
 
     lights.periodic();
+
+    drive.periodic(); // remove for competition
   }
 
   @Override

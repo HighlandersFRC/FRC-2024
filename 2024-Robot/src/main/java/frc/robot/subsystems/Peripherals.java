@@ -102,8 +102,8 @@ public class Peripherals extends SubsystemBase {
 
   public JSONObject getCameraMeasurements(){
     JSONObject allCamResults = new JSONObject();
-    JSONObject backCamResults = new JSONObject(backCamJSON.getString(""));
-    JSONObject frontCamResults = new JSONObject(frontCamJSON.getString(""));
+    JSONObject backCamResults = new JSONObject(backCamJSON.getString("")).getJSONObject("Results");
+    JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("")).getJSONObject("Results");
     allCamResults.put("BackCam", backCamResults);
     allCamResults.put("FrontCam", frontCamResults);
     return allCamResults;
