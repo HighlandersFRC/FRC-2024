@@ -19,6 +19,11 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.ZeroAngleMidMatch;
+import frc.robot.commands.autos.FivePieceAuto;
+import frc.robot.commands.autos.FourPieceCloseAuto;
+import frc.robot.commands.autos.FourPieceOneFarAuto;
+import frc.robot.commands.autos.FourPieceTwoFarAuto;
+import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
@@ -42,6 +47,14 @@ public class Robot extends TimedRobot {
 
   @Override
   public void robotInit() {
+    if (OI.isBlueSide()) {
+      System.out.println("ON BLUE SIDE");
+      fieldSide = "blue";
+    } else {
+      System.out.println("ON RED SIDE");
+      fieldSide = "red";
+    }
+
     lights.init(fieldSide);
     peripherals.init();
     drive.init(fieldSide);
@@ -62,103 +75,72 @@ public class Robot extends TimedRobot {
     PortForwarder.add(5801, "10.44.99.40", 5801);
 
     //Auto selection here...
-    if (OI.isRedSide()) {
-      System.out.println("ON RED SIDE");
-      fieldSide = "red";
-    } else if (OI.isBlueSide()) {
-      System.out.println("ON BLUE SIDE");
-      fieldSide = "blue";
+    if (OI.is4PieceCloseAuto()) {
+      try {
+        pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch(Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
+    } else if (OI.is5PieceAuto()) {
+      try {
+        pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch (Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
+    } else if (OI.is4Piece1FarAuto()) {
+      try {
+        pathingFile = new File("/home/lvuser/deploy/4Piece1FarPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch (Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
+    } else if (OI.is3PieceBottomAuto()) {
+      try {
+        pathingFile = new File("/home/lvuser/deploy/3PieceBottomPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch (Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
+    } else if (OI.is4Piece2FarAuto()){
+      try {
+        pathingFile = new File("/home/lvuser/deploy/4Piece2FarPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch (Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
     }
 
-    // if (OI.is4PieceCloseAuto()) {
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch(Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
-    // } else if (OI.is5PieceAuto()) {
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch (Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
-    // } else if (OI.is4Piece1FarAuto()) {
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PieceBumpPart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch (Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
-    // } else if (OI.is3PieceBottomAuto()) {
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PiecePart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch (Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
-    // } else if (OI.is4Piece2FarAuto()){
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PiecePart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch (Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
-    // }
-
-    // if (OI.is2PieceBumpSideAuto()) {
-    //   drive.useCameraInOdometry();
-    //   if (OI.isDocking()) {
-    //     this.auto = new TwoPieceBumpAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   } else {
-    //     this.auto = new TwoPieceBumpAutoNoDock(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   }
-    // } else if (OI.is1PieceAuto()) {
-    //   if (OI.isDocking()) {
-    //     this.auto = new OnePieceAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   } else {
-    //     this.auto = new OnePieceAutoNoDock(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   }
-    // // } else if (OI.is2Plus1BumpSideAuto()) {
-    // //   if (OI.isDocking()){
-    // //     this.auto = new TwoPlusOneBumpAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    // //     auto.schedule();
-    // //   } else {
-    // //     this.auto = new TwoPlusOneBumpAutoNoDock(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    // //     auto.schedule();
-    // //   }
-    // } else if (OI.is3PieceBumpSideAuto()){
-    //   this.auto = new ThreePieceBumpAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //   auto.schedule();
-    // } else if (OI.is2Plus1ClearSideAuto()) {
-    //   if (OI.isDocking()){
-    //     this.auto = new TwoPlusOneAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   } else {
-    //     this.auto = new TwoPlusOneAutoNoDock(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //     auto.schedule();
-    //   }
-    // } else if (OI.is3PieceClearSideAuto()){
-    //   this.auto = new ThreePieceAuto(drive, armExtension, armRotation, wrist, flipChecker, peripherals, lights, intake);
-    //   auto.schedule();
-    // } else {
-    //   System.out.println("NO AUTO SELECTED");
-    // }
+    if (OI.is4PieceCloseAuto()) {
+      // drive.useCameraInOdometry();
+      this.auto = new FourPieceCloseAuto(drive, peripherals);
+      auto.schedule();
+    } else if (OI.is5PieceAuto()) {
+      this.auto = new FivePieceAuto(drive, peripherals);
+      auto.schedule();
+    } else if (OI.is4Piece1FarAuto()){
+      this.auto = new FourPieceOneFarAuto();
+      auto.schedule();
+    } else if (OI.is3PieceBottomAuto()) {
+      this.auto = new ThreePieceBottomAuto();
+      auto.schedule();
+    } else if (OI.is4Piece2FarAuto()){
+      this.auto = new FourPieceTwoFarAuto();
+      auto.schedule();
+    } else {
+      System.out.println("NO AUTO SELECTED");
+    }
   }
 
   @Override
