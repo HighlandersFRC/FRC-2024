@@ -41,7 +41,7 @@ public class Robot extends TimedRobot {
   JSONObject pathRead;
   JSONArray pathJSON;
 
-  String fieldSide;
+  String fieldSide = "red";
 
   SequentialCommandGroup auto;
 

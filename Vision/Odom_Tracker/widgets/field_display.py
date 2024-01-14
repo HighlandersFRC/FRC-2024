@@ -35,7 +35,11 @@ class FieldDisplay(Image):
         self.canvas.add(self.field_image)
 
         # Info lable
-        self.info_label.text = f"[b]PX:[/b] {constants.get_cursor_pos_pixels()[0]}, [b]PY: {constants.get_cursor_pos_pixels()[1]}[/b]\n[b]X:[/b] {round(constants.get_cursor_pos_meters()[0], 3)}, [b]Y:[/b] {round(constants.get_cursor_pos_meters()[1], 3)}\n[b]Length:[/b] {self.trail_length} sec."
+        if len(self.trail_points) == 0:
+            self.info_label.text = f"[b]PX:[/b] {constants.get_cursor_pos_pixels()[0]}, [b]PY: {constants.get_cursor_pos_pixels()[1]}[/b]\n[b]X:[/b] {round(constants.get_cursor_pos_meters()[0], 3)}, [b]Y:[/b] {round(constants.get_cursor_pos_meters()[1], 3)}\n[b]Length:[/b] {self.trail_length} sec."
+        else:
+            track_str = "".join([f"{self.current_tracks[i]['fID']}, " if i != len(self.current_tracks) - 1 else f"{self.current_tracks[i]['fID']}" for i in range(len(self.current_tracks))])
+            self.info_label.text = f"[b]PX:[/b] {constants.get_cursor_pos_pixels()[0]}, [b]PY: {constants.get_cursor_pos_pixels()[1]}[/b]\n[b]X:[/b] {round(constants.get_cursor_pos_meters()[0], 3)}, [b]Y:[/b] {round(constants.get_cursor_pos_meters()[1], 3)}\n[b]Length:[/b] {self.trail_length} sec.\n[b]Robot:[/b] ({round(self.trail_points[-1][1], 3)}, {round(self.trail_points[-1][2], 3)})\n[b]Heading:[/b] {self.trail_points[-1][3] * 180 / math.pi} deg.\n[b]Tracks:[/b] {track_str}"
         if self.info_label.texture != None:
             self.info_rect = Rectangle(texture = self.info_label.texture, size = list(self.info_label.texture.size), pos = (50, 800))
             self.canvas.add(self.info_rect)
@@ -93,7 +97,7 @@ class FieldDisplay(Image):
         pose = [odom_data["time"], odom_data["pose"]["x"], odom_data["pose"]["y"], odom_data["pose"]["theta"]]
         self.trail_points.append(pose)
         self.current_tracks = odom_data["tracks"]
-        print(pose)
+        # print(pose)
 
     def toggle_sonic(self, event):
         if self.sonic == False:

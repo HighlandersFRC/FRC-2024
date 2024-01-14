@@ -57,8 +57,8 @@ public final class Constants {
     public static final double LIMELIGHT_VFOV_RAD = LIMELIGHT_VFOV_DEG * Math.PI / 180;
 
     //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
-    public static final double[] BACK_CAMERA_POSE = {-0.219075, -0.1524, 0.1524, 0, 0, Math.PI};
-    public static final double[] FRONT_CAMERA_POSE = {0.219075, 0.1524, 0.288925, 0, 33 * Math.PI / 180, 0};
+    public static final double[] BACK_CAMERA_POSE = {-0.263252, -0.1778, 0.2413, 0, 0, degreesToRadians(180)};
+    public static final double[] FRONT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, degreesToRadians(33), 0};
     public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
 
@@ -82,6 +82,10 @@ public final class Constants {
 
   public static double rotationsToRadians(double rotations){
     return rotations * 2 * Math.PI;
+  }
+
+  public static double degreesToRadians(double degrees){
+    return degrees * Math.PI / 180;
   }
 
   public static double angleToUnitVectorI(double angle){
