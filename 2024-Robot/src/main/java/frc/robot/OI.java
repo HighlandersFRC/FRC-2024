@@ -77,19 +77,19 @@ public class OI {
     }
 
     public static boolean is4PieceCloseAuto(){
-        return autoChooser.getRawButton(4);
-    }
-
-    public static boolean is5PieceAuto() {
         return autoChooser.getRawButton(1);
     }
 
-    public static boolean is4Piece1FarAuto() {
+    public static boolean is5PieceAuto() {
         return autoChooser.getRawButton(2);
     }
 
-    public static boolean is3PieceBottomAuto() {
+    public static boolean is4Piece1FarAuto() {
         return autoChooser.getRawButton(3);
+    }
+
+    public static boolean is3PieceBottomAuto() {
+        return autoChooser.getRawButton(4);
     }
 
     public static boolean is4Piece2FarAuto(){

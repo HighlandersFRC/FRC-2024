@@ -130,7 +130,7 @@ public class Drive extends SubsystemBase {
   private PID yPID = new PID(yP, yI, yD);
   private PID thetaPID = new PID(thetaP, thetaI, thetaD);
 
-  private String fieldSide = "red";
+  private String fieldSide = "blue";
 
   private int lookAheadDistance = 5;
   
@@ -218,8 +218,8 @@ public class Drive extends SubsystemBase {
     double firstPointY = firstPoint.getDouble(2);
     double firstPointAngle = firstPoint.getDouble(3);
 
-    // changing odometry if on blue side, don't need to change y because it will be the same for autos on either side
-    if(getFieldSide() == "blue") {
+    // changing odometry if on red side, don't need to change y because it will be the same for autos on either side
+    if(getFieldSide() == "red") {
       firstPointX = Constants.Physical.FIELD_LENGTH - firstPointX;
       firstPointAngle = Math.PI - firstPointAngle;
     }
@@ -615,7 +615,7 @@ public class Drive extends SubsystemBase {
 
         // System.out.println("X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
 
-        if(getFieldSide() == "blue") {
+        if(getFieldSide() == "red") {
             targetX = Constants.Physical.FIELD_LENGTH - targetX;
             targetTheta = Math.PI - targetTheta;
         }
@@ -631,7 +631,7 @@ public class Drive extends SubsystemBase {
         double currentPointY = currentPoint.getDouble(2);
         double currentPointTheta = currentPoint.getDouble(3);
 
-        if(getFieldSide() == "blue") {
+        if(getFieldSide() == "red") {
             currentPointX = Constants.Physical.FIELD_LENGTH - currentPointX;
             currentPointTheta = Math.PI - currentPointTheta;
         }
