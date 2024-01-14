@@ -415,7 +415,6 @@ public class Drive extends SubsystemBase {
             
         }
 
-        //AprilTag pose extraction approach
         JSONArray noTrack = new JSONArray();
         noTrack.put(0);
         noTrack.put(0);
