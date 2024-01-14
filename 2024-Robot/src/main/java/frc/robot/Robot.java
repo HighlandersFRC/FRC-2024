@@ -18,12 +18,10 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveAutoAligned;
-import frc.robot.commands.Shoot;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
-import frc.robot.subsystems.Shooter;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -31,7 +29,6 @@ public class Robot extends TimedRobot {
   private Lights lights = new Lights();
   private Peripherals peripherals = new Peripherals(lights);
   private Drive drive = new Drive(peripherals);
-  private Shooter shooter = new Shooter();
   
   File pathingFile;
   String pathString;
@@ -204,7 +201,6 @@ public class Robot extends TimedRobot {
     //CONTROLS
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverA.whileTrue(new Shoot(shooter, 0.6));
   }
 
   @Override
