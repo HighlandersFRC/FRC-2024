@@ -5,6 +5,7 @@
 package frc.robot.subsystems;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -270,12 +271,14 @@ public class Drive extends SubsystemBase {
 
   // method to update odometry by fusing prediction, encoder rotations, and camera values
   public void updateOdometryFusedArray(){
-    double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
+    double pigeonAngle = 0;//Math.toRadians(peripherals.getPigeonAngle());
         //angle in field coordinate system, 0 = +x axis
         double fieldPigeonAngle = pigeonAngle + Math.PI;
         if (fieldSide == "red"){
             fieldPigeonAngle += Math.PI;
         }
+
+        
 
         SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
         swerveModulePositions[0] = new SwerveModulePosition(frontRight.getModuleDistance(), new Rotation2d(frontRight.getCanCoderPositionRadians()));
@@ -291,6 +294,9 @@ public class Drive extends SubsystemBase {
         double backCamCL = backCamResults.getDouble("cl");
         double frontCamTL = frontCamResults.getDouble("tl");
         double frontCamCL = frontCamResults.getDouble("cl");
+        double averageLatency = (backCamCL + backCamTL + frontCamCL + frontCamTL) / 2;
+        JSONArray backCamBotPose = backCamResults.getJSONArray("botpose");
+        JSONArray frontCamBotPose = frontCamResults.getJSONArray("botpose");
 
         //fiducial data from all cameras
         JSONArray fiducialResults = new JSONArray();
@@ -330,6 +336,7 @@ public class Drive extends SubsystemBase {
         //  "camera": String (camera name, e.g. "back_cam"),
         //  "id": int (id number of AprilTag used for track)
         //}
+
         ArrayList<JSONObject> verticalTagDistances = new ArrayList<JSONObject>();
         for (int i = 0; i < fiducialResults.length(); i ++){
             JSONObject fiducial = (JSONObject) fiducialResults.get(i);
@@ -358,7 +365,7 @@ public class Drive extends SubsystemBase {
             JSONObject pose = new JSONObject();
             pose.put("x", Constants.Vision.TAG_POSES[id - 1][0] - cameraOffsetX);
             pose.put("y", Constants.Vision.TAG_POSES[id - 1][1] - cameraOffsetY);
-            pose.put("theta", -fiducial.getDouble("tx") * Constants.Vision.LIMELIGHT_HFOV_RAD + cameraOffsetTheta);
+            pose.put("theta", -fiducial.getDouble("tx") * Constants.Vision.LIMELIGHT_HFOV_RAD + cameraOffsetTheta + fieldPigeonAngle);
             pose.put("camera", camera);
             pose.put("id", id);
             horizontalTagPoses.add(pose);
@@ -376,20 +383,25 @@ public class Drive extends SubsystemBase {
 
         //least-squares intersection of angle lines approach
         //convert poses {x, y, theta} in line equation coefficients {a, b} and c from ax + by = c
-        double[][] lineCoefficients = new double[numTracks][2];
-        double[][] lineConstants = new double[numTracks][1];
-        for (int i = 0; i < horizontalTagPoses.size(); i ++){
-            JSONObject horizontalTagPose = horizontalTagPoses.get(i);
-            double a = -Math.sin(horizontalTagPose.getDouble("theta"));
-            double b = Math.cos(horizontalTagPose.getDouble("theta"));
-            double c = a * horizontalTagPose.getDouble("x") + b * horizontalTagPose.getDouble("y");
-            lineCoefficients[i][0] = a;
-            lineCoefficients[i][1] = b;
-            lineConstants[i][0] = c;
+        if (numTracks >= 2){
+          double[][] lineCoefficients = new double[numTracks][2];
+          double[][] lineConstants = new double[numTracks][1];
+          for (int i = 0; i < horizontalTagPoses.size(); i ++){
+              JSONObject horizontalTagPose = horizontalTagPoses.get(i);
+              double a = -Math.sin(horizontalTagPose.getDouble("theta"));
+              double b = Math.cos(horizontalTagPose.getDouble("theta"));
+              double c = a * horizontalTagPose.getDouble("x") + b * horizontalTagPose.getDouble("y");
+              lineCoefficients[i][0] = a;
+              lineCoefficients[i][1] = b;
+              lineConstants[i][0] = c;
+          }
+          // System.out.println("Coeffs: " + Arrays.deepToString(lineCoefficients));
+          // System.out.println("Consts: " + Arrays.deepToString(lineConstants));
+          RealMatrix linesA = MatrixUtils.createRealMatrix(lineCoefficients);
+          RealMatrix linesB = MatrixUtils.createRealMatrix(lineConstants);
+          RealMatrix linesV = MatrixUtils.inverse(linesA.transpose().multiply(linesA)).multiply(linesA.transpose().multiply(linesB));
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(linesV.getEntry(0, 0), linesV.getEntry(1, 0)), new Rotation2d(pigeonAngle)), averageLatency);
         }
-        RealMatrix linesA = MatrixUtils.createRealMatrix(lineCoefficients);
-        RealMatrix linesB = MatrixUtils.createRealMatrix(lineConstants);
-        RealMatrix linesV = MatrixUtils.inverse(linesA.transpose().multiply(linesA)).multiply(linesA.transpose().multiply(linesB));
 
         //least-squares intersection of distance circles approach
         
@@ -400,6 +412,7 @@ public class Drive extends SubsystemBase {
             double dist = verticalTagDistances.get(i).getDouble("dist");
             double x = horizontalTagPose.getDouble("x") + dist * Math.cos(horizontalTagPose.getDouble("theta"));
             double y = horizontalTagPose.getDouble("y") + dist * Math.sin(horizontalTagPose.getDouble("theta"));
+            
         }
 
         //AprilTag pose extraction approach
@@ -412,12 +425,24 @@ public class Drive extends SubsystemBase {
             if (robotFieldPose.length() == 6){
                 double x = (double) robotFieldPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
                 double y = (double) robotFieldPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
+                // System.out.println("Tag pos: " + x + ", " + y);
                 if (fiducial.getString("camera") == "back_cam"){
-                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), backCamTL + backCamCL);
+                  // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), backCamTL + backCamCL);
                 } else if (fiducial.getString("camera") == "front_cam"){
-                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), frontCamTL + frontCamCL);
+                  // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), frontCamTL + frontCamCL);
                 }
             }
+        }
+
+        if (backCamBotPose.length() == 6){
+          double x = (double) backCamBotPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
+          double y = (double) backCamBotPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
+          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), backCamTL + backCamCL);
+        }
+        if (frontCamBotPose.length() == 6){
+          double x = (double) frontCamBotPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
+          double y = (double) frontCamBotPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
+          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), frontCamTL + frontCamCL);
         }
 
         m_pose = m_odometry.update(new Rotation2d(pigeonAngle), swerveModulePositions);
@@ -449,6 +474,7 @@ public class Drive extends SubsystemBase {
         trackerData.put("pose", pose);
         trackerData.put("tracks", tracks);
         odometryTrackerData.setString(trackerData.toString());
+        // System.out.println("Pos: " + finalX + ", " + finalY);
   }
 
   public double[] getModuleStates(){

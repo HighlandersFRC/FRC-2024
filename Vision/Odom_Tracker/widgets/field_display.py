@@ -93,6 +93,7 @@ class FieldDisplay(Image):
         pose = [odom_data["time"], odom_data["pose"]["x"], odom_data["pose"]["y"], odom_data["pose"]["theta"]]
         self.trail_points.append(pose)
         self.current_tracks = odom_data["tracks"]
+        print(pose)
 
     def toggle_sonic(self, event):
         if self.sonic == False:
