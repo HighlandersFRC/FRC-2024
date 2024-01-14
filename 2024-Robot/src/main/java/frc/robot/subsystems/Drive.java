@@ -20,6 +20,9 @@ import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.networktables.NetworkTable;
+import edu.wpi.first.networktables.NetworkTableEntry;
+import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -63,6 +66,10 @@ public class Drive extends SubsystemBase {
   Translation2d m_frontRightLocation = new Translation2d(moduleX, -moduleY);
   Translation2d m_backLeftLocation = new Translation2d(-moduleX, moduleY);
   Translation2d m_backRightLocation = new Translation2d(-moduleX, -moduleY);
+
+  //Odometry tracker
+  private NetworkTable odometryTrackerTable = NetworkTableInstance.getDefault().getTable("odometry_tracking");
+  private NetworkTableEntry odometryTrackerData = odometryTrackerTable.getEntry("odometry_data");
 
   // odometry
   private double currentX = 0;
@@ -276,10 +283,14 @@ public class Drive extends SubsystemBase {
     //     swerveModulePositions[2] = new SwerveModulePosition(backLeft.getModuleDistance(), new Rotation2d(backLeft.getCanCoderPositionRadians()));
     //     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
 
-    //     //json data from all cameras
-    //     JSONObject allCamResults = peripherals.getCameraMeasurements();
-    //     JSONObject backCamResults = allCamResults.getJSONObject("BackCam");
-    //     JSONObject frontCamResults = allCamResults.getJSONObject("FrontCam");
+        //json data from all cameras
+        JSONObject allCamResults = peripherals.getCameraMeasurements();
+        JSONObject backCamResults = allCamResults.getJSONObject("BackCam");
+        JSONObject frontCamResults = allCamResults.getJSONObject("FrontCam");
+        double backCamTL = backCamResults.getDouble("tl");
+        double backCamCL = backCamResults.getDouble("cl");
+        double frontCamTL = frontCamResults.getDouble("tl");
+        double frontCamCL = frontCamResults.getDouble("cl");
 
     //     //fiducial data from all cameras
     //     JSONArray fiducialResults = new JSONArray();
@@ -310,58 +321,58 @@ public class Drive extends SubsystemBase {
     //     //}
     //     ArrayList<JSONObject> horizontalTagPoses = new ArrayList<JSONObject>();
 
-    //     //distances from offset tag positions (offset by camera offset from robot center) to the robot center
-    //     //each JSONObject is of the form:
-    //     //{
-    //     //  "x": float (x in field coordinates, meters),
-    //     //  "y": float (y in field coordinates, meters),
-    //     //  "dist": float (distance from robot center to offset target, meters),
-    //     //  "camera": String (camera name, e.g. "back_cam"),
-    //     //  "id": int (id number of AprilTag used for track)
-    //     //}
-    //     ArrayList<JSONObject> verticalTagDistances = new ArrayList<JSONObject>();
-    //     for (int i = 0; i < fiducialResults.length(); i ++){
-    //         JSONObject fiducial = (JSONObject) fiducialResults.get(i);
-    //         int id = fiducial.getInt("fID");
-    //         double cameraOffsetX = 0;
-    //         double cameraOffsetY = 0;
-    //         double cameraOffsetZ = 0;
-    //         double cameraOffsetPitch = 0;
-    //         double cameraOffsetTheta = 0;
-    //         String camera = fiducial.getString("camera");
-    //         //3d camera offset in field coordinates (meters and radians)
-    //         if (camera == "back_cam"){
-    //             cameraOffsetX = Constants.Vision.BACK_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.BACK_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
-    //             cameraOffsetY = Constants.Vision.BACK_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.BACK_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
-    //             cameraOffsetZ = Constants.Vision.BACK_CAMERA_POSE[2];
-    //             cameraOffsetTheta = Constants.Vision.BACK_CAMERA_POSE[5] + fieldPigeonAngle;
-    //             cameraOffsetPitch = Constants.Vision.BACK_CAMERA_POSE[4];
-    //         } else if (camera == "front_cam"){
-    //             cameraOffsetX = Constants.Vision.FRONT_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.FRONT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
-    //             cameraOffsetY = Constants.Vision.FRONT_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.FRONT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
-    //             cameraOffsetZ = Constants.Vision.FRONT_CAMERA_POSE[2];
-    //             cameraOffsetTheta = Constants.Vision.FRONT_CAMERA_POSE[5] + fieldPigeonAngle;
-    //             cameraOffsetPitch = Constants.Vision.FRONT_CAMERA_POSE[4];
-    //         }
-    //         //pose to add to horizontalTagPoses
-    //         JSONObject pose = new JSONObject();
-    //         pose.put("x", Constants.Vision.TAG_POSES[id][0] - cameraOffsetX);
-    //         pose.put("y", Constants.Vision.TAG_POSES[id][1] - cameraOffsetY);
-    //         pose.put("theta", -fiducial.getDouble("tx") * Constants.Vision.LIMELIGHT_HFOV_RAD + cameraOffsetTheta);
-    //         pose.put("camera", camera);
-    //         pose.put("id", id);
-    //         horizontalTagPoses.add(pose);
+        //distances from offset tag positions (offset by camera offset from robot center) to the robot center
+        //each JSONObject is of the form:
+        //{
+        //  "x": float (x in field coordinates, meters),
+        //  "y": float (y in field coordinates, meters),
+        //  "dist": float (distance from robot center to offset target, meters),
+        //  "camera": String (camera name, e.g. "back_cam"),
+        //  "id": int (id number of AprilTag used for track)
+        //}
+        ArrayList<JSONObject> verticalTagDistances = new ArrayList<JSONObject>();
+        for (int i = 0; i < fiducialResults.length(); i ++){
+            JSONObject fiducial = (JSONObject) fiducialResults.get(i);
+            int id = fiducial.getInt("fID");
+            double cameraOffsetX = 0;
+            double cameraOffsetY = 0;
+            double cameraOffsetZ = 0;
+            double cameraOffsetPitch = 0;
+            double cameraOffsetTheta = 0;
+            String camera = fiducial.getString("camera");
+            //3d camera offset in field coordinates (meters and radians)
+            if (camera == "back_cam"){
+                cameraOffsetX = Constants.Vision.BACK_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.BACK_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+                cameraOffsetY = Constants.Vision.BACK_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.BACK_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+                cameraOffsetZ = Constants.Vision.BACK_CAMERA_POSE[2];
+                cameraOffsetTheta = Constants.Vision.BACK_CAMERA_POSE[5] + fieldPigeonAngle;
+                cameraOffsetPitch = Constants.Vision.BACK_CAMERA_POSE[4];
+            } else if (camera == "front_cam"){
+                cameraOffsetX = Constants.Vision.FRONT_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.FRONT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+                cameraOffsetY = Constants.Vision.FRONT_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.FRONT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+                cameraOffsetZ = Constants.Vision.FRONT_CAMERA_POSE[2];
+                cameraOffsetTheta = Constants.Vision.FRONT_CAMERA_POSE[5] + fieldPigeonAngle;
+                cameraOffsetPitch = Constants.Vision.FRONT_CAMERA_POSE[4];
+            }
+            //pose to add to horizontalTagPoses
+            JSONObject pose = new JSONObject();
+            pose.put("x", Constants.Vision.TAG_POSES[id - 1][0] - cameraOffsetX);
+            pose.put("y", Constants.Vision.TAG_POSES[id - 1][1] - cameraOffsetY);
+            pose.put("theta", -fiducial.getDouble("tx") * Constants.Vision.LIMELIGHT_HFOV_RAD + cameraOffsetTheta);
+            pose.put("camera", camera);
+            pose.put("id", id);
+            horizontalTagPoses.add(pose);
 
-    //         //distance info to add to verticalTagDistances
-    //         double verticalAngle = -fiducial.getDouble("ty") * Constants.Vision.LIMELIGHT_VFOV_RAD + cameraOffsetPitch;
-    //         JSONObject dist = new JSONObject();
-    //         dist.put("x", Constants.Vision.TAG_POSES[id][0] - cameraOffsetX);
-    //         dist.put("y", Constants.Vision.TAG_POSES[id][1] - cameraOffsetY);
-    //         dist.put("dist", (Constants.Vision.TAG_POSES[id][2] - cameraOffsetZ) / Math.tan(verticalAngle));
-    //         dist.put("camera", camera);
-    //         dist.put("id", id);
-    //         verticalTagDistances.add(dist);
-    //     }
+            //distance info to add to verticalTagDistances
+            double verticalAngle = -fiducial.getDouble("ty") * Constants.Vision.LIMELIGHT_VFOV_RAD + cameraOffsetPitch;
+            JSONObject dist = new JSONObject();
+            dist.put("x", Constants.Vision.TAG_POSES[id - 1][0] - cameraOffsetX);
+            dist.put("y", Constants.Vision.TAG_POSES[id - 1][1] - cameraOffsetY);
+            dist.put("dist", (Constants.Vision.TAG_POSES[id - 1][2] - cameraOffsetZ) / Math.tan(verticalAngle));
+            dist.put("camera", camera);
+            dist.put("id", id);
+            verticalTagDistances.add(dist);
+        }
 
     //     //least-squares intersection of angle lines approach
     //     //convert poses {x, y, theta} in line equation coefficients {a, b} and c from ax + by = c
@@ -391,18 +402,23 @@ public class Drive extends SubsystemBase {
     //         double y = horizontalTagPose.getDouble("y") + dist * Math.sin(horizontalTagPose.getDouble("theta"));
     //     }
 
-    //     //AprilTag pose extraction approach
-    //     JSONArray noTrack = new JSONArray();
-    //     noTrack.put(0);
-    //     noTrack.put(0);
-    //     for (int i = 0; i < numTracks; i ++){
-    //         JSONObject fiducial = (JSONObject) fiducialResults.get(i);
-    //         JSONArray robotFieldPose = fiducial.getJSONArray("t6r_fs");
-    //         if (robotFieldPose.length() == 6){
-    //             double x = (double) robotFieldPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
-    //             double y = (double) robotFieldPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
-    //         }
-    //     }
+        //AprilTag pose extraction approach
+        JSONArray noTrack = new JSONArray();
+        noTrack.put(0);
+        noTrack.put(0);
+        for (int i = 0; i < numTracks; i ++){
+            JSONObject fiducial = (JSONObject) fiducialResults.get(i);
+            JSONArray robotFieldPose = fiducial.getJSONArray("t6r_fs");
+            if (robotFieldPose.length() == 6){
+                double x = (double) robotFieldPose.get(0) + Constants.Physical.FIELD_LENGTH / 2;
+                double y = (double) robotFieldPose.get(1) + Constants.Physical.FIELD_WIDTH / 2;
+                if (fiducial.getString("camera") == "back_cam"){
+                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), backCamTL + backCamCL);
+                } else if (fiducial.getString("camera") == "front_cam"){
+                  m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), frontCamTL + frontCamCL);
+                }
+            }
+        }
 
     //     m_pose = m_odometry.update(new Rotation2d(pigeonAngle), swerveModulePositions);
 
@@ -413,17 +429,26 @@ public class Drive extends SubsystemBase {
     //     currentFusedOdometry[1] = finalY;
     //     currentFusedOdometry[2] = pigeonAngle;
 
-    //     //odometry data to send to odometry tracking tool
-    //     JSONObject trackerData = new JSONObject();
-    //     //final odometry pose
-    //     JSONObject pose = new JSONObject();
-    //     pose.put("x", finalX);
-    //     pose.put("y", finalY);
-    //     pose.put("theta", fieldPigeonAngle);
-    //     //list of tags tracked by which cameras
-    //     JSONArray tracks = new JSONArray();
-    //     trackerData.put("pose", pose);
-    //     trackerData.put("tracks", tracks);
+        //odometry data to send to odometry tracking tool
+        JSONObject trackerData = new JSONObject();
+        //final odometry pose
+        JSONObject pose = new JSONObject();
+        pose.put("x", finalX);
+        pose.put("y", finalY);
+        pose.put("theta", fieldPigeonAngle);
+        //list of tags tracked by which cameras
+        JSONArray tracks = new JSONArray();
+        for (int i = 0; i < numTracks; i ++){
+          JSONObject track = new JSONObject();
+          JSONObject fiducial = (JSONObject) fiducialResults.get(i);
+          track.put("camera", fiducial.getString("camera"));
+          track.put("fID", fiducial.getInt("fID"));
+          tracks.put(track);
+        }
+        trackerData.put("time", Timer.getFPGATimestamp());
+        trackerData.put("pose", pose);
+        trackerData.put("tracks", tracks);
+        odometryTrackerData.setString(trackerData.toString());
   }
 
   public double[] getModuleStates(){
@@ -663,7 +688,7 @@ public class Drive extends SubsystemBase {
   
   @Override
   public void periodic() {
-
+    updateOdometryFusedArray();
   }
 
   // get Joystick adjusted y-value
