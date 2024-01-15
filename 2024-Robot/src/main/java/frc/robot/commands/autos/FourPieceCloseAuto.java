@@ -82,7 +82,6 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      // new SetWheelsStraight(drive),
       new AutonomousFollower(drive, pathJSON, false),
       new AutonomousFollower(drive, pathJSON2, false),
       new AutonomousFollower(drive, pathJSON3, false),

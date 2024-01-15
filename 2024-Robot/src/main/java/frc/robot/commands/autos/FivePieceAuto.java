@@ -35,6 +35,10 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private File pathingFile4;
   private JSONArray pathJSON4;
   private JSONObject pathRead4;
+
+  private File pathingFile5;
+  private JSONArray pathJSON5;
+  private JSONObject pathRead5;
   /** Creates a new FivePieceAuto. */
   public FivePieceAuto(Drive drive, Peripherals peripherals) {
     try {
@@ -68,10 +72,20 @@ public class FivePieceAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile4 = new File("/home/lvuser/deploy/4PieceClosePart4.json");
+      pathingFile4 = new File("/home/lvuser/deploy/5PieceCenterPart4.json");
       FileReader scanner4 = new FileReader(pathingFile4);
       pathRead4 = new JSONObject(new JSONTokener(scanner4));
       pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      pathingFile5 = new File("/home/lvuser/deploy/5PiecePart5.json");
+      FileReader scanner5 = new FileReader(pathingFile5);
+      pathRead5 = new JSONObject(new JSONTokener(scanner5));
+      pathJSON5 = (JSONArray) pathRead5.get("sampled_points");
     }
     catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
@@ -84,7 +98,8 @@ public class FivePieceAuto extends SequentialCommandGroup {
       new AutonomousFollower(drive, pathJSON, false),
       new AutonomousFollower(drive, pathJSON2, false),
       new AutonomousFollower(drive, pathJSON3, false),
-      new AutonomousFollower(drive, pathJSON4, false)
+      new AutonomousFollower(drive, pathJSON4, false),
+      new AutonomousFollower(drive, pathJSON5, false)
     );
   }
 }
