@@ -69,7 +69,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile4 = new File("/home/lvuser/deploy/5PieceCenterPart4.json");
+      pathingFile4 = new File("/home/lvuser/deploy/4PieceClosePart4.json");
       FileReader scanner4 = new FileReader(pathingFile4);
       pathRead4 = new JSONObject(new JSONTokener(scanner4));
       pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
@@ -85,8 +85,8 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
       // new SetWheelsStraight(drive),
       new AutonomousFollower(drive, pathJSON, false),
       new AutonomousFollower(drive, pathJSON2, false),
-      new AutonomousFollower(drive, pathJSON3, false)
-      // new AutonomousFollower(drive, pathJSON4, false)
+      new AutonomousFollower(drive, pathJSON3, false),
+      new AutonomousFollower(drive, pathJSON4, false)
     );
   }
 }

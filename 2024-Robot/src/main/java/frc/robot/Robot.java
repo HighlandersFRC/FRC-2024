@@ -77,7 +77,7 @@ public class Robot extends TimedRobot {
     //Auto selection here...
     if (OI.is4PieceCloseAuto()) {
       try {
-        pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
+        pathingFile = new File("/home/lvuser/deploy/4PieceClosePart4.json");
         FileReader scanner = new FileReader(pathingFile);
         pathRead = new JSONObject(new JSONTokener(scanner));
         pathJSON = (JSONArray) pathRead.get("sampled_points");
