@@ -72,6 +72,10 @@ public class Drive extends SubsystemBase {
   private NetworkTable odometryTrackerTable = NetworkTableInstance.getDefault().getTable("odometry_tracking");
   private NetworkTableEntry odometryTrackerData = odometryTrackerTable.getEntry("odometry_data");
 
+  private NetworkTable measurementTable = NetworkTableInstance.getDefault().getTable("measurements");
+  private NetworkTableEntry tagPoseMeasurements = measurementTable.getEntry("tag");
+  private NetworkTableEntry triangulationPoseMeasurements = measurementTable.getEntry("triangulation");
+
   // odometry
   private double currentX = 0;
   private double currentY = 0;
@@ -390,6 +394,7 @@ public class Drive extends SubsystemBase {
         if (horizontalTagPose.getString("camera") == "back_cam"){
           m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
         } else if (horizontalTagPose.getString("camera") == "front_cam"){
+          triangulationPoseMeasurements.setDoubleArray(new double[] {x, y});
           m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
         }
     }
@@ -406,6 +411,7 @@ public class Drive extends SubsystemBase {
       double x = (double) frontCamBotPose.get(0);
       double y = (double) frontCamBotPose.get(1);
       if (x != 0 && y != 0){
+        tagPoseMeasurements.setDoubleArray(new double[] {x + Constants.Physical.FIELD_LENGTH / 2, y + Constants.Physical.FIELD_WIDTH / 2});
         m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x + Constants.Physical.FIELD_LENGTH / 2, y + Constants.Physical.FIELD_WIDTH / 2), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
       }
     }
