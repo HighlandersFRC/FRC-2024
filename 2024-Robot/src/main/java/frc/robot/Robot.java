@@ -130,7 +130,7 @@ public class Robot extends TimedRobot {
       this.auto = new FivePieceAuto(drive, peripherals);
       auto.schedule();
     } else if (OI.is4Piece1FarAuto()){
-      this.auto = new FourPieceOneFarAuto();
+      this.auto = new FourPieceOneFarAuto(drive, peripherals);
       auto.schedule();
     } else if (OI.is3PieceBottomAuto()) {
       this.auto = new ThreePieceBottomAuto();

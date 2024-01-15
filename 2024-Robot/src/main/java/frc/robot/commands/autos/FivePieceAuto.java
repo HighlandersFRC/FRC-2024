@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Peripherals;
@@ -39,6 +40,14 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private File pathingFile5;
   private JSONArray pathJSON5;
   private JSONObject pathRead5;
+
+  private File pathingFile6;
+  private JSONArray pathJSON6;
+  private JSONObject pathRead6;
+
+  private File pathingFile7;
+  private JSONArray pathJSON7;
+  private JSONObject pathRead7;
   /** Creates a new FivePieceAuto. */
   public FivePieceAuto(Drive drive, Peripherals peripherals) {
     try {
@@ -91,15 +100,42 @@ public class FivePieceAuto extends SequentialCommandGroup {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
+    try {
+      pathingFile6 = new File("/home/lvuser/deploy/6PiecePart6.json");
+      FileReader scanner6 = new FileReader(pathingFile6);
+      pathRead6 = new JSONObject(new JSONTokener(scanner6));
+      pathJSON6 = (JSONArray) pathRead6.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      pathingFile7 = new File("/home/lvuser/deploy/6PiecePart7.json");
+      FileReader scanner7 = new FileReader(pathingFile7);
+      pathRead7 = new JSONObject(new JSONTokener(scanner7));
+      pathJSON7 = (JSONArray) pathRead7.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+
     addRequirements(drive);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new AutonomousFollower(drive, pathJSON, false),
+      new WaitCommand(0.5),
       new AutonomousFollower(drive, pathJSON2, false),
+      new WaitCommand(0.5),
       new AutonomousFollower(drive, pathJSON3, false),
+      new WaitCommand(0.5),
       new AutonomousFollower(drive, pathJSON4, false),
-      new AutonomousFollower(drive, pathJSON5, false)
+      new AutonomousFollower(drive, pathJSON5, false),
+      new WaitCommand(0.5),
+      new AutonomousFollower(drive, pathJSON6, false),
+      new AutonomousFollower(drive, pathJSON7, false)
     );
   }
 }
