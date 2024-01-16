@@ -67,7 +67,7 @@ public final class Constants {
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 0.25;
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 2;
     public static final double TAG_STANDARD_DEVIATION_DISTANCE = 3; //meters
-    public static final double TAG_STANDARD_DEVIATION_FLATNESS = 0.1;
+    public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
 
     //Standard deviation regressions
     public static double getTagDistStdDevScalar(double dist){

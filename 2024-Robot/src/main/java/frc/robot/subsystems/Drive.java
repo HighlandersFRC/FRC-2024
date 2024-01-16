@@ -416,10 +416,9 @@ public class Drive extends SubsystemBase {
         }
         standardDeviation.set(2, 0, 0);
         if (horizontalTagPose.getString("camera") == "back_cam"){
-          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL), standardDeviation);
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL), standardDeviation);
         } else if (horizontalTagPose.getString("camera") == "front_cam"){
-          triangulationPoseMeasurements.setDoubleArray(new double[] {x, y});
-          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL), standardDeviation);
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL), standardDeviation);
         }
     }
 
@@ -448,7 +447,7 @@ public class Drive extends SubsystemBase {
     if (frontCamBotPose.length() == 6){
       double x = (double) frontCamBotPose.get(0);
       double y = (double) frontCamBotPose.get(1);
-      if (x != 0 && y != 0 && backCamFiducialResults.length() != 0){
+      if (x != 0 && y != 0 && frontCamFiducialResults.length() != 0){
         int id = ((JSONObject) frontCamFiducialResults.get(0)).getInt("fID");
         double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
         double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
@@ -463,7 +462,6 @@ public class Drive extends SubsystemBase {
           standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset));
         }
         standardDeviation.set(2, 0, 0);
-        tagPoseMeasurements.setDoubleArray(new double[] {x, y});
         m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
       }
     }
