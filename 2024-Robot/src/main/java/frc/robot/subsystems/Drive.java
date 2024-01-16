@@ -15,12 +15,16 @@ import org.json.JSONObject;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.math.Matrix;
+import edu.wpi.first.math.Nat;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
+import edu.wpi.first.math.numbers.N1;
+import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -101,6 +105,8 @@ public class Drive extends SubsystemBase {
   private double previousX = 0;
   private double previousY = 0;
   private double previousTheta = 0;
+
+  private double lastLoopTime = Timer.getFPGATimestamp();  
 
   // array for fused odometry
   private double[] currentFusedOdometry = new double[3];
@@ -283,6 +289,11 @@ public class Drive extends SubsystemBase {
       fieldPigeonAngle += Math.PI;
     }
 
+    //maximum ammount the position of the robot could change by in one loop through
+    double dt = Timer.getFPGATimestamp() - this.lastLoopTime;
+    this.lastLoopTime = Timer.getFPGATimestamp();
+    double maxChange = dt * Constants.Physical.TOP_SPEED;
+
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontRight.getModuleDistance(), new Rotation2d(frontRight.getCanCoderPositionRadians()));
     swerveModulePositions[1] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
@@ -298,8 +309,8 @@ public class Drive extends SubsystemBase {
     double frontCamTL = frontCamResults.getDouble("tl") / 1000;
     double frontCamCL = frontCamResults.getDouble("cl") / 1000;
     double averageLatency = (backCamCL + backCamTL + frontCamCL + frontCamTL) / 2;
-    JSONArray backCamBotPose = backCamResults.getJSONArray("botpose");
-    JSONArray frontCamBotPose = frontCamResults.getJSONArray("botpose");
+    JSONArray backCamBotPose = backCamResults.getJSONArray("botpose_wpiblue");
+    JSONArray frontCamBotPose = frontCamResults.getJSONArray("botpose_wpiblue");
 
     //fiducial data from all cameras
     JSONArray fiducialResults = new JSONArray();
@@ -391,11 +402,23 @@ public class Drive extends SubsystemBase {
         double dist = verticalTagDistances.get(i).getDouble("dist");
         double x = horizontalTagPose.getDouble("x") + dist * Math.cos(horizontalTagPose.getDouble("theta"));
         double y = horizontalTagPose.getDouble("y") + dist * Math.sin(horizontalTagPose.getDouble("theta"));
+        int id = horizontalTagPose.getInt("id");
+        double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
+        double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
+        Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
+        if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
+          double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
+          standardDeviation.set(0, 0, Constants.Vision.getTriStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(dist) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+          standardDeviation.set(1, 0, Constants.Vision.getTriStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(dist) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+        } else {
+          standardDeviation.set(0, 0, Constants.Vision.getTriStdDevX(xOffset, yOffset));
+          standardDeviation.set(1, 0, Constants.Vision.getTriStdDevY(xOffset, yOffset));
+        }
+        standardDeviation.set(2, 0, 0);
         if (horizontalTagPose.getString("camera") == "back_cam"){
-          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL), standardDeviation);
         } else if (horizontalTagPose.getString("camera") == "front_cam"){
-          triangulationPoseMeasurements.setDoubleArray(new double[] {x, y});
-          m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL), standardDeviation);
         }
     }
 
@@ -403,16 +426,43 @@ public class Drive extends SubsystemBase {
     if (backCamBotPose.length() == 6){
       double x = (double) backCamBotPose.get(0);
       double y = (double) backCamBotPose.get(1);
-      if (x != 0 && y != 0){
-        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x + Constants.Physical.FIELD_LENGTH / 2, y + Constants.Physical.FIELD_WIDTH / 2), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
+      if (x != 0 && y != 0 && backCamFiducialResults.length() != 0){
+        int id = ((JSONObject) backCamFiducialResults.get(0)).getInt("fID");
+        double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
+        double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
+        double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
+        Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
+        if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
+          double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
+          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+        } else {
+          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset));
+          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset));
+        }
+        standardDeviation.set(2, 0, 0);
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
       }
     }
     if (frontCamBotPose.length() == 6){
       double x = (double) frontCamBotPose.get(0);
       double y = (double) frontCamBotPose.get(1);
-      if (x != 0 && y != 0){
-        tagPoseMeasurements.setDoubleArray(new double[] {x + Constants.Physical.FIELD_LENGTH / 2, y + Constants.Physical.FIELD_WIDTH / 2});
-        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x + Constants.Physical.FIELD_LENGTH / 2, y + Constants.Physical.FIELD_WIDTH / 2), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
+      if (x != 0 && y != 0 && frontCamFiducialResults.length() != 0){
+        int id = ((JSONObject) frontCamFiducialResults.get(0)).getInt("fID");
+        double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
+        double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
+        double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
+        Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
+        if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
+          double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
+          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+        } else {
+          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset));
+          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset));
+        }
+        standardDeviation.set(2, 0, 0);
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
       }
     }
 
@@ -425,6 +475,10 @@ public class Drive extends SubsystemBase {
     currentFusedOdometry[0] = finalX;
     currentFusedOdometry[1] = finalY;
     currentFusedOdometry[2] = pigeonAngle;
+
+    currentX = currentFusedOdometry[0];
+    currentY = currentFusedOdometry[1];
+    currentTheta = currentFusedOdometry[2];
 
     //odometry data to send to odometry tracking tool
     JSONObject trackerData = new JSONObject();
