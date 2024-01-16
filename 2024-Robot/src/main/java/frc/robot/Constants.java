@@ -62,6 +62,35 @@ public final class Constants {
     public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
 
+    //Standard deviation adjustments
+    public static final double STANDARD_DEVIATION_SCALAR = 10;
+    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 0.25;
+    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 2;
+    public static final double TAG_STANDARD_DEVIATION_DISTANCE = 3; //meters
+    public static final double TAG_STANDARD_DEVIATION_FLATNESS = 0.1;
+
+    //Standard deviation regressions
+    public static double getTagDistStdDevScalar(double dist){
+      double a = TAG_STANDARD_DEVIATION_FLATNESS;
+      double b = 1 - a * Math.pow(TAG_STANDARD_DEVIATION_DISTANCE, 2);
+      return Math.max(1, a * Math.pow(dist, 2) + b);
+    }
+
+    public static double getTagStdDevX(double xOffset, double yOffset){
+      return Math.max(0, 0.005533021491867763 * (xOffset * xOffset + yOffset * yOffset) - 0.010807566510145635) * STANDARD_DEVIATION_SCALAR;
+    }
+
+    public static double getTagStdDevY(double xOffset, double yOffset){
+      return Math.max(0, 0.0055 * (xOffset * xOffset + yOffset * yOffset) - 0.01941597810542626) * STANDARD_DEVIATION_SCALAR;
+    }
+
+    public static double getTriStdDevX(double xOffset, double yOffset){
+      return Math.max(0, 0.004544133588821881 * (xOffset * xOffset + yOffset * yOffset) - 0.01955724864971872) * STANDARD_DEVIATION_SCALAR;
+    }
+
+    public static double getTriStdDevY(double xOffset, double yOffset){
+      return Math.max(0, 0.002615358015002413 * (xOffset * xOffset + yOffset * yOffset) - 0.008955462032388808) * STANDARD_DEVIATION_SCALAR;
+    }
   }
 
   public static final class OperatorConstants {
