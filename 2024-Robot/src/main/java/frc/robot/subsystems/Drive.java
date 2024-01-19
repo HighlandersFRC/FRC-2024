@@ -428,17 +428,18 @@ public class Drive extends SubsystemBase {
       double y = (double) backCamBotPose.get(1);
       if (x != 0 && y != 0 && backCamFiducialResults.length() != 0){
         int id = ((JSONObject) backCamFiducialResults.get(0)).getInt("fID");
+        int numBackTracks = backCamFiducialResults.length();
         double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
         double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
         double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
         Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
         if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
           double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
-          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
-          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numBackTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numBackTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
         } else {
-          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset));
-          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset));
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numBackTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset)));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numBackTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
         }
         standardDeviation.set(2, 0, 0);
         m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
@@ -449,17 +450,18 @@ public class Drive extends SubsystemBase {
       double y = (double) frontCamBotPose.get(1);
       if (x != 0 && y != 0 && frontCamFiducialResults.length() != 0){
         int id = ((JSONObject) frontCamFiducialResults.get(0)).getInt("fID");
+        int numFrontTracks = frontCamFiducialResults.length();
         double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
         double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
         double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
         Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
         if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
           double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
-          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
-          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR);
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numFrontTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numFrontTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
         } else {
-          standardDeviation.set(0, 0, Constants.Vision.getTagStdDevX(xOffset, yOffset));
-          standardDeviation.set(1, 0, Constants.Vision.getTagStdDevY(xOffset, yOffset));
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numFrontTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset)));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numFrontTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
         }
         standardDeviation.set(2, 0, 0);
         m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));

@@ -70,24 +70,42 @@ public final class Constants {
     public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
 
     //Standard deviation regressions
+    //Increases standard deviation with distance from tag
     public static double getTagDistStdDevScalar(double dist){
       double a = TAG_STANDARD_DEVIATION_FLATNESS;
       double b = 1 - a * Math.pow(TAG_STANDARD_DEVIATION_DISTANCE, 2);
       return Math.max(1, a * Math.pow(dist, 2) + b);
     }
 
+    // Decreases standard deviation with more tag present in one MegaTag botpose
+    public static double getNumTagStdDevScalar(int numTags){
+      if (numTags == 0){
+        return 99999;
+      } else if (numTags == 1){
+        return 2;
+      } else if (numTags == 2){
+        return 1;
+      } else {
+        return 0.75;
+      }
+    }
+
+    //Regression for standard deviation in x for fiducial measurements
     public static double getTagStdDevX(double xOffset, double yOffset){
       return Math.max(0, 0.005533021491867763 * (xOffset * xOffset + yOffset * yOffset) - 0.010807566510145635) * STANDARD_DEVIATION_SCALAR;
     }
 
+    //Regression for standard deviation in y for fiducial measurements
     public static double getTagStdDevY(double xOffset, double yOffset){
       return Math.max(0, 0.0055 * (xOffset * xOffset + yOffset * yOffset) - 0.01941597810542626) * STANDARD_DEVIATION_SCALAR;
     }
 
+    //Regression for standard deviation in x for triangulation measurements
     public static double getTriStdDevX(double xOffset, double yOffset){
       return Math.max(0, 0.004544133588821881 * (xOffset * xOffset + yOffset * yOffset) - 0.01955724864971872) * STANDARD_DEVIATION_SCALAR;
     }
 
+    //Regression for standard deviation in y for triangulation measurements
     public static double getTriStdDevY(double xOffset, double yOffset){
       return Math.max(0, 0.002615358015002413 * (xOffset * xOffset + yOffset * yOffset) - 0.008955462032388808) * STANDARD_DEVIATION_SCALAR;
     }
