@@ -178,7 +178,7 @@ public class SwerveModule extends SubsystemBase {
 
   public double getWheelPosition(){
     double position = angleMotor.getPosition().getValue();
-    return Math.toRadians(rotationsToDegrees(position));
+    return Constants.rotationsToRadians(position);
   }
 
   public double getWheelSpeed(){
@@ -266,8 +266,8 @@ public class SwerveModule extends SubsystemBase {
 
       double velocityRPS = (MPSToRPS(finalVelocity));
       
-      SmartDashboard.putNumber("Velocity", velocityRPS);
-      SmartDashboard.putNumber("Final Angle", Math.toDegrees(finalAngle));
+      // SmartDashboard.putNumber("Velocity", velocityRPS);
+      // SmartDashboard.putNumber("Final Angle", Math.toDegrees(finalAngle));
 
       double currentAngle = getWheelPosition();
       double currentAngleBelow360 = (getWheelPosition()) % (Math.toRadians(360));
@@ -276,11 +276,13 @@ public class SwerveModule extends SubsystemBase {
       double setpointAngle = findClosestAngle(currentAngleBelow360, finalAngle);
       double setpointAngleFlipped = findClosestAngle(currentAngleBelow360, finalAngle + Math.PI);
 
-      // moves wheel
+      double angleDifference = Math.abs(currentAngleBelow360 - finalAngle);
+      double adjustedVelocity = ((Math.cos(angleDifference)) * velocityRPS);
+
       if (Math.abs(setpointAngle) <= Math.abs(setpointAngleFlipped)){
-        setWheelPID(currentAngle + setpointAngle, velocityRPS);
+        setWheelPID(currentAngle + setpointAngle, adjustedVelocity);
       } else {
-        setWheelPID(currentAngle + setpointAngleFlipped, -velocityRPS);
+        setWheelPID(currentAngle + setpointAngleFlipped, adjustedVelocity);
       }
   }
 }
