@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.FeedbackSensorSourceValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
@@ -17,6 +20,8 @@ import frc.robot.commands.defaults.ShooterDefault;
 
 public class Shooter extends SubsystemBase {
   private Lights lights;
+
+  private final CANcoder angleEncoder = new CANcoder(Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
@@ -42,7 +47,13 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kP = 0;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 0;
+    this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
+    this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
+    this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
+    this.angleFalconConfiguration.Feedback.RotorToSensorRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
+    this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
+    this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
 
     this.flywheelVortexMaster.restoreFactoryDefaults();
     this.flywheelVortexMasterPID.setP(0, 0);
@@ -74,7 +85,11 @@ public class Shooter extends SubsystemBase {
 
   //Set shooter angle in rotations
   public void setShooterAngle(double elevationAngle){
-    this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(elevationAngle * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
+    if (elevationAngle > Constants.SetPoints.SHOOTER_MAX_ANGLE){
+      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(elevationAngle * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
+    } else {
+      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(elevationAngle * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
+    }
   }
 
   //Set flywheel velocity in RPM

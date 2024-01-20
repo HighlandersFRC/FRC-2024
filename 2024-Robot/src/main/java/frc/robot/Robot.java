@@ -26,6 +26,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -215,15 +216,21 @@ public class Robot extends LoggedRobot {
   @Override
   public void autonomousPeriodic() {}
 
-  @Override
+  @Override 
   public void teleopInit() {
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
 
     //CONTROLS
+
+    //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1000));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1000));
+
+    //Operator
   }
 
   @Override

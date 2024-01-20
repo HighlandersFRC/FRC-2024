@@ -3,15 +3,23 @@
 
 package frc.robot;
 
+import java.util.function.BooleanSupplier;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
-// import frc.robot.tools.TriggerButton;
+import frc.robot.tools.TriggerButton;
 
 public class OI {
     public static XboxController driverController = new XboxController(0);
     public static XboxController operatorController = new XboxController(1);
+
+    public static BooleanSupplier driveRTSupplier = () -> getDriverRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE;
+    public static BooleanSupplier driverLTSupplier = () -> getDriverLTPercent() > Constants.OperatorConstants.LEFT_TRIGGER_DEADZONE;
+
+    public static TriggerButton driverRT = new TriggerButton(driveRTSupplier);
+    public static TriggerButton driverLT = new TriggerButton(driverLTSupplier);
 
     public static JoystickButton driverA = new JoystickButton(driverController, 1);
     public static JoystickButton driverB = new JoystickButton(driverController, 2);
@@ -19,8 +27,6 @@ public class OI {
     public static JoystickButton driverY = new JoystickButton(driverController, 4);
     public static JoystickButton driverX = new JoystickButton(driverController, 3);
 
-    // public static TriggerButton driverRT = new TriggerButton(driverController, 3);
-    // public static TriggerButton driverLT = new TriggerButton(driverController, 2);
     public static JoystickButton driverRB = new JoystickButton(driverController, 6);
     public static JoystickButton driverLB = new JoystickButton(driverController, 5);
 
@@ -30,8 +36,6 @@ public class OI {
     public static JoystickButton operatorY = new JoystickButton(operatorController, 4);
     public static JoystickButton operatorA = new JoystickButton(operatorController, 1);
     
-    // public static TriggerButton operatorRT = new TriggerButton(operatorController, 3);
-    // public static TriggerButton operatorLT = new TriggerButton(operatorController, 2);
     public static JoystickButton operatorRB = new JoystickButton(operatorController, 6);
     public static JoystickButton operatorLB = new JoystickButton(operatorController, 5);
 
@@ -58,6 +62,14 @@ public class OI {
 
     public static double getDriverRightY() {
         return driverController.getRightY();
+    }
+
+    public static double getDriverRTPercent() {
+        return driverController.getRightTriggerAxis();
+    }
+
+    public static double getDriverLTPercent() {
+        return driverController.getLeftTriggerAxis();
     }
 
     public static boolean getDriverA() {
