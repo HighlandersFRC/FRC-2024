@@ -171,6 +171,12 @@ public final class Constants {
     public static final int FEEDER_ROLLER_MOTOR_ID = 15;
   }
 
+  //Misc. controller values
+  public static final class OperatorConstants {
+    public static final double RIGHT_TRIGGER_DEADZONE = 0.1;
+    public static final double LEFT_TRIGGER_DEADZONE = 0.1;
+  }
+
   public static double inchesToMeters(double inches){
     return inches / 39.37;
   }

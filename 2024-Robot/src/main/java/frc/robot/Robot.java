@@ -224,6 +224,7 @@ public class Robot extends LoggedRobot {
     //CONTROLS
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    
   }
 
   @Override
