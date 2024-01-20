@@ -39,6 +39,7 @@ public class Intake extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
 
+    this.rollerVortex.restoreFactoryDefaults();
     this.rollerVortexPID.setP(0, 0);
     this.rollerVortexPID.setI(0, 0);
     this.rollerVortexPID.setD(0, 0);

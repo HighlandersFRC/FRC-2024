@@ -44,6 +44,7 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
 
+    this.flywheelVortexMaster.restoreFactoryDefaults();
     this.flywheelVortexMasterPID.setP(0, 0);
     this.flywheelVortexMasterPID.setI(0, 0);
     this.flywheelVortexMasterPID.setD(0, 0);
@@ -53,6 +54,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelVortexMasterEncoder.setVelocityConversionFactor(1);
     this.flywheelVortexMaster.setIdleMode(IdleMode.kCoast);
 
+    this.flywheelVortexFollower.restoreFactoryDefaults();
     this.flywheelVortexFollower.follow(this.flywheelVortexMaster);
     this.flywheelVortexFollowerPID.setP(0, 0);
     this.flywheelVortexFollowerPID.setI(0, 0);

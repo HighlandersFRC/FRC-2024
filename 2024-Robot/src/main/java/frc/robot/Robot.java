@@ -33,6 +33,7 @@ import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
@@ -46,6 +47,7 @@ public class Robot extends LoggedRobot {
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake(lights);
   private Shooter shooter = new Shooter(lights);
+  private Feeder feeder = new Feeder(lights);
 
   // private Logger logger = Logger.getInstance();
   
@@ -88,7 +90,9 @@ public class Robot extends LoggedRobot {
     lights.init(fieldSide);
     peripherals.init();
     drive.init(fieldSide);
+    intake.init();
     shooter.init();
+    feeder.init();
 
     PortForwarder.add(5800, "limelight-front.local", 5800);
     PortForwarder.add(5801, "limelight-front.local", 5801);
@@ -184,6 +188,7 @@ public class Robot extends LoggedRobot {
     lights.periodic();
     intake.periodic();
     shooter.periodic();
+    feeder.periodic();
 
     drive.periodic(); // remove for competition
   }
@@ -225,6 +230,7 @@ public class Robot extends LoggedRobot {
   public void teleopPeriodic() {
     intake.teleopPeriodic();
     shooter.teleopPeriodic();
+    feeder.teleopPeriodic();
   }
 
   @Override
