@@ -12,37 +12,38 @@ import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.commands.defaults.IntakeDefault;
 
 public class Intake extends SubsystemBase {
-  private final TalonFX rotationFalcon = new TalonFX(10, "Canivore");
-  private final TalonFXConfiguration rotationFalconConfiguration = new TalonFXConfiguration();
+  private Lights lights;
+
+  private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.INTAKE_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
   private final PositionTorqueCurrentFOC falconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  private final CANSparkFlex rollerVortex = new CANSparkFlex(11, MotorType.kBrushless);
+  private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, MotorType.kBrushless);
   private final SparkAbsoluteEncoder rollerVortexEncoder = rollerVortex.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
   private final SparkPIDController rollerVortexPID = rollerVortex.getPIDController();
   private double rollerVortexVelocitySetpoint = 0;
 
-  public Intake() {
-
+  public Intake(Lights lights) {
+    this.lights = lights;
+    setDefaultCommand(new IntakeDefault(this));
   }
 
   public void init(){
     this.rollerVortexVelocitySetpoint = 0;
 
-    this.rotationFalconConfiguration.Slot0.kP = 0;
-    this.rotationFalconConfiguration.Slot0.kI = 0;
-    this.rotationFalconConfiguration.Slot0.kD = 0;
-    this.rotationFalcon.getConfigurator().apply(this.rotationFalconConfiguration);
+    this.angleFalconConfiguration.Slot0.kP = 0;
+    this.angleFalconConfiguration.Slot0.kI = 0;
+    this.angleFalconConfiguration.Slot0.kD = 0;
+    this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
 
     this.rollerVortexPID.setP(0, 0);
     this.rollerVortexPID.setI(0, 0);
     this.rollerVortexPID.setD(0, 0);
     this.rollerVortexPID.setFF(0, 0);
     this.rollerVortexPID.setOutputRange(-1, 1);
-    this.rollerVortexPID.setSmartMotionMaxVelocity(1000, 0);
-    this.rollerVortexPID.setSmartMotionMinOutputVelocity(-1000, 0);
-    this.rollerVortexPID.setSmartMotionMaxAccel(100, 0);
     this.rollerVortexEncoder.setPositionConversionFactor(1);
     this.rollerVortexEncoder.setVelocityConversionFactor(1);
     this.rollerVortex.setIdleMode(IdleMode.kCoast);
@@ -50,13 +51,13 @@ public class Intake extends SubsystemBase {
 
   //Set intake state, rotationAngle in rotations, rollerVelocity in RPM
   public void setIntake(double rotationAngle, double rollerVelocity){
-    this.rotationFalcon.setControl(this.falconPositionRequest.withPosition(rotationAngle));
+    this.angleFalcon.setControl(this.falconPositionRequest.withPosition(rotationAngle));
     this.rollerVortexVelocitySetpoint = rollerVelocity;
   }
 
   //Set intake state, position either kUP or kDOWN, rollerVelocity in RPM
   public void setIntake(Constants.Setpoints.IntakePosition position, double rollerVelocity){
-    this.rotationFalcon.setControl(this.falconPositionRequest.withPosition(position.angle));
+    this.angleFalcon.setControl(this.falconPositionRequest.withPosition(position.angle));
     this.rollerVortexVelocitySetpoint = rollerVelocity;
   }
 

@@ -40,19 +40,19 @@ import frc.robot.commands.defaults.DriveDefault;
 // **Zero Wheels with the bolt head showing on the left when the front side(battery) is facing down/away from you**
 
 public class Drive extends SubsystemBase {
-  private final TalonFX frontRightDriveMotor = new TalonFX(1, "Canivore");
-  private final TalonFX frontRightAngleMotor = new TalonFX(2, "Canivore");
-  private final TalonFX frontLeftDriveMotor = new TalonFX(3, "Canivore");
-  private final TalonFX frontLeftAngleMotor = new TalonFX(4, "Canivore");
-  private final TalonFX backLeftDriveMotor = new TalonFX(5, "Canivore");
-  private final TalonFX backLeftAngleMotor = new TalonFX(6, "Canivore");
-  private final TalonFX backRightDriveMotor = new TalonFX(7, "Canivore");
-  private final TalonFX backRightAngleMotor = new TalonFX(8, "Canivore");
+  private final TalonFX frontRightDriveMotor = new TalonFX(Constants.CANInfo.FRONT_RIGHT_DRIVE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX frontRightAngleMotor = new TalonFX(Constants.CANInfo.FRONT_RIGHT_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX frontLeftDriveMotor = new TalonFX(Constants.CANInfo.FRONT_LEFT_DRIVE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX frontLeftAngleMotor = new TalonFX(Constants.CANInfo.FRONT_LEFT_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX backLeftDriveMotor = new TalonFX(Constants.CANInfo.BACK_LEFT_DRIVE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX backLeftAngleMotor = new TalonFX(Constants.CANInfo.BACK_LEFT_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX backRightDriveMotor = new TalonFX(Constants.CANInfo.BACK_RIGHT_DRIVE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX backRightAngleMotor = new TalonFX(Constants.CANInfo.BACK_RIGHT_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
 
-  private final CANcoder frontRightCanCoder = new CANcoder(1, "Canivore");
-  private final CANcoder frontLeftCanCoder = new CANcoder(2, "Canivore");
-  private final CANcoder backLeftCanCoder = new CANcoder(3, "Canivore");
-  private final CANcoder backRightCanCoder = new CANcoder(4, "Canivore");
+  private final CANcoder frontRightCanCoder = new CANcoder(Constants.CANInfo.FRONT_RIGHT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
+  private final CANcoder frontLeftCanCoder = new CANcoder(Constants.CANInfo.FRONT_LEFT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
+  private final CANcoder backLeftCanCoder = new CANcoder(Constants.CANInfo.BACK_LEFT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
+  private final CANcoder backRightCanCoder = new CANcoder(Constants.CANInfo.BACK_RIGHT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
 
   // creates all 4 modules
   private final SwerveModule frontRight = new SwerveModule(1, frontRightAngleMotor, frontRightDriveMotor, frontRightCanCoder);

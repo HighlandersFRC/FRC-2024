@@ -16,12 +16,6 @@ public final class Constants {
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
     public static final double TOP_SPEED = feetToMeters(20);
-    public static final double GEAR_RATIO = 6.75;
-    public static final double STEER_GEAR_RATIO = 21.43;
-
-    public static final double FALCON_TICS_PER_ROTATION = 2048;
-    public static final double CANCODER_TICS_PER_ROTATION = 4096;
-    public static final double NEO_TICS_PER_ROTATION = 42;
 
     public static final double ROBOT_WIDTH = inchesToMeters(25);
     public static final double ROBOT_LENGTH = inchesToMeters(29);
@@ -128,8 +122,41 @@ public final class Constants {
     }
   }
 
-  public static final class OperatorConstants {
-    int DRIVER_CONTROLLER_PORT = 0;
+  //Gear ratios and conversions
+  public static final class Ratios {
+    public static final double DRIVE_GEAR_RATIO = 6.75;
+    public static final double STEER_GEAR_RATIO = 21.43;
+  }
+
+  //Can info such as IDs
+  public static final class CANInfo {
+    public static final String CANBUS_NAME = "Canivore";
+
+    //drive
+    public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 1;
+    public static final int FRONT_RIGHT_ANGLE_MOTOR_ID = 2;
+    public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 3;
+    public static final int FRONT_LEFT_ANGLE_MOTOR_ID = 4;
+    public static final int BACK_LEFT_DRIVE_MOTOR_ID = 5;
+    public static final int BACK_LEFT_ANGLE_MOTOR_ID = 6;
+    public static final int BACK_RIGHT_DRIVE_MOTOR_ID = 7;
+    public static final int BACK_RIGHT_ANGLE_MOTOR_ID = 8;
+    public static final int FRONT_RIGHT_MODULE_CANCODER_ID = 1;
+    public static final int FRONT_LEFT_MODULE_CANCODER_ID = 2;
+    public static final int BACK_LEFT_MODULE_CANCODER_ID = 3;
+    public static final int BACK_RIGHT_MODULE_CANCODER_ID = 4;
+
+    //intake
+    public static final int INTAKE_ANGLE_MOTOR_ID = 10;
+    public static final int INTAKE_ROLLER_MOTOR_ID = 11;
+
+    //shooter
+    public static final int SHOOTER_ANGLE_MOTOR_ID = 12;
+    public static final int SHOOTER_FLYWHEEL_MASTER_MOTOR_ID = 13;
+    public static final int SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID = 14;
+
+    //feeder
+    public static final int FEEDER_ROLLER_MOTOR_ID = 15;
   }
 
   public static double inchesToMeters(double inches){

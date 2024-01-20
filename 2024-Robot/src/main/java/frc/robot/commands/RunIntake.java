@@ -1,13 +1,13 @@
-package frc.robot.commands.defaults;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
 
-public class IntakeDefault extends Command {
+public class RunIntake extends Command {
   Intake intake;
 
-  public IntakeDefault(Intake intake) {
+  public RunIntake(Intake intake) {
     this.intake = intake;
     addRequirements(this.intake);
   }
@@ -17,7 +17,7 @@ public class IntakeDefault extends Command {
 
   @Override
   public void execute() {
-    intake.setIntake(Constants.Setpoints.IntakePosition.kUP, 0);
+    this.intake.setIntake(Constants.Setpoints.IntakePosition.kDOWN, 1000);
   }
 
   @Override

@@ -1,15 +1,14 @@
 package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.Constants;
-import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
-public class IntakeDefault extends Command {
-  Intake intake;
+public class ShooterDefault extends Command {
+  Shooter shooter;
 
-  public IntakeDefault(Intake intake) {
-    this.intake = intake;
-    addRequirements(this.intake);
+  public ShooterDefault(Shooter shooter) {
+    this.shooter = shooter;
+    addRequirements(this.shooter);
   }
 
   @Override
@@ -17,7 +16,7 @@ public class IntakeDefault extends Command {
 
   @Override
   public void execute() {
-    intake.setIntake(Constants.Setpoints.IntakePosition.kUP, 0);
+    
   }
 
   @Override
