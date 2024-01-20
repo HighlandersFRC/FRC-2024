@@ -33,6 +33,7 @@ import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 
@@ -42,6 +43,7 @@ public class Robot extends LoggedRobot {
   private Lights lights = new Lights();
   private Peripherals peripherals = new Peripherals(lights);
   private Drive drive = new Drive(peripherals);
+  private Intake intake = new Intake();
 
   // private Logger logger = Logger.getInstance();
   
@@ -177,6 +179,7 @@ public class Robot extends LoggedRobot {
     // Logger.recordOutput("Odometry", drive.getOdometry());
 
     lights.periodic();
+    intake.periodic();
 
     drive.periodic(); // remove for competition
   }
@@ -215,7 +218,9 @@ public class Robot extends LoggedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+    intake.teleopPeriodic();
+  }
 
   @Override
   public void testInit() {

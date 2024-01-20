@@ -28,6 +28,23 @@ public final class Constants {
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
   }
 
+  //Subsystem setpoint constants
+  public static final class Setpoints {
+    public static final double INTAKE_DOWN_ANGLE = 0;
+    public static final double INTAKE_UP_ANGLE = 0;
+
+    //Intake up and down positions
+    public enum IntakePosition {
+      kDOWN(INTAKE_DOWN_ANGLE), kUP(INTAKE_UP_ANGLE);
+
+      public final double angle;
+
+      private IntakePosition(double angle){
+        this.angle = angle;
+      }
+    }
+  }
+
   //Vision constants (e.g. camera offsets)
   public static final class Vision {
     //Poses of all 16 AprilTags, {x, y, z, theta}, in meters and radians
