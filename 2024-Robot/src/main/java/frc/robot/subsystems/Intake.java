@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.INTAKE_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  private final PositionTorqueCurrentFOC falconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final PositionTorqueCurrentFOC anglefalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
   private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, MotorType.kBrushless);
   private final SparkAbsoluteEncoder rollerVortexEncoder = rollerVortex.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
@@ -51,19 +51,34 @@ public class Intake extends SubsystemBase {
 
   //Set intake state, rotationAngle in rotations, rollerVelocity in RPM
   public void setIntake(double rotationAngle, double rollerVelocity){
-    this.angleFalcon.setControl(this.falconPositionRequest.withPosition(rotationAngle));
+    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(rotationAngle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     this.rollerVortexVelocitySetpoint = rollerVelocity;
   }
 
   //Set intake state, position either kUP or kDOWN, rollerVelocity in RPM
-  public void setIntake(Constants.Setpoints.IntakePosition position, double rollerVelocity){
-    this.angleFalcon.setControl(this.falconPositionRequest.withPosition(position.angle));
+  public void setIntake(Constants.SetPoints.IntakePosition position, double rollerVelocity){
+    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.angle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     this.rollerVortexVelocitySetpoint = rollerVelocity;
   }
 
-  //Constantly set vortex pid
+  //Set intake angle in rotations
+  public void setIntakeAngle(double rotationAngle){
+    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(rotationAngle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+  }
+
+  //Set intake angle with setpoint
+  public void setIntakeAngle(Constants.SetPoints.IntakePosition position){
+    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.angle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+  }
+
+  //Set intake roller velocity in RPM
+  public void setIntakeRollers(double rollerVelocity){
+    this.rollerVortexVelocitySetpoint = rollerVelocity;
+  }
+
+  //Constantly set roller velocity PID
   public void teleopPeriodic(){
-    this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint, CANSparkBase.ControlType.kVelocity);
+    this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
   }
 
   @Override

@@ -6,9 +6,11 @@ import frc.robot.subsystems.Intake;
 
 public class RunIntake extends Command {
   Intake intake;
+  double RPM;
 
-  public RunIntake(Intake intake) {
+  public RunIntake(Intake intake, double RPM) {
     this.intake = intake;
+    this.RPM = RPM;
     addRequirements(this.intake);
   }
 
@@ -17,7 +19,7 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    this.intake.setIntake(Constants.Setpoints.IntakePosition.kDOWN, 1000);
+    this.intake.setIntake(Constants.SetPoints.IntakePosition.kDOWN, this.RPM);
   }
 
   @Override

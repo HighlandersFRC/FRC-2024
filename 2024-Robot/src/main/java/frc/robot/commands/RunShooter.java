@@ -1,13 +1,17 @@
-package frc.robot.commands.defaults;
+package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
-public class ShooterDefault extends Command {
+public class RunShooter extends Command {
   Shooter shooter;
+  double angle;
+  double RPM;
 
-  public ShooterDefault(Shooter shooter) {
+  public RunShooter(Shooter shooter, double angle, double RPM) {
     this.shooter = shooter;
+    this.angle = angle;
+    this.RPM = RPM;
     addRequirements(this.shooter);
   }
 
@@ -16,7 +20,7 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    this.shooter.setShooter(0, 0);
+    this.shooter.setShooter(this.angle, this.RPM);
   }
 
   @Override

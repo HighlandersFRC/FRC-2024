@@ -23,7 +23,7 @@ public final class Constants {
   }
 
   //Subsystem setpoint constants
-  public static final class Setpoints {
+  public static final class SetPoints {
     public static final double INTAKE_DOWN_ANGLE = 0;
     public static final double INTAKE_UP_ANGLE = 0;
 
@@ -124,8 +124,20 @@ public final class Constants {
 
   //Gear ratios and conversions
   public static final class Ratios {
+    //drive
     public static final double DRIVE_GEAR_RATIO = 6.75;
     public static final double STEER_GEAR_RATIO = 21.43;
+
+    //intake
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 1;
+    public static final double INTAKE_ROLLER_GEAR_RATIO = 1;
+
+    //shooter
+    public static final double SHOOTER_ANGLE_GEAR_RATIO = 1;
+    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1;
+
+    //feeder
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 1;
   }
 
   //Can info such as IDs

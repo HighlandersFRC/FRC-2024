@@ -17,7 +17,7 @@ public class IntakeDefault extends Command {
 
   @Override
   public void execute() {
-    intake.setIntake(Constants.Setpoints.IntakePosition.kUP, 0);
+    intake.setIntake(Constants.SetPoints.IntakePosition.kUP, 0);
   }
 
   @Override
