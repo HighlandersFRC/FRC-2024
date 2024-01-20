@@ -24,6 +24,9 @@ public final class Constants {
 
   //Subsystem setpoint constants
   public static final class SetPoints {
+    //drive
+
+    //intake
     public static final double INTAKE_DOWN_ANGLE = 0;
     public static final double INTAKE_UP_ANGLE = 0;
 
@@ -37,6 +40,12 @@ public final class Constants {
         this.angle = angle;
       }
     }
+
+    //shooter
+    public static final double SHOOTER_DOWN_ANGLE = 0;
+    public static final double SHOOTER_MAX_ANGLE = 10;
+
+    //feeder
   }
 
   //Vision constants (e.g. camera offsets)
@@ -166,6 +175,7 @@ public final class Constants {
     public static final int SHOOTER_ANGLE_MOTOR_ID = 12;
     public static final int SHOOTER_FLYWHEEL_MASTER_MOTOR_ID = 13;
     public static final int SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID = 14;
+    public static final int SHOOTER_ANGLE_CANCODER_ID = 5;
 
     //feeder
     public static final int FEEDER_ROLLER_MOTOR_ID = 15;

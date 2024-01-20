@@ -6,10 +6,26 @@ import frc.robot.subsystems.Intake;
 
 public class RunIntake extends Command {
   Intake intake;
+  double angle;
   double RPM;
 
   public RunIntake(Intake intake, double RPM) {
     this.intake = intake;
+    this.angle = Constants.SetPoints.INTAKE_DOWN_ANGLE;
+    this.RPM = RPM;
+    addRequirements(this.intake);
+  }
+
+  public RunIntake(Intake intake, double angle, double RPM){
+    this.intake = intake;
+    this.angle = angle;
+    this.RPM = RPM;
+    addRequirements(this.intake);
+  }
+
+  public RunIntake(Intake intake, Constants.SetPoints.IntakePosition setpoint, double RPM){
+    this.intake = intake;
+    this.angle = setpoint.angle;
     this.RPM = RPM;
     addRequirements(this.intake);
   }
@@ -19,7 +35,7 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    this.intake.setIntake(Constants.SetPoints.IntakePosition.kDOWN, this.RPM);
+    this.intake.setIntake(this.angle, this.RPM);
   }
 
   @Override

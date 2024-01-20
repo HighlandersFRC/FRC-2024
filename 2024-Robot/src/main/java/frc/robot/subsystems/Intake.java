@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.SparkAbsoluteEncoder;
@@ -38,6 +39,7 @@ public class Intake extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
+    this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
 
     this.rollerVortex.restoreFactoryDefaults();
     this.rollerVortexPID.setP(0, 0);
@@ -75,6 +77,20 @@ public class Intake extends SubsystemBase {
   //Set intake roller velocity in RPM
   public void setIntakeRollers(double rollerVelocity){
     this.rollerVortexVelocitySetpoint = rollerVelocity;
+  }
+
+  //Get value of intake rotation limit switch
+  public boolean getAngleLimitSwitch(){
+    if (angleFalcon.getReverseLimit().getValue().value == 1){
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  //Set encoder position of the intake angle in rotations
+  public void setAngleEncoderPosition(double position){
+    angleFalcon.setPosition(position);
   }
 
   //Constantly set roller velocity PID
