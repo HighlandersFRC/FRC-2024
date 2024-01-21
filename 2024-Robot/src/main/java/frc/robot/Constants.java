@@ -77,10 +77,14 @@ public final class Constants {
     public static final double LIMELIGHT_VFOV_RAD = LIMELIGHT_VFOV_DEG * Math.PI / 180;
 
     //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
+    public static final double[] FRONT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, 0, 0};
+    public static final double[] LEFT_CAMERA_POSE = {-0.263252, -0.1778, 0.2413, 0, 0, degreesToRadians(90)};
+    public static final double[] RIGHT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, 0, degreesToRadians(270)};
     public static final double[] BACK_CAMERA_POSE = {-0.263252, -0.1778, 0.2413, 0, 0, degreesToRadians(180)};
-    public static final double[] FRONT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, degreesToRadians(33), 0};
-    public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
+    public static final double[] LEFT_CAMERA_POSITION_POLAR = {getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]), Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0])};
+    public static final double[] RIGHT_CAMERA_POSITION_POLAR = {getDistance(0, 0, RIGHT_CAMERA_POSE[0], RIGHT_CAMERA_POSE[1]), Math.atan2(RIGHT_CAMERA_POSE[1], RIGHT_CAMERA_POSE[0])};
+    public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
 
     //Standard deviation adjustments
     public static final double STANDARD_DEVIATION_SCALAR = 10;
