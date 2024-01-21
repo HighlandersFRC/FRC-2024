@@ -95,12 +95,6 @@ public class Robot extends LoggedRobot {
     shooter.init();
     feeder.init();
 
-    PortForwarder.add(5800, "limelight-front.local", 5800);
-    PortForwarder.add(5801, "limelight-front.local", 5801);
-
-    PortForwarder.add(5800, "limelight-back.local", 5800);
-    PortForwarder.add(5801, "limelight-back.local", 5801);
-
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
 
@@ -109,6 +103,12 @@ public class Robot extends LoggedRobot {
 
     PortForwarder.add(5800, "10.44.99.40", 5800);
     PortForwarder.add(5801, "10.44.99.40", 5801);
+
+    PortForwarder.add(5800, "10.44.99.41", 5800);
+    PortForwarder.add(5801, "10.44.99.41", 5801);
+
+    PortForwarder.add(5800, "10.44.99.42", 5800);
+    PortForwarder.add(5801, "10.44.99.42", 5801);
 
     //Auto selection here...
     if (OI.is4PieceCloseAuto()) {

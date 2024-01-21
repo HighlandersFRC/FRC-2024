@@ -125,17 +125,17 @@ public class FivePieceAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutonomousFollower(drive, pathJSON, false),
+      new AutonomousFollower(drive, pathJSON, 0, false),
       new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON2, false),
+      new AutonomousFollower(drive, pathJSON2, 0, false),
       new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON3, false),
+      new AutonomousFollower(drive, pathJSON3, 0, false),
       new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON4, false),
-      new AutonomousFollower(drive, pathJSON5, false),
+      new AutonomousFollower(drive, pathJSON4, 0, false),
+      new AutonomousFollower(drive, pathJSON5, 0, false),
       new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON6, false),
-      new AutonomousFollower(drive, pathJSON7, false)
+      new AutonomousFollower(drive, pathJSON6, 0, false),
+      new AutonomousFollower(drive, pathJSON7, 0, false)
     );
   }
 }

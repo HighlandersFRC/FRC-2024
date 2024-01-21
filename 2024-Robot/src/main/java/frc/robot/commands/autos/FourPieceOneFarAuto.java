@@ -81,8 +81,8 @@ public class FourPieceOneFarAuto extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutonomousFollower(drive, pathJSON, false),
-      new AutonomousFollower(drive, pathJSON2, false)
+      new AutonomousFollower(drive, pathJSON, 0, false),
+      new AutonomousFollower(drive, pathJSON2, 0, false)
       // new AutonomousFollower(drive, pathJSON3, false),
       // new AutonomousFollower(drive, pathJSON4, false)
     );

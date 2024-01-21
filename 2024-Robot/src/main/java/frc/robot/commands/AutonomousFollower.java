@@ -33,36 +33,23 @@ public class AutonomousFollower extends Command {
 
   private boolean record;
   private String fieldSide;
-  private int rowOffset = 0;
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
-  private boolean generatePath = false;
-  /** Creates a new AutonomousFollower. */
-  public AutonomousFollower(Drive drive, JSONArray pathPoints, boolean record) {
+  private double pathStartTime;
+
+  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, boolean record) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
-    this.generatePath = false;
+    this.pathStartTime = pathStartTime;
     addRequirements(drive);
-    // Use addRequirements() here to declare subsystem dependencies.
   }
 
-  public AutonomousFollower(Drive drive, boolean generatePath, boolean record, int rowOffset){
-    this.drive = drive;
-    this.rowOffset = rowOffset;
-    this.record = record;
-    this.generatePath = generatePath;
-    this.commands = new JSONArray();
-    addRequirements(this.drive);
-  }
-
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     initTime = Timer.getFPGATimestamp();
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
     odometryFusedX = drive.getFusedOdometryX();
@@ -71,7 +58,7 @@ public class AutonomousFollower extends Command {
 
     // System.out.println("X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
 
-    currentTime = Timer.getFPGATimestamp() - initTime;
+    currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
     
     // call PIDController function
     desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path);
@@ -91,7 +78,6 @@ public class AutonomousFollower extends Command {
     }
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     Vector velocityVector = new Vector();
@@ -136,7 +122,6 @@ public class AutonomousFollower extends Command {
     }
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     if(currentTime > path.getJSONArray(path.length() - 1).getDouble(0)) {
