@@ -56,10 +56,10 @@ public class Shooter extends SubsystemBase {
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
 
     this.flywheelVortexMaster.restoreFactoryDefaults();
-    this.flywheelVortexMasterPID.setP(0, 0);
-    this.flywheelVortexMasterPID.setI(0, 0);
+    this.flywheelVortexMasterPID.setP(0.00012, 0);
+    this.flywheelVortexMasterPID.setI(0.000001, 0);
     this.flywheelVortexMasterPID.setD(0, 0);
-    this.flywheelVortexMasterPID.setFF(0, 0);
+    this.flywheelVortexMasterPID.setFF(0.00011, 0);
     this.flywheelVortexMasterPID.setOutputRange(-1, 1);
     this.flywheelVortexMasterEncoder.setPositionConversionFactor(1);
     this.flywheelVortexMasterEncoder.setVelocityConversionFactor(1);
@@ -67,10 +67,10 @@ public class Shooter extends SubsystemBase {
 
     this.flywheelVortexFollower.restoreFactoryDefaults();
     this.flywheelVortexFollower.follow(this.flywheelVortexMaster);
-    this.flywheelVortexFollowerPID.setP(0, 0);
-    this.flywheelVortexFollowerPID.setI(0, 0);
+    this.flywheelVortexFollowerPID.setP(0.00012, 0);
+    this.flywheelVortexFollowerPID.setI(0.000001, 0);
     this.flywheelVortexFollowerPID.setD(0, 0);
-    this.flywheelVortexFollowerPID.setFF(0, 0);
+    this.flywheelVortexFollowerPID.setFF(0.00011, 0);
     this.flywheelVortexFollowerPID.setOutputRange(-1, 1);
     this.flywheelVortexFollowerEncoder.setPositionConversionFactor(1);
     this.flywheelVortexFollowerEncoder.setVelocityConversionFactor(1);

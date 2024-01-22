@@ -30,10 +30,10 @@ public class Feeder extends SubsystemBase {
     this.rollerVortexVelocitySetpoint = 0;
 
     this.rollerVortex.restoreFactoryDefaults();
-    this.rollerVortexPID.setP(0, 0);
-    this.rollerVortexPID.setI(0, 0);
+    this.rollerVortexPID.setP(0.00012, 0);
+    this.rollerVortexPID.setI(0.000001, 0);
     this.rollerVortexPID.setD(0, 0);
-    this.rollerVortexPID.setFF(0, 0);
+    this.rollerVortexPID.setFF(0.00011, 0);
     this.rollerVortexPID.setOutputRange(-1, 1);
     this.rollerVortexEncoder.setPositionConversionFactor(1);
     this.rollerVortexEncoder.setVelocityConversionFactor(1);

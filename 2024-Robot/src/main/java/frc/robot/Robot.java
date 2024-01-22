@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.Shoot;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -235,6 +236,7 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1000));
     OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1000));
+    OI.driverY.whileTrue(new Shoot(shooter, feeder, 1000));
 
     //Operator
   }
