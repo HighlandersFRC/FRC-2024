@@ -72,19 +72,19 @@ public class Peripherals extends SubsystemBase {
     setDefaultCommand(new PeripheralsDefault(this));
   }
 
-  public void setFrontPipeline(int pipeline){
+  public void setFrontCamPipeline(int pipeline){
     frontCam.getEntry("pipeline").setNumber(pipeline);
   }
 
-  public void setBackPipeline(int pipeline){
+  public void setBackCamPipeline(int pipeline){
     backCam.getEntry("pipeline").setNumber(pipeline);
   }
 
-  public int getFrontLimelightPipeline(){
+  public int getFrontCamPipeline(){
     return (int) frontCam.getEntry("pipeline").getInteger(5);
   }
 
-  public int getBackLimelightPipeline(){
+  public int getBackCamPipeline(){
     return (int) backCam.getEntry("pipeline").getInteger(5);
   }
 
@@ -102,8 +102,8 @@ public class Peripherals extends SubsystemBase {
 
   public JSONObject getCameraMeasurements(){
     JSONObject allCamResults = new JSONObject();
-    JSONObject backCamResults = new JSONObject(backCamJSON.getString("{}")).getJSONObject("Results");
-    JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("{}")).getJSONObject("Results");
+    JSONObject backCamResults = new JSONObject(backCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     allCamResults.put("BackCam", backCamResults);
     allCamResults.put("FrontCam", frontCamResults);
     return allCamResults;
