@@ -282,7 +282,7 @@ public class Drive extends SubsystemBase {
 
   // method to update odometry by fusing prediction, encoder rotations, and camera values
   public void updateOdometryFusedArray(){
-    double pigeonAngle = 0; //Math.toRadians(peripherals.getPigeonAngle());
+    double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
 
     //angle in field coordinate system, 0 = +x axis
     double fieldPigeonAngle = pigeonAngle;

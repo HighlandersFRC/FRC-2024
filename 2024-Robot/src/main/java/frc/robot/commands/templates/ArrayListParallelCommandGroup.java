@@ -4,15 +4,16 @@
 
 package frc.robot.commands.templates;
 
-import edu.wpi.first.util.sendable.SendableBuilder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- * A command composition that runs a list of commands in sequence.
+ * A command composition that runs a set of commands in parallel, ending when the last command ends.
  *
  * <p>The rules for command compositions apply: command instances that are passed to it cannot be
  * added to any other composition or scheduled individually, and the composition requires all
@@ -20,37 +21,41 @@ import java.util.List;
  *
  * <p>This class is provided by the NewCommands VendorDep
  */
-public class ArrayListSequentialCommandGroup extends Command {
-  private final List<Command> m_commands = new ArrayList<>();
-  private int m_currentCommandIndex = -1;
+public class ArrayListParallelCommandGroup extends Command {
+  // maps commands in this composition to whether they are still running
+  private final Map<Command, Boolean> m_commands = new HashMap<>();
   private boolean m_runWhenDisabled = true;
   private InterruptionBehavior m_interruptBehavior = InterruptionBehavior.kCancelIncoming;
 
   /**
-   * Creates a new SequentialCommandGroup. The given commands will be run sequentially, with the
-   * composition finishing when the last command finishes.
+   * Creates a new ParallelCommandGroup. The given commands will be executed simultaneously. The
+   * command composition will finish when the last command finishes. If the composition is
+   * interrupted, only the commands that are still running will be interrupted.
    *
    * @param commands the commands to include in this composition.
    */
-  public ArrayListSequentialCommandGroup(Command... commands) {
-    // addCommands(commands);
+  public ArrayListParallelCommandGroup(ArrayList<Command> commands) {
+    addCommands(commands);
   }
-  
 
   /**
    * Adds the given commands to the group.
    *
-   * @param commands Commands to add, in order of execution.
+   * @param commands Commands to add to the group.
    */
   public final void addCommands(ArrayList<Command> commands) {
-    if (m_currentCommandIndex != -1) {
+    if (m_commands.containsValue(true)) {
       throw new IllegalStateException(
           "Commands cannot be added to a composition while it's running");
     }
 
     for (Command command : commands) {
         CommandScheduler.getInstance().registerComposedCommands(command);
-      m_commands.add(command);
+      if (!Collections.disjoint(command.getRequirements(), m_requirements)) {
+        throw new IllegalArgumentException(
+            "Multiple commands in a parallel composition cannot require the same subsystems");
+      }
+      m_commands.put(command, false);
       m_requirements.addAll(command.getRequirements());
       m_runWhenDisabled &= command.runsWhenDisabled();
       if (command.getInterruptionBehavior() == InterruptionBehavior.kCancelSelf) {
@@ -61,45 +66,40 @@ public class ArrayListSequentialCommandGroup extends Command {
 
   @Override
   public final void initialize() {
-    m_currentCommandIndex = 0;
-
-    if (!m_commands.isEmpty()) {
-      m_commands.get(0).initialize();
+    for (Map.Entry<Command, Boolean> commandRunning : m_commands.entrySet()) {
+      commandRunning.getKey().initialize();
+      commandRunning.setValue(true);
     }
   }
 
   @Override
   public final void execute() {
-    if (m_commands.isEmpty()) {
-      return;
-    }
-
-    Command currentCommand = m_commands.get(m_currentCommandIndex);
-
-    currentCommand.execute();
-    if (currentCommand.isFinished()) {
-      currentCommand.end(false);
-      m_currentCommandIndex++;
-      if (m_currentCommandIndex < m_commands.size()) {
-        m_commands.get(m_currentCommandIndex).initialize();
+    for (Map.Entry<Command, Boolean> commandRunning : m_commands.entrySet()) {
+      if (!commandRunning.getValue()) {
+        continue;
+      }
+      commandRunning.getKey().execute();
+      if (commandRunning.getKey().isFinished()) {
+        commandRunning.getKey().end(false);
+        commandRunning.setValue(false);
       }
     }
   }
 
   @Override
   public final void end(boolean interrupted) {
-    if (interrupted
-        && !m_commands.isEmpty()
-        && m_currentCommandIndex > -1
-        && m_currentCommandIndex < m_commands.size()) {
-      m_commands.get(m_currentCommandIndex).end(true);
+    if (interrupted) {
+      for (Map.Entry<Command, Boolean> commandRunning : m_commands.entrySet()) {
+        if (commandRunning.getValue()) {
+          commandRunning.getKey().end(true);
+        }
+      }
     }
-    m_currentCommandIndex = -1;
   }
 
   @Override
   public final boolean isFinished() {
-    return m_currentCommandIndex == m_commands.size();
+    return !m_commands.containsValue(true);
   }
 
   @Override
@@ -110,12 +110,5 @@ public class ArrayListSequentialCommandGroup extends Command {
   @Override
   public InterruptionBehavior getInterruptionBehavior() {
     return m_interruptBehavior;
-  }
-
-  @Override
-  public void initSendable(SendableBuilder builder) {
-    super.initSendable(builder);
-
-    builder.addIntegerProperty("index", () -> m_currentCommandIndex, null);
   }
 }
