@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
@@ -7,6 +8,7 @@ public class RunShooter extends Command {
   Shooter shooter;
   double angle;
   double RPM;
+  double startTime = Timer.getFPGATimestamp();
 
   public RunShooter(Shooter shooter, double angle, double RPM) {
     this.shooter = shooter;
@@ -20,7 +22,8 @@ public class RunShooter extends Command {
 
   @Override
   public void execute() {
-    this.shooter.setShooter(this.angle, this.RPM);
+    // this.shooter.setShooter(this.angle, this.RPM);
+    System.out.println("SHOOTER");
   }
 
   @Override
@@ -28,6 +31,10 @@ public class RunShooter extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    if (Timer.getFPGATimestamp() - startTime > 4){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

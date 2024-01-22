@@ -230,7 +230,7 @@ public class Drive extends SubsystemBase {
     double firstPointAngle = firstPoint.getDouble(3);
 
     // changing odometry if on red side, don't need to change y because it will be the same for autos on either side
-    if(getFieldSide() == "red") {
+    if(this.fieldSide == "blue") {
       firstPointX = Constants.Physical.FIELD_LENGTH - firstPointX;
       firstPointAngle = Math.PI - firstPointAngle;
     }
@@ -243,25 +243,13 @@ public class Drive extends SubsystemBase {
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
     m_odometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
         
-    estimatedX = getOdometryX();
-    estimatedY = getOdometryY();
-    estimatedTheta = getOdometryAngle();
+    currentFusedOdometry[0] = firstPointX;
+    currentFusedOdometry[1] = firstPointY;
+    currentFusedOdometry[2] = firstPointAngle;
 
-    previousEstimateX = estimatedX;
-    previousEstimateY = estimatedY;
-    previousEstimateTheta = estimatedTheta;
-
-    currentX = getOdometryX();
-    currentY = getOdometryY();
-    currentTheta = getOdometryAngle();
-
-    previousX = currentX;
-    previousY = currentY;
-    previousTheta = currentTheta;
-
-    averagedX = (estimatedX + currentX)/2;
-    averagedY = (estimatedY + currentY)/2;   
-    averagedTheta = (estimatedTheta + currentTheta)/2;
+    currentX = currentFusedOdometry[0];
+    currentY = currentFusedOdometry[1];
+    currentTheta = currentFusedOdometry[2];
 
     initTime = Timer.getFPGATimestamp();
 
@@ -304,32 +292,48 @@ public class Drive extends SubsystemBase {
     //json data from all cameras
     JSONObject allCamResults = peripherals.getCameraMeasurements();
     JSONObject backCamResults = allCamResults.getJSONObject("BackCam");
+    boolean haveBackCam = allCamResults.isNull("BackCam");
     JSONObject frontCamResults = allCamResults.getJSONObject("FrontCam");
-    double backCamTL = backCamResults.getDouble("tl") / 1000;
-    double backCamCL = backCamResults.getDouble("cl") / 1000;
-    double frontCamTL = frontCamResults.getDouble("tl") / 1000;
-    double frontCamCL = frontCamResults.getDouble("cl") / 1000;
-    double averageLatency = (backCamCL + backCamTL + frontCamCL + frontCamTL) / 2;
-    JSONArray backCamBotPose = backCamResults.getJSONArray("botpose_wpiblue");
-    JSONArray frontCamBotPose = frontCamResults.getJSONArray("botpose_wpiblue");
+    boolean haveFrontCam = allCamResults.isNull("FrontCam");
 
-    //fiducial data from all cameras
-    JSONArray fiducialResults = new JSONArray();
-    JSONArray backCamFiducialResults = backCamResults.getJSONArray("Fiducial");
-    JSONArray frontCamFiducialResults = frontCamResults.getJSONArray("Fiducial");
+    double backCamTL = 9999;
+    double backCamCL = 9999;
+    JSONArray backCamBotPose = new JSONArray();
+    JSONArray backCamFiducialResults = new JSONArray();
+    if (haveBackCam){
+      backCamTL = backCamResults.getDouble("tl") / 1000;
+      backCamCL = backCamResults.getDouble("cl") / 1000;
+      backCamBotPose = backCamResults.getJSONArray("botpose_wpiblue");
+      backCamFiducialResults = backCamResults.getJSONArray("Fiducial");
+    }
+    double frontCamTL = 9999;
+    double frontCamCL = 9999;
+    JSONArray frontCamBotPose = new JSONArray();
+    JSONArray frontCamFiducialResults = new JSONArray();
+    if (haveFrontCam){
+      frontCamTL = frontCamResults.getDouble("tl") / 1000;
+      frontCamCL = frontCamResults.getDouble("cl") / 1000;
+      frontCamBotPose = frontCamResults.getJSONArray("botpose_wpiblue");
+      frontCamFiducialResults = frontCamResults.getJSONArray("Fiducial");
+    }
+
     //combine fiducial data from all cameras, marked with which camera it came from
+    JSONArray fiducialResults = new JSONArray();
     for (int i = 0; i < backCamFiducialResults.length(); i ++){
-        JSONObject fiducial = (JSONObject) backCamFiducialResults.get(i);
-        fiducial.put("camera", "back_cam");
-        fiducialResults.put(fiducial);
+      JSONObject fiducial = (JSONObject) backCamFiducialResults.get(i);
+      fiducial.put("camera", "back_cam");
+      fiducialResults.put(fiducial);
     }
     for (int i = 0; i < frontCamFiducialResults.length(); i ++){
-        JSONObject fiducial = (JSONObject) frontCamFiducialResults.get(i);
-        fiducial.put("camera", "front_cam");
-        fiducialResults.put(fiducial);
+      JSONObject fiducial = (JSONObject) frontCamFiducialResults.get(i);
+      fiducial.put("camera", "front_cam");
+      fiducialResults.put(fiducial);
     }
 
     int numTracks = fiducialResults.length();
+    if (numTracks == 0){
+      return;
+    }
 
     //2d poses defining lines passing through offset tag positions (offset by camera offset from robot center) and the robot center
     //each JSONObject is of the sform:
@@ -474,6 +478,8 @@ public class Drive extends SubsystemBase {
 
     double finalX = m_pose.getX();
     double finalY = m_pose.getY();
+    
+    System.out.println("Update X:" + finalX + " Y: " + " Theta: " + pigeonAngle);
 
     currentFusedOdometry[0] = finalX;
     currentFusedOdometry[1] = finalY;
@@ -676,9 +682,7 @@ public class Drive extends SubsystemBase {
         double targetY = targetPoint.getDouble(2);
         double targetTheta = targetPoint.getDouble(3);
 
-        // System.out.println("X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
-
-        if(getFieldSide() == "red") {
+        if(this.fieldSide == "blue") {
             targetX = Constants.Physical.FIELD_LENGTH - targetX;
             targetTheta = Math.PI - targetTheta;
         }
@@ -694,7 +698,7 @@ public class Drive extends SubsystemBase {
         double currentPointY = currentPoint.getDouble(2);
         double currentPointTheta = currentPoint.getDouble(3);
 
-        if(getFieldSide() == "red") {
+        if(this.fieldSide == "blue") {
             currentPointX = Constants.Physical.FIELD_LENGTH - currentPointX;
             currentPointTheta = Math.PI - currentPointTheta;
         }
@@ -725,7 +729,8 @@ public class Drive extends SubsystemBase {
         velocityArray[1] = -yVel;
         velocityArray[2] = thetaVel;
 
-        // System.out.println("Target Point: " + targetPoint);
+        System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
+        System.out.println("PID side: " + this.fieldSide);
 
         return velocityArray;
     }
