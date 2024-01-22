@@ -52,11 +52,12 @@ public class AutonomousFollower extends Command {
 
   @Override
   public void execute() {
+    drive.updateOdometryFusedArray();
     odometryFusedX = drive.getFusedOdometryX();
     odometryFusedY = drive.getFusedOdometryY();
     odometryFusedTheta = drive.getFusedOdometryTheta();
 
-    // System.out.println("X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
+    System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
 
     currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
     
@@ -65,9 +66,12 @@ public class AutonomousFollower extends Command {
     
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
-    velocityVector.setI(desiredVelocityArray[0]);
-    velocityVector.setJ(desiredVelocityArray[1]);
-    desiredThetaChange = desiredVelocityArray[2];
+    // velocityVector.setI(desiredVelocityArray[0]);
+    // velocityVector.setJ(desiredVelocityArray[1]);
+    // desiredThetaChange = desiredVelocityArray[2];
+    velocityVector.setI(0);
+    velocityVector.setJ(0);
+    desiredThetaChange = 0;
 
     drive.autoDrive(velocityVector, desiredThetaChange);
 

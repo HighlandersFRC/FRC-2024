@@ -60,6 +60,8 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
     
     addRequirements(drive, intake, feeder, shooter, peripherals);
 
+    this.drive.autoInit(this.sampledPoints);
+
     //Path parsing and command construction
     JSONArray sortedHaltingPathCommands = new JSONArray();
     JSONArray sortedNonHaltingPathCommands = new JSONArray();
