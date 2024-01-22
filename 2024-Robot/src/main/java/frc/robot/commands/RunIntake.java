@@ -40,7 +40,9 @@ public class RunIntake extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.intake.setIntake(this.angle, 0.0);
+  }
 
   @Override
   public boolean isFinished() {
