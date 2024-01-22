@@ -9,11 +9,13 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.SparkAbsoluteEncoder;
 import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ShooterDefault;
@@ -29,8 +31,10 @@ public class Shooter extends SubsystemBase {
 
   private final CANSparkFlex flywheelVortexMaster = new CANSparkFlex(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, MotorType.kBrushless);
   private final SparkAbsoluteEncoder flywheelVortexMasterEncoder = flywheelVortexMaster.getAbsoluteEncoder(Type.kDutyCycle);
+  private final RelativeEncoder flywheelVortexEncoderMaster = flywheelVortexMaster.getEncoder();
   private final SparkPIDController flywheelVortexMasterPID = flywheelVortexMaster.getPIDController();
   private final CANSparkFlex flywheelVortexFollower = new CANSparkFlex(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID, MotorType.kBrushless);
+  private final RelativeEncoder flywheelVortexEncoderFollower = flywheelVortexFollower.getEncoder();
   private final SparkAbsoluteEncoder flywheelVortexFollowerEncoder = flywheelVortexFollower.getAbsoluteEncoder(Type.kDutyCycle);
   private final SparkPIDController flywheelVortexFollowerPID = flywheelVortexFollower.getPIDController();
 
@@ -56,7 +60,7 @@ public class Shooter extends SubsystemBase {
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
 
     this.flywheelVortexMaster.restoreFactoryDefaults();
-    this.flywheelVortexMasterPID.setP(0.00012, 0);
+    this.flywheelVortexMasterPID.setP(0.0003, 0);
     this.flywheelVortexMasterPID.setI(0.000001, 0);
     this.flywheelVortexMasterPID.setD(0, 0);
     this.flywheelVortexMasterPID.setFF(0.00011, 0);
@@ -66,8 +70,8 @@ public class Shooter extends SubsystemBase {
     this.flywheelVortexMaster.setIdleMode(IdleMode.kCoast);
 
     this.flywheelVortexFollower.restoreFactoryDefaults();
-    this.flywheelVortexFollower.follow(this.flywheelVortexMaster);
-    this.flywheelVortexFollowerPID.setP(0.00012, 0);
+    // this.flywheelVortexFollower.follow(this.flywheelVortexMaster, true);
+    this.flywheelVortexFollowerPID.setP(0.0003, 0);
     this.flywheelVortexFollowerPID.setI(0.000001, 0);
     this.flywheelVortexFollowerPID.setD(0, 0);
     this.flywheelVortexFollowerPID.setFF(0.00011, 0);
@@ -100,8 +104,13 @@ public class Shooter extends SubsystemBase {
   //Constantly set flywheel velocity PID
   public void teleopPeriodic(){
     this.flywheelVortexMasterPID.setReference(this.flywheelVelocitySetpoint * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
+    this.flywheelVortexFollowerPID.setReference(-(this.flywheelVelocitySetpoint * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO), CANSparkBase.ControlType.kVelocity);
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmartDashboard.putNumber("flywheel", flywheelVortexEncoderMaster.getVelocity());
+    SmartDashboard.putNumber("flywheel 2", flywheelVortexEncoderFollower.getVelocity());
+
+  }
 }
