@@ -36,12 +36,23 @@ public class AutonomousFollower extends Command {
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   private double pathStartTime;
+  private double pathEndTime;
+
+  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record) {
+    this.drive = drive;
+    this.path = pathPoints;
+    this.record = record;
+    this.pathStartTime = pathStartTime;
+    this.pathEndTime = pathEndTime;
+    addRequirements(drive);
+  }
 
   public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, boolean record) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
+    this.pathEndTime = path.getJSONArray(path.length() - 1).getDouble(0);
     addRequirements(drive);
   }
 
@@ -128,7 +139,7 @@ public class AutonomousFollower extends Command {
 
   @Override
   public boolean isFinished() {
-    if(currentTime > path.getJSONArray(path.length() - 1).getDouble(0)) {
+    if(currentTime > this.pathEndTime) {
       return true;
     }
     else {

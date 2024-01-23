@@ -128,7 +128,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
         }
       }
       ArrayListParallelDeadlineGroup parallelDeadlineGroup = new ArrayListParallelDeadlineGroup(
-        new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, false),
+        new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, haltingTime, false),
         parallelCommands
       );
       this.autoCommands.add(parallelDeadlineGroup);
