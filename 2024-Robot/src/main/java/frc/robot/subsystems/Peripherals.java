@@ -27,26 +27,13 @@ public class Peripherals extends SubsystemBase {
   private Lights lights;
 
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
-  private NetworkTableEntry backCamAngleHorizontal = backCam.getEntry("tx");
-  private NetworkTableEntry backCamAngleVertical = backCam.getEntry("ty");
-  private NetworkTableEntry backCamTableLatency = backCam.getEntry("tl");
-  private NetworkTableEntry backCamCameraLatency = backCam.getEntry("cl");
-  private NetworkTableEntry backCamArea = backCam.getEntry("ta");
-  private NetworkTableEntry backCamRobotPose = backCam.getEntry("botpose");
-  private NetworkTableEntry backCamAprilTagPose = backCam.getEntry("targetpose_cameraspace");
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
-  private NetworkTableEntry backCamTagToRobotPose = backCam.getEntry("botpose_targetspace");
-
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
-  private NetworkTableEntry frontCamAngleHorizontal = frontCam.getEntry("tx");
-  private NetworkTableEntry frontCamAngleVertical = frontCam.getEntry("ty");
-  private NetworkTableEntry fromCamTableLatency = frontCam.getEntry("tl");
-  private NetworkTableEntry frontCamCameraLatency = frontCam.getEntry("cl");
-  private NetworkTableEntry frontCamArea = frontCam.getEntry("ta");
-  private NetworkTableEntry frontCamRobotPose = frontCam.getEntry("botpose");
-  private NetworkTableEntry frontCamTagPose = frontCam.getEntry("targetpose_cameraspace");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
-  private NetworkTableEntry frontCamTagToRobotPose = frontCam.getEntry("botpose_targetspace");
+  private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
+  private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
+  private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
+  private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
 
   private double[] noTrackLimelightArray = new double[6];
 
@@ -80,12 +67,28 @@ public class Peripherals extends SubsystemBase {
     backCam.getEntry("pipeline").setNumber(pipeline);
   }
 
+  public void setLeftCamPipeline(int pipeline){
+    leftCam.getEntry("pipeline").setNumber(pipeline);
+  }
+
+  public void setRightCamPipeline(int pipeline){
+    rightCam.getEntry("pipeline").setNumber(pipeline);
+  }
+
   public int getFrontCamPipeline(){
     return (int) frontCam.getEntry("pipeline").getInteger(5);
   }
 
   public int getBackCamPipeline(){
     return (int) backCam.getEntry("pipeline").getInteger(5);
+  }
+
+  public int getLeftCamPipeline(){
+    return (int) leftCam.getEntry("pipeline").getInteger(5);
+  }
+
+  public int getRightCamPipeline(){
+    return (int) rightCam.getEntry("pipeline").getInteger(5);
   }
 
   public void zeroPigeon(){
@@ -104,8 +107,12 @@ public class Peripherals extends SubsystemBase {
     JSONObject allCamResults = new JSONObject();
     JSONObject backCamResults = new JSONObject(backCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject leftCamResults = new JSONObject(leftCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject rightCamResults = new JSONObject(rightCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     allCamResults.put("BackCam", backCamResults);
     allCamResults.put("FrontCam", frontCamResults);
+    allCamResults.put("LeftCam", leftCamResults);
+    allCamResults.put("RightCam", rightCamResults);
     return allCamResults;
   }
 

@@ -295,6 +295,10 @@ public class Drive extends SubsystemBase {
     boolean haveBackCam = allCamResults.isNull("BackCam");
     JSONObject frontCamResults = allCamResults.getJSONObject("FrontCam");
     boolean haveFrontCam = allCamResults.isNull("FrontCam");
+    JSONObject leftCamResults = allCamResults.getJSONObject("LeftCam");
+    boolean haveLeftCam = allCamResults.isNull("LeftCam");
+    JSONObject rightCamResults = allCamResults.getJSONObject("RightCam");
+    boolean haveRightCam = allCamResults.isNull("RightCam");
 
     double backCamTL = 9999;
     double backCamCL = 9999;
@@ -316,6 +320,26 @@ public class Drive extends SubsystemBase {
       frontCamBotPose = frontCamResults.getJSONArray("botpose_wpiblue");
       frontCamFiducialResults = frontCamResults.getJSONArray("Fiducial");
     }
+    double leftCamTL = 9999;
+    double leftCamCL = 9999;
+    JSONArray leftCamBotPose = new JSONArray();
+    JSONArray leftCamFiducialResults = new JSONArray();
+    if (haveLeftCam){
+      leftCamTL = leftCamResults.getDouble("tl") / 1000;
+      leftCamCL = leftCamResults.getDouble("cl") / 1000;
+      leftCamBotPose = leftCamResults.getJSONArray("botpose_wpiblue");
+      leftCamFiducialResults = leftCamResults.getJSONArray("Fiducial");
+    }
+    double rightCamTL = 9999;
+    double rightCamCL = 9999;
+    JSONArray rightCamBotPose = new JSONArray();
+    JSONArray rightCamFiducialResults = new JSONArray();
+    if (haveRightCam){
+      rightCamTL = rightCamResults.getDouble("tl") / 1000;
+      rightCamCL = rightCamResults.getDouble("cl") / 1000;
+      rightCamBotPose = rightCamResults.getJSONArray("botpose_wpiblue");
+      rightCamFiducialResults = rightCamResults.getJSONArray("Fiducial");
+    }
 
     //combine fiducial data from all cameras, marked with which camera it came from
     JSONArray fiducialResults = new JSONArray();
@@ -327,6 +351,16 @@ public class Drive extends SubsystemBase {
     for (int i = 0; i < frontCamFiducialResults.length(); i ++){
       JSONObject fiducial = (JSONObject) frontCamFiducialResults.get(i);
       fiducial.put("camera", "front_cam");
+      fiducialResults.put(fiducial);
+    }
+    for (int i = 0; i < leftCamFiducialResults.length(); i ++){
+      JSONObject fiducial = (JSONObject) leftCamFiducialResults.get(i);
+      fiducial.put("camera", "left_cam");
+      fiducialResults.put(fiducial);
+    }
+    for (int i = 0; i < rightCamFiducialResults.length(); i ++){
+      JSONObject fiducial = (JSONObject) rightCamFiducialResults.get(i);
+      fiducial.put("camera", "right_cam");
       fiducialResults.put(fiducial);
     }
 
@@ -380,6 +414,18 @@ public class Drive extends SubsystemBase {
             cameraOffsetZ = Constants.Vision.FRONT_CAMERA_POSE[2];
             cameraOffsetTheta = Constants.Vision.FRONT_CAMERA_POSE[5];
             cameraOffsetPitch = Constants.Vision.FRONT_CAMERA_POSE[4];
+        } else if (camera == "left_cam"){
+            cameraOffsetX = Constants.Vision.LEFT_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.LEFT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+            cameraOffsetY = Constants.Vision.LEFT_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.LEFT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+            cameraOffsetZ = Constants.Vision.LEFT_CAMERA_POSE[2];
+            cameraOffsetTheta = Constants.Vision.LEFT_CAMERA_POSE[5];
+            cameraOffsetPitch = Constants.Vision.LEFT_CAMERA_POSE[4];
+        } else if (camera == "right_cam"){
+            cameraOffsetX = Constants.Vision.RIGHT_CAMERA_POSITION_POLAR[0] * Math.cos(Constants.Vision.RIGHT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+            cameraOffsetY = Constants.Vision.RIGHT_CAMERA_POSITION_POLAR[0] * Math.sin(Constants.Vision.RIGHT_CAMERA_POSITION_POLAR[1] + fieldPigeonAngle);
+            cameraOffsetZ = Constants.Vision.RIGHT_CAMERA_POSE[2];
+            cameraOffsetTheta = Constants.Vision.RIGHT_CAMERA_POSE[5];
+            cameraOffsetPitch = Constants.Vision.RIGHT_CAMERA_POSE[4];
         }
         //pose to add to horizontalTagPoses
         JSONObject pose = new JSONObject();
@@ -424,6 +470,10 @@ public class Drive extends SubsystemBase {
           // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL), standardDeviation);
         } else if (horizontalTagPose.getString("camera") == "front_cam"){
           // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL), standardDeviation);
+        } else if (horizontalTagPose.getString("camera") == "left_cam"){
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (leftCamTL + leftCamCL), standardDeviation);
+        } else if (horizontalTagPose.getString("camera") == "right_cam"){
+          // m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (rightCamTL + rightCamCL), standardDeviation);
         }
     }
 
@@ -447,7 +497,7 @@ public class Drive extends SubsystemBase {
           standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numBackTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
         }
         standardDeviation.set(2, 0, 0);
-        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL));
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (backCamTL + backCamCL), standardDeviation);
       }
     }
     if (frontCamBotPose.length() == 6){
@@ -469,7 +519,51 @@ public class Drive extends SubsystemBase {
           standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numFrontTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
         }
         standardDeviation.set(2, 0, 0);
-        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL));
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (frontCamTL + frontCamCL), standardDeviation);
+      }
+    }
+    if (leftCamBotPose.length() == 6){
+      double x = (double) leftCamBotPose.get(0);
+      double y = (double) leftCamBotPose.get(1);
+      if (x != 0 && y != 0 && leftCamFiducialResults.length() != 0){
+        int id = ((JSONObject) leftCamFiducialResults.get(0)).getInt("fID");
+        int numLeftTracks = leftCamFiducialResults.length();
+        double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
+        double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
+        double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
+        Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
+        if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
+          double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numLeftTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numLeftTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+        } else {
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numLeftTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset)));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numLeftTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
+        }
+        standardDeviation.set(2, 0, 0);
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (leftCamTL + leftCamCL), standardDeviation);
+      }
+    }
+    if (rightCamBotPose.length() == 6){
+      double x = (double) rightCamBotPose.get(0);
+      double y = (double) rightCamBotPose.get(1);
+      if (x != 0 && y != 0 && rightCamFiducialResults.length() != 0){
+        int id = ((JSONObject) rightCamFiducialResults.get(0)).getInt("fID");
+        int numRightTracks = rightCamFiducialResults.length();
+        double xOffset = x - Constants.Vision.TAG_POSES[id - 1][0];
+        double yOffset = y - Constants.Vision.TAG_POSES[id - 1][1];
+        double distToTag = Constants.getDistance(xOffset, yOffset, 0, 0);
+        Matrix<N3, N1> standardDeviation = new Matrix<>(Nat.N3(), Nat.N1());
+        if (Constants.getDistance(currentX, currentY, x, y) > maxChange){
+          double dif = Constants.getDistance(currentX, currentY, x, y) - maxChange;
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numRightTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numRightTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset) * Constants.Vision.getTagDistStdDevScalar(distToTag) + Math.pow(dif, Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE) * Constants.Vision.ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR));
+        } else {
+          standardDeviation.set(0, 0, Constants.Vision.getNumTagStdDevScalar(numRightTracks) * (Constants.Vision.getTagStdDevX(xOffset, yOffset)));
+          standardDeviation.set(1, 0, Constants.Vision.getNumTagStdDevScalar(numRightTracks) * (Constants.Vision.getTagStdDevY(xOffset, yOffset)));
+        }
+        standardDeviation.set(2, 0, 0);
+        m_odometry.addVisionMeasurement(new Pose2d(new Translation2d(x, y), new Rotation2d(pigeonAngle)), Timer.getFPGATimestamp() - (rightCamTL + rightCamCL), standardDeviation);
       }
     }
 
