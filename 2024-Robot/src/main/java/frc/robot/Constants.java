@@ -147,7 +147,7 @@ public final class Constants {
 
     //shooter
     public static final double SHOOTER_ANGLE_GEAR_RATIO = 1;
-    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1;
+    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 0.4;
 
     //feeder
     public static final double FEEDER_ROLLER_GEAR_RATIO = 1;
