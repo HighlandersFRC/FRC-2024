@@ -103,7 +103,7 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterPercent(double percent){
     this.flywheelVortexMaster.set(percent);
-    this.flywheelVortexFollower.set(percent);
+    this.flywheelVortexFollower.set(-percent);
   }
 
   //Constantly set flywheel velocity PID
@@ -114,8 +114,8 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("flywheel", flywheelVortexEncoderMaster.getVelocity());
-    SmartDashboard.putNumber("flywheel 2", flywheelVortexEncoderFollower.getVelocity());
+    SmartDashboard.putNumber("flywheel", flywheelVortexEncoderMaster.getVelocity()*2.5);
+    SmartDashboard.putNumber("flywheel 2", flywheelVortexEncoderFollower.getVelocity()*2.5);
 
   }
 }

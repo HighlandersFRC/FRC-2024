@@ -96,6 +96,12 @@ public class Intake extends SubsystemBase {
     this.rollerFalcon.set(rollerVelocity);
   }
 
+  public void setIntakePercent(double percent){
+    // this.rollerVortexVelocitySetpoint = rollerVelocity;
+    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
+    this.rollerFalcon.set(percent);
+  }
+
   //Get value of intake rotation limit switch
   public boolean getAngleLimitSwitch(){
     if (angleFalcon.getReverseLimit().getValue().value == 1){

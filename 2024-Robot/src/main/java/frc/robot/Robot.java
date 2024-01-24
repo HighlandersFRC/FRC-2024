@@ -24,9 +24,11 @@ import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoParser;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.Shoot;
 import frc.robot.commands.ZeroAngleMidMatch;
@@ -237,9 +239,12 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1000));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1000));
-    OI.driverY.whileTrue(new Shoot(shooter, feeder, 6000));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -0.5));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 0.5));
+    // OI.driverRT.whileTrue(new RunFeeder(feeder, 0.5));
+    // OI.driverB.whileTrue(new RunFeeder(feeder, 0.5));
+    OI.driverX.whileTrue(new RunFeeder(feeder, -0.2));
+    OI.driverY.whileTrue(new Shoot(shooter, 6000));
     //Operator
   }
 

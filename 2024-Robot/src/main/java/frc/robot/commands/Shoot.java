@@ -6,19 +6,16 @@ import frc.robot.subsystems.Feeder;
 
 public class Shoot extends Command {
     Shooter shooter;
-    Feeder feeder;
     double velocity;
-  public Shoot(Shooter shooter, Feeder feeder, double rpm) {
+  public Shoot(Shooter shooter, double rpm) {
     this.shooter = shooter;
-    this.feeder = feeder;
     velocity = rpm;
-    addRequirements(shooter, feeder);
+    addRequirements(shooter);
   }
 
   @Override
   public void initialize() {
-    shooter.setShooterPercent(0.5);
-    // feeder.setFeederPercent(0.5);
+    shooter.setShooterPercent(0.701);
   }
 
   @Override
@@ -27,7 +24,6 @@ public class Shoot extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.setShooterPercent(0);
-    feeder.setFeederPercent(0);
   }
 
   @Override
