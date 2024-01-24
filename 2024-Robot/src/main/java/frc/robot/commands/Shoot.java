@@ -17,8 +17,8 @@ public class Shoot extends Command {
 
   @Override
   public void initialize() {
-    shooter.setShooterVelocity(velocity);
-    feeder.setFeeder(velocity);
+    shooter.setShooterPercent(0.5);
+    // feeder.setFeederPercent(0.5);
   }
 
   @Override
@@ -26,8 +26,8 @@ public class Shoot extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    shooter.setShooterVelocity(0);
-    feeder.setFeeder(0);
+    shooter.setShooterPercent(0);
+    feeder.setFeederPercent(0);
   }
 
   @Override

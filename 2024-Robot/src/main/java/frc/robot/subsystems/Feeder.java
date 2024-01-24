@@ -14,7 +14,7 @@ import frc.robot.commands.defaults.FeederDefault;
 
 public class Feeder extends SubsystemBase {
   private Lights lights;
-
+  double startTime;
   private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.FEEDER_ROLLER_MOTOR_ID, MotorType.kBrushless);
   private final SparkAbsoluteEncoder rollerVortexEncoder = rollerVortex.getAbsoluteEncoder(Type.kDutyCycle);
   private final SparkPIDController rollerVortexPID = rollerVortex.getPIDController();
@@ -31,7 +31,7 @@ public class Feeder extends SubsystemBase {
 
     this.rollerVortex.restoreFactoryDefaults();
     this.rollerVortexPID.setP(0.00012, 0);
-    this.rollerVortexPID.setI(0.000001, 0);
+    this.rollerVortexPID.setI(0.00000, 0);
     this.rollerVortexPID.setD(0, 0);
     this.rollerVortexPID.setFF(0.00011, 0);
     this.rollerVortexPID.setOutputRange(-1, 1);
@@ -45,9 +45,13 @@ public class Feeder extends SubsystemBase {
     this.rollerVortexVelocitySetpoint = rollerVelocity;
   }
 
+  public void setFeederPercent(double percent){
+    rollerVortex.set(percent);
+  }
+
   //Constantly set roller velocity PID
   public void teleopPeriodic(){
-    this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
+    // this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
   }
 
   @Override

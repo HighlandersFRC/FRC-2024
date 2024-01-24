@@ -18,11 +18,13 @@ public class RunShooter extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    startTime = Timer.getFPGATimestamp();
+  }
 
   @Override
   public void execute() {
-    // this.shooter.setShooter(this.angle, this.RPM);
+    this.shooter.setShooter(this.angle, this.RPM);
     System.out.println("SHOOTER");
   }
 
