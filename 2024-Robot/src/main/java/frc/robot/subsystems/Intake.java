@@ -24,10 +24,6 @@ public class Intake extends SubsystemBase {
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
   private final PositionTorqueCurrentFOC anglefalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  // private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, MotorType.kBrushless);
-  // private final SparkAbsoluteEncoder rollerVortexEncoder = rollerVortex.getAbsoluteEncoder(SparkAbsoluteEncoder.Type.kDutyCycle);
-  // private final SparkPIDController rollerVortexPID = rollerVortex.getPIDController();
-  // private double rollerVortexVelocitySetpoint = 0;
   private final TalonFX rollerFalcon = new TalonFX(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
@@ -38,68 +34,91 @@ public class Intake extends SubsystemBase {
   }
 
   public void init(){
-    // this.rollerVortexVelocitySetpoint = 0;
-
-    this.angleFalconConfiguration.Slot0.kP = 0;
+    this.angleFalconConfiguration.Slot0.kP = 0.1;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
     this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
+    this.angleFalcon.setPosition(0);
 
-    // this.rollerVortex.restoreFactoryDefaults();
-    // this.rollerVortexPID.setP(0, 0);
-    // this.rollerVortexPID.setI(0, 0);
-    // this.rollerVortexPID.setD(0, 0);
-    // this.rollerVortexPID.setFF(0, 0);
-    // this.rollerVortexPID.setOutputRange(-1, 1);
-    // this.rollerVortexEncoder.setPositionConversionFactor(1);
-    // this.rollerVortexEncoder.setVelocityConversionFactor(1);
-    // this.rollerVortex.setIdleMode(IdleMode.kCoast);
-    this.rollerFalconConfiguration.Slot0.kP = 0;    
+    this.rollerFalconConfiguration.Slot0.kP = 0.1;    
     this.rollerFalconConfiguration.Slot0.kI = 0;
     this.rollerFalconConfiguration.Slot0.kD = 0;
-    this.rollerFalconConfiguration.Slot0.kV = 0;
-    this.rollerFalcon.getConfigurator().apply(this.angleFalconConfiguration);
-    rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
+    this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
+    this.rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }
 
-  //Set intake state, rotationAngle in rotations, rollerVelocity in RPM
+  //Set intake state, rotationAngle in degrees, rollerVelocity in RPM
   public void setIntake(double rotationAngle, double rollerVelocity){
-    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(rotationAngle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
-    // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
-    this.rollerFalcon.set(rollerVelocity);
+    if (rotationAngle > Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      // System.out.println("2 " + rotationAngle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else if (rotationAngle < Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      // System.out.println("3 " + rotationAngle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else {
+      // System.out.println("4 " + rotationAngle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(rotationAngle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    }
+    this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(rollerVelocity) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
   //Set intake state, position either kUP or kDOWN, rollerVelocity in RPM
   public void setIntake(Constants.SetPoints.IntakePosition position, double rollerVelocity){
-    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.angle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
-    // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
-    this.rollerFalcon.set(rollerVelocity);
+    if (position.angle < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      // System.out.println("2 " + position.angle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else if (position.angle > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      // System.out.println("3 " + position.angle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else {
+      // System.out.println("4 " + position.angle);
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(position.angle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    }
   }
 
   //Set intake angle in rotations
   public void setIntakeAngle(double rotationAngle){
-    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(rotationAngle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    if (rotationAngle < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else if (rotationAngle > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else {
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(rotationAngle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    }
   }
 
   //Set intake angle with setpoint
   public void setIntakeAngle(Constants.SetPoints.IntakePosition position){
-    this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.angle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    if (position.angle < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else if (position.angle > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    } else {
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(position.angle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    }
   }
 
   //Set intake roller velocity in RPM
   public void setIntakeRollers(double rollerVelocity){
-    // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
-    this.rollerFalcon.set(rollerVelocity);
+    this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(rollerVelocity) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
+  //Set intake roller percent
   public void setIntakePercent(double percent){
-    // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
     this.rollerFalcon.set(percent);
+  }
+
+  public double getRollerVelocity(){
+    return this.rollerFalcon.getVelocity().getValue() / Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO;
+  }
+
+  public double getIntakeAngleRotations(){
+    return this.angleFalcon.getPosition().getValue() / Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO;
+  }
+
+  public double getIntakeAngleDegrees(){
+    return Constants.rotationsToDegrees(this.angleFalcon.getPosition().getValue() / Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO);
   }
 
   //Get value of intake rotation limit switch
@@ -118,7 +137,7 @@ public class Intake extends SubsystemBase {
 
   //Constantly set roller velocity PID
   public void teleopPeriodic(){
-    // this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
+    SmartDashboard.putNumber("Intake Angle", getIntakeAngleDegrees());
   }
 
   @Override

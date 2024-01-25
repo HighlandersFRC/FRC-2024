@@ -8,27 +8,23 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Feeder;
 
 public class RunFeeder extends Command {
-  /** Creates a new RunIntake. */
   Feeder feeder;
-  double percent;
-  public RunFeeder(Feeder feeder, double percent) {
-    // Use addRequirements() here to declare subsystem dependencies.
+  double RPM;
+
+  public RunFeeder(Feeder feeder, double RPM) {
     this.feeder = feeder;
-    this.percent = percent;
+    this.RPM = RPM;
     addRequirements(feeder);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    feeder.setFeederPercent(percent);
+    feeder.setFeeder(RPM);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {}
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     feeder.setFeederPercent(0);

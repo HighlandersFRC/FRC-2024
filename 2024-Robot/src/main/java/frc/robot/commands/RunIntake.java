@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Intake;
@@ -11,7 +12,7 @@ public class RunIntake extends Command {
 
   public RunIntake(Intake intake, double RPM) {
     this.intake = intake;
-    this.angle = Constants.SetPoints.INTAKE_DOWN_ANGLE;
+    this.angle = Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG;
     this.RPM = RPM;
     addRequirements(this.intake);
   }
@@ -35,8 +36,7 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    this.intake.setIntakePercent(RPM);
-    System.out.println("INTAKE " + this.angle);
+    this.intake.setIntake(this.angle, this.RPM);
   }
 
   @Override

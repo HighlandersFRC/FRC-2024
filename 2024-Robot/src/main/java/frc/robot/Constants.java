@@ -20,6 +20,8 @@ public final class Constants {
     public static final double ROBOT_WIDTH = inchesToMeters(25);
     public static final double ROBOT_LENGTH = inchesToMeters(29);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
+
+    public static final double SHOOTER_RESTING_ANGLE_DEG = 8;
   }
 
   //Subsystem setpoint constants
@@ -27,12 +29,14 @@ public final class Constants {
     //drive
 
     //intake
-    public static final double INTAKE_DOWN_ANGLE = 0;
-    public static final double INTAKE_UP_ANGLE = 0;
+    public static final double INTAKE_DOWN_ANGLE_ROT = 0.385;
+    public static final double INTAKE_UP_ANGLE_ROT = 0;
+    public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
+    public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
 
     //Intake up and down positions
     public enum IntakePosition {
-      kDOWN(INTAKE_DOWN_ANGLE), kUP(INTAKE_UP_ANGLE);
+      kDOWN(INTAKE_DOWN_ANGLE_DEG), kUP(INTAKE_UP_ANGLE_DEG);
 
       public final double angle;
 
@@ -42,8 +46,10 @@ public final class Constants {
     }
 
     //shooter
-    public static final double SHOOTER_DOWN_ANGLE = 0;
-    public static final double SHOOTER_MAX_ANGLE = 10;
+    public static final double SHOOTER_DOWN_ANGLE_ROT = 0;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.16;
+    public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
+    public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     //feeder
   }
@@ -142,15 +148,15 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
-    public static final double INTAKE_ANGLE_GEAR_RATIO = 1;
-    public static final double INTAKE_ROLLER_GEAR_RATIO = 1;
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 25;
+    public static final double INTAKE_ROLLER_GEAR_RATIO = 2.5;
 
     //shooter
-    public static final double SHOOTER_ANGLE_GEAR_RATIO = 1;
-    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 0.4;
+    public static final double SHOOTER_ANGLE_GEAR_RATIO = 96;
+    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1 / 2.5;
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 1;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 4/3;
   }
 
   //Can info such as IDs
@@ -207,6 +213,14 @@ public final class Constants {
     return rotations * 2 * Math.PI;
   }
 
+  public static double degreesToRotations(double degrees){
+    return degrees / 360;
+  }
+
+  public static double rotationsToDegrees(double rotations){
+    return rotations * 360;
+  }
+
   public static double degreesToRadians(double degrees){
     return degrees * Math.PI / 180;
   }
@@ -217,5 +231,13 @@ public final class Constants {
 
   public static double angleToUnitVectorJ(double angle){
     return (Math.sin(angle));
+  }
+
+  public static double RPMToRPS(double RPM){
+    return RPM / 60;
+  }
+
+  public static double RPSToRPM(double RPS){
+    return RPS * 60;
   }
 }

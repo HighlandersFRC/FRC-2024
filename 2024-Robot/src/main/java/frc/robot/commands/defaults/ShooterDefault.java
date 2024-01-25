@@ -16,7 +16,9 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    this.shooter.setShooter(0, 0);
+    // System.out.println("Shooter Default");
+    this.shooter.setShooterPercent(0);
+    this.shooter.setShooterAngle(30);
   }
 
   @Override

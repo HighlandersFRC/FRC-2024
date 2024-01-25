@@ -30,7 +30,7 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.Shoot;
+import frc.robot.commands.RunShooter;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -237,14 +237,12 @@ public class Robot extends LoggedRobot {
     //CONTROLS
 
     //Driver
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -0.5));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 0.5));
-    // OI.driverRT.whileTrue(new RunFeeder(feeder, 0.5));
-    // OI.driverB.whileTrue(new RunFeeder(feeder, 0.5));
-    OI.driverX.whileTrue(new RunFeeder(feeder, -0.2));
-    OI.driverY.whileTrue(new Shoot(shooter, 6000));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -0));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 0));
+    OI.driverX.whileTrue(new RunFeeder(feeder, -60));
+    OI.driverY.whileTrue(new RunShooter(shooter, 45, 0));
     //Operator
   }
 

@@ -19,7 +19,7 @@ public class IntakeDefault extends Command {
   public void execute() {
     intake.setIntake(Constants.SetPoints.IntakePosition.kUP, 0);
     if (this.intake.getAngleLimitSwitch()){
-      this.intake.setAngleEncoderPosition(0);
+      // this.intake.setAngleEncoderPosition(0);
     }
   }
 

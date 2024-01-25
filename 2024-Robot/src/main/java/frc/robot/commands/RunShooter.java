@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Shooter;
 
@@ -24,8 +25,8 @@ public class RunShooter extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("Run Shooter");
     this.shooter.setShooter(this.angle, this.RPM);
-    System.out.println("SHOOTER");
   }
 
   @Override
@@ -33,10 +34,6 @@ public class RunShooter extends Command {
 
   @Override
   public boolean isFinished() {
-    if (Timer.getFPGATimestamp() - startTime > 4){
-      return true;
-    } else {
-      return false;
-    }
+    return false;
   }
 }
