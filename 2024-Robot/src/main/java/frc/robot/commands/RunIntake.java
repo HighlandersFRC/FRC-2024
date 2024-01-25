@@ -35,7 +35,8 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    this.intake.setIntakePercent(RPM);
+    // this.intake.setIntakePercent(RPM);
+    this.intake.setIntake(angle, RPM);
     System.out.println("INTAKE " + this.angle);
   }
 

@@ -55,10 +55,10 @@ public class Intake extends SubsystemBase {
     // this.rollerVortexEncoder.setPositionConversionFactor(1);
     // this.rollerVortexEncoder.setVelocityConversionFactor(1);
     // this.rollerVortex.setIdleMode(IdleMode.kCoast);
-    this.rollerFalconConfiguration.Slot0.kP = 0;    
-    this.rollerFalconConfiguration.Slot0.kI = 0;
-    this.rollerFalconConfiguration.Slot0.kD = 0;
-    this.rollerFalconConfiguration.Slot0.kV = 0;
+    this.rollerFalconConfiguration.Slot0.kP = 0.0;    
+    this.rollerFalconConfiguration.Slot0.kI = 0.0;
+    this.rollerFalconConfiguration.Slot0.kD = 0.0;
+    this.rollerFalconConfiguration.Slot0.kV = 0.0;
     this.rollerFalcon.getConfigurator().apply(this.angleFalconConfiguration);
     rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }
@@ -67,16 +67,16 @@ public class Intake extends SubsystemBase {
   public void setIntake(double rotationAngle, double rollerVelocity){
     this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(rotationAngle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
-    this.rollerFalcon.set(rollerVelocity);
+    this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
+    // this.rollerFalcon.set(rollerVelocity);
   }
 
   //Set intake state, position either kUP or kDOWN, rollerVelocity in RPM
   public void setIntake(Constants.SetPoints.IntakePosition position, double rollerVelocity){
     this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.angle * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     // this.rollerVortexVelocitySetpoint = rollerVelocity;
-    // this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
-    this.rollerFalcon.set(rollerVelocity);
+    this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(rollerVelocity * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
+    // this.rollerFalcon.set(rollerVelocity);
   }
 
   //Set intake angle in rotations
@@ -119,10 +119,9 @@ public class Intake extends SubsystemBase {
   //Constantly set roller velocity PID
   public void teleopPeriodic(){
     // this.rollerVortexPID.setReference(this.rollerVortexVelocitySetpoint * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
+    SmartDashboard.putNumber("intake speed", rollerFalcon.getVelocity().getValue());
   }
 
   @Override
   public void periodic() {}
-
-  
 }

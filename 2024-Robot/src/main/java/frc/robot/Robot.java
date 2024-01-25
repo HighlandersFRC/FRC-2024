@@ -239,8 +239,8 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -0.5));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 0.5));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 100));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -100));
     // OI.driverRT.whileTrue(new RunFeeder(feeder, 0.5));
     // OI.driverB.whileTrue(new RunFeeder(feeder, 0.5));
     OI.driverX.whileTrue(new RunFeeder(feeder, -0.2));
