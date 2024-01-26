@@ -19,7 +19,7 @@ public class RunFeeder extends Command {
 
   @Override
   public void initialize() {
-    feeder.setFeeder(RPM);
+    feeder.set(RPM);
   }
 
   @Override
@@ -27,7 +27,7 @@ public class RunFeeder extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    feeder.setFeederPercent(0);
+    feeder.setPercent(0);
   }
 
   // Returns true when the command should end.

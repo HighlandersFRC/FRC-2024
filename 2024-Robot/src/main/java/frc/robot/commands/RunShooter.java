@@ -26,7 +26,7 @@ public class RunShooter extends Command {
   @Override
   public void execute() {
     // System.out.println("Run Shooter");
-    this.shooter.setShooter(this.angle, this.RPM);
+    this.shooter.set(this.angle, this.RPM);
   }
 
   @Override

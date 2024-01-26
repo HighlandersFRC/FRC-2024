@@ -102,23 +102,17 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
 
-    PortForwarder.add(5800, "10.44.99.13", 5800);
-    PortForwarder.add(5801, "10.44.99.13", 5801);
-
-    PortForwarder.add(5800, "10.44.99.57", 5800);
-    PortForwarder.add(5801, "10.44.99.57", 5801);
-
-    PortForwarder.add(5800, "10.44.99.58", 5800);
-    PortForwarder.add(5801, "10.44.99.58", 5801);
-
-    PortForwarder.add(5800, "10.44.99.65", 5800);
-    PortForwarder.add(5801, "10.44.99.65", 5801);
-
     PortForwarder.add(5800, "10.44.99.41", 5800);
     PortForwarder.add(5801, "10.44.99.41", 5801);
 
     PortForwarder.add(5800, "10.44.99.42", 5800);
     PortForwarder.add(5801, "10.44.99.42", 5801);
+
+    PortForwarder.add(5800, "10.44.99.43", 5800);
+    PortForwarder.add(5801, "10.44.99.43", 5801);
+
+    PortForwarder.add(5800, "10.44.99.44", 5800);
+    PortForwarder.add(5801, "10.44.99.44", 5801);
 
     //Auto selection here...
     // if (OI.is4PieceCloseAuto()) {
@@ -223,6 +217,7 @@ public class Robot extends LoggedRobot {
     } catch (Exception e){
       System.out.println("No auto is selected");
     }
+    this.intake.autoInit();
   }
 
   @Override
@@ -239,8 +234,8 @@ public class Robot extends LoggedRobot {
     //Driver
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -0));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 0));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -500));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 500));
     OI.driverX.whileTrue(new RunFeeder(feeder, -60));
     OI.driverY.whileTrue(new RunShooter(shooter, 45, 0));
     //Operator

@@ -16,7 +16,7 @@ public class FeederDefault extends Command {
 
   @Override
   public void execute() {
-    this.feeder.setFeeder(0);
+    this.feeder.set(0);
   }
 
   @Override

@@ -43,22 +43,22 @@ public class Feeder extends SubsystemBase {
   }
 
   //Set roller velocity in RPM
-  public void setFeeder(double rollerVelocity){
+  public void set(double rollerVelocity){
     this.rollerVortexPID.setReference(rollerVelocity * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
   }
 
   //Set roller output in percent
-  public void setFeederPercent(double percent){
+  public void setPercent(double percent){
     rollerVortex.set(percent);
   }
 
-  public double getFeederVelocity(){
+  public double getVelocity(){
     return this.rollerVortexEncoder.getVelocity() / Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO;
   }
 
   //Constantly set roller velocity PID
   public void teleopPeriodic(){
-    SmartDashboard.putNumber("Feeder", getFeederVelocity());
+    SmartDashboard.putNumber("Feeder", getVelocity());
   }
 
   @Override

@@ -36,12 +36,13 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    this.intake.setIntake(this.angle, this.RPM);
+    this.intake.set(this.angle, this.RPM);
   }
 
   @Override
   public void end(boolean interrupted) {
-    this.intake.setIntakePercent(0);
+    this.intake.setRollers(0);
+    this.intake.setRollerPercent(0);
   }
 
   @Override

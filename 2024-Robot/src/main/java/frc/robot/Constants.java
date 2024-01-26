@@ -29,7 +29,7 @@ public final class Constants {
     //drive
 
     //intake
-    public static final double INTAKE_DOWN_ANGLE_ROT = 0.385;
+    public static final double INTAKE_DOWN_ANGLE_ROT = -0.385;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
     public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
@@ -82,11 +82,17 @@ public final class Constants {
     public static final double LIMELIGHT_HFOV_RAD = LIMELIGHT_HFOV_DEG * Math.PI / 180;
     public static final double LIMELIGHT_VFOV_RAD = LIMELIGHT_VFOV_DEG * Math.PI / 180;
 
+    //Camera IDs
+    public static final int FRONT_CAMERA_ID = 4;
+    public static final int BACK_CAMERA_ID = 3;
+    public static final int LEFT_CAMERA_ID = 1;
+    public static final int RIGHT_CAMERA_ID = 2;
+
     //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
-    public static final double[] FRONT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, 0, 0};
-    public static final double[] LEFT_CAMERA_POSE = {-0.263252, -0.1778, 0.2413, 0, 0, degreesToRadians(90)};
-    public static final double[] RIGHT_CAMERA_POSE = {0.263525, 0.1778, 0.2667, 0, 0, degreesToRadians(270)};
-    public static final double[] BACK_CAMERA_POSE = {-0.263252, -0.1778, 0.2413, 0, 0, degreesToRadians(180)};
+    public static final double[] FRONT_CAMERA_POSE = {0.3683, -0.01905, 0.23495, 0, 0, 0};
+    public static final double[] LEFT_CAMERA_POSE = {0.0172, 0.3429, 0.23495, 0, 0, degreesToRadians(90)};
+    public static final double[] RIGHT_CAMERA_POSE = {0.073025, -0.3429, 0.23495, 0, 0, degreesToRadians(270)};
+    public static final double[] BACK_CAMERA_POSE = {0, 0, 0, 0, 0, degreesToRadians(180)};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
     public static final double[] LEFT_CAMERA_POSITION_POLAR = {getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]), Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0])};
     public static final double[] RIGHT_CAMERA_POSITION_POLAR = {getDistance(0, 0, RIGHT_CAMERA_POSE[0], RIGHT_CAMERA_POSE[1]), Math.atan2(RIGHT_CAMERA_POSE[1], RIGHT_CAMERA_POSE[0])};
@@ -98,6 +104,22 @@ public final class Constants {
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 2;
     public static final double TAG_STANDARD_DEVIATION_DISTANCE = 3; //meters
     public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
+
+    //Limelight settings
+    /*
+    
+    Resolution: 960x720 40fps
+    Exposure: 3000
+    Black Level Offset: 8
+    Sensor Gain: 10.5
+    Red Balance: 1380
+    Blue Balance: 1410
+    AprilTag Family: 16h11
+    AprilTag Size: 165
+    Detector Downscale: 1.5
+    Quality Threshold: 2
+
+    */
 
     //Standard deviation regressions
     //Increases standard deviation with distance from tag
@@ -148,15 +170,15 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
-    public static final double INTAKE_ANGLE_GEAR_RATIO = 25;
-    public static final double INTAKE_ROLLER_GEAR_RATIO = 2.5;
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 25.0;
+    public static final double INTAKE_ROLLER_GEAR_RATIO = 2.0 + 1.0 / 3.0;
 
     //shooter
-    public static final double SHOOTER_ANGLE_GEAR_RATIO = 96;
-    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1 / 2.5;
+    public static final double SHOOTER_ANGLE_GEAR_RATIO = 96.0;
+    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1.0 / 2.5;
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 4/3;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 4.0 / 3.0;
   }
 
   //Can info such as IDs

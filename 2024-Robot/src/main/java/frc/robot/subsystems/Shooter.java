@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -48,7 +49,7 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 10;
-    this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.RemoteCANcoder;
+    this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
     this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
     this.angleFalconConfiguration.Feedback.RotorToSensorRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
@@ -83,23 +84,19 @@ public class Shooter extends SubsystemBase {
   }
 
   //Set shooter state, elevationAngle in rotations, flywheelVelocity in RPM
-  public void setShooter(double elevationAngle, double flywheelVelocity){
+  public void set(double elevationAngle, double flywheelVelocity){
     if (elevationAngle > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
       this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
     } else if (elevationAngle < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
     } else {
-      System.out.println("4 " + elevationAngle);
-      System.out.println("pos " + getShooterAngle());
-      System.out.println("final " + Constants.degreesToRotations(elevationAngle));
-      System.out.println("power " + this.angleFalcon.getAppliedControl().getControlInfo().toString());
       this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.degreesToRotations(elevationAngle)));
     }
     this.flywheelVortexMasterPID.setReference(flywheelVelocity * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
   }
 
   //Set shooter angle in rotations
-  public void setShooterAngle(double elevationAngle){
+  public void setAngle(double elevationAngle){
     if (elevationAngle > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
       this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
     } else if (elevationAngle < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
@@ -110,12 +107,12 @@ public class Shooter extends SubsystemBase {
   }
 
   //Set flywheel velocity in RPM
-  public void setShooterVelocity(double flywheelVelocity){
+  public void setVelocity(double flywheelVelocity){
     this.flywheelVortexMasterPID.setReference(flywheelVelocity * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
   }
 
   //Set flywheel percent
-  public void setShooterPercent(double percent){
+  public void setPercent(double percent){
     this.flywheelVortexMaster.set(percent);
   }
 
@@ -123,14 +120,14 @@ public class Shooter extends SubsystemBase {
     return this.flywheelVortexMasterEncoder.getVelocity() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
   }
 
-  public double getShooterAngle(){
+  public double getAngle(){
     return this.angleFalcon.getPosition().getValue();
   }
 
   //Constantly set flywheel velocity PID
   public void teleopPeriodic(){
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
-    SmartDashboard.putNumber("Shooter Elevation", getShooterAngle());
+    SmartDashboard.putNumber("Shooter Elevation", getAngle());
     // SmartDashboard.putNumber("Shooter elev falcon" )
   }
 
