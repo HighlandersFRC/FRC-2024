@@ -101,6 +101,18 @@ public class Robot extends LoggedRobot {
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
+    
+    PortForwarder.add(5800, "limelight-front.local", 5800);
+    PortForwarder.add(5801, "limelight-front.local", 5801);
+    
+    PortForwarder.add(5800, "limelight-back.local", 5800);
+    PortForwarder.add(5801, "limelight-back.local", 5801);
+
+    PortForwarder.add(5800, "limelight-left.local", 5800);
+    PortForwarder.add(5801, "limelight-left.local", 5801);
+
+    PortForwarder.add(5800, "limelight-right.local", 5800);
+    PortForwarder.add(5801, "limelight-right.local", 5801);
 
     PortForwarder.add(5800, "10.44.99.41", 5800);
     PortForwarder.add(5801, "10.44.99.41", 5801);
@@ -199,6 +211,7 @@ public class Robot extends LoggedRobot {
     feeder.periodic();
 
     drive.periodic(); // remove for competition
+    peripherals.periodic();
   }
 
   @Override
@@ -234,10 +247,12 @@ public class Robot extends LoggedRobot {
     //Driver
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -500));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 500));
-    OI.driverX.whileTrue(new RunFeeder(feeder, -60));
-    OI.driverY.whileTrue(new RunShooter(shooter, 45, 0));
+    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1800));
+    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 1800));
+    OI.driverX.whileTrue(new RunFeeder(feeder, 1200));
+    OI.driverB.whileTrue(new RunFeeder(feeder, -120));
+    OI.driverY.whileTrue(new RunShooter(shooter, 10, 0));
+    OI.driverA.whileTrue(new RunShooter(shooter, 30, 0));
     //Operator
   }
 

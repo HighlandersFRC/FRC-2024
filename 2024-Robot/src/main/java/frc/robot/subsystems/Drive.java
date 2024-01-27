@@ -366,6 +366,7 @@ public class Drive extends SubsystemBase {
 
     int numTracks = fiducialResults.length();
     if (numTracks == 0){
+      // System.out.println("No Tracks");
       return;
     }
 

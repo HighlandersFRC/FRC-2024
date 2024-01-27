@@ -7,6 +7,7 @@ import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import com.kauailabs.navx.frc.AHRS;
 
+import edu.wpi.first.networktables.ConnectionInfo;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
@@ -118,6 +119,10 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    // ConnectionInfo[] info = NetworkTableInstance.getDefault().getConnections();
+    // for (ConnectionInfo i : info){
+    //   System.out.println(i.remote_ip);
+    //   System.out.println(i.remote_id);
+    // }
   }
 }
