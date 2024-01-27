@@ -50,22 +50,28 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 0;//600
+    this.angleFalconConfiguration.Slot0.kP = 600;//600
     this.angleFalconConfiguration.Slot0.kI = 0;//300
     this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalconConfiguration.Slot0.kS = 0;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 15;
+    this.angleFalconConfiguration.MotorOutput.PeakForwardDutyCycle = 0.0;
+    this.angleFalconConfiguration.MotorOutput.PeakReverseDutyCycle = -0.0;
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
     this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
     this.angleFalconConfiguration.Feedback.RotorToSensorRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 30;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
-    this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
+    this.angleFalcon.setNeutralMode(NeutralModeValue.Coast);
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
     this.angleFalcon.set(0);
 
-    double flywheelP = 0.01;
+    double flywheelP = 0.0;
     double flywheelI = 0.000;
     double flywheelD = 0;
     double flywheelFF = 0;

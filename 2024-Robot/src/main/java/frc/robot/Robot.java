@@ -251,7 +251,7 @@ public class Robot extends LoggedRobot {
     OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 1800));
     OI.driverX.whileTrue(new RunFeeder(feeder, 1200));
     OI.driverB.whileTrue(new RunFeeder(feeder, -120));
-    OI.driverY.whileTrue(new RunShooter(shooter, 10, 0));
+    OI.driverY.whileTrue(new RunShooter(shooter, 30, 0));
     OI.driverA.whileTrue(new RunShooter(shooter, 30, 0));
     //Operator
   }
