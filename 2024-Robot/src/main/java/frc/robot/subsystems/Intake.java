@@ -20,7 +20,6 @@ import frc.robot.Constants;
 import frc.robot.commands.defaults.IntakeDefault;
 
 public class Intake extends SubsystemBase {
-  private Lights lights;
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.INTAKE_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
@@ -30,8 +29,7 @@ public class Intake extends SubsystemBase {
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  public Intake(Lights lights) {
-    this.lights = lights;
+  public Intake() {
     setDefaultCommand(new IntakeDefault(this));
   }
 
@@ -46,8 +44,8 @@ public class Intake extends SubsystemBase {
 
     this.rollerFalconConfiguration.Slot0.kP = 10;    
     this.rollerFalconConfiguration.Slot0.kI = 0;
-    this.rollerFalconConfiguration.Slot0.kD = 0;
-    this.rollerFalconConfiguration.Slot0.kV = 0;
+    this.rollerFalconConfiguration.Slot0.kD = 0.1;
+    this.rollerFalconConfiguration.Slot0.kS = 4;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }
@@ -69,12 +67,12 @@ public class Intake extends SubsystemBase {
 
   //Set intake state, position either kUP or kDOWN, RPM in RPM
   public void set(Constants.SetPoints.IntakePosition position, double RPM){
-    if (position.angle < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+    if (position.degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
-    } else if (position.angle > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+    } else if (position.degrees > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else {
-      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(position.angle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.rotations * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     }
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
@@ -92,12 +90,12 @@ public class Intake extends SubsystemBase {
 
   //Set intake angle with setpoint
   public void setAngle(Constants.SetPoints.IntakePosition position){
-    if (position.angle < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+    if (position.degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
-    } else if (position.angle > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+    } else if (position.degrees > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else {
-      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(position.angle) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+      this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(position.rotations * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     }
   }
 

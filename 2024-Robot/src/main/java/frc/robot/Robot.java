@@ -21,6 +21,7 @@ import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -37,6 +38,7 @@ import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
+import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -47,12 +49,16 @@ import frc.robot.subsystems.Shooter;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
+  //Subsystems
   private Lights lights = new Lights();
-  private Peripherals peripherals = new Peripherals(lights);
+  private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
-  private Intake intake = new Intake(lights);
-  private Shooter shooter = new Shooter(lights);
-  private Feeder feeder = new Feeder(lights);
+  private Intake intake = new Intake();
+  private Shooter shooter = new Shooter();
+  private Feeder feeder = new Feeder();
+
+  //Sensors
+  private TOF tof = new TOF();
 
   // private Logger logger = Logger.getInstance();
   
@@ -251,8 +257,8 @@ public class Robot extends LoggedRobot {
     OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 1800));
     OI.driverX.whileTrue(new RunFeeder(feeder, 1200));
     OI.driverB.whileTrue(new RunFeeder(feeder, -120));
-    OI.driverY.whileTrue(new RunShooter(shooter, 30, 0));
-    OI.driverA.whileTrue(new RunShooter(shooter, 30, 0));
+    OI.driverY.whileTrue(new RunShooter(shooter, 45, 3000));
+    OI.driverA.whileTrue(new RunShooter(shooter, 30, 4000));
     //Operator
   }
 
