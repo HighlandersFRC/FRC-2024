@@ -211,6 +211,10 @@ public final class Constants {
 
     //feeder
     public static final int FEEDER_ROLLER_MOTOR_ID = 15;
+
+    //climber
+    public static final int CLIMBER_LEFT_MOTOR_ID = 16;
+    public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
   }
 
   //Misc. controller values

@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoParser;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
@@ -37,6 +38,7 @@ import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -53,6 +55,7 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake(lights);
   private Shooter shooter = new Shooter(lights);
   private Feeder feeder = new Feeder(lights);
+  private Climber climber = new Climber(lights);
 
   // private Logger logger = Logger.getInstance();
   
@@ -98,6 +101,7 @@ public class Robot extends LoggedRobot {
     intake.init();
     shooter.init();
     feeder.init();
+    climber.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -253,6 +257,9 @@ public class Robot extends LoggedRobot {
     OI.driverB.whileTrue(new RunFeeder(feeder, -120));
     OI.driverY.whileTrue(new RunShooter(shooter, 30, 0));
     OI.driverA.whileTrue(new RunShooter(shooter, 30, 0));
+    OI.driverRB.whileTrue(new RunClimber(climber, 0.6, 0.6));
+    OI.driverLB.whileTrue(new RunClimber(climber, 0.6, 0.0));
+    OI.driverMenuButton.whileTrue(new RunClimber(climber, 0.0, 0.6));
     //Operator
   }
 

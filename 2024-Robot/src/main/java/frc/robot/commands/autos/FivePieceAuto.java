@@ -11,10 +11,17 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
 import frc.robot.commands.AutonomousFollower;
+import frc.robot.commands.RunFeeder;
+import frc.robot.commands.RunIntake;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Peripherals;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -49,7 +56,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private JSONArray pathJSON7;
   private JSONObject pathRead7;
   /** Creates a new FivePieceAuto. */
-  public FivePieceAuto(Drive drive, Peripherals peripherals) {
+  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder) {
     try {
       pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -121,21 +128,25 @@ public class FivePieceAuto extends SequentialCommandGroup {
     }
 
 
-    addRequirements(drive);
+    addRequirements(drive, intake, feeder);
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutonomousFollower(drive, pathJSON, 0, false),
-      new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON2, 0, false),
-      new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON3, 0, false),
-      new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON4, 0, false),
-      new AutonomousFollower(drive, pathJSON5, 0, false),
-      new WaitCommand(0.5),
-      new AutonomousFollower(drive, pathJSON6, 0, false),
-      new AutonomousFollower(drive, pathJSON7, 0, false)
+      new ParallelCommandGroup(
+        new AutonomousFollower(drive, pathJSON, 0, false),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1800)
+      ),
+      new RunFeeder(feeder, 0)
+      // new WaitCommand(0.5),
+      // new AutonomousFollower(drive, pathJSON2, 0, false),
+      // new WaitCommand(0.5),
+      // new AutonomousFollower(drive, pathJSON3, 0, false),
+      // new WaitCommand(0.5),
+      // new AutonomousFollower(drive, pathJSON4, 0, false),
+      // new AutonomousFollower(drive, pathJSON5, 0, false),
+      // new WaitCommand(0.5),
+      // new AutonomousFollower(drive, pathJSON6, 0, false),
+      // new AutonomousFollower(drive, pathJSON7, 0, false)
     );
   }
 }
