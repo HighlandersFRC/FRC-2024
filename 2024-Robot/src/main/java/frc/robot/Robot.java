@@ -31,7 +31,10 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
+import frc.robot.commands.SmartIntake;
+import frc.robot.commands.SmartShoot;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -207,6 +210,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+
     CommandScheduler.getInstance().run();
 
     // Logger.recordOutput("Odometry", drive.getOdometry());
@@ -251,14 +255,12 @@ public class Robot extends LoggedRobot {
     //CONTROLS
 
     //Driver
-    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1800));
-    OI.driverLT.whileTrue(new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 1800));
-    OI.driverX.whileTrue(new RunFeeder(feeder, 1200));
-    OI.driverB.whileTrue(new RunFeeder(feeder, -120));
-    OI.driverY.whileTrue(new RunShooter(shooter, 45, 3000));
-    OI.driverA.whileTrue(new RunShooter(shooter, 30, 4000));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  400));
+    OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
+    OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 2000));
+    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 24, 6500, 2000));
     //Operator
   }
 

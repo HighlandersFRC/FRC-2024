@@ -19,12 +19,12 @@ public class SmartShoot extends Command {
   private double shooterRPM;
   private double feederRPM;
 
-  private double startTime = Timer.getFPGATimestamp();
-  private double timeout = 3;
+  private double startTime;
+  private double timeout = 15;
 
   private double shotTime = 0;
-  private boolean hasShot = false;
-  private double shotPauseTime = 0.25;
+  private boolean hasShot;
+  private double shotPauseTime = 0.1;
 
   private double shooterDegreesAllowedError = 1;
   private double shooterRPMAllowedError = 50;
@@ -38,6 +38,7 @@ public class SmartShoot extends Command {
     this.shooterDegrees = shooterDegrees;
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
+    addRequirements(this.shooter, this.feeder);
   }
 
   public SmartShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM, double timeout) {
@@ -50,10 +51,14 @@ public class SmartShoot extends Command {
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
+    addRequirements(this.shooter, this.feeder);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.startTime = Timer.getFPGATimestamp();
+    this.hasShot = false;
+  }
 
   @Override
   public void execute() {
@@ -75,6 +80,7 @@ public class SmartShoot extends Command {
   @Override
   public boolean isFinished() {
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
+      System.out.println("Shooter time out");
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
       return true;

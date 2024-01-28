@@ -41,8 +41,6 @@ public class RunIntake extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    this.intake.setRollers(0);
-    this.intake.setRollerPercent(0);
   }
 
   @Override
