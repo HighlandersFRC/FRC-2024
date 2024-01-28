@@ -218,6 +218,10 @@ public final class Constants {
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;
+
+    //Climber
+    public static final int CLIMBER_LEFT_MOTOR_ID = 16;
+    public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
   }
 
   //Misc. controller values
