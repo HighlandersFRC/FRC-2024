@@ -43,6 +43,7 @@ import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -60,6 +61,7 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Feeder feeder = new Feeder();
+  private Climber climber = new Climber(lights);
 
   //Sensors
   private TOF tof = new TOF();
@@ -108,6 +110,7 @@ public class Robot extends LoggedRobot {
     intake.init();
     shooter.init();
     feeder.init();
+    climber.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -262,6 +265,10 @@ public class Robot extends LoggedRobot {
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
     OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 2000));
     OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 24, 6500, 2000));
+    OI.driverX.whileTrue(new RunClimber(climber, 0.6, 0.6));
+    OI.driverY.whileTrue(new RunClimber(climber, 0.0, 0.6));
+    OI.driverRB.whileTrue(new RunClimber(climber, 0.6, 0.0));
+
     //Operator
   }
 
