@@ -18,14 +18,12 @@ import frc.robot.Constants;
 import frc.robot.commands.defaults.FeederDefault;
 
 public class Feeder extends SubsystemBase {
-  private Lights lights;
   double startTime;
   private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.FEEDER_ROLLER_MOTOR_ID, MotorType.kBrushless);
   private final RelativeEncoder rollerVortexEncoder = rollerVortex.getEncoder();
   private final SparkPIDController rollerVortexPID = rollerVortex.getPIDController();
 
-  public Feeder(Lights lights) {
-    this.lights = lights;
+  public Feeder() {
     setDefaultCommand(new FeederDefault(this));
   }
 

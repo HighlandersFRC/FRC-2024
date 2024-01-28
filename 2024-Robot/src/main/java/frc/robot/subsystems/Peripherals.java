@@ -19,14 +19,9 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.PeripheralsDefault;
 import frc.robot.sensors.Navx;
+import frc.robot.sensors.TOF;
 
 public class Peripherals extends SubsystemBase {
-  private final static AHRS ahrs = new AHRS(Port.kMXP);
-
-  private final static Navx navx = new Navx(ahrs);
-
-  private Lights lights;
-
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
@@ -41,9 +36,7 @@ public class Peripherals extends SubsystemBase {
   private Pigeon2 pigeon = new Pigeon2(0, "Canivore");
   private Pigeon2Configuration pigeonConfig = new Pigeon2Configuration();
   
-  public Peripherals(Lights lights) {
-   this.lights = lights;
-  }
+  public Peripherals() {}
 
   public void init() {
     pigeonConfig.MountPose.MountPosePitch = 85.25395965576172;

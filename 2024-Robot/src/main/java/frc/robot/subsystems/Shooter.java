@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -25,14 +26,14 @@ import frc.robot.Constants;
 import frc.robot.commands.defaults.ShooterDefault;
 
 public class Shooter extends SubsystemBase {
-  private Lights lights;
 
   private final CANcoder angleEncoder = new CANcoder(Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
   private final CANcoderConfiguration angleEncoderConfiguration = new CANcoderConfiguration();
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  private final PositionTorqueCurrentFOC angleFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  // private final PositionTorqueCurrentFOC angleFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final MotionMagicExpoTorqueCurrentFOC angleFalconPositionRequest = new MotionMagicExpoTorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final CANSparkFlex flywheelVortexMaster = new CANSparkFlex(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, MotorType.kBrushless);
   private final RelativeEncoder flywheelVortexMasterEncoder = flywheelVortexMaster.getEncoder();
@@ -41,8 +42,7 @@ public class Shooter extends SubsystemBase {
   private final RelativeEncoder flywheelVortexFollowerEncoder = flywheelVortexFollower.getEncoder();
   private final SparkPIDController flywheelVortexFollowerPID = flywheelVortexFollower.getPIDController();
 
-  public Shooter(Lights lights) {
-    this.lights = lights;
+  public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
   }
 
@@ -50,14 +50,15 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 600;//600
-    this.angleFalconConfiguration.Slot0.kI = 0;//300
-    this.angleFalconConfiguration.Slot0.kD = 0;
-    this.angleFalconConfiguration.Slot0.kS = 0;
+    this.angleFalconConfiguration.Slot0.kP = 1300;
+    this.angleFalconConfiguration.Slot0.kI = 0;
+    this.angleFalconConfiguration.Slot0.kD = 20;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    this.angleFalconConfiguration.Slot0.kG = 15;
-    this.angleFalconConfiguration.MotorOutput.PeakForwardDutyCycle = 0.0;
-    this.angleFalconConfiguration.MotorOutput.PeakReverseDutyCycle = -0.0;
+    this.angleFalconConfiguration.Slot0.kG = 14;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = 0.15;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = 0.3;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = 3;
+
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
     this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
@@ -67,14 +68,14 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
-    this.angleFalcon.setNeutralMode(NeutralModeValue.Coast);
+    this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
     this.angleFalcon.set(0);
 
-    double flywheelP = 0.0;
-    double flywheelI = 0.000;
-    double flywheelD = 0;
-    double flywheelFF = 0;
+    double flywheelP = 0.002;
+    double flywheelI = 0.00000;
+    double flywheelD = 0.01;
+    double flywheelFF = 0.0002;
 
     this.flywheelVortexMaster.restoreFactoryDefaults();
     this.flywheelVortexMasterPID.setP(flywheelP, 0);

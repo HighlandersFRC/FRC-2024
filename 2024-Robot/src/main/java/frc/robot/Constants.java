@@ -36,12 +36,14 @@ public final class Constants {
 
     //Intake up and down positions
     public enum IntakePosition {
-      kDOWN(INTAKE_DOWN_ANGLE_DEG), kUP(INTAKE_UP_ANGLE_DEG);
+      kDOWN(INTAKE_DOWN_ANGLE_DEG, INTAKE_DOWN_ANGLE_ROT), kUP(INTAKE_UP_ANGLE_DEG, INTAKE_UP_ANGLE_ROT);
 
-      public final double angle;
+      public final double degrees;
+      public final double rotations;
 
-      private IntakePosition(double angle){
-        this.angle = angle;
+      private IntakePosition(double degrees, double rotations){
+        this.degrees = degrees;
+        this.rotations = rotations;
       }
     }
 
@@ -52,6 +54,9 @@ public final class Constants {
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     //feeder
+
+    //TOF
+    public static final double FEEDER_TOF_THRESHOLD_MM = 100;
   }
 
   //Vision constants (e.g. camera offsets)
@@ -212,9 +217,8 @@ public final class Constants {
     //feeder
     public static final int FEEDER_ROLLER_MOTOR_ID = 15;
 
-    //climber
-    public static final int CLIMBER_LEFT_MOTOR_ID = 16;
-    public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
+    //TOF
+    public static final int FEEDER_TOF_ID = 0;
   }
 
   //Misc. controller values
