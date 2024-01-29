@@ -53,6 +53,52 @@ public final class Constants {
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
+    // {distance(inches), target angle(deg), hood angle(deg), RPM}
+    public static final double [][] SHOOTING_LOOKUP_TABLE = {
+      {1.4352, 13.80, 53, 4000},
+      {2.2987, -3.64, 42, 4000},
+      {3.3655, -12.68, 31, 5500},
+      {3.6195, -19.93, 26, 6000},
+      {5.9817, -23.34, 22, 6500}
+    };
+
+    public static double[] getShooterValues(double angle) {
+        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
+        if (angle > SHOOTING_LOOKUP_TABLE[0][1]) {
+            //If the angle is closer than the first setpoint
+            double[] returnArr = {SHOOTING_LOOKUP_TABLE[0][2], SHOOTING_LOOKUP_TABLE[0][3]};
+            return returnArr;
+        } else if (angle < SHOOTING_LOOKUP_TABLE[lastIndex][1]) {
+            //If the angle is farther than the last setpoint
+            double[] returnArr = {SHOOTING_LOOKUP_TABLE[lastIndex][2], SHOOTING_LOOKUP_TABLE[lastIndex][3]};
+            return returnArr;
+        } else {
+            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
+                if (angle < SHOOTING_LOOKUP_TABLE[i][1] && angle > SHOOTING_LOOKUP_TABLE[i + 1][1]) {
+                    //If the angle is in the table of setpoints
+                    //Calculate where angle is between setpoints
+                    double leftDif = angle - SHOOTING_LOOKUP_TABLE[i][1];
+                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][1] - SHOOTING_LOOKUP_TABLE[i][1]);
+
+                    double hood1 = SHOOTING_LOOKUP_TABLE[i][2];
+                    double rpm1 = SHOOTING_LOOKUP_TABLE[i][3];
+                    double hood2 = SHOOTING_LOOKUP_TABLE[i + 1][2];
+                    double rpm2 = SHOOTING_LOOKUP_TABLE[i + 1][3];
+
+                    //Interpolate in-between values for hood angle and shooter rpm
+                    double newHood = hood1 + (percent * (hood2 - hood1));
+                    double newRPM = rpm1 + (percent * (rpm2 - rpm1));
+                    
+                    double[] returnArr = {newHood, newRPM};
+                    return returnArr;
+                }
+            }
+            //Should never run
+            double[] returnArr = {0, 0};
+            return returnArr;
+        }  
+    }
+
     //feeder
 
     //TOF

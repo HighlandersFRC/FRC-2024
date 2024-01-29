@@ -26,6 +26,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
+  private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
   private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -51,6 +52,10 @@ public class Peripherals extends SubsystemBase {
     noTrackLimelightArray[4] = 0;
     noTrackLimelightArray[5] = 0;
     setDefaultCommand(new PeripheralsDefault(this));
+  }
+
+  public double getFrontCamTy(){
+    return frontCamTy.getDouble(100);
   }
 
   public void setFrontCamPipeline(int pipeline){

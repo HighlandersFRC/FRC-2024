@@ -28,6 +28,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoParser;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -96,13 +97,13 @@ public class Robot extends LoggedRobot {
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
-    if (OI.isBlueSide()) {
-      System.out.println("ON BLUE SIDE");
-      fieldSide = "blue";
-    } else {
-      System.out.println("ON RED SIDE");
-      fieldSide = "red";
-    }
+    // if (OI.isBlueSide()) {
+    //   System.out.println("ON BLUE SIDE");
+    //   fieldSide = "blue";
+    // } else {
+    //   System.out.println("ON RED SIDE");
+    //   fieldSide = "red";
+    // }
 
     lights.init(fieldSide);
     peripherals.init();
@@ -151,14 +152,14 @@ public class Robot extends LoggedRobot {
     //     System.out.println("ERROR WITH PATH FILE " + e);
     //   }
     // } else if (OI.is5PieceAuto()) {
-    //   try {
-    //     pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
-    //     FileReader scanner = new FileReader(pathingFile);
-    //     pathRead = new JSONObject(new JSONTokener(scanner));
-    //     pathJSON = (JSONArray) pathRead.get("sampled_points");
-    //   } catch (Exception e) {
-    //     System.out.println("ERROR WITH PATH FILE " + e);
-    //   }
+      try {
+        pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
+        FileReader scanner = new FileReader(pathingFile);
+        pathRead = new JSONObject(new JSONTokener(scanner));
+        pathJSON = (JSONArray) pathRead.get("sampled_points");
+      } catch (Exception e) {
+        System.out.println("ERROR WITH PATH FILE " + e);
+      }
     // } else if (OI.is4Piece1FarAuto()) {
     //   try {
     //     pathingFile = new File("/home/lvuser/deploy/4Piece1FarPart1.json");
@@ -193,8 +194,8 @@ public class Robot extends LoggedRobot {
     //   this.auto = new FourPieceCloseAuto(drive, peripherals);
     //   auto.schedule();
     // } else if (OI.is5PieceAuto()) {
-    //   this.auto = new FivePieceAuto(drive, peripherals);
-    //   auto.schedule();
+      this.auto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, lights, tof);
+      auto.schedule();
     // } else if (OI.is4Piece1FarAuto()){
     //   this.auto = new FourPieceOneFarAuto(drive, peripherals);
     //   auto.schedule();
@@ -208,8 +209,8 @@ public class Robot extends LoggedRobot {
     //   System.out.println("NO AUTO SELECTED");
     // }
 
-    this.auto = new AutoParser(drive, intake, feeder, shooter, peripherals, "CommandTest");
-    this.auto.schedule();
+    // this.auto = new AutoParser(drive, intake, feeder, shooter, peripherals, "CommandTest");
+    // this.auto.schedule();
   }
 
   @Override
@@ -261,13 +262,14 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  400));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
-    OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 2000));
-    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 24, 6500, 2000));
-    OI.driverX.whileTrue(new RunClimber(climber, 0.6, 0.6));
-    OI.driverY.whileTrue(new RunClimber(climber, 0.0, 0.6));
-    OI.driverRB.whileTrue(new RunClimber(climber, 0.6, 0.0));
+    OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 6000, 2000));
+    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 2500, 2000));
+    // OI.driverX.whileTrue(new RunClimber(climber, 0.6, 0.6));
+    // OI.driverY.whileTrue(new RunClimber(climber, 0.0, 0.6));
+    // OI.driverRB.whileTrue(new RunClimber(climber, 0.6, 0.0));
+    OI.driverY.whileTrue(new AutoShoot(shooter, feeder, peripherals, lights, tof, 600));
 
     //Operator
   }

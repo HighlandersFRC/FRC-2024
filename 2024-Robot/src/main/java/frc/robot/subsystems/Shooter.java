@@ -138,6 +138,10 @@ public class Shooter extends SubsystemBase {
     return this.flywheelVortexMasterEncoder.getVelocity() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
   }
 
+  public double getFlywheelFollowerRPM(){
+    return this.flywheelVortexFollowerEncoder.getVelocity() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
+  }
+
   public double getAngleRotations(){
     return this.angleFalcon.getPosition().getValue();
   }
@@ -149,6 +153,7 @@ public class Shooter extends SubsystemBase {
   //Constantly set flywheel velocity PID
   public void teleopPeriodic(){
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
+    SmartDashboard.putNumber("Flywheel Follower RPM", getFlywheelFollowerRPM());
     SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
   }
 
