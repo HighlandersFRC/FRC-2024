@@ -150,9 +150,9 @@ public final class Constants {
     public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
 
     //Standard deviation adjustments
-    public static final double STANDARD_DEVIATION_SCALAR = 10;
+    public static final double STANDARD_DEVIATION_SCALAR = 1;
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 0.25;
-    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 2;
+    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 3;
     public static final double TAG_STANDARD_DEVIATION_DISTANCE = 3; //meters
     public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
 
@@ -169,7 +169,6 @@ public final class Constants {
     AprilTag Size: 165
     Detector Downscale: 1.5
     Quality Threshold: 2
-
     */
 
     //Standard deviation regressions

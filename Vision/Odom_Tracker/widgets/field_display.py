@@ -66,6 +66,10 @@ class FieldDisplay(Image):
                     camera_pos = (pose[1] + constants.BACK_CAMERA_POSITION_POLAR[0] * math.cos(constants.BACK_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.BACK_CAMERA_POSITION_POLAR[0] * math.sin(constants.BACK_CAMERA_POSITION_POLAR[1] + pose[3]))
                 elif track["camera"] == "front_cam":
                     camera_pos = (pose[1] + constants.FRONT_CAMERA_POSITION_POLAR[0] * math.cos(constants.FRONT_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.FRONT_CAMERA_POSITION_POLAR[0] * math.sin(constants.FRONT_CAMERA_POSITION_POLAR[1] + pose[3]))
+                elif track["camera"] == "left_cam":
+                    camera_pos = (pose[1] + constants.LEFT_CAMERA_POSITION_POLAR[0] * math.cos(constants.LEFT_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.LEFT_CAMERA_POSITION_POLAR[0] * math.sin(constants.LEFT_CAMERA_POSITION_POLAR[1] + pose[3]))
+                elif track["camera"] == "right_cam":
+                    camera_pos = (pose[1] + constants.RIGHT_CAMERA_POSITION_POLAR[0] * math.cos(constants.RIGHT_CAMERA_POSITION_POLAR[1] + pose[3]), pose[2] + constants.RIGHT_CAMERA_POSITION_POLAR[0] * math.sin(constants.RIGHT_CAMERA_POSITION_POLAR[1] + pose[3]))
                 camera_pos_pixels = constants.meters_to_pixels(camera_pos)
                 self.canvas.add(Color(0, 0.8, 0, 1))
                 self.canvas.add(Line(points = [camera_pos_pixels[0], camera_pos_pixels[1], constants.meters_to_pixels_x(constants.TAG_POSES[fid - 1][0]), constants.meters_to_pixels_y(constants.TAG_POSES[fid - 1][1])], width = 2, cap = "round", joint = "round"))

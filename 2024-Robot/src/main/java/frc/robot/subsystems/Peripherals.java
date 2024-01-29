@@ -18,8 +18,6 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.PeripheralsDefault;
-import frc.robot.sensors.Navx;
-import frc.robot.sensors.TOF;
 
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
@@ -108,10 +106,18 @@ public class Peripherals extends SubsystemBase {
     JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     JSONObject leftCamResults = new JSONObject(leftCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     JSONObject rightCamResults = new JSONObject(rightCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
-    allCamResults.put("BackCam", backCamResults);
-    allCamResults.put("FrontCam", frontCamResults);
-    allCamResults.put("LeftCam", leftCamResults);
-    allCamResults.put("RightCam", rightCamResults);
+    if (!backCamResults.isNull("Fiducial")){
+      allCamResults.put("BackCam", backCamResults);
+    }
+    if (!frontCamResults.isNull("Fiducial")){
+      allCamResults.put("FrontCam", frontCamResults);
+    }
+    if (!leftCamResults.isNull("Fiducial")){
+      allCamResults.put("LeftCam", leftCamResults);
+    }
+    if (!rightCamResults.isNull("Fiducial")){
+      allCamResults.put("RightCam", rightCamResults);
+    }
     return allCamResults;
   }
 
