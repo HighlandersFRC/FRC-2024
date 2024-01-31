@@ -140,9 +140,9 @@ public final class Constants {
     public static final int RIGHT_CAMERA_ID = 2;
 
     //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
-    public static final double[] FRONT_CAMERA_POSE = {0.3683, -0.01905, 0.23495, 0, 0, 0};
-    public static final double[] LEFT_CAMERA_POSE = {0.0172, 0.3429, 0.23495, 0, 0, degreesToRadians(90)};
-    public static final double[] RIGHT_CAMERA_POSE = {0.073025, -0.3429, 0.23495, 0, 0, degreesToRadians(270)};
+    public static final double[] FRONT_CAMERA_POSE = {0.3683, -0.01905, 0.23495, 0, degreesToRadians(33), 0};
+    public static final double[] LEFT_CAMERA_POSE = {0.0172, 0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(90)};
+    public static final double[] RIGHT_CAMERA_POSE = {0.073025, -0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(270)};
     public static final double[] BACK_CAMERA_POSE = {0, 0, 0, 0, 0, degreesToRadians(180)};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
     public static final double[] LEFT_CAMERA_POSITION_POLAR = {getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]), Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0])};
@@ -151,9 +151,9 @@ public final class Constants {
 
     //Standard deviation adjustments
     public static final double STANDARD_DEVIATION_SCALAR = 1;
-    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 0.25;
+    public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 1;
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 3;
-    public static final double TAG_STANDARD_DEVIATION_DISTANCE = 3; //meters
+    public static final double TAG_STANDARD_DEVIATION_DISTANCE = 2; //meters
     public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
 
     //Limelight settings

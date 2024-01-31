@@ -72,9 +72,9 @@ public class Shooter extends SubsystemBase {
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
     this.angleFalcon.set(0);
 
-    double flywheelP = 0.002;
+    double flywheelP = 0.01;
     double flywheelI = 0.00000;
-    double flywheelD = 0.01;
+    double flywheelD = 0.0;
     double flywheelFF = 0.0002;
 
     this.flywheelVortexMaster.restoreFactoryDefaults();
@@ -84,6 +84,9 @@ public class Shooter extends SubsystemBase {
     this.flywheelVortexMasterPID.setFF(flywheelFF, 0);
     this.flywheelVortexMasterPID.setOutputRange(-1, 1);
     this.flywheelVortexMaster.setIdleMode(IdleMode.kCoast);
+    this.flywheelVortexMaster.setClosedLoopRampRate(0.1);
+    this.flywheelVortexMaster.setOpenLoopRampRate(0.1);
+    // this.flywheelVortexMaster.setSmartCurrentLimit(60);
     this.flywheelVortexMaster.set(0);
 
     this.flywheelVortexFollower.restoreFactoryDefaults();
@@ -94,6 +97,9 @@ public class Shooter extends SubsystemBase {
     this.flywheelVortexFollowerPID.setFF(flywheelFF, 0);
     this.flywheelVortexFollowerPID.setOutputRange(-1, 1);
     this.flywheelVortexFollower.setIdleMode(IdleMode.kCoast);
+    this.flywheelVortexFollower.setClosedLoopRampRate(0.1);
+    this.flywheelVortexFollower.setOpenLoopRampRate(0.1);
+    // this.flywheelVortexFollower.setSmartCurrentLimit(60);
     this.flywheelVortexFollower.set(0);
   }
 
@@ -155,6 +161,8 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel Follower RPM", getFlywheelFollowerRPM());
     SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
+    // SmartDashboard.putNumber("Flywheel %Out Master", this.flywheelVortexMaster.getAppliedOutput());
+    // SmartDashboard.putNumber("Flywheel %Out Follower", this.flywheelVortexFollower.getAppliedOutput());
   }
 
   @Override
