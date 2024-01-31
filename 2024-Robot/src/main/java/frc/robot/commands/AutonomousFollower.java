@@ -63,6 +63,7 @@ public class AutonomousFollower extends Command {
 
   @Override
   public void execute() {
+    System.out.println("auto runs");
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getFusedOdometryX();
     odometryFusedY = drive.getFusedOdometryY();

@@ -37,6 +37,7 @@ import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.ToggleBrake;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -75,7 +76,7 @@ public class Robot extends LoggedRobot {
   JSONObject pathRead;
   JSONArray pathJSON;
 
-  String fieldSide = "red";
+  String fieldSide = "blue";
 
   Command auto;
 
@@ -245,6 +246,7 @@ public class Robot extends LoggedRobot {
     } catch (Exception e){
       System.out.println("No auto is selected");
     }
+    this.drive.autoInit(this.pathJSON);
     this.intake.autoInit();
   }
 
@@ -268,7 +270,8 @@ public class Robot extends LoggedRobot {
     OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 2500, 2000));
     // OI.driverX.whileTrue(new RunClimber(climber, 0.6, 0.6));
     // OI.driverY.whileTrue(new RunClimber(climber, 0.0, 0.6));
-    // OI.driverRB.whileTrue(new RunClimber(climber, 0.6, 0.0));
+    OI.driverRB.whileTrue(new RunClimber(climber, 0.0, 0.6));
+    OI.driverLB.onTrue(new ToggleBrake(climber));
     OI.driverY.whileTrue(new AutoShoot(shooter, feeder, peripherals, lights, tof, 600));
 
     //Operator

@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.tools.EMBrake;
 
 public class Climber extends SubsystemBase {
   private Lights lights;
@@ -26,10 +27,13 @@ public class Climber extends SubsystemBase {
   private final TalonFX rightClimberFalcon = new TalonFX(Constants.CANInfo.CLIMBER_RIGHT_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration rightClimberFalconConfiguration = new TalonFXConfiguration();
   private final PositionTorqueCurrentFOC rightClimberFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+
+  private final EMBrake brake = new EMBrake(Constants.CANInfo.CLIMBER_BRAKE_PORT);
+
   /** Creates a new Climber. */
   public Climber(Lights lights) {
     this.lights = lights;
-    setDefaultCommand(new ClimberDefault(this));
+    // setDefaultCommand(new ClimberDefault(this));
   }
 
   public void init(){
@@ -54,6 +58,17 @@ public class Climber extends SubsystemBase {
     this.leftClimberFalcon.set(left);
     this.rightClimberFalcon.set(-right);
   }
+
+  public void lock(){
+    brake.lock();
+  }
+  public void unlock(){
+    brake.unlock();
+  }
+  public void toggle(){
+    brake.toggle();
+  }
+  
   @Override
   public void periodic() {
     // This method will be called once per scheduler run

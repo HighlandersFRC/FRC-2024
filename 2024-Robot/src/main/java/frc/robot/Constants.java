@@ -268,6 +268,7 @@ public final class Constants {
     //Climber
     public static final int CLIMBER_LEFT_MOTOR_ID = 16;
     public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
+    public static final int CLIMBER_BRAKE_PORT = 0;
   }
 
   //Misc. controller values

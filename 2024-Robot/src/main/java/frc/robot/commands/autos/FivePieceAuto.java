@@ -138,10 +138,11 @@ public class FivePieceAuto extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new AutoShoot(shooter, feeder, peripherals, lights, tof, 600),
-      new ParallelCommandGroup(
+      new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON, 0, false),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1800)
-      )
+      ),
+      new AutoShoot(shooter, feeder, peripherals, lights, tof, 600)
       // new WaitCommand(0.5),
       // new AutonomousFollower(drive, pathJSON2, 0, false),
       // new WaitCommand(0.5),
