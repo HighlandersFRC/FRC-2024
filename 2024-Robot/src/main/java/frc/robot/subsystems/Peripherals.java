@@ -1,5 +1,7 @@
 package frc.robot.subsystems;
 
+import java.util.ArrayList;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -25,6 +27,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
   private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
+  private NetworkTableEntry frontCamTx = frontCam.getEntry("tx");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
   private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -54,6 +57,34 @@ public class Peripherals extends SubsystemBase {
 
   public double getFrontCamTy(){
     return frontCamTy.getDouble(100);
+  }
+
+  public double getFrontCamTargetTx(){
+    JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
+    if (results.isNull("Fiducial")){
+      return 100;
+    }
+    JSONArray fiducials = results.getJSONArray("Fiducial");
+    for (int i = 0; i < fiducials.length(); i ++){
+      int id = ((JSONObject) fiducials.get(i)).getInt("fID");
+      if (id == 7 || id == 4){
+        return ((JSONObject) fiducials.get(i)).getDouble("tx");
+      }
+    }
+    return 100;
+  }
+
+  public ArrayList<Integer> getFrontCamIDs(){
+    JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
+    if (results.isNull("Fiducial")){
+      return new ArrayList<Integer>();
+    }
+    ArrayList<Integer> ids = new ArrayList<Integer>();
+    JSONArray fiducials = results.getJSONArray("Fiducial");
+    for (int i = 0; i < fiducials.length(); i ++){
+      ids.add(((JSONObject) fiducials.get(i)).getInt("fID"));
+    }
+    return ids;
   }
 
   public void setFrontCamPipeline(int pipeline){

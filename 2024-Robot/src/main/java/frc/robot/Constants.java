@@ -55,8 +55,8 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.4352, 13.80, 53, 4000},
-      {2.2987, -3.64, 42, 4000},
+      {1.4352, 13.80, 53, 5000},
+      {2.2987, -3.64, 42, 5000},
       {3.3655, -12.68, 31, 5500},
       {3.6195, -19.93, 26, 6000},
       {5.9817, -23.34, 22, 6500}

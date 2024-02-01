@@ -57,8 +57,7 @@ public class Feeder extends SubsystemBase {
 
   //Constantly set roller velocity PID
   public void teleopPeriodic(){
-    SmartDashboard.putNumber("Feeder RPM", getRPM());
-    
+   
   }
 
   @Override

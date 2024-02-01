@@ -4,16 +4,21 @@
 
 package frc.robot.commands;
 
+import java.util.ArrayList;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
+import frc.robot.tools.controlloops.PID;
 
 public class AutoShoot extends Command {
+  private Drive drive;
   private Shooter shooter;
   private Feeder feeder;
   private Peripherals peripherals;
@@ -34,10 +39,25 @@ public class AutoShoot extends Command {
 
   private double shooterDegreesAllowedError = 1;
   private double shooterRPMAllowedError = 50;
+  private double driveAngleAllowedError = 1;
 
   private double angle;
 
-  public AutoShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM) {
+  private boolean hasReachedSetPoint;
+
+  private PID pid;
+
+  private double set = 0;
+
+  private double kP = 0.07;
+  private double kI = 0;
+  private double kD = 0.02;
+
+  private double turn;
+  private double targetPigeonAngle;
+
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM) {
+    this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
@@ -46,10 +66,11 @@ public class AutoShoot extends Command {
     // this.shooterDegrees = shooterDegrees;
     // this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
-    addRequirements(this.shooter, this.feeder);
+    addRequirements(this.drive, this.shooter, this.feeder);
   }
 
-  public AutoShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM, double timeout) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM, double timeout) {
+    this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
@@ -59,7 +80,7 @@ public class AutoShoot extends Command {
     // this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
-    addRequirements(this.shooter, this.feeder);
+    addRequirements(this.drive, this.shooter, this.feeder);
   }
 
   // Called when the command is initially scheduled.
@@ -68,20 +89,59 @@ public class AutoShoot extends Command {
     this.startTime = Timer.getFPGATimestamp();
     this.hasShot = false;
     this.angle = peripherals.getFrontCamTy();
-    this.shooterValues = Constants.SetPoints.getShooterValues(angle);
-    this.shooterDegrees = shooterValues[0];
-    this.shooterRPM = shooterValues[1];
+    this.hasReachedSetPoint = false;
+    pid = new PID(kP, kI, kD);
+    pid.setMinOutput(-3);
+    pid.setMaxOutput(3);
+
+    turn = peripherals.getFrontCamTargetTx();
+    double pigeonAngle = peripherals.getPigeonAngle();
+    this.targetPigeonAngle = pigeonAngle - turn;
+    pid.setSetPoint(targetPigeonAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    turn = peripherals.getFrontCamTargetTx();
+    double pigeonAngle = peripherals.getPigeonAngle();
+    pid.updatePID(pigeonAngle);
+
+    double result = -pid.getResult();
+
+    ArrayList<Integer> ids = peripherals.getFrontCamIDs();
+
+    boolean canSeeTag = false;
+    for (int id : ids){
+      if (id == 7 || id == 4){
+        canSeeTag = true;
+      }
+    }
+
+    if (canSeeTag && turn < 90){
+      this.drive.driveAutoAligned(result);
+    } else {
+      this.drive.autoRobotCentricTurn(0);
+    }
+
+    if (canSeeTag){
+      this.shooterValues = Constants.SetPoints.getShooterValues(angle);
+      this.shooterDegrees = shooterValues[0];
+      this.shooterRPM = shooterValues[1];
+    } 
+
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError){
+
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngle - this.targetPigeonAngle) <= this.driveAngleAllowedError){
+      this.hasReachedSetPoint = true;
+    }
+
+    if (this.hasReachedSetPoint == true){
       this.feeder.set(this.feederRPM);
     } else {
-      this.feeder.set(0);
+      this.feeder.set(0.0);
     }
+
     if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
