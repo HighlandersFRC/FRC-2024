@@ -68,6 +68,7 @@ public class AutonomousFollower extends Command {
     odometryFusedX = drive.getFusedOdometryX();
     odometryFusedY = drive.getFusedOdometryY();
     odometryFusedTheta = drive.getFusedOdometryTheta();
+    System.out.println("Follower field side: " + this.drive.getFieldSide());
 
     System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
 

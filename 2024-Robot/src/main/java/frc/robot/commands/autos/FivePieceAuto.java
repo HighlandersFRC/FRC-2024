@@ -20,6 +20,8 @@ import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunShooter;
+import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
@@ -140,7 +142,8 @@ public class FivePieceAuto extends SequentialCommandGroup {
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON, 0, false),
-        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, -1800)
+        new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+        new RunShooter(shooter, 30, 1000)
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600)
       // new WaitCommand(0.5),

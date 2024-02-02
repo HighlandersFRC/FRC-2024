@@ -5,6 +5,8 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
+import com.fasterxml.jackson.core.io.JsonEOFException;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
@@ -47,6 +49,21 @@ public class OI {
     public static JoystickButton operatorMenuButton = new JoystickButton(operatorController, 8);
 
     public static Joystick autoChooser = new Joystick(2);
+
+    public static JoystickButton autoChooserIsBlue = new JoystickButton(autoChooser, 8);
+    public static JoystickButton autoChooserIsRed = new JoystickButton(autoChooser, 6);
+
+    public static void printAutoChooserInputs(){
+        System.out.println("Driver Controller Connected: " + driverController.isConnected());
+        System.out.println("Operator Controller Connected: " + operatorController.isConnected());
+        System.out.println("Auto Chooser Connected: " + autoChooser.isConnected());
+        System.out.println("Auto Chooser Num Buttons: " + autoChooser.getButtonCount());
+        System.out.println("Is Blue: " + autoChooserIsBlue.getAsBoolean());
+        System.out.println("Is Red: " + autoChooserIsRed.getAsBoolean());
+        for (int i = 1; i <= 16;  i ++){
+            System.out.println("Auto Chooser Button " + i + " : " + autoChooser.getRawButton(i));
+        }
+    }
 
     public static double getDriverLeftX() {
         return -driverController.getLeftX();

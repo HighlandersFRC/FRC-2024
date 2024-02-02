@@ -63,8 +63,6 @@ public class AutoShoot extends Command {
     this.peripherals = peripherals;
     this.lights = lights;
     this.tof = tof;
-    // this.shooterDegrees = shooterDegrees;
-    // this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     addRequirements(this.drive, this.shooter, this.feeder);
   }
@@ -76,8 +74,6 @@ public class AutoShoot extends Command {
     this.peripherals = peripherals;
     this.lights = lights;
     this.tof = tof;
-    // this.shooterDegrees = shooterDegrees;
-    // this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
     addRequirements(this.drive, this.shooter, this.feeder);
@@ -98,6 +94,9 @@ public class AutoShoot extends Command {
     double pigeonAngle = peripherals.getPigeonAngle();
     this.targetPigeonAngle = pigeonAngle - turn;
     pid.setSetPoint(targetPigeonAngle);
+
+    // System.out.println("Pigeon Angle " + pigeonAngle);
+    // System.out.println("Target Angle " + targetPigeonAngle);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -142,7 +141,7 @@ public class AutoShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }
@@ -155,6 +154,10 @@ public class AutoShoot extends Command {
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    // System.out.println("Duration " + (Timer.getFPGATimestamp() - this.startTime));
+    // System.out.println("Has Shot " + this.hasShot);
+    // System.out.println("Time Since Shot " + (Timer.getFPGATimestamp() - this.shotTime));
+
     if (this.shooterDegrees > 90){
       return true;
     }
