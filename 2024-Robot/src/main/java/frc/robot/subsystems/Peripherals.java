@@ -55,8 +55,19 @@ public class Peripherals extends SubsystemBase {
     setDefaultCommand(new PeripheralsDefault(this));
   }
 
-  public double getFrontCamTy(){
-    return frontCamTy.getDouble(100);
+  public double getFrontCamTargetTy(){
+    JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
+    if (results.isNull("Fiducial")){
+      return 100;
+    }
+    JSONArray fiducials = results.getJSONArray("Fiducial");
+    for (int i = 0; i < fiducials.length(); i ++){
+      int id = ((JSONObject) fiducials.get(i)).getInt("fID");
+      if (id == 7 || id == 4){
+        return ((JSONObject) fiducials.get(i)).getDouble("ty");
+      }
+    }
+    return 100;
   }
 
   public double getFrontCamTargetTx(){

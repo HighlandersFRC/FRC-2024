@@ -31,14 +31,14 @@ public class AutoShoot extends Command {
   private double feederRPM;
 
   private double startTime;
-  private double timeout = 15;
+  private double timeout = 10;
 
   private double shotTime = 0;
   private boolean hasShot;
   private double shotPauseTime = 0.1;
 
   private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 50;
+  private double shooterRPMAllowedError = 100;
   private double driveAngleAllowedError = 1;
 
   private double angle;
@@ -84,7 +84,7 @@ public class AutoShoot extends Command {
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
     this.hasShot = false;
-    this.angle = peripherals.getFrontCamTy();
+    this.angle = peripherals.getFrontCamTargetTy();
     this.hasReachedSetPoint = false;
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
@@ -95,8 +95,7 @@ public class AutoShoot extends Command {
     this.targetPigeonAngle = pigeonAngle - turn;
     pid.setSetPoint(targetPigeonAngle);
 
-    // System.out.println("Pigeon Angle " + pigeonAngle);
-    // System.out.println("Target Angle " + targetPigeonAngle);
+    // this.feeder.set(0);
   }
 
   // Called every time the scheduler runs while the command is scheduled.
@@ -124,6 +123,7 @@ public class AutoShoot extends Command {
     }
 
     if (canSeeTag){
+      this.angle = peripherals.getFrontCamTargetTy();
       this.shooterValues = Constants.SetPoints.getShooterValues(angle);
       this.shooterDegrees = shooterValues[0];
       this.shooterRPM = shooterValues[1];
@@ -145,11 +145,20 @@ public class AutoShoot extends Command {
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }
+
+    System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
+    System.out.println("Angle: " + this.shooter.getAngleDegrees());
+    System.out.println("Angle Err: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    System.out.println("Pigeon Angle: " + pigeonAngle);
+    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngle - targetPigeonAngle));
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.feeder.set(0);
+  }
 
   // Returns true when the command should end.
   @Override

@@ -13,8 +13,10 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import com.ctre.phoenix6.configs.Slot0Configs;
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
@@ -133,9 +135,9 @@ public class Drive extends SubsystemBase {
   private double yI = 0.0;
   private double yD = 1.2;
 
-  private double thetaP = 3.1;
+  private double thetaP = 4.01;
   private double thetaI = 0.0;
-  private double thetaD = 0.8;
+  private double thetaD = 1.15;
 
   private PID xPID = new PID(xP, xI, xD);
   private PID yPID = new PID(yP, yI, yD);
@@ -185,8 +187,8 @@ public class Drive extends SubsystemBase {
     yPID.setMinOutput(-4.9);
     yPID.setMaxOutput(4.9);
 
-    thetaPID.setMinOutput(-(Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
-    thetaPID.setMaxOutput((Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+    thetaPID.setMinOutput(-3);
+    thetaPID.setMaxOutput(3);
 
     setDefaultCommand(new DriveDefault(this));
   }
@@ -912,7 +914,8 @@ public class Drive extends SubsystemBase {
 
         double feedForwardX = (targetX - currentPointX)/(targetTime - currentPointTime);
         double feedForwardY = (targetY - currentPointY)/(targetTime - currentPointTime);
-        double feedForwardTheta = -(targetTheta - currentPointTheta)/(targetTime - currentPointTime);
+        // double feedForwardTheta = -(targetTheta - currentPointTheta)/(targetTime - currentPointTime);
+        double feedForwardTheta = 0;
 
         xPID.setSetPoint(targetX);
         yPID.setSetPoint(targetY);
@@ -936,8 +939,8 @@ public class Drive extends SubsystemBase {
         velocityArray[1] = -yVel;
         velocityArray[2] = thetaVel;
 
-        System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
-        System.out.println("PID side: " + this.fieldSide);
+        // System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
+        // System.out.println("PID side: " + this.fieldSide);
 
         return velocityArray;
     }

@@ -29,7 +29,7 @@ public final class Constants {
     //drive
 
     //intake
-    public static final double INTAKE_DOWN_ANGLE_ROT = -0.385;
+    public static final double INTAKE_DOWN_ANGLE_ROT = -0.375;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
     public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
@@ -55,7 +55,7 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.4352, 13.80, 53, 5000},
+      {1.4352, 13.80, 52, 4500},
       {2.2987, -3.64, 42, 5000},
       {3.3655, -12.68, 31, 5500},
       {3.6195, -19.93, 26, 6000},
@@ -102,7 +102,7 @@ public final class Constants {
     //feeder
 
     //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 100;
+    public static final double FEEDER_TOF_THRESHOLD_MM = 150;
   }
 
   //Vision constants (e.g. camera offsets)

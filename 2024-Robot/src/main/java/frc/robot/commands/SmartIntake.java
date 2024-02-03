@@ -18,6 +18,8 @@ public class SmartIntake extends Command {
   private double intakeRPM;
   private double feederRPM;
 
+  private boolean haveNote;
+
   public SmartIntake(Intake intake, Feeder feeder, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
     this.feeder = feeder;
@@ -30,7 +32,9 @@ public class SmartIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.haveNote = false;
+  }
 
   @Override
   public void execute() {
@@ -39,16 +43,23 @@ public class SmartIntake extends Command {
       this.feeder.set(0);
       OI.driverController.setRumble(RumbleType.kBothRumble, 0.7);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0.7);
+      this.haveNote = true;
     } else {
       this.feeder.set(this.feederRPM);
     }
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.feeder.set(0);
+  }
 
   @Override
   public boolean isFinished() {
-    return false;
+    if (this.haveNote){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

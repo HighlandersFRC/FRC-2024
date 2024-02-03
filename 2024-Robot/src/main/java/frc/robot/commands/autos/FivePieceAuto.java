@@ -136,26 +136,29 @@ public class FivePieceAuto extends SequentialCommandGroup {
 
 
     addRequirements(drive, intake, feeder, shooter, lights);
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+
     addCommands(
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, pathJSON, 0, false),
-        new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
-        new RunShooter(shooter, 30, 1000)
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600)
-      // new WaitCommand(0.5),
-      // new AutonomousFollower(drive, pathJSON2, 0, false),
-      // new WaitCommand(0.5),
-      // new AutonomousFollower(drive, pathJSON3, 0, false),
-      // new WaitCommand(0.5),
-      // new AutonomousFollower(drive, pathJSON4, 0, false),
-      // new AutonomousFollower(drive, pathJSON5, 0, false),
-      // new WaitCommand(0.5),
-      // new AutonomousFollower(drive, pathJSON6, 0, false),
-      // new AutonomousFollower(drive, pathJSON7, 0, false)
+      new ParallelDeadlineGroup(
+        new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+        new AutonomousFollower(drive, pathJSON, 0, false),
+        new RunShooter(shooter, 40, 3000)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
+      )
+      // new ParallelDeadlineGroup(
+      //   new AutonomousFollower(drive, pathJSON2, 0, false),
+      //   new RunShooter(shooter, 40, 3000)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
+      //   new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
+      // )
     );
   }
 }

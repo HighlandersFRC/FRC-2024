@@ -98,14 +98,15 @@ public class Robot extends LoggedRobot {
     // // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
-    if (OI.isBlueSide()) {
-      System.out.println("ON BLUE SIDE");
-      fieldSide = "blue";
-    } else {
-      System.out.println("ON RED SIDE");
-      fieldSide = "red";
-    }
-    OI.printAutoChooserInputs();
+    // if (OI.isBlueSide()) {
+    //   System.out.println("ON BLUE SIDE");
+    //   fieldSide = "blue";
+    // } else {
+    //   System.out.println("ON RED SIDE");
+    //   fieldSide = "red";
+    // }
+    // OI.printAutoChooserInputs();
+    this.fieldSide = "blue";
 
     lights.init(fieldSide);
     peripherals.init();
@@ -217,7 +218,6 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
-
     CommandScheduler.getInstance().run();
 
     // Logger.recordOutput("Odometry", drive.getOdometry());
