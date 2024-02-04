@@ -35,19 +35,20 @@ public class AutoShoot extends Command {
 
   private double shotTime = 0;
   private boolean hasShot;
-  private double shotPauseTime = 0.1;
+  private double shotPauseTime = 0.0;
 
-  private double shooterDegreesAllowedError = 1;
+  // private double shooterDegreesAllowedError = 1;
+  // private double shooterRPMAllowedError = 100;
+  // private double driveAngleAllowedError = 2;
+  private double shooterDegreesAllowedError = 2;
   private double shooterRPMAllowedError = 100;
-  private double driveAngleAllowedError = 1;
+  private double driveAngleAllowedError = 2;
 
   private double angle;
 
   private boolean hasReachedSetPoint;
 
   private PID pid;
-
-  private double set = 0;
 
   private double kP = 0.07;
   private double kI = 0;

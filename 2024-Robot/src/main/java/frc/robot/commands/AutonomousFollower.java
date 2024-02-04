@@ -18,7 +18,6 @@ public class AutonomousFollower extends Command {
   private Drive drive;
 
   private JSONArray path;
-  private JSONArray commands;
 
   private double initTime;
   private double currentTime;
@@ -32,7 +31,6 @@ public class AutonomousFollower extends Command {
   private double desiredThetaChange = 0;
 
   private boolean record;
-  private String fieldSide;
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   private double pathStartTime;
@@ -88,7 +86,7 @@ public class AutonomousFollower extends Command {
 
     drive.autoDrive(velocityVector, desiredThetaChange);
 
-    previousTime = currentTime;
+    this.previousTime = currentTime;
 
     if (this.record){
       recordedOdometry.add(new double[] {currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta});

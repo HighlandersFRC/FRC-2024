@@ -16,8 +16,10 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
+import frc.robot.commands.IdleShooter;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
@@ -143,22 +145,45 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
-        new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
-        new AutonomousFollower(drive, pathJSON, 0, false),
-        new RunShooter(shooter, 40, 3000)
+        new ParallelCommandGroup(
+          new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+          new AutonomousFollower(drive, pathJSON, 0, false)
+        ),
+        new IdleShooter(shooter, 3000)
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
-      )
-      // new ParallelDeadlineGroup(
-      //   new AutonomousFollower(drive, pathJSON2, 0, false),
-      //   new RunShooter(shooter, 40, 3000)
-      // ),
-      // new ParallelDeadlineGroup(
-      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
-      //   new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
-      // )
+      ),
+      new ParallelDeadlineGroup(
+        new ParallelCommandGroup(
+          new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+          new AutonomousFollower(drive, pathJSON2, 0, false)
+        ),
+        new IdleShooter(shooter, 3000)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
+      ),
+      new ParallelDeadlineGroup(
+        new ParallelCommandGroup(
+          new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+          new AutonomousFollower(drive, pathJSON3, 0, false)
+        ),
+        new IdleShooter(shooter, 3000)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
+        new RunIntake(intake, 1200)
+      ),
+      //End
+      new ParallelCommandGroup(
+        new RunFeeder(feeder, 0),
+        new IdleShooter(shooter, 0),
+        new RunIntake(intake, 0, 0)
+      ),
+      new WaitCommand(3)
     );
   }
 }
