@@ -24,6 +24,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
@@ -860,6 +861,37 @@ public class Drive extends SubsystemBase {
     frontRight.drive(vector, turnRadiansPerSec, pigeonAngle);
     backLeft.drive(vector, turnRadiansPerSec, pigeonAngle);
     backRight.drive(vector, turnRadiansPerSec, pigeonAngle);
+  }
+
+  //get current velocity vector of the robot in field coordinats, m/s
+  public Vector getRobotVelocityVector(){
+    Vector velocityVector = new Vector(0, 0);
+    double pigeonAngleRadians = Math.toRadians(this.peripherals.getPigeonAngle());
+
+    double frV = this.frontRight.getGroundSpeed();
+    double frTheta = this.frontRight.getWheelPosition() + pigeonAngleRadians;
+    double frVX = frV * Math.cos(frTheta);
+    double frVY = frV * Math.sin(frTheta);
+    double flV = this.frontLeft.getGroundSpeed();
+    double flTheta = this.frontLeft.getWheelPosition() + pigeonAngleRadians;
+    double flVX = flV * Math.cos(flTheta);
+    double flVY = flV * Math.sin(flTheta);
+    double blV = this.backLeft.getGroundSpeed();
+    double blTheta = this.backLeft.getWheelPosition() + pigeonAngleRadians;
+    double blVX = blV * Math.cos(blTheta);
+    double blVY = blV * Math.sin(blTheta);
+    double brV = this.backRight.getGroundSpeed();
+    double brTheta = this.backRight.getWheelPosition() + pigeonAngleRadians;
+    double brVX = brV * Math.cos(brTheta);
+    double brVY = brV * Math.sin(brTheta);
+
+    velocityVector.setI(frVX + flVX + blVX + brVX);
+    velocityVector.setJ(frVY + flVY + blVY + brVY);
+    
+
+    System.out.println("VVector: <" + velocityVector.getI() + ", " + velocityVector.getJ() + ">");
+
+    return velocityVector;
   }
 
   // Autonomous algorithm

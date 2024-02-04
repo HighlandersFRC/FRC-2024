@@ -16,6 +16,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
+import frc.robot.tools.math.Vector;
 
 public class AutoShoot extends Command {
   private Drive drive;
@@ -41,8 +42,8 @@ public class AutoShoot extends Command {
   // private double shooterRPMAllowedError = 100;
   // private double driveAngleAllowedError = 2;
   private double shooterDegreesAllowedError = 2;
-  private double shooterRPMAllowedError = 100;
-  private double driveAngleAllowedError = 2;
+  private double shooterRPMAllowedError = 500;
+  private double driveAngleAllowedError = 4;
 
   private double angle;
 
@@ -50,12 +51,12 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.07;
+  private double kP = 0.04;
   private double kI = 0;
-  private double kD = 0.02;
+  private double kD = 0.06;
 
-  private double turn;
-  private double targetPigeonAngle;
+  private double speakerElevationDegrees;
+  private double speakerAngleDegrees;
 
   public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM) {
     this.drive = drive;
@@ -85,28 +86,19 @@ public class AutoShoot extends Command {
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
     this.hasShot = false;
-    this.angle = peripherals.getFrontCamTargetTy();
     this.hasReachedSetPoint = false;
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
 
-    turn = peripherals.getFrontCamTargetTx();
-    double pigeonAngle = peripherals.getPigeonAngle();
-    this.targetPigeonAngle = pigeonAngle - turn;
-    pid.setSetPoint(targetPigeonAngle);
-
-    // this.feeder.set(0);
+    this.speakerElevationDegrees = peripherals.getFrontCamTargetTy();
+    this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
   }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turn = peripherals.getFrontCamTargetTx();
-    double pigeonAngle = peripherals.getPigeonAngle();
-    pid.updatePID(pigeonAngle);
-
-    double result = -pid.getResult();
+    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
     ArrayList<Integer> ids = peripherals.getFrontCamIDs();
 
@@ -117,22 +109,63 @@ public class AutoShoot extends Command {
       }
     }
 
-    if (canSeeTag && turn < 90){
-      this.drive.driveAutoAligned(result);
-    } else {
-      this.drive.autoRobotCentricTurn(0);
-    }
-
     if (canSeeTag){
-      this.angle = peripherals.getFrontCamTargetTy();
-      this.shooterValues = Constants.SetPoints.getShooterValues(angle);
+      this.speakerElevationDegrees = peripherals.getFrontCamTargetTy();
+      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+      this.shooterValues = Constants.SetPoints.getShooterValues(speakerElevationDegrees);
       this.shooterDegrees = shooterValues[0];
       this.shooterRPM = shooterValues[1];
-    } 
+    }
 
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    //velocity compensation
+    double thetaI = Math.toRadians(pigeonAngleDegrees - this.speakerAngleDegrees);
+    double phiI = Math.toRadians(this.shooterDegrees);
+    double rhoI = Constants.Physical.flywheelRPMToNoteMPS(this.shooterRPM);
+    Vector robotVelocityVector = this.drive.getRobotVelocityVector();
+    double vx = robotVelocityVector.getI();
+    double vy = robotVelocityVector.getJ();
 
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngle - this.targetPigeonAngle) <= this.driveAngleAllowedError){
+    double xI = rhoI * Math.cos(phiI) * Math.cos(thetaI);
+    double yI = rhoI * Math.cos(phiI) * Math.sin(thetaI);
+    double zI = rhoI * Math.sin(phiI);
+
+    double xF = xI - vx;
+    double yF = yI - vy;
+    double zF = zI;
+
+    double thetaF = Math.atan2(yF, xF);
+    if (thetaF < 0){
+      thetaF += 2 * Math.PI;
+    }
+    double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
+    double rhoF = Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2) + Math.pow(zF, 2));
+    // System.out.println("ThetaI: " + thetaI);
+    // System.out.println("PhiI: " + phiI);
+    // System.out.println("RhoI: " + rhoI);
+    // System.out.println("ThetaF: " + thetaF);
+    // System.out.println("PhiF: " + phiF);
+    // System.out.println("RhoF: " + rhoF);
+
+    double targetShooterDegrees = Math.toDegrees(phiF);
+    double targetShooterRPM = Constants.Physical.noteMPSToFlywheelRPM(rhoF);
+
+    double extraPigeonRotations = Math.floor((pigeonAngleDegrees / 360.0));
+    // System.out.println("Extra Rotations: " + extraPigeonRotations);
+    double targetPigeonAngleDegrees = extraPigeonRotations * 360.0 + Math.toDegrees(thetaF);
+
+    this.pid.setSetPoint(targetPigeonAngleDegrees);
+    this.pid.updatePID(pigeonAngleDegrees);
+    double turnResult = -pid.getResult();    
+
+    if (canSeeTag && this.speakerAngleDegrees < 90){
+      this.drive.driveAutoAligned(turnResult);
+    } else {
+      this.drive.driveAutoAligned(0);
+    }
+
+    this.shooter.set(targetShooterDegrees, targetShooterRPM);
+
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;
     }
 
@@ -147,12 +180,16 @@ public class AutoShoot extends Command {
       this.shotTime = Timer.getFPGATimestamp();
     }
 
-    System.out.println("RPM: " + this.shooter.getFlywheelRPM());
-    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
-    System.out.println("Angle: " + this.shooter.getAngleDegrees());
-    System.out.println("Angle Err: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngle);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngle - targetPigeonAngle));
+    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    // System.out.println("Targ. RPM: " + targetShooterRPM);
+    // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
+    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    // System.out.println("Targ. Elev: " + targetShooterDegrees);
+    // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
+    // System.out.println("<================>");
   }
 
   // Called once the command ends or is interrupted.

@@ -21,7 +21,17 @@ public final class Constants {
     public static final double ROBOT_LENGTH = inchesToMeters(29);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
-    public static final double SHOOTER_RESTING_ANGLE_DEG = 8;
+    public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;
+    public static final double FLYWHEEL_RADIUS_METERS = inchesToMeters(2.0);
+    public static final double FLYWHEEL_CIRCUMFERENCE_METERS = 2.0 * Math.PI * FLYWHEEL_RADIUS_METERS;
+
+    public static double flywheelRPMToNoteMPS(double rpm){
+      return rpm * (1.0 / 60.0) * FLYWHEEL_CIRCUMFERENCE_METERS;
+    }
+
+    public static double noteMPSToFlywheelRPM(double mps){
+      return (mps / FLYWHEEL_CIRCUMFERENCE_METERS) * 60.0;
+    }
   }
 
   //Subsystem setpoint constants

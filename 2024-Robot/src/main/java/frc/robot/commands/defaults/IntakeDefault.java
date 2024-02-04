@@ -30,7 +30,8 @@ public class IntakeDefault extends Command {
       this.intake.setAngleEncoderPosition(0);
       this.numTimesOverCurrentLimit ++;
     } else if (!this.isZeroed) {
-      this.intake.setAnglePercent(0.2);
+      // this.intake.setAnglePercent(0.2);
+      this.intake.setAnglePercent(0);
     } else {
       this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP);
     }
