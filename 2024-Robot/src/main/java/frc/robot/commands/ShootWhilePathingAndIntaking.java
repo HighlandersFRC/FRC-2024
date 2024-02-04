@@ -39,9 +39,9 @@ public class ShootWhilePathingAndIntaking extends Command {
 
   //Shooting stuff
   private PID turnPID;
-  private double turnP = 0.07;
+  private double turnP = 0.04;
   private double turnI = 0.0;
-  private double turnD = 0.02;
+  private double turnD = 0.06;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -66,13 +66,14 @@ public class ShootWhilePathingAndIntaking extends Command {
 
   private boolean haveIntakeNote;
 
-  public ShootWhilePathingAndIntaking(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, TOF tof, double intakeRPM, double feederRPM, double shootDelay) {
+  public ShootWhilePathingAndIntaking(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, TOF tof, JSONArray pathPoints, double intakeRPM, double feederRPM, double shootDelay) {
     this.drive = drive;
     this.intake = intake;
     this.feeder = feeder;
     this.shooter = shooter;
     this.peripherals = peripherals;
     this.tof = tof;
+    this.path = pathPoints;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.shootDelay = shootDelay;
@@ -100,8 +101,16 @@ public class ShootWhilePathingAndIntaking extends Command {
     this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
     this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+    // System.out.println("Speaker Angle: " + this.speakerAngleDegrees);
+    // System.out.println("Target Angle: " + this.targetPigeonAngleDegrees);
     this.turnPID.setSetPoint(this.targetPigeonAngleDegrees);
     this.turnPID.updatePID(pigeonAngleDegrees);
+    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
+    // System.out.println("Angle: " + this.shooter.getAngleDegrees());
+    // System.out.println("Angle Err: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
 
     double turnResult = -this.turnPID.getResult();
 
@@ -126,6 +135,8 @@ public class ShootWhilePathingAndIntaking extends Command {
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0]);
     velocityVector.setJ(desiredVelocityArray[1]);
+    // velocityVector.setI(0);
+    // velocityVector.setJ(0);
     if (canSeeSpeakerTag){
       this.drive.autoDrive(velocityVector, turnResult);
     } else {
