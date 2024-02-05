@@ -180,16 +180,16 @@ public class AutoShoot extends Command {
       this.shotTime = Timer.getFPGATimestamp();
     }
 
-    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
-    // System.out.println("Targ. RPM: " + targetShooterRPM);
-    // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
-    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
-    // System.out.println("Targ. Elev: " + targetShooterDegrees);
-    // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
-    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    // System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
-    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
-    // System.out.println("<================>");
+    System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    System.out.println("Targ. RPM: " + targetShooterRPM);
+    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
+    System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    System.out.println("Targ. Elev: " + targetShooterDegrees);
+    System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
+    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
+    System.out.println("<================>");
   }
 
   // Called once the command ends or is interrupted.
