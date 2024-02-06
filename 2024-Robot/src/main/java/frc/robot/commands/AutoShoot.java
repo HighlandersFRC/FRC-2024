@@ -32,7 +32,7 @@ public class AutoShoot extends Command {
   private double feederRPM;
 
   private double startTime;
-  private double timeout = 10;
+  private double timeout = 4;
 
   private double shotTime = 0;
   private boolean hasShot;
@@ -44,8 +44,6 @@ public class AutoShoot extends Command {
   private double shooterDegreesAllowedError = 2;
   private double shooterRPMAllowedError = 500;
   private double driveAngleAllowedError = 4;
-
-  private double angle;
 
   private boolean hasReachedSetPoint;
 
@@ -110,7 +108,7 @@ public class AutoShoot extends Command {
     }
 
     if (canSeeTag){
-      this.speakerElevationDegrees = peripherals.getFrontCamTargetTy();
+      this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
       this.shooterValues = Constants.SetPoints.getShooterValues(speakerElevationDegrees);
       this.shooterDegrees = shooterValues[0];
@@ -180,16 +178,20 @@ public class AutoShoot extends Command {
       this.shotTime = Timer.getFPGATimestamp();
     }
 
-    System.out.println("RPM: " + this.shooter.getFlywheelRPM());
-    System.out.println("Targ. RPM: " + targetShooterRPM);
-    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
-    System.out.println("Elev: " + this.shooter.getAngleDegrees());
-    System.out.println("Targ. Elev: " + targetShooterDegrees);
-    System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
-    System.out.println("<================>");
+    if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
+      this.hasReachedSetPoint = true;
+    }
+
+    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    // System.out.println("Targ. RPM: " + targetShooterRPM);
+    // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
+    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    // System.out.println("Targ. Elev: " + targetShooterDegrees);
+    // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
+    // System.out.println("<================>");
   }
 
   // Called once the command ends or is interrupted.
@@ -206,10 +208,6 @@ public class AutoShoot extends Command {
     // System.out.println("Time Since Shot " + (Timer.getFPGATimestamp() - this.shotTime));
 
     if (this.shooterDegrees > 90){
-      return true;
-    }
-    if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
-      System.out.println("Shooter time out");
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
       return true;

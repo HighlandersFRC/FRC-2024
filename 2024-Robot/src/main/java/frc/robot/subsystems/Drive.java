@@ -889,7 +889,7 @@ public class Drive extends SubsystemBase {
     velocityVector.setJ(frVY + flVY + blVY + brVY);
     
 
-    System.out.println("VVector: <" + velocityVector.getI() + ", " + velocityVector.getJ() + ">");
+    // System.out.println("VVector: <" + velocityVector.getI() + ", " + velocityVector.getJ() + ">");
 
     return velocityVector;
   }
