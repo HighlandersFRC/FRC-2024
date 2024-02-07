@@ -39,9 +39,9 @@ public class ShootWhilePathingAndIntaking extends Command {
 
   //Shooting stuff
   private PID turnPID;
-  private double turnP = 0.04;
+  private double turnP = 0.035;
   private double turnI = 0.0;
-  private double turnD = 0.06;
+  private double turnD = 0.07;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -55,11 +55,11 @@ public class ShootWhilePathingAndIntaking extends Command {
   private boolean hasReachedSetPoint;
 
   private double shooterDegreesAllowedError = 2;
-  private double shooterRPMAllowedError = 100;
-  private double driveAngleAllowedError = 2;
+  private double shooterRPMAllowedError = 500;
+  private double driveAngleAllowedError = 4;
 
   private double shootDelay;
-  private double shootTimeout = 1;
+  private double shootTimeout = 0.5;
 
   //Intaking stuff
   private double intakeRPM;
@@ -113,7 +113,7 @@ public class ShootWhilePathingAndIntaking extends Command {
     if (canSeeSpeakerTag){
       this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-      this.shooterValues = Constants.SetPoints.getShooterValues(speakerElevationDegrees);
+      this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(speakerElevationDegrees);
       this.shooterDegrees = shooterValues[0];
       this.shooterRPM = shooterValues[1];
     }
@@ -140,12 +140,12 @@ public class ShootWhilePathingAndIntaking extends Command {
     }
     double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
     double rhoF = Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2) + Math.pow(zF, 2));
-    System.out.println("ThetaI: " + thetaI);
-    System.out.println("PhiI: " + phiI);
-    System.out.println("RhoI: " + rhoI);
-    System.out.println("ThetaF: " + thetaF);
-    System.out.println("PhiF: " + phiF);
-    System.out.println("RhoF: " + rhoF);
+    // System.out.println("ThetaI: " + thetaI);
+    // System.out.println("PhiI: " + phiI);
+    // System.out.println("RhoI: " + rhoI);
+    // System.out.println("ThetaF: " + thetaF);
+    // System.out.println("PhiF: " + phiF);
+    // System.out.println("RhoF: " + rhoF);
 
     double targetShooterDegrees = Math.toDegrees(phiF);
     double targetShooterRPM = Constants.Physical.noteMPSToFlywheelRPM(rhoF);
@@ -177,10 +177,10 @@ public class ShootWhilePathingAndIntaking extends Command {
 
     double[] desiredVelocityArray = this.drive.pidController(this.odometryX, this.odometryY, this.odometryTheta, this.currentTime, this.path);
     Vector velocityVector = new Vector();
-    // velocityVector.setI(desiredVelocityArray[0]);
-    // velocityVector.setJ(desiredVelocityArray[1]);
-    velocityVector.setI(0);
-    velocityVector.setJ(0);
+    velocityVector.setI(desiredVelocityArray[0]);
+    velocityVector.setJ(desiredVelocityArray[1]);
+    // velocityVector.setI(0);
+    // velocityVector.setJ(0);
     if (canSeeSpeakerTag){
       this.drive.autoDrive(velocityVector, turnResult);
     } else {

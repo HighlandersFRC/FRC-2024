@@ -142,13 +142,13 @@ public class FivePieceAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new WaitCommand(1.5),
-        new RunShooter(shooter, 0, 4000),
+        new WaitCommand(1),
+        new RunShooter(shooter, 45, 4000),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON, 1200, 600, 0),
-      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON2, 1200, 600, 1.5),
-      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON3, 1200, 600, 1.5),
+      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON2, 1200, 600, 1.25),
+      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON3, 1200, 600, 1),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)

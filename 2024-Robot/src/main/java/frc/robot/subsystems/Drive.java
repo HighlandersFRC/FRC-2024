@@ -273,12 +273,6 @@ public class Drive extends SubsystemBase {
   public void updateOdometryFusedArray(){
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
-    // Matrix<N3, N1> stdDeviation = new Matrix<>(Nat.N3(), Nat.N1());
-
-    // stdDeviation.set(0, 0, 0);
-    // stdDeviation.set(1, 0, 0);
-    // stdDeviation.set(2, 0, 0);
-
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
     swerveModulePositions[1] = new SwerveModulePosition(frontRight.getModuleDistance(), new Rotation2d(frontRight.getCanCoderPositionRadians()));
@@ -291,13 +285,13 @@ public class Drive extends SubsystemBase {
     currentY = getOdometryY();
     currentTheta = navxOffset;
 
-    // if(useCameraInOdometry && cameraCoordinates.getDouble(0) != 0) {
-    //   cameraBasedX = cameraCoordinates.getDouble(0);
-    //   cameraBasedY = cameraCoordinates.getDouble(1);
-    //   timeSinceLastCameraMeasurement = 0;
-    //   Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
-    //   m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getBackCameraLatency()/1000));
-    // }
+    // JSONArray frontCamCoordinates = this.peripherals.getFrontCamBasedPosition();
+    // JSONObject frontCamLatencies = this.peripherals.getFrontCamLatencies();
+
+    // double cameraBasedX = frontCamCoordinates.getDouble(0);
+    // double cameraBasedY = frontCamCoordinates.getDouble(1);
+    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+    // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
 
     currentTime = Timer.getFPGATimestamp() - initTime;
     timeDiff = currentTime - previousTime;

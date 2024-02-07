@@ -104,7 +104,7 @@ public class SwerveModule extends SubsystemBase {
     driveMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 75;
     driveMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -75;
 
-    driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
+    driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Coast;
 
     driveMotorConfig.ClosedLoopRamps.TorqueClosedLoopRampPeriod = 0.1;
 

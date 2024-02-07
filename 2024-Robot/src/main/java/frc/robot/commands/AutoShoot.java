@@ -110,7 +110,7 @@ public class AutoShoot extends Command {
     if (canSeeTag){
       this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-      this.shooterValues = Constants.SetPoints.getShooterValues(speakerElevationDegrees);
+      this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(speakerElevationDegrees);
       this.shooterDegrees = shooterValues[0];
       this.shooterRPM = shooterValues[1];
     }
