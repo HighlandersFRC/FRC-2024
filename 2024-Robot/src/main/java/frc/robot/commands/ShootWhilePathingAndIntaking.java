@@ -165,7 +165,7 @@ public class ShootWhilePathingAndIntaking extends Command {
 
     this.shooter.set(targetFutureShooterDegrees, targetFutureShooterRPM);
 
-    if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
+    if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;
     }
 
