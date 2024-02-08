@@ -119,53 +119,29 @@ public class ShootWhilePathingAndIntaking extends Command {
     }
 
     //velocity compensation
-    double thetaI = Math.toRadians(pigeonAngleDegrees - this.speakerAngleDegrees);
-    double phiI = Math.toRadians(this.shooterDegrees);
-    double rhoI = Constants.Physical.flywheelRPMToNoteMPS(this.shooterRPM);
-    Vector robotVelocityVector = this.drive.getRobotVelocityVector();
-    double vx = robotVelocityVector.getI();
-    double vy = robotVelocityVector.getJ();
+    double[] currentSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, this.shooterDegrees, this.shooterRPM, this.drive.getRobotVelocityVector());
+    double targetCurrentPigeonAngleDegrees = currentSetpoints[0];
+    double targetCurrentShooterDegrees = currentSetpoints[1];
+    double targetCurrentShooterRPM = currentSetpoints[2];
 
-    double xI = rhoI * Math.cos(phiI) * Math.cos(thetaI);
-    double yI = rhoI * Math.cos(phiI) * Math.sin(thetaI);
-    double zI = rhoI * Math.sin(phiI);
+    double[] futureSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, this.shooterDegrees, this.shooterRPM, this.drive.getRobotVelocityVector());
+    double targetFuturePigeonAngleDegrees = futureSetpoints[0];
+    double targetFutureShooterDegrees = futureSetpoints[1];
+    double targetFutureShooterRPM = futureSetpoints[2];
 
-    double xF = xI - vx;
-    double yF = yI - vy;
-    double zF = zI;
-
-    double thetaF = Math.atan2(yF, xF);
-    if (thetaF < 0){
-      thetaF += 2 * Math.PI;
-    }
-    double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
-    double rhoF = Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2) + Math.pow(zF, 2));
-    // System.out.println("ThetaI: " + thetaI);
-    // System.out.println("PhiI: " + phiI);
-    // System.out.println("RhoI: " + rhoI);
-    // System.out.println("ThetaF: " + thetaF);
-    // System.out.println("PhiF: " + phiF);
-    // System.out.println("RhoF: " + rhoF);
-
-    double targetShooterDegrees = Math.toDegrees(phiF);
-    double targetShooterRPM = Constants.Physical.noteMPSToFlywheelRPM(rhoF);
-
-    double extraPigeonRotations = Math.floor((pigeonAngleDegrees / 360.0));
-    double targetPigeonAngleDegrees = extraPigeonRotations * 360.0 + Math.toDegrees(thetaF);
-
-    this.turnPID.setSetPoint(targetPigeonAngleDegrees);
+    this.turnPID.setSetPoint(targetCurrentPigeonAngleDegrees);
     this.turnPID.updatePID(pigeonAngleDegrees);
 
-    System.out.println("RPM: " + this.shooter.getFlywheelRPM());
-    System.out.println("Targ. RPM: " + targetShooterRPM);
-    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
-    System.out.println("Elev: " + this.shooter.getAngleDegrees());
-    System.out.println("Targ. Elev: " + targetShooterDegrees);
-    System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
-    System.out.println("<================>");
+    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    // System.out.println("Targ. RPM: " + targetShooterRPM);
+    // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetShooterRPM));
+    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    // System.out.println("Targ. Elev: " + targetShooterDegrees);
+    // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
+    // System.out.println("<================>");
 
     double turnResult = -this.turnPID.getResult();
 
@@ -187,7 +163,7 @@ public class ShootWhilePathingAndIntaking extends Command {
       this.drive.autoDrive(velocityVector, 0);
     }
 
-    this.shooter.set(targetShooterDegrees, targetShooterRPM);
+    this.shooter.set(targetFutureShooterDegrees, targetFutureShooterRPM);
 
     if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;

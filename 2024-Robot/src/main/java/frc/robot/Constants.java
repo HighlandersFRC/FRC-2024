@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.tools.math.Vector;
+
 public final class Constants {
 
   //Physical constants (e.g. field and robot dimensions)
@@ -144,6 +146,38 @@ public final class Constants {
             double[] returnArr = {0, 0};
             return returnArr;
         }  
+    }
+
+    public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees, double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS){
+      double thetaI = Math.toRadians(pigeonAngleDegrees - speakerAngleDegrees);
+      double phiI = Math.toRadians(shooterAngleDegrees);
+      double rhoI = Constants.Physical.flywheelRPMToNoteMPS(shooterRPM);
+      Vector robotVelocityVector = robotVelocityMPS;
+      double vx = robotVelocityVector.getI();
+      double vy = robotVelocityVector.getJ();
+
+      double xI = rhoI * Math.cos(phiI) * Math.cos(thetaI);
+      double yI = rhoI * Math.cos(phiI) * Math.sin(thetaI);
+      double zI = rhoI * Math.sin(phiI);
+
+      double xF = xI - vx;
+      double yF = yI - vy;
+      double zF = zI;
+
+      double thetaF = Math.atan2(yF, xF);
+      if (thetaF < 0){
+        thetaF += 2 * Math.PI;
+      }
+      double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
+      double rhoF = Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2) + Math.pow(zF, 2));
+
+      double targetShooterDegrees = Math.toDegrees(phiF);
+      double targetShooterRPM = Constants.Physical.noteMPSToFlywheelRPM(rhoF);
+
+      double extraPigeonRotations = Math.floor((pigeonAngleDegrees / 360.0));
+      double targetPigeonAngleDegrees = extraPigeonRotations * 360.0 + Math.toDegrees(thetaF);
+
+      return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
     }
 
     //feeder
