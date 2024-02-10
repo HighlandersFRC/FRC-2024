@@ -297,7 +297,7 @@ public final class Constants {
   //Gear ratios and conversions
   public static final class Ratios {
     //drive
-    public static final double DRIVE_GEAR_RATIO = 6.75;
+    public static final double DRIVE_GEAR_RATIO = 5.9;
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
