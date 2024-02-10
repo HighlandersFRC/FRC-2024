@@ -888,6 +888,23 @@ public class Drive extends SubsystemBase {
     return velocityVector;
   }
 
+  public JSONArray getPathPoint(JSONArray path, double time){
+    for (int i = 0; i < path.length() - 1; i ++){
+      JSONArray currentPoint = path.getJSONArray(i + 1);
+      JSONArray previousPoint = path.getJSONArray(i);
+      double currentPointTime = currentPoint.getDouble(0);
+      double previousPointTime = previousPoint.getDouble(0);
+      if (time >= previousPointTime && time < currentPointTime){
+        return currentPoint;
+      }
+    }
+    if (time < path.getJSONArray(0).getDouble(0)){
+      return path.getJSONArray(0);
+    } else {
+      return path.getJSONArray(path.length() - 1);
+    }
+  }
+
   // Autonomous algorithm
   public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints) {
     if(time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {

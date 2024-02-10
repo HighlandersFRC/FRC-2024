@@ -27,6 +27,8 @@ public final class Constants {
     public static final double FLYWHEEL_RADIUS_METERS = inchesToMeters(2.0);
     public static final double FLYWHEEL_CIRCUMFERENCE_METERS = 2.0 * Math.PI * FLYWHEEL_RADIUS_METERS;
 
+    public static final double GRAVITY_ACCEL_MS2 = 9.806;
+
     public static double flywheelRPMToNoteMPS(double rpm){
       return rpm * (1.0 / 60.0) * FLYWHEEL_CIRCUMFERENCE_METERS;
     }

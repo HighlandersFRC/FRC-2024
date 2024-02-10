@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.PeripheralsDefault;
+import frc.robot.tools.math.Vector;
 
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
@@ -151,6 +152,13 @@ public class Peripherals extends SubsystemBase {
 
   public double getPigeonAngle(){
     return pigeon.getYaw().getValueAsDouble();
+  }
+
+  public Vector getPigeonLinAccel(){
+    Vector accelVector = new Vector();
+    accelVector.setI(pigeon.getAccelerationX().getValueAsDouble() * Constants.Physical.GRAVITY_ACCEL_MS2);
+    accelVector.setJ(pigeon.getAccelerationY().getValueAsDouble() * Constants.Physical.GRAVITY_ACCEL_MS2);
+    return accelVector;
   }
 
   public double getBackHorizontalDistToTag(){
