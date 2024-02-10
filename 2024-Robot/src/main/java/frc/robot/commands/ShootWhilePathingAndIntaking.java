@@ -129,8 +129,6 @@ public class ShootWhilePathingAndIntaking extends Command {
     double futureTime = this.currentTime + this.shooterLookAheadTime;
     JSONArray futurePathPoint = this.drive.getPathPoint(this.path, futureTime);
     double futurePathAngleDegrees = Math.toDegrees(futurePathPoint.getDouble(1));
-    // double extraFuturePathAngleRotations = Math.floor(futurePathAngleDegrees / 360.0);
-    // double futureFieldPigeonAngleDegrees = futurePathAngleDegrees - extraFuturePathAngleRotations * 360.0;
 
     double speakerX = Constants.Vision.TAG_POSES[4][0];
     double futurePathPointX = futurePathPoint.getDouble(1);
@@ -190,7 +188,7 @@ public class ShootWhilePathingAndIntaking extends Command {
 
     this.shooter.set(targetFutureShooterDegrees, targetFutureShooterRPM);
 
-    if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
+    if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - targetCurrentShooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - targetCurrentShooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;
     }
 

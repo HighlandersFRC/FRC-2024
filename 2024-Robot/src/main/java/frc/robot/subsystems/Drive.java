@@ -882,10 +882,20 @@ public class Drive extends SubsystemBase {
     velocityVector.setI(frVX + flVX + blVX + brVX);
     velocityVector.setJ(frVY + flVY + blVY + brVY);
     
-
     // System.out.println("VVector: <" + velocityVector.getI() + ", " + velocityVector.getJ() + ">");
 
     return velocityVector;
+  }
+
+  public Vector getRobotAccelerationVector(){
+    Vector accelerationVector = new Vector();
+
+    Vector robotCentricAccelerationVector = this.peripherals.getPigeonLinAccel();
+    double accelerationMagnitude = Constants.getDistance(robotCentricAccelerationVector.getI(), robotCentricAccelerationVector.getJ(), 0, 0);
+    accelerationVector.setI(accelerationMagnitude * Math.cos(Math.toRadians(this.peripherals.getPigeonAngle())));
+    accelerationVector.setJ(accelerationMagnitude * Math.sin(Math.toRadians(this.peripherals.getPigeonAngle())));
+
+    return accelerationVector;
   }
 
   public JSONArray getPathPoint(JSONArray path, double time){
