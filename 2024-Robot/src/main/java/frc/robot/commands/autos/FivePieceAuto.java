@@ -20,12 +20,15 @@ import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
+import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.ShootWhilePathingAndIntaking;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.SpinUpShooter;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -142,17 +145,42 @@ public class FivePieceAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new WaitCommand(1),
-        new RunShooter(shooter, 45, 4000),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
-      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON, 1200, 600, 0),
-      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON2, 1200, 600, 1.25),
-      new ShootWhilePathingAndIntaking(drive, intake, feeder, shooter, peripherals, tof, pathJSON3, 1200, 600, 1),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600),
-        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
       ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new ParallelDeadlineGroup(
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON2, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new ParallelDeadlineGroup(
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON3, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
 
       //End
       new ParallelCommandGroup(

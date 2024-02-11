@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
@@ -275,6 +276,7 @@ public class Robot extends LoggedRobot {
     // OI.driverRB.whileTrue(new RunClimber(climber, 0.0, 0.6));
     // OI.driverLB.onTrue(new ToggleBrake(climber));
     OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
     //Operator
   }

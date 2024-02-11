@@ -108,6 +108,7 @@ public final class Constants {
                 }
             }
             //Should never run
+            System.out.println("preset selection error");
             double[] returnArr = {0, 0};
             return returnArr;
         }  
@@ -115,17 +116,17 @@ public final class Constants {
 
     public static double[] getShooterValuesFromDistance(double dist) {
         int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (dist > SHOOTING_LOOKUP_TABLE[0][0]) {
+        if (dist < SHOOTING_LOOKUP_TABLE[0][0]) {
             //If the dist is closer than the first setpoint
             double[] returnArr = {SHOOTING_LOOKUP_TABLE[0][2], SHOOTING_LOOKUP_TABLE[0][3]};
             return returnArr;
-        } else if (dist < SHOOTING_LOOKUP_TABLE[lastIndex][0]) {
+        } else if (dist > SHOOTING_LOOKUP_TABLE[lastIndex][0]) {
             //If the dist is farther than the last setpoint
             double[] returnArr = {SHOOTING_LOOKUP_TABLE[lastIndex][2], SHOOTING_LOOKUP_TABLE[lastIndex][3]};
             return returnArr;
         } else {
             for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (dist < SHOOTING_LOOKUP_TABLE[i][0] && dist > SHOOTING_LOOKUP_TABLE[i + 1][0]) {
+                if (dist > SHOOTING_LOOKUP_TABLE[i][0] && dist < SHOOTING_LOOKUP_TABLE[i + 1][0]) {
                     //If the dist is in the table of setpoints
                     //Calculate where dist is between setpoints
                     double leftDif = dist - SHOOTING_LOOKUP_TABLE[i][0];
@@ -145,8 +146,43 @@ public final class Constants {
                 }
             }
             //Should never run
+            System.out.println("preset selection error");
             double[] returnArr = {0, 0};
             return returnArr;
+        }  
+    }
+
+    public static double getDistFromAngle(double ty) {
+        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
+        if (ty > SHOOTING_LOOKUP_TABLE[0][1]) {
+            //If the ty is closer than the first setpoint
+            double returnDist = SHOOTING_LOOKUP_TABLE[0][0];
+            return returnDist;
+        } else if (ty < SHOOTING_LOOKUP_TABLE[lastIndex][1]) {
+            //If the ty is farther than the last setpoint
+            double returnDist = SHOOTING_LOOKUP_TABLE[lastIndex][0];
+            return returnDist;
+        } else {
+            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
+                if (ty < SHOOTING_LOOKUP_TABLE[i][1] && ty > SHOOTING_LOOKUP_TABLE[i + 1][1]) {
+                    //If the ty is in the table of setpoints
+                    //Calculate where ty is between setpoints
+                    double leftDif = ty - SHOOTING_LOOKUP_TABLE[i][1];
+                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][1] - SHOOTING_LOOKUP_TABLE[i][1]);
+
+                    double dist1 = SHOOTING_LOOKUP_TABLE[i][0];
+                    double dist2 = SHOOTING_LOOKUP_TABLE[i + 1][0];
+
+                    //Interpolate in-between values for dist ty and shooter rpm
+                    double newDist = dist1 + (percent * (dist2 - dist1));
+                    
+                    double returnDist = newDist;
+                    return returnDist;
+                }
+            }
+            //Should never run
+            double returnDist = 1;
+            return returnDist;
         }  
     }
 
@@ -252,6 +288,7 @@ public final class Constants {
     AprilTag Size: 165
     Detector Downscale: 1.5
     Quality Threshold: 2
+    Crosshair X: 0.23
     */
 
     //Standard deviation regressions
