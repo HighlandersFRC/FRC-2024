@@ -108,6 +108,7 @@ public final class Constants {
                 }
             }
             //Should never run
+            System.out.println("preset selection error");
             double[] returnArr = {0, 0};
             return returnArr;
         }  
@@ -145,6 +146,7 @@ public final class Constants {
                 }
             }
             //Should never run
+            System.out.println("preset selection error");
             double[] returnArr = {0, 0};
             return returnArr;
         }  
