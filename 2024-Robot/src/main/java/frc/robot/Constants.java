@@ -303,8 +303,8 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
-    public static final double INTAKE_ANGLE_GEAR_RATIO = 25.0;
-    public static final double INTAKE_ROLLER_GEAR_RATIO = 2.0 + 1.0 / 3.0;
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 600 / 18;
+    public static final double INTAKE_ROLLER_GEAR_RATIO = 24 / 11;
 
     //shooter
     public static final double SHOOTER_ANGLE_GEAR_RATIO = 96.0;

@@ -46,9 +46,9 @@ public class Peripherals extends SubsystemBase {
   public Peripherals() {}
 
   public void init() {
-    pigeonConfig.MountPose.MountPosePitch = 85.25395965576172;
-    pigeonConfig.MountPose.MountPoseRoll = 126.1924057006836;
-    pigeonConfig.MountPose.MountPoseYaw = -0.5872021913528442;
+    pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
+    pigeonConfig.MountPose.MountPoseRoll = 32.49883270263672;
+    pigeonConfig.MountPose.MountPoseYaw = 0.1901332437992096;
     pigeon.getConfigurator().apply(pigeonConfig);
     zeroPigeon();
     noTrackLimelightArray[0] = 0;
