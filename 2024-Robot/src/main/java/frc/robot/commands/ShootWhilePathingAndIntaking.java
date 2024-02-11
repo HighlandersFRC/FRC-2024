@@ -39,9 +39,9 @@ public class ShootWhilePathingAndIntaking extends Command {
 
   //Shooting stuff
   private PID turnPID;
-  private double turnP = 0.035;
+  private double turnP = 0.04;
   private double turnI = 0.0;
-  private double turnD = 0.07;
+  private double turnD = 0.06;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -58,7 +58,7 @@ public class ShootWhilePathingAndIntaking extends Command {
   private double shooterRPMAllowedError = 500;
   private double driveAngleAllowedError = 4;
 
-  private double shooterLookAheadTime = 0.05;
+  private double shooterLookAheadTime = 0.0;
 
   private double shootDelay;
   private double shootTimeout = 0.5;
@@ -128,7 +128,7 @@ public class ShootWhilePathingAndIntaking extends Command {
 
     double futureTime = this.currentTime + this.shooterLookAheadTime;
     JSONArray futurePathPoint = this.drive.getPathPoint(this.path, futureTime);
-    double futurePathAngleDegrees = Math.toDegrees(futurePathPoint.getDouble(1));
+    double futurePathAngleDegrees = Math.toDegrees(futurePathPoint.getDouble(3));
 
     double speakerX = Constants.Vision.TAG_POSES[4][0];
     double futurePathPointX = futurePathPoint.getDouble(1);
@@ -144,8 +144,8 @@ public class ShootWhilePathingAndIntaking extends Command {
     double futureSpeakerDist = Constants.getDistance(speakerX, speakerY, futurePathPointX, futurePathPointY);
     double[] futureSetpoints = Constants.SetPoints.getShooterValuesFromDistance(futureSpeakerDist);
     Vector futureVelocityVector = new Vector();
-    futureVelocityVector.setI(this.path.getDouble(4));
-    futureVelocityVector.setJ(this.path.getDouble(5));
+    futureVelocityVector.setI(futurePathPoint.getDouble(4));
+    futureVelocityVector.setJ(futurePathPoint.getDouble(5));
 
     double[] futureCorrectedSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(futurePathAngleDegrees, futureSpeakerAngleDegrees, futureSetpoints[0], futureSetpoints[1], futureVelocityVector);
     double targetFuturePigeonAngleDegrees = futureCorrectedSetpoints[0];

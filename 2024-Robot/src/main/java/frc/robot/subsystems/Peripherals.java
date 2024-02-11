@@ -156,8 +156,8 @@ public class Peripherals extends SubsystemBase {
 
   public Vector getPigeonLinAccel(){
     Vector accelVector = new Vector();
-    accelVector.setI(pigeon.getAccelerationX().getValueAsDouble() * Constants.Physical.GRAVITY_ACCEL_MS2);
-    accelVector.setJ(pigeon.getAccelerationY().getValueAsDouble() * Constants.Physical.GRAVITY_ACCEL_MS2);
+    accelVector.setI(pigeon.getAccelerationX().getValueAsDouble() / Constants.Physical.GRAVITY_ACCEL_MS2);
+    accelVector.setJ(pigeon.getAccelerationY().getValueAsDouble() / Constants.Physical.GRAVITY_ACCEL_MS2);
     return accelVector;
   }
 

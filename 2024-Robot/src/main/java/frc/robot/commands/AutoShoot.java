@@ -7,6 +7,7 @@ package frc.robot.commands;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.sensors.TOF;
@@ -39,14 +40,11 @@ public class AutoShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.0;
 
-  // private double shooterDegreesAllowedError = 1;
-  // private double shooterRPMAllowedError = 100;
-  // private double driveAngleAllowedError = 2;
   private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 100;
+  private double shooterRPMAllowedError = 400;
   private double driveAngleAllowedError = 3;
 
-  private double lookAheadTime = 0.05;
+  private double lookAheadTime = 0.0;
 
   private boolean hasReachedSetPoint;
 
@@ -124,7 +122,35 @@ public class AutoShoot extends Command {
     double targetCurrentShooterDegrees = currentSetpoints[1];
     double targetCurrentShooterRPM = currentSetpoints[2];
 
+    double currentRobotSpeakerAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+    double currentSpeakerDistance = Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees);
+    // System.out.println("Current Dist: " + currentSpeakerDistance);
+    Vector currentVelocityVector = this.drive.getRobotVelocityVector();
+    Vector currentAccelerationVector = this.drive.getRobotAccelerationVector();
+    // System.out.println("Accel: (" + currentAccelerationVector.getI() + ", " + currentAccelerationVector.getJ() + ")");
+    Vector futureVelocityVector = new Vector();
+    futureVelocityVector.setI(currentVelocityVector.getI() + currentAccelerationVector.getI() * this.lookAheadTime);
+    futureVelocityVector.setJ(currentVelocityVector.getJ() + currentAccelerationVector.getJ() * this.lookAheadTime);
+    // System.out.println("Future Vel: (" + futureVelocityVector.getI() + ", " + futureVelocityVector.getJ() + ")");
+    double deltaX = 0.5 * currentAccelerationVector.getI() * Math.pow(this.lookAheadTime, 2) + currentVelocityVector.getI() * this.lookAheadTime;
+    double deltaY = 0.5 * currentAccelerationVector.getJ() * Math.pow(this.lookAheadTime, 2) + currentVelocityVector.getJ() * this.lookAheadTime;
+    // System.out.println("Delta X: " + deltaX);
+    // System.out.println("Delta Y: " + deltaY);
+    double deltaAngleRadians = Math.atan2(deltaY, deltaX);
+    // System.out.println("Delta Angle Rad: " + deltaAngleRadians);
+    double deltaD = -Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) * Math.cos(deltaAngleRadians - Math.toRadians(currentRobotSpeakerAngleDegrees));
+    // System.out.println("Delta D: " + deltaD);
+    double futureSpeakerDistance = currentSpeakerDistance + deltaD;
+    double[] futureSetpoints = Constants.SetPoints.getShooterValuesFromDistance(futureSpeakerDistance);
+    // System.out.println("Future Degrees: " + futureSetpoints[0]);
+    // System.out.println("Future RPM: " + futureSetpoints[1]);
+    double[] futureAdjutedSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, futureSetpoints[0], futureSetpoints[1], futureVelocityVector);
+    double targetFuturePigeonAngleDegrees = futureAdjutedSetpoints[0];
+    double targetFutureShooterDegrees = futureAdjutedSetpoints[1];
+    double targetFutureShooterRPM = futureAdjutedSetpoints[2];
 
+    // System.out.println("Future Adj. Degrees: " + targetFutureShooterDegrees);
+    // System.out.println("Future Adj. RPM: " + targetFutureShooterRPM);
 
     this.pid.setSetPoint(targetCurrentPigeonAngleDegrees);
     this.pid.updatePID(pigeonAngleDegrees);
@@ -167,6 +193,13 @@ public class AutoShoot extends Command {
     // System.out.println("Targ. Pigeon Angle: " + targetCurrentPigeonAngleDegrees);
     // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees));
     // System.out.println("<================>");
+
+    SmartDashboard.putNumber("Targ RPM", targetCurrentShooterRPM);
+    SmartDashboard.putNumber("Targ Degrees", targetCurrentShooterDegrees);
+    SmartDashboard.putNumber("Targ Pigeon Angle", targetCurrentPigeonAngleDegrees);
+    SmartDashboard.putNumber("RPM", this.shooter.getFlywheelRPM());
+    SmartDashboard.putNumber("Degrees", this.shooter.getAngleDegrees());
+    SmartDashboard.putNumber("Pigeon Angle", pigeonAngleDegrees);
   }
 
   // Called once the command ends or is interrupted.
