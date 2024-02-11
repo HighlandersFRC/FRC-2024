@@ -14,11 +14,12 @@ public class TurnToTarget extends Command {
   private Peripherals peripherals;
 
   private PID turnPID;
-  private double kP = 0.4;
+  private double kP = 0.03;
   private double kI = 0.0;
-  private double kD = 0.6;
+  private double kD = 0.07;
 
   private double speakerAngleDegrees;
+  private double targetPigeonAngleDegrees;
 
   private double initTime;
   private double timeout = 1.5;
@@ -39,6 +40,7 @@ public class TurnToTarget extends Command {
     this.turnPID.setMinOutput(-3);
     this.turnPID.setMaxOutput(3);
     this.speakerAngleDegrees = 0;
+    this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle();
     this.canSeeTag = false;
   }
 
@@ -57,13 +59,19 @@ public class TurnToTarget extends Command {
 
     if (this.canSeeTag){
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+      this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
     }
 
-    this.turnPID.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees);
+    this.turnPID.setSetPoint(targetPigeonAngleDegrees);
     this.turnPID.updatePID(pigeonAngleDegrees);
     double turnResult = -this.turnPID.getResult();
 
     this.drive.autoRobotCentricTurn(turnResult);
+
+    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Turn Result: " + turnResult);
+    System.out.println("Can See Tag: " + this.canSeeTag);
   }
 
   @Override

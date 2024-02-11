@@ -149,7 +149,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON, 0, false),
@@ -160,7 +160,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON2, 0, false),
@@ -171,7 +171,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 5),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON3, 0, false),

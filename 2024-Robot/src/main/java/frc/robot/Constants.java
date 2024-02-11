@@ -20,7 +20,7 @@ public final class Constants {
     public static final double TOP_SPEED = feetToMeters(20);
 
     public static final double ROBOT_WIDTH = inchesToMeters(25);
-    public static final double ROBOT_LENGTH = inchesToMeters(29);
+    public static final double ROBOT_LENGTH = inchesToMeters(28.75);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
     public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;
@@ -69,11 +69,22 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.4352, 13.80, 52, 4500},
-      {2.2987, -3.64, 42, 5000},
-      {3.3655, -12.68, 31, 5500},
-      {3.6195, -19.93, 26, 6000},
-      {5.9817, -23.34, 22, 6500}
+      // {1.4352, 13.80, 52, 4500},
+      // {2.2987, -3.64, 42, 5000},
+      // {3.3655, -12.68, 31, 5500},
+      // {3.6195, -19.93, 26, 6000},
+      // {5.9817, -23.34, 22, 6500}
+      {1.36525, 21.28, 58, 3500},
+      {1.74625, 11.28, 51, 4000},
+      {2.270125, 1.25, 41, 4500},
+      {2.7559, -5.91, 36, 5000},
+      {3.3401, -10.56, 31, 5000},
+      {3.91795, -13.91, 27, 5500},
+      {4.55295, -16.3, 25.4, 6000},
+      {5.2324, -18.31, 23.5, 6500},
+      {6.0833, -21.05, 21.5, 7000},
+      {6.6802, -21.36, 20.7, 7500},
+      {7.5819, -22.69, 19.9, 8000}
     };
 
     public static double[] getShooterValuesFromAngle(double angle) {
@@ -190,6 +201,9 @@ public final class Constants {
       double thetaI = Math.toRadians(pigeonAngleDegrees - speakerAngleDegrees);
       double phiI = Math.toRadians(shooterAngleDegrees);
       double rhoI = Constants.Physical.flywheelRPMToNoteMPS(shooterRPM);
+      if (rhoI < 0.01){
+        return new double[] {pigeonAngleDegrees - speakerAngleDegrees, shooterAngleDegrees, shooterRPM};
+      }
       Vector robotVelocityVector = robotVelocityMPS;
       double vx = robotVelocityVector.getI();
       double vy = robotVelocityVector.getJ();
