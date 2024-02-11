@@ -344,11 +344,12 @@ public final class Constants {
     public static final double INTAKE_ROLLER_GEAR_RATIO = 24 / 11;
 
     //shooter
-    public static final double SHOOTER_ANGLE_GEAR_RATIO = 96.0;
-    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 1.0 / 2.5;
+    public static final double SHOOTER_ANGLE_GEAR_RATIO = 75;
+    public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 30 / 56;
+    //1.8666
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 4.0 / 3.0;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 1 / 3;
   }
 
   //Can info such as IDs

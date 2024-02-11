@@ -19,11 +19,13 @@ public class RunFeeder extends Command {
 
   @Override
   public void initialize() {
-    feeder.set(RPM);
+    // feeder.set(RPM);
   }
 
   @Override
-  public void execute() {}
+  public void execute() {
+    feeder.setPercent(RPM);
+  }
 
   @Override
   public void end(boolean interrupted) {
