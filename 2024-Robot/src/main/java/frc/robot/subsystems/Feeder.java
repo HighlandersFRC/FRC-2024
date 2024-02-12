@@ -4,7 +4,12 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
+import com.ctre.phoenix6.signals.GravityTypeValue;
+import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkBase;
 import com.revrobotics.CANSparkFlex;
 import com.revrobotics.RelativeEncoder;
@@ -24,6 +29,8 @@ public class Feeder extends SubsystemBase {
   // private final RelativeEncoder rollerVortexEncoder = rollerVortex.getEncoder();
   // private final SparkPIDController rollerVortexPID = rollerVortex.getPIDController();
   private final TalonFX rollerFalcon = new TalonFX(Constants.CANInfo.FEEDER_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
+  private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
   public Feeder() {
     setDefaultCommand(new FeederDefault(this));
@@ -40,12 +47,20 @@ public class Feeder extends SubsystemBase {
     // this.rollerVortexEncoder.setVelocityConversionFactor(1);
     // this.rollerVortex.setIdleMode(IdleMode.kBrake);
     // this.rollerVortex.set(0);
+    this.rollerFalconConfiguration.Slot0.kP = 12.0;
+    this.rollerFalconConfiguration.Slot0.kI = 0.0;
+    this.rollerFalconConfiguration.Slot0.kD = 0.0;
+    this.rollerFalconConfiguration.Slot0.kS = 5.0;
+    this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
+    this.rollerFalcon.setNeutralMode(NeutralModeValue.Brake);
+
   }
 
   //Set roller velocity in RPM
   public void set(double RPM){
     SmartDashboard.putNumber("Feeder Target", RPM);
     // this.rollerVortexPID.setReference(RPM * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
+    rollerFalcon.setControl(rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO));
   }
 
   //Set roller output in percent
@@ -65,5 +80,7 @@ public class Feeder extends SubsystemBase {
   }
 
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
+  }
 }

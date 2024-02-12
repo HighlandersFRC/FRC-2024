@@ -24,7 +24,8 @@ public class RunFeeder extends Command {
 
   @Override
   public void execute() {
-    feeder.setPercent(RPM);
+    // feeder.setPercent(RPM);
+    feeder.set(RPM);
   }
 
   @Override

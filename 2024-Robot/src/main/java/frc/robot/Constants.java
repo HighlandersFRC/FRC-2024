@@ -349,7 +349,7 @@ public final class Constants {
     //1.8666
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 1 / 3;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 3;
   }
 
   //Can info such as IDs
