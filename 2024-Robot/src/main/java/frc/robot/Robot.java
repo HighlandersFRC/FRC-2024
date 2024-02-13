@@ -269,8 +269,8 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
-    // OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
+    OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
     // OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 600));
     // OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 30, 5500, 600));
     // OI.driverRB.whileTrue(new RunClimber(climber, 0.0, 0.6));
@@ -278,9 +278,8 @@ public class Robot extends LoggedRobot {
     // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
-    OI.driverRB.whileTrue(new RunShooter(shooter, 0.0, 0.7));
-    OI.driverLB.whileTrue(new RunIntake(intake, 1200));
     OI.driverB.whileTrue(new RunFeeder(feeder, 600));
+    
     //Operator
   }
 

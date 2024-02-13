@@ -26,7 +26,6 @@ public class ShooterDefault extends Command {
     } else {
       this.shooter.setAnglePercent(-0.05);
     }
-    // this.shooter.set(40, 3000);
   }
 
   @Override

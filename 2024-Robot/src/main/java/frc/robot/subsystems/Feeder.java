@@ -37,20 +37,10 @@ public class Feeder extends SubsystemBase {
   }
 
   public void init(){
-    // this.rollerVortex.restoreFactoryDefaults();
-    // this.rollerVortexPID.setP(0.000125, 0);
-    // this.rollerVortexPID.setI(0, 0);
-    // this.rollerVortexPID.setD(0.02, 0);
-    // this.rollerVortexPID.setFF(0.000175, 0);
-    // this.rollerVortexPID.setOutputRange(-1, 1);
-    // this.rollerVortexEncoder.setPositionConversionFactor(1);
-    // this.rollerVortexEncoder.setVelocityConversionFactor(1);
-    // this.rollerVortex.setIdleMode(IdleMode.kBrake);
-    // this.rollerVortex.set(0);
-    this.rollerFalconConfiguration.Slot0.kP = 12.0;
+    this.rollerFalconConfiguration.Slot0.kP = 12.5;
     this.rollerFalconConfiguration.Slot0.kI = 0.0;
     this.rollerFalconConfiguration.Slot0.kD = 0.0;
-    this.rollerFalconConfiguration.Slot0.kS = 5.0;
+    this.rollerFalconConfiguration.Slot0.kS = 0.0;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Brake);
 
@@ -59,25 +49,19 @@ public class Feeder extends SubsystemBase {
   //Set roller velocity in RPM
   public void set(double RPM){
     SmartDashboard.putNumber("Feeder Target", RPM);
-    // this.rollerVortexPID.setReference(RPM * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO, CANSparkBase.ControlType.kVelocity);
     rollerFalcon.setControl(rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO));
   }
 
   //Set roller output in percent
   public void setPercent(double percent){
-    // rollerVortex.set(percent);
     rollerFalcon.set(percent);
   }
 
   public double getRPM(){
-    // return this.rollerVortexEncoder.getVelocity() / Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO;
     return this.rollerFalcon.getRotorVelocity().getValue() / Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO;
   }
 
-  //Constantly set roller velocity PID
-  public void teleopPeriodic(){
-   
-  }
+  public void teleopPeriodic(){}
 
   @Override
   public void periodic() {
