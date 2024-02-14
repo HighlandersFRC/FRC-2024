@@ -273,9 +273,10 @@ public class Robot extends LoggedRobot {
     // OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
     // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
-    OI.driverB.whileTrue(new RunShooter(shooter, 40, 0));
-    OI.driverA.whileTrue(new RunShooter(shooter, 17.75, 0));
-    OI.driverY.whileTrue(new RunFeeder(feeder, 600));
+    // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
+    OI.driverX.whileTrue(new RunShooter(shooter, 15, 0));
+    OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
+    OI.driverB.whileTrue(new RunShooter(shooter, 60, 0));
 
     //Operator
   }

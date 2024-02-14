@@ -27,9 +27,7 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-
-  private final PositionTorqueCurrentFOC angleFalconPositionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
-  private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
+  private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
@@ -43,25 +41,17 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 2200;
+    this.angleFalconConfiguration.Slot0.kP = 2500;
     this.angleFalconConfiguration.Slot0.kI = 0;
-    this.angleFalconConfiguration.Slot0.kD = 70;
+    this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 5;
-    
-    this.angleFalconConfiguration.Slot1.kP = 800;
-    this.angleFalconConfiguration.Slot1.kI = 0;
-    this.angleFalconConfiguration.Slot1.kD = 70;
-    this.angleFalconConfiguration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
-    this.angleFalconConfiguration.Slot1.kG = 5;
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = 10;
-    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = 3;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = 1.25;
     this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = 0.5;
 
-    // this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 40;
-    // this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
-    // this.angleFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 20;
-    // this.angleFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -10;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 40;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
 
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
