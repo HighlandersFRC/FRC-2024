@@ -4,7 +4,9 @@ import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -25,7 +27,9 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  private final PositionTorqueCurrentFOC angleFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+
+  private final PositionTorqueCurrentFOC angleFalconPositionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 1, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
@@ -39,11 +43,25 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 0;
+    this.angleFalconConfiguration.Slot0.kP = 2200;
     this.angleFalconConfiguration.Slot0.kI = 0;
-    this.angleFalconConfiguration.Slot0.kD = 0;
+    this.angleFalconConfiguration.Slot0.kD = 70;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    this.angleFalconConfiguration.Slot0.kG = 0;
+    this.angleFalconConfiguration.Slot0.kG = 5;
+    
+    this.angleFalconConfiguration.Slot1.kP = 800;
+    this.angleFalconConfiguration.Slot1.kI = 0;
+    this.angleFalconConfiguration.Slot1.kD = 70;
+    this.angleFalconConfiguration.Slot1.GravityType = GravityTypeValue.Arm_Cosine;
+    this.angleFalconConfiguration.Slot1.kG = 5;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = 10;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = 3;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = 0.5;
+
+    // this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 40;
+    // this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
+    // this.angleFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 20;
+    // this.angleFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -10;
 
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
@@ -54,10 +72,10 @@ public class Shooter extends SubsystemBase {
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
     this.angleFalcon.set(0);
 
-    double flywheelP = 0.01;
-    double flywheelI = 0.00000;
+    double flywheelP = 0.0;
+    double flywheelI = 0.0;
     double flywheelD = 0.0;
-    double flywheelFF = 0.0002;
+    double flywheelFF = 0.0;
 
     this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
   }
@@ -65,22 +83,22 @@ public class Shooter extends SubsystemBase {
   //Set shooter state, elevationAngle in rotations, flywheelVelocity in RPM
   public void set(double degrees, double RPM){
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.degreesToRotations(degrees)));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)));
     }
   }
 
   //Set shooter angle in rotations
   public void setAngle(double degrees){
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionRequest.withPosition(Constants.degreesToRotations(degrees)));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)));
     }
   }
 
@@ -119,6 +137,7 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
     // SmartDashboard.putNumber("Flywheel %Out Master", this.flywheelVortexMaster.getAppliedOutput());
     // SmartDashboard.putNumber("Flywheel %Out Follower", this.flywheelVortexFollower.getAppliedOutput());
+    SmartDashboard.putNumber("Shooter Angle %", this.angleFalcon.getClosedLoopOutput().getValueAsDouble());
   }
 
   @Override

@@ -12,7 +12,7 @@ public final class Constants {
   public static final class Physical {
     public static final double FIELD_WIDTH = 8.2;
     public static final double FIELD_LENGTH = 16.63;
-    public static final double ROBOT_RADIUS = inchesToMeters(15.375);
+    public static final double ROBOT_RADIUS = inchesToMeters(15.429);
     public static final double WHEEL_DIAMETER = inchesToMeters(4);
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
@@ -20,7 +20,7 @@ public final class Constants {
     public static final double TOP_SPEED = feetToMeters(20);
 
     public static final double ROBOT_WIDTH = inchesToMeters(25);
-    public static final double ROBOT_LENGTH = inchesToMeters(29);
+    public static final double ROBOT_LENGTH = inchesToMeters(28.5);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
     public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;
