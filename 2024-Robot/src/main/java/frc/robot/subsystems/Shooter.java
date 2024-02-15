@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -27,11 +28,18 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
+  // private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
+  // private final PositionTorqueCurrentFOC angleFalconPositionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final DynamicMotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0, 0, 0, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
   private final TalonFX flywheelFalconFollower = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+
+  private final double angleFalconJerk = 10;
+  private final double angleFalconAcceleration = 1.25;
+  private final double angleFalconCruiseVelocity = 0.5;
+  private final double angleFalconProfileScalarFactor = 0.5;
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -46,9 +54,9 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 5;
-    this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = 10;
-    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = 1.25;
-    this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = 0.5;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = this.angleFalconAcceleration;
+    this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = this.angleFalconCruiseVelocity;
 
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 40;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
@@ -72,23 +80,25 @@ public class Shooter extends SubsystemBase {
 
   //Set shooter state, elevationAngle in rotations, flywheelVelocity in RPM
   public void set(double degrees, double RPM){
+    double motionProfileScalar = (1 - this.angleFalconProfileScalarFactor) * Math.cos(Math.toRadians(getAngleDegrees())) + this.angleFalconProfileScalarFactor;
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     }
   }
 
   //Set shooter angle in rotations
   public void setAngle(double degrees){
+    double motionProfileScalar = (1 - this.angleFalconProfileScalarFactor) * Math.cos(Math.toRadians(getAngleDegrees())) + this.angleFalconProfileScalarFactor;
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)));
+      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees)).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar));
     }
   }
 
