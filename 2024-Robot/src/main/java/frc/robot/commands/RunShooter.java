@@ -26,8 +26,6 @@ public class RunShooter extends Command {
   @Override
   public void execute() {
     this.shooter.set(this.angle, this.RPM);
-    // this.shooter.setAngle(this.angle);
-    // this.shooter.setFlywheelPercent(0.85);
   }
 
   @Override
