@@ -29,8 +29,6 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  // private final MotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
-  // private final PositionTorqueCurrentFOC angleFalconPositionTorqueCurrentRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final DynamicMotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0.3, 0, 0, 0, 0, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
@@ -43,11 +41,6 @@ public class Shooter extends SubsystemBase {
   private final double angleFalconCruiseVelocity = 0.5;
 
   private final double angleFalconProfileScalarFactor = 0.25;
-  // private final double angleFalconJerk = 2;
-  // private final double angleFalconAcceleration = 1.25;
-  // private final double angleFalconCruiseVelocity = 0.5;
-
-  // private final double angleFalconProfileScalarFactor = 0.25;
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -57,13 +50,9 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    // this.angleFalconConfiguration.Slot0.kP = 2500;
-    // this.angleFalconConfiguration.Slot0.kI = 0;
-    // this.angleFalconConfiguration.Slot0.kD = 60;
-    this.angleFalconConfiguration.Slot0.kP = 400;
-    this.angleFalconConfiguration.Slot0.kI = 400;
-    this.angleFalconConfiguration.Slot0.kD = 30;
-    this.angleFalconConfiguration.Slot0.kS = 5;
+    this.angleFalconConfiguration.Slot0.kP = 2300;
+    this.angleFalconConfiguration.Slot0.kI = 0;
+    this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 7;
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
@@ -144,7 +133,7 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getAngleRotations(){
-    return this.angleFalcon.getPosition().getValue();
+    return this.angleFalcon.getPosition().getValueAsDouble() - Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT;
   }
 
   public double getAngleDegrees(){

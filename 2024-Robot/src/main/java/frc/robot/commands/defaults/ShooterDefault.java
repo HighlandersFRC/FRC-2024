@@ -21,7 +21,7 @@ public class ShooterDefault extends Command {
   @Override
   public void execute() {
     this.shooter.setFlywheelPercent(0);
-    if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG - Constants.SetPoints.SHOOTER_CENTER_OFFSET_DEG) < 2){
+    if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);
     } else {
       this.shooter.setAnglePercent(-0.05);
