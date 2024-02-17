@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.AbsoluteSensorRangeValue;
@@ -35,17 +36,18 @@ public class Shooter extends SubsystemBase {
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
   private final TalonFX flywheelFalconFollower = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  // private final double angleFalconJerk = 10;
-  // private final double angleFalconAcceleration = 1.25;
-  // private final double angleFalconCruiseVelocity = 0.5;
-
-  // private final double angleFalconProfileScalarFactor = 0.25;
-  private final double angleFalconJerk = 2;
+  private final double angleFalconJerk = 10;
   private final double angleFalconAcceleration = 1.25;
   private final double angleFalconCruiseVelocity = 0.5;
 
   private final double angleFalconProfileScalarFactor = 0.25;
+  // private final double angleFalconJerk = 2;
+  // private final double angleFalconAcceleration = 1.25;
+  // private final double angleFalconCruiseVelocity = 0.5;
+
+  // private final double angleFalconProfileScalarFactor = 0.25;
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -55,12 +57,13 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 2500;
-    this.angleFalconConfiguration.Slot0.kI = 0;
-    this.angleFalconConfiguration.Slot0.kD = 60;
-    // this.angleFalconConfiguration.Slot0.kP = 0;
+    // this.angleFalconConfiguration.Slot0.kP = 2500;
     // this.angleFalconConfiguration.Slot0.kI = 0;
-    // this.angleFalconConfiguration.Slot0.kD = 0;
+    // this.angleFalconConfiguration.Slot0.kD = 60;
+    this.angleFalconConfiguration.Slot0.kP = 400;
+    this.angleFalconConfiguration.Slot0.kI = 400;
+    this.angleFalconConfiguration.Slot0.kD = 30;
+    this.angleFalconConfiguration.Slot0.kS = 5;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
     this.angleFalconConfiguration.Slot0.kG = 7;
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
@@ -79,10 +82,15 @@ public class Shooter extends SubsystemBase {
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
     this.angleFalcon.set(0);
 
-    double flywheelP = 0.0;
-    double flywheelI = 0.0;
-    double flywheelD = 0.0;
-    double flywheelFF = 0.0;
+    this.flywheelFalconConfiguration.Slot0.kP = 12;
+    this.flywheelFalconConfiguration.Slot0.kI = 0;
+    this.flywheelFalconConfiguration.Slot0.kD = 0;
+    this.flywheelFalconConfiguration.Slot0.kS = 1;
+    this.flywheelFalconConfiguration.Slot0.kV = 0.2;
+    this.flywheelFalconMaster.getConfigurator().apply(this.flywheelFalconConfiguration);
+    this.flywheelFalconMaster.setNeutralMode(NeutralModeValue.Coast);
+    this.flywheelFalconFollower.getConfigurator().apply(this.flywheelFalconConfiguration);
+    this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
     this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
   }
@@ -98,6 +106,7 @@ public class Shooter extends SubsystemBase {
     } else {
       this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees) + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     }
+    this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   //Set shooter angle in rotations
@@ -113,7 +122,9 @@ public class Shooter extends SubsystemBase {
   }
 
   //Set flywheel velocity in RPM
-  public void setVelocity(double RPM){}
+  public void setVelocity(double RPM){
+    this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest.withVelocity(Constants.RPSToRPM(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+  }
 
   //Set flywheel percent
   public void setFlywheelPercent(double percent){
@@ -125,11 +136,11 @@ public class Shooter extends SubsystemBase {
   }
 
   public double getFlywheelRPM(){
-    return this.flywheelFalconMaster.getRotorVelocity().getValue() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
+    return Constants.RPSToRPM(this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
   public double getFlywheelFollowerRPM(){
-    return this.flywheelFalconFollower.getRotorVelocity().getValue() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
+    return Constants.RPSToRPM(this.flywheelFalconFollower.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
   public double getAngleRotations(){
@@ -143,11 +154,11 @@ public class Shooter extends SubsystemBase {
   //Constantly set flywheel velocity PID
   public void teleopPeriodic(){
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
-    // SmartDashboard.putNumber("Flywheel Follower RPM", getFlywheelFollowerRPM());
+    SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
     SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
     // SmartDashboard.putNumber("Flywheel %Out Master", this.flywheelVortexMaster.getAppliedOutput());
     // SmartDashboard.putNumber("Flywheel %Out Follower", this.flywheelVortexFollower.getAppliedOutput());
-    SmartDashboard.putNumber("Shooter Angle %", this.angleFalcon.getClosedLoopOutput().getValueAsDouble());
+    // SmartDashboard.putNumber("Shooter Angle %", this.angleFalcon.getClosedLoopOutput().getValueAsDouble());
   }
 
   @Override
