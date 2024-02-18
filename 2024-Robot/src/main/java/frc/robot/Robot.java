@@ -39,6 +39,7 @@ import frc.robot.commands.RunShooter;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.ToggleBrake;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -271,20 +272,20 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     // OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
-    // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
     // OI.driverX.whileTrue(new RunShooter(shooter, 15, 0));
-    // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
-    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 26.5, 7000, 1200));
+    OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
+    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 58, 4500, 1200, 0));
 
     //Operator
   }
 
   @Override
   public void teleopPeriodic() {
-    SmartDashboard.putBoolean("Feeder TOF", this.tof.getFeederDistMillimeters() < Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM);
-    SmartDashboard.putNumber("Feeder TOF Dist", this.tof.getFeederDistMillimeters());
+    // SmartDashboard.putBoolean("Feeder TOF", this.tof.getFeederDistMillimeters() < Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM);
+    // SmartDashboard.putNumber("Feeder TOF Dist", this.tof.getFeederDistMillimeters());
     intake.teleopPeriodic();
     shooter.teleopPeriodic();
     feeder.teleopPeriodic();

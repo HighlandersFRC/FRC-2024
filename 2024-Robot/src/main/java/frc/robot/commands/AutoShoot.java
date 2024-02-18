@@ -37,8 +37,8 @@ public class AutoShoot extends Command {
   private double shotPauseTime = 0.0;
 
   private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 400;
-  private double driveAngleAllowedError = 3;
+  private double shooterRPMAllowedError = 200;
+  private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;
 
@@ -46,9 +46,9 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.035;
+  private double kP = 0.03;
   private double kI = 0;
-  private double kD = 0.07;
+  private double kD = 0.06;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -91,8 +91,8 @@ public class AutoShoot extends Command {
 
   @Override
   public void execute() {
-    System.out.println("Speaker Elev: " + this.speakerElevationDegrees);
-    System.out.println("Speaker Angle: " + this.speakerAngleDegrees);
+    // System.out.println("Speaker Elev: " + this.speakerElevationDegrees);
+    // System.out.println("Speaker Angle: " + this.speakerAngleDegrees);
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
@@ -121,33 +121,33 @@ public class AutoShoot extends Command {
 
     double currentRobotSpeakerAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
     double currentSpeakerDistance = Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees);
-    System.out.println("Current Dist: " + currentSpeakerDistance);
+    // System.out.println("Current Dist: " + currentSpeakerDistance);
     Vector currentVelocityVector = this.drive.getRobotVelocityVector();
     Vector currentAccelerationVector = this.drive.getRobotAccelerationVector();
-    System.out.println("Accel: (" + currentAccelerationVector.getI() + ", " + currentAccelerationVector.getJ() + ")");
+    // System.out.println("Accel: (" + currentAccelerationVector.getI() + ", " + currentAccelerationVector.getJ() + ")");
     Vector futureVelocityVector = new Vector();
     futureVelocityVector.setI(currentVelocityVector.getI() + currentAccelerationVector.getI() * this.lookAheadTime);
     futureVelocityVector.setJ(currentVelocityVector.getJ() + currentAccelerationVector.getJ() * this.lookAheadTime);
-    System.out.println("Future Vel: (" + futureVelocityVector.getI() + ", " + futureVelocityVector.getJ() + ")");
+    // System.out.println("Future Vel: (" + futureVelocityVector.getI() + ", " + futureVelocityVector.getJ() + ")");
     double deltaX = 0.5 * currentAccelerationVector.getI() * Math.pow(this.lookAheadTime, 2) + currentVelocityVector.getI() * this.lookAheadTime;
     double deltaY = 0.5 * currentAccelerationVector.getJ() * Math.pow(this.lookAheadTime, 2) + currentVelocityVector.getJ() * this.lookAheadTime;
-    System.out.println("Delta X: " + deltaX);
-    System.out.println("Delta Y: " + deltaY);
+    // System.out.println("Delta X: " + deltaX);
+    // System.out.println("Delta Y: " + deltaY);
     double deltaAngleRadians = Math.atan2(deltaY, deltaX);
-    System.out.println("Delta Angle Rad: " + deltaAngleRadians);
+    // System.out.println("Delta Angle Rad: " + deltaAngleRadians);
     double deltaD = -Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) * Math.cos(deltaAngleRadians - Math.toRadians(currentRobotSpeakerAngleDegrees));
-    System.out.println("Delta D: " + deltaD);
+    // System.out.println("Delta D: " + deltaD);
     double futureSpeakerDistance = currentSpeakerDistance + deltaD;
     double[] futureSetpoints = Constants.SetPoints.getShooterValuesFromDistance(futureSpeakerDistance);
-    System.out.println("Future Degrees: " + futureSetpoints[0]);
-    System.out.println("Future RPM: " + futureSetpoints[1]);
+    // System.out.println("Future Degrees: " + futureSetpoints[0]);
+    // System.out.println("Future RPM: " + futureSetpoints[1]);
     double[] futureAdjutedSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, futureSetpoints[0], futureSetpoints[1], futureVelocityVector);
     double targetFuturePigeonAngleDegrees = futureAdjutedSetpoints[0];
     double targetFutureShooterDegrees = futureAdjutedSetpoints[1];
     double targetFutureShooterRPM = futureAdjutedSetpoints[2];
 
-    System.out.println("Future Adj. Degrees: " + targetFutureShooterDegrees);
-    System.out.println("Future Adj. RPM: " + targetFutureShooterRPM);
+    // System.out.println("Future Adj. Degrees: " + targetFutureShooterDegrees);
+    // System.out.println("Future Adj. RPM: " + targetFutureShooterRPM);
 
     this.pid.setSetPoint(targetCurrentPigeonAngleDegrees);
     this.pid.updatePID(pigeonAngleDegrees);

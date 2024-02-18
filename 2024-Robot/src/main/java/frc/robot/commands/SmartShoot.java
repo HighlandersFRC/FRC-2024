@@ -26,7 +26,7 @@ public class SmartShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.1;
 
-  private double shooterDegreesAllowedError = 1;
+  private double shooterDegreesAllowedError = 0.75;
   private double shooterRPMAllowedError = 150;
 
   public SmartShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM) {

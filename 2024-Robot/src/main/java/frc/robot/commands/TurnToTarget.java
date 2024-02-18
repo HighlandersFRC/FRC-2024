@@ -14,9 +14,9 @@ public class TurnToTarget extends Command {
   private Peripherals peripherals;
 
   private PID turnPID;
-  private double kP = 0.4;
+  private double kP = 0.07;
   private double kI = 0.0;
-  private double kD = 0.6;
+  private double kD = 0.14;
 
   private double speakerAngleDegrees;
 
@@ -57,9 +57,9 @@ public class TurnToTarget extends Command {
 
     if (this.canSeeTag){
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+      this.turnPID.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees);
     }
 
-    this.turnPID.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees);
     this.turnPID.updatePID(pigeonAngleDegrees);
     double turnResult = -this.turnPID.getResult();
 
@@ -73,12 +73,12 @@ public class TurnToTarget extends Command {
 
   @Override
   public boolean isFinished() {
-    if (Timer.getFPGATimestamp() - this.initTime > this.timeout){
-      return true;
-    } else if (Math.abs(this.speakerAngleDegrees) <= this.robotAngleAllowedErrorDegrees && this.canSeeTag){
-      return true;
-    } else {
+    // if (Timer.getFPGATimestamp() - this.initTime > this.timeout){
+    //   return true;
+    // } else if (Math.abs(this.speakerAngleDegrees) <= this.robotAngleAllowedErrorDegrees && this.canSeeTag){
+    //   return true;
+    // } else {
       return false;
-    }
+    // }
   }
 }
