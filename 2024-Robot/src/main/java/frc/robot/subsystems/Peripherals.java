@@ -20,6 +20,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.PeripheralsDefault;
+import frc.robot.tools.math.Vector;
 
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
@@ -28,6 +29,10 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
   private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
   private NetworkTableEntry frontCamTx = frontCam.getEntry("tx");
+  private NetworkTableEntry frontCamTl = frontCam.getEntry("tl");
+  private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
+  private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
+  private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
   private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
@@ -98,6 +103,13 @@ public class Peripherals extends SubsystemBase {
     return ids;
   }
 
+  public JSONObject getFrontCamLatencies(){
+    JSONObject latencies = new JSONObject();
+    latencies.put("tl", this.frontCamTl.getDouble(0) / 1000);
+    latencies.put("cl", this.frontCamCl.getDouble(0) / 1000);
+    return latencies;
+  }
+
   public void setFrontCamPipeline(int pipeline){
     frontCam.getEntry("pipeline").setNumber(pipeline);
   }
@@ -142,12 +154,51 @@ public class Peripherals extends SubsystemBase {
     return pigeon.getYaw().getValueAsDouble();
   }
 
+  public Vector getPigeonLinAccel(){
+    Vector accelVector = new Vector();
+    accelVector.setI(pigeon.getAccelerationX().getValueAsDouble() / Constants.Physical.GRAVITY_ACCEL_MS2);
+    accelVector.setJ(pigeon.getAccelerationY().getValueAsDouble() / Constants.Physical.GRAVITY_ACCEL_MS2);
+    return accelVector;
+  }
+
+  public double getBackHorizontalDistToTag(){
+    double[] pose = this.frontCamRobotTagPose.getDoubleArray(new double[] {0, 0, 0, 0, 0, 0});
+    return -pose[2];
+  }
+
+  public JSONArray getFrontCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    double tagDist = 99999;
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.frontCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+      tagDist = getBackHorizontalDistToTag();
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (tagDist > 2.25 || tagDist == 0){
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
   public JSONObject getCameraMeasurements(){
     JSONObject allCamResults = new JSONObject();
-    JSONObject backCamResults = new JSONObject(backCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
-    JSONObject frontCamResults = new JSONObject(frontCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
-    JSONObject leftCamResults = new JSONObject(leftCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
-    JSONObject rightCamResults = new JSONObject(rightCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject backCamResults = new JSONObject(this.backCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject frontCamResults = new JSONObject(this.frontCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject leftCamResults = new JSONObject(this.leftCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
+    JSONObject rightCamResults = new JSONObject(this.rightCamJSON.getString("{'Results': {}}")).getJSONObject("Results");
     if (!backCamResults.isNull("Fiducial")){
       allCamResults.put("BackCam", backCamResults);
     }

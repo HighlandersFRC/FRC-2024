@@ -30,6 +30,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
@@ -38,6 +39,7 @@ import frc.robot.commands.RunShooter;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.ToggleBrake;
+import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -270,14 +272,10 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
-    OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 600));
-    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 30, 5500, 600));
-    // OI.driverX.whileTrue(new RunClimber(climber, 0.6, 0.6));
-    // OI.driverY.whileTrue(new RunClimber(climber, 0.0, 0.6));
-    OI.driverRB.whileTrue(new RunClimber(climber, 0.0, 0.6));
-    OI.driverLB.onTrue(new ToggleBrake(climber));
-    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 600));
-    // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
+    // OI.driverA.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 50, 4000, 600));
+    OI.driverB.whileTrue(new TurnToTarget(drive, peripherals));
+    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     //Operator
   }
 

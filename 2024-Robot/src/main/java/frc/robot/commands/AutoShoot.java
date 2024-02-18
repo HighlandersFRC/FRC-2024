@@ -1,12 +1,10 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.sensors.TOF;
@@ -16,6 +14,7 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
+import frc.robot.tools.math.Vector;
 
 public class AutoShoot extends Command {
   private Drive drive;
@@ -31,30 +30,28 @@ public class AutoShoot extends Command {
   private double feederRPM;
 
   private double startTime;
-  private double timeout = 10;
+  private double timeout = 20;
 
   private double shotTime = 0;
   private boolean hasShot;
-  private double shotPauseTime = 0.1;
+  private double shotPauseTime = 0.0;
 
   private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 100;
-  private double driveAngleAllowedError = 1;
+  private double shooterRPMAllowedError = 250;
+  private double driveAngleAllowedError = 3;
 
-  private double angle;
+  private double lookAheadTime = 0.0;
 
   private boolean hasReachedSetPoint;
 
   private PID pid;
 
-  private double set = 0;
-
-  private double kP = 0.07;
+  private double kP = 0.03;
   private double kI = 0;
-  private double kD = 0.02;
+  private double kD = 0.07;
 
-  private double turn;
-  private double targetPigeonAngle;
+  private double speakerElevationDegrees;
+  private double speakerAngleDegrees;
 
   public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM) {
     this.drive = drive;
@@ -79,35 +76,35 @@ public class AutoShoot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder);
   }
 
-  // Called when the command is initially scheduled.
   @Override
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
     this.hasShot = false;
-    this.angle = peripherals.getFrontCamTargetTy();
     this.hasReachedSetPoint = false;
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
 
-    turn = peripherals.getFrontCamTargetTx();
-    double pigeonAngle = peripherals.getPigeonAngle();
-    this.targetPigeonAngle = pigeonAngle - turn;
-    pid.setSetPoint(targetPigeonAngle);
+    this.speakerElevationDegrees = 0;
+    this.speakerAngleDegrees = 0;
 
-    // this.feeder.set(0);
+    System.out.println("INIT");
+    System.out.println("Init pigeon angle: " + this.peripherals.getPigeonAngle());
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
+    this.shooterDegrees = this.shooterValues[0];
+    this.shooterRPM = this.shooterValues[1];
+    System.out.println("Init shooter degrees: " + this.shooterDegrees);
+    System.out.println("Init shooter RPM: " + this.shooterRPM);
   }
 
-  // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    turn = peripherals.getFrontCamTargetTx();
-    double pigeonAngle = peripherals.getPigeonAngle();
-    pid.updatePID(pigeonAngle);
+    // System.out.println("Speaker Elev: " + this.speakerElevationDegrees);
+    // System.out.println("Speaker Angle: " + this.speakerAngleDegrees);
 
-    double result = -pid.getResult();
+    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    ArrayList<Integer> ids = peripherals.getFrontCamIDs();
+    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
 
     boolean canSeeTag = false;
     for (int id : ids){
@@ -116,24 +113,37 @@ public class AutoShoot extends Command {
       }
     }
 
-    if (canSeeTag && turn < 90){
-      this.drive.driveAutoAligned(result);
-    } else {
-      this.drive.autoRobotCentricTurn(0);
-    }
-
     if (canSeeTag){
-      this.angle = peripherals.getFrontCamTargetTy();
-      this.shooterValues = Constants.SetPoints.getShooterValues(angle);
-      this.shooterDegrees = shooterValues[0];
-      this.shooterRPM = shooterValues[1];
-    } 
-
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
-
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngle - this.targetPigeonAngle) <= this.driveAngleAllowedError){
-      this.hasReachedSetPoint = true;
+      System.out.println("SAW TAG");
+      this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
+      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+      this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
+      this.shooterDegrees = this.shooterValues[0];
+      this.shooterRPM = this.shooterValues[1];
     }
+
+    //velocity compensation
+    double[] currentSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, this.shooterDegrees, this.shooterRPM, this.drive.getRobotVelocityVector());
+    double targetCurrentPigeonAngleDegrees = currentSetpoints[0];
+    double targetCurrentShooterDegrees = currentSetpoints[1];
+    double targetCurrentShooterRPM = currentSetpoints[2];
+
+    this.pid.setSetPoint(targetCurrentPigeonAngleDegrees);
+    this.pid.updatePID(pigeonAngleDegrees);
+    double turnResult = -pid.getResult();
+
+    if (Math.abs(this.shooter.getAngleDegrees() - targetCurrentShooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - targetCurrentShooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
+      this.hasReachedSetPoint = true;
+      turnResult = 0;
+    }
+
+    if (canSeeTag && this.speakerAngleDegrees < 90){
+      this.drive.driveAutoAligned(turnResult);
+    } else {
+      this.drive.driveAutoAligned(0);
+    }
+
+    this.shooter.set(targetCurrentShooterDegrees, targetCurrentShooterRPM);    
 
     if (this.hasReachedSetPoint == true){
       this.feeder.set(this.feederRPM);
@@ -146,12 +156,26 @@ public class AutoShoot extends Command {
       this.shotTime = Timer.getFPGATimestamp();
     }
 
+    if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
+      this.hasReachedSetPoint = true;
+    }
+
     System.out.println("RPM: " + this.shooter.getFlywheelRPM());
-    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
-    System.out.println("Angle: " + this.shooter.getAngleDegrees());
-    System.out.println("Angle Err: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngle);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngle - targetPigeonAngle));
+    System.out.println("Targ. RPM: " + this.shooterRPM);
+    System.out.println("Targ. Adj. RPM: " + targetCurrentShooterRPM);
+    System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - targetCurrentShooterRPM));
+    System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    System.out.println("Targ. Elev: " + this.shooterDegrees);
+    System.out.println("Targ. Adj. Elev: " + targetCurrentShooterDegrees);
+    System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetCurrentShooterDegrees));
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Targ. Pigeon Angle: " + (pigeonAngleDegrees - this.speakerAngleDegrees));
+    System.out.println("Targ. Adj. Pigeon Angle: " + targetCurrentPigeonAngleDegrees);
+    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees));
+    System.out.println("Current Setpoints: " + Arrays.toString(currentSetpoints));
+    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
+    System.out.println("<================>");
   }
 
   // Called once the command ends or is interrupted.
@@ -168,10 +192,6 @@ public class AutoShoot extends Command {
     // System.out.println("Time Since Shot " + (Timer.getFPGATimestamp() - this.shotTime));
 
     if (this.shooterDegrees > 90){
-      return true;
-    }
-    if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
-      System.out.println("Shooter time out");
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
       return true;
