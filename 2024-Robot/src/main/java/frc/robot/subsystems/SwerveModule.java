@@ -24,6 +24,12 @@ public class SwerveModule extends SubsystemBase {
   private final TalonFX driveMotor;
   private final int moduleNumber;
   private final CANcoder canCoder;
+  private double canId;
+  private double canVoltage;
+  private boolean swerveCan1 = false;
+  private boolean swerveCan2 = false;
+  private boolean swerveCan3 = false;
+  private boolean swerveCan4 = false;
 
   PositionTorqueCurrentFOC positionTorqueFOCRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   VelocityTorqueCurrentFOC velocityTorqueFOCRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
@@ -36,6 +42,7 @@ public class SwerveModule extends SubsystemBase {
     angleMotor = mAngleMotor;
     driveMotor = mDriveMotor;
     canCoder = mCanCoder;
+    
   }
 
   public double torqueAngle(){
@@ -294,5 +301,19 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan1 = true;
+    } else if (canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan2 = true;
+    } else if (canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan3 = true;
+    } else if (canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan4 = true;
+    }
+    
+    SmartDashboard.putBoolean(" swerve can(1)", swerveCan1);
+    SmartDashboard.putBoolean(" swerve can(2)", swerveCan2);
+    SmartDashboard.putBoolean(" swerve can(3)", swerveCan3);
+    SmartDashboard.putBoolean(" swerve can(4)", swerveCan4);
   }
 }
