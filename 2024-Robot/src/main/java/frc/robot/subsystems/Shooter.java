@@ -20,19 +20,15 @@ import com.revrobotics.SparkPIDController;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 import com.revrobotics.SparkAbsoluteEncoder.Type;
 
-import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ShooterDefault;
-import frc.robot.tools.controlloops.PID;
 
 public class Shooter extends SubsystemBase {
 
   private final CANcoder angleEncoder = new CANcoder(Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
   private final CANcoderConfiguration angleEncoderConfiguration = new CANcoderConfiguration();
-  private boolean shooterEncoderBool = false;
-  private boolean shooterBeam = false;
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
@@ -80,6 +76,7 @@ public class Shooter extends SubsystemBase {
     double flywheelI = 0.00000;
     double flywheelD = 0.0;
     double flywheelFF = 0.0002;
+
     this.flywheelVortexMaster.restoreFactoryDefaults();
     this.flywheelVortexMasterPID.setP(flywheelP, 0);
     this.flywheelVortexMasterPID.setI(flywheelI, 0);
@@ -170,34 +167,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.getNumber("Flywheel P value", this.flywheelVortexMasterPID.getP());
-		SmartDashboard.getNumber("Flywheel I value",  this.flywheelVortexMasterPID.getI());
-		SmartDashboard.getNumber("Flywheel D value", this.flywheelVortexMasterPID.getD());
-    SmartDashboard.getNumber("Flywheel FF value", this.flywheelVortexMasterPID.getFF());
 
- double newPIDP = SmartDashboard.getNumber("Flywheel P value", flywheelVortexMasterPID.getP());
-    if(this.flywheelVortexMasterPID.getP() != newPIDP){
-      flywheelVortexMasterPID.setP(newPIDP);
-    }
-
-    double newPIDI = SmartDashboard.getNumber("Flywheel I value",  flywheelVortexMasterPID.getI());
-     if(flywheelVortexMasterPID.getI() != newPIDI){
-      flywheelVortexMasterPID.setI(newPIDI);
-    }
-
-    double newPIDD = 	SmartDashboard.getNumber("Flywheel D value", flywheelVortexMasterPID.getD());
-     if(flywheelVortexMasterPID.getD() != newPIDD){
-      flywheelVortexMasterPID.setD(newPIDD);
-    }
-
-    double newPIDFF =  SmartDashboard.getNumber("Flywheel FF value", flywheelVortexMasterPID.getFF());
-     if(this.flywheelVortexMasterPID.getFF() != newPIDFF){
-      this.flywheelVortexMasterPID.setFF(newPIDFF);
-    }
-
-    if(angleEncoder.getAbsolutePosition().getValue() != 0){
-          shooterEncoderBool = true;
-        }
-    SmartDashboard.putBoolean(" shooter encoder", false);
   }
 }

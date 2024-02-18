@@ -24,6 +24,7 @@ import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.math.kinematics.SwerveModulePosition;
 import edu.wpi.first.math.numbers.N1;
@@ -272,12 +273,6 @@ public class Drive extends SubsystemBase {
   public void updateOdometryFusedArray(){
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
-    // Matrix<N3, N1> stdDeviation = new Matrix<>(Nat.N3(), Nat.N1());
-
-    // stdDeviation.set(0, 0, 0);
-    // stdDeviation.set(1, 0, 0);
-    // stdDeviation.set(2, 0, 0);
-
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
     swerveModulePositions[1] = new SwerveModulePosition(frontRight.getModuleDistance(), new Rotation2d(frontRight.getCanCoderPositionRadians()));
@@ -290,13 +285,13 @@ public class Drive extends SubsystemBase {
     currentY = getOdometryY();
     currentTheta = navxOffset;
 
-    // if(useCameraInOdometry && cameraCoordinates.getDouble(0) != 0) {
-    //   cameraBasedX = cameraCoordinates.getDouble(0);
-    //   cameraBasedY = cameraCoordinates.getDouble(1);
-    //   timeSinceLastCameraMeasurement = 0;
-    //   Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
-    //   m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getBackCameraLatency()/1000));
-    // }
+    // JSONArray frontCamCoordinates = this.peripherals.getFrontCamBasedPosition();
+    // JSONObject frontCamLatencies = this.peripherals.getFrontCamLatencies();
+
+    // double cameraBasedX = frontCamCoordinates.getDouble(0);
+    // double cameraBasedY = frontCamCoordinates.getDouble(1);
+    // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+    // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
 
     currentTime = Timer.getFPGATimestamp() - initTime;
     timeDiff = currentTime - previousTime;
@@ -862,6 +857,64 @@ public class Drive extends SubsystemBase {
     backRight.drive(vector, turnRadiansPerSec, pigeonAngle);
   }
 
+  //get current velocity vector of the robot in field coordinats, m/s
+  public Vector getRobotVelocityVector(){
+    Vector velocityVector = new Vector(0, 0);
+    double pigeonAngleRadians = Math.toRadians(this.peripherals.getPigeonAngle());
+
+    double frV = this.frontRight.getGroundSpeed();
+    double frTheta = this.frontRight.getWheelPosition() + pigeonAngleRadians;
+    double frVX = frV * Math.cos(frTheta);
+    double frVY = frV * Math.sin(frTheta);
+    double flV = this.frontLeft.getGroundSpeed();
+    double flTheta = this.frontLeft.getWheelPosition() + pigeonAngleRadians;
+    double flVX = flV * Math.cos(flTheta);
+    double flVY = flV * Math.sin(flTheta);
+    double blV = this.backLeft.getGroundSpeed();
+    double blTheta = this.backLeft.getWheelPosition() + pigeonAngleRadians;
+    double blVX = blV * Math.cos(blTheta);
+    double blVY = blV * Math.sin(blTheta);
+    double brV = this.backRight.getGroundSpeed();
+    double brTheta = this.backRight.getWheelPosition() + pigeonAngleRadians;
+    double brVX = brV * Math.cos(brTheta);
+    double brVY = brV * Math.sin(brTheta);
+
+    velocityVector.setI(frVX + flVX + blVX + brVX);
+    velocityVector.setJ(frVY + flVY + blVY + brVY);
+    
+    // System.out.println("VVector: <" + velocityVector.getI() + ", " + velocityVector.getJ() + ">");
+
+    return velocityVector;
+  }
+
+  public Vector getRobotAccelerationVector(){
+    Vector accelerationVector = new Vector();
+
+    Vector robotCentricAccelerationVector = this.peripherals.getPigeonLinAccel();
+    double accelerationMagnitude = Constants.getDistance(robotCentricAccelerationVector.getI(), robotCentricAccelerationVector.getJ(), 0, 0);
+    accelerationVector.setI(accelerationMagnitude * Math.cos(Math.toRadians(this.peripherals.getPigeonAngle())));
+    accelerationVector.setJ(accelerationMagnitude * Math.sin(Math.toRadians(this.peripherals.getPigeonAngle())));
+
+    return accelerationVector;
+  }
+
+  public JSONArray getPathPoint(JSONArray path, double time){
+    for (int i = 0; i < path.length() - 1; i ++){
+      JSONArray currentPoint = path.getJSONArray(i + 1);
+      JSONArray previousPoint = path.getJSONArray(i);
+      double currentPointTime = currentPoint.getDouble(0);
+      double previousPointTime = previousPoint.getDouble(0);
+      if (time >= previousPointTime && time < currentPointTime){
+        return currentPoint;
+      }
+    }
+    if (time < path.getJSONArray(0).getDouble(0)){
+      return path.getJSONArray(0);
+    } else {
+      return path.getJSONArray(path.length() - 1);
+    }
+  }
+
   // Autonomous algorithm
   public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints) {
     if(time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {
@@ -939,7 +992,7 @@ public class Drive extends SubsystemBase {
         velocityArray[1] = -yVel;
         velocityArray[2] = thetaVel;
 
-        // System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
+        System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
         // System.out.println("PID side: " + this.fieldSide);
 
         return velocityArray;

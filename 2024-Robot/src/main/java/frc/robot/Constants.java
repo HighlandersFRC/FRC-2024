@@ -4,6 +4,8 @@
 
 package frc.robot;
 
+import frc.robot.tools.math.Vector;
+
 public final class Constants {
 
   //Physical constants (e.g. field and robot dimensions)
@@ -18,10 +20,22 @@ public final class Constants {
     public static final double TOP_SPEED = feetToMeters(20);
 
     public static final double ROBOT_WIDTH = inchesToMeters(25);
-    public static final double ROBOT_LENGTH = inchesToMeters(29);
+    public static final double ROBOT_LENGTH = inchesToMeters(28.75);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
-    public static final double SHOOTER_RESTING_ANGLE_DEG = 8;
+    public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;
+    public static final double FLYWHEEL_RADIUS_METERS = inchesToMeters(2.0);
+    public static final double FLYWHEEL_CIRCUMFERENCE_METERS = 2.0 * Math.PI * FLYWHEEL_RADIUS_METERS;
+
+    public static final double GRAVITY_ACCEL_MS2 = 9.806;
+
+    public static double flywheelRPMToNoteMPS(double rpm){
+      return rpm * (1.0 / 60.0) * FLYWHEEL_CIRCUMFERENCE_METERS;
+    }
+
+    public static double noteMPSToFlywheelRPM(double mps){
+      return (mps / FLYWHEEL_CIRCUMFERENCE_METERS) * 60.0;
+    }
   }
 
   //Subsystem setpoint constants
@@ -29,7 +43,7 @@ public final class Constants {
     //drive
 
     //intake
-    public static final double INTAKE_DOWN_ANGLE_ROT = -0.375;
+    public static final double INTAKE_DOWN_ANGLE_ROT = -0.365;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
     public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
@@ -55,14 +69,25 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.4352, 13.80, 52, 4500},
-      {2.2987, -3.64, 42, 5000},
-      {3.3655, -12.68, 31, 5500},
-      {3.6195, -19.93, 26, 6000},
-      {5.9817, -23.34, 22, 6500}
+      // {1.4352, 13.80, 52, 4500},
+      // {2.2987, -3.64, 42, 5000},
+      // {3.3655, -12.68, 31, 5500},
+      // {3.6195, -19.93, 26, 6000},
+      // {5.9817, -23.34, 22, 6500}
+      {1.36525, 21.28, 58, 3500},
+      {1.74625, 11.28, 51, 4000},
+      {2.270125, 1.25, 41, 4500},
+      {2.7559, -5.91, 36, 5000},
+      {3.3401, -10.56, 31, 5000},
+      {3.91795, -13.91, 27, 5500},
+      {4.55295, -16.3, 25.4, 6000},
+      {5.2324, -18.31, 23.5, 6500},
+      {6.0833, -21.05, 21.5, 7000},
+      {6.6802, -21.36, 20.7, 7500},
+      {7.5819, -22.69, 19.9, 8000}
     };
 
-    public static double[] getShooterValues(double angle) {
+    public static double[] getShooterValuesFromAngle(double angle) {
         int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
         if (angle > SHOOTING_LOOKUP_TABLE[0][1]) {
             //If the angle is closer than the first setpoint
@@ -94,9 +119,117 @@ public final class Constants {
                 }
             }
             //Should never run
+            System.out.println("preset selection error");
             double[] returnArr = {0, 0};
             return returnArr;
         }  
+    }
+
+    public static double[] getShooterValuesFromDistance(double dist) {
+        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
+        if (dist < SHOOTING_LOOKUP_TABLE[0][0]) {
+            //If the dist is closer than the first setpoint
+            double[] returnArr = {SHOOTING_LOOKUP_TABLE[0][2], SHOOTING_LOOKUP_TABLE[0][3]};
+            return returnArr;
+        } else if (dist > SHOOTING_LOOKUP_TABLE[lastIndex][0]) {
+            //If the dist is farther than the last setpoint
+            double[] returnArr = {SHOOTING_LOOKUP_TABLE[lastIndex][2], SHOOTING_LOOKUP_TABLE[lastIndex][3]};
+            return returnArr;
+        } else {
+            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
+                if (dist > SHOOTING_LOOKUP_TABLE[i][0] && dist < SHOOTING_LOOKUP_TABLE[i + 1][0]) {
+                    //If the dist is in the table of setpoints
+                    //Calculate where dist is between setpoints
+                    double leftDif = dist - SHOOTING_LOOKUP_TABLE[i][0];
+                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][0] - SHOOTING_LOOKUP_TABLE[i][0]);
+
+                    double hood1 = SHOOTING_LOOKUP_TABLE[i][2];
+                    double rpm1 = SHOOTING_LOOKUP_TABLE[i][3];
+                    double hood2 = SHOOTING_LOOKUP_TABLE[i + 1][2];
+                    double rpm2 = SHOOTING_LOOKUP_TABLE[i + 1][3];
+
+                    //Interpolate in-between values for hood dist and shooter rpm
+                    double newHood = hood1 + (percent * (hood2 - hood1));
+                    double newRPM = rpm1 + (percent * (rpm2 - rpm1));
+                    
+                    double[] returnArr = {newHood, newRPM};
+                    return returnArr;
+                }
+            }
+            //Should never run
+            System.out.println("preset selection error");
+            double[] returnArr = {0, 0};
+            return returnArr;
+        }  
+    }
+
+    public static double getDistFromAngle(double ty) {
+        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
+        if (ty > SHOOTING_LOOKUP_TABLE[0][1]) {
+            //If the ty is closer than the first setpoint
+            double returnDist = SHOOTING_LOOKUP_TABLE[0][0];
+            return returnDist;
+        } else if (ty < SHOOTING_LOOKUP_TABLE[lastIndex][1]) {
+            //If the ty is farther than the last setpoint
+            double returnDist = SHOOTING_LOOKUP_TABLE[lastIndex][0];
+            return returnDist;
+        } else {
+            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
+                if (ty < SHOOTING_LOOKUP_TABLE[i][1] && ty > SHOOTING_LOOKUP_TABLE[i + 1][1]) {
+                    //If the ty is in the table of setpoints
+                    //Calculate where ty is between setpoints
+                    double leftDif = ty - SHOOTING_LOOKUP_TABLE[i][1];
+                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][1] - SHOOTING_LOOKUP_TABLE[i][1]);
+
+                    double dist1 = SHOOTING_LOOKUP_TABLE[i][0];
+                    double dist2 = SHOOTING_LOOKUP_TABLE[i + 1][0];
+
+                    //Interpolate in-between values for dist ty and shooter rpm
+                    double newDist = dist1 + (percent * (dist2 - dist1));
+                    
+                    double returnDist = newDist;
+                    return returnDist;
+                }
+            }
+            //Should never run
+            double returnDist = 1;
+            return returnDist;
+        }  
+    }
+
+    public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees, double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS){
+      double thetaI = Math.toRadians(pigeonAngleDegrees - speakerAngleDegrees);
+      double phiI = Math.toRadians(shooterAngleDegrees);
+      double rhoI = Constants.Physical.flywheelRPMToNoteMPS(shooterRPM);
+      if (rhoI < 0.01){
+        return new double[] {pigeonAngleDegrees - speakerAngleDegrees, shooterAngleDegrees, shooterRPM};
+      }
+      Vector robotVelocityVector = robotVelocityMPS;
+      double vx = robotVelocityVector.getI();
+      double vy = robotVelocityVector.getJ();
+
+      double xI = rhoI * Math.cos(phiI) * Math.cos(thetaI);
+      double yI = rhoI * Math.cos(phiI) * Math.sin(thetaI);
+      double zI = rhoI * Math.sin(phiI);
+
+      double xF = xI - vx;
+      double yF = yI - vy;
+      double zF = zI;
+
+      double thetaF = Math.atan2(yF, xF);
+      if (thetaF < 0){
+        thetaF += 2 * Math.PI;
+      }
+      double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
+      double rhoF = Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2) + Math.pow(zF, 2));
+
+      double targetShooterDegrees = Math.toDegrees(phiF);
+      double targetShooterRPM = Constants.Physical.noteMPSToFlywheelRPM(rhoF);
+
+      double extraPigeonRotations = Math.floor((pigeonAngleDegrees / 360.0));
+      double targetPigeonAngleDegrees = extraPigeonRotations * 360.0 + Math.toDegrees(thetaF);
+
+      return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
     }
 
     //feeder
@@ -169,6 +302,7 @@ public final class Constants {
     AprilTag Size: 165
     Detector Downscale: 1.5
     Quality Threshold: 2
+    Crosshair X: 0.23
     */
 
     //Standard deviation regressions
@@ -216,7 +350,7 @@ public final class Constants {
   //Gear ratios and conversions
   public static final class Ratios {
     //drive
-    public static final double DRIVE_GEAR_RATIO = 6.75;
+    public static final double DRIVE_GEAR_RATIO = 5.9;
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake

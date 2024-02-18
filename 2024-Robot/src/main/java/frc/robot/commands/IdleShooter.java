@@ -1,17 +1,16 @@
-package frc.robot.commands.defaults;
+package frc.robot.commands;
 
-import org.apache.commons.math3.analysis.function.Constant;
-
-import edu.wpi.first.hal.simulation.ConstBufferCallback;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Shooter;
 
-public class ShooterDefault extends Command {
-  Shooter shooter;
+public class IdleShooter extends Command {
+  private Shooter shooter;
+  private double RPM;
 
-  public ShooterDefault(Shooter shooter) {
+  public IdleShooter(Shooter shooter, double RPM) {
     this.shooter = shooter;
+    this.RPM = RPM;
     addRequirements(this.shooter);
   }
 
@@ -20,13 +19,12 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    this.shooter.setFlywheelPercent(0);
+    this.shooter.setVelocity(this.RPM);
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);
     } else {
       this.shooter.setAnglePercent(-0.05);
     }
-    // this.shooter.set(40, 3000);
   }
 
   @Override
