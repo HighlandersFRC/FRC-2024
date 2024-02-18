@@ -223,7 +223,7 @@ public final class Constants {
     //feeder
 
     //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 150;
+    public static final double FEEDER_TOF_THRESHOLD_MM = 180;
   }
 
   //Vision constants (e.g. camera offsets)

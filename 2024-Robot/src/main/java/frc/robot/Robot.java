@@ -274,15 +274,17 @@ public class Robot extends LoggedRobot {
     // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
-    OI.driverX.whileTrue(new RunShooter(shooter, 15, 0));
-    OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
-    OI.driverB.whileTrue(new RunShooter(shooter, 60, 0));
+    // OI.driverX.whileTrue(new RunShooter(shooter, 15, 0));
+    // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
+    OI.driverB.whileTrue(new SmartShoot(shooter, feeder, peripherals, lights, tof, 26.5, 7000, 1200));
 
     //Operator
   }
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putBoolean("Feeder TOF", this.tof.getFeederDistMillimeters() < Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM);
+    SmartDashboard.putNumber("Feeder TOF Dist", this.tof.getFeederDistMillimeters());
     intake.teleopPeriodic();
     shooter.teleopPeriodic();
     feeder.teleopPeriodic();

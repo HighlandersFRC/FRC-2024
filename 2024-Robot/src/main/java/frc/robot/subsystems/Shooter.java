@@ -50,7 +50,7 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 2300;
+    this.angleFalconConfiguration.Slot0.kP = 2500;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -144,7 +144,7 @@ public class Shooter extends SubsystemBase {
   public void teleopPeriodic(){
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
-    SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
+    
     // SmartDashboard.putNumber("Flywheel %Out Master", this.flywheelVortexMaster.getAppliedOutput());
     // SmartDashboard.putNumber("Flywheel %Out Follower", this.flywheelVortexFollower.getAppliedOutput());
     // SmartDashboard.putNumber("Shooter Angle %", this.angleFalcon.getClosedLoopOutput().getValueAsDouble());
@@ -152,6 +152,6 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-
+    SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
   }
 }
