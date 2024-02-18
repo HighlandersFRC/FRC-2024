@@ -14,17 +14,17 @@ public class TurnToTarget extends Command {
   private Peripherals peripherals;
 
   private PID turnPID;
-  private double kP = 0.07;
+  private double kP = 0.04;
   private double kI = 0.0;
-  private double kD = 0.14;
+  private double kD = 0.08;
 
   private double speakerAngleDegrees;
+  private double targetPigeonAngleDegrees;
 
   private double initTime;
   private double timeout = 1.5;
 
   private double robotAngleAllowedErrorDegrees = 2;
-  private boolean canSeeTag = false;
 
   public TurnToTarget(Drive drive, Peripherals peripherals) {
     this.drive = drive;
@@ -36,10 +36,9 @@ public class TurnToTarget extends Command {
   public void initialize() {
     this.initTime = Timer.getFPGATimestamp();
     this.turnPID = new PID(this.kP, this.kI, this.kD);
-    this.turnPID.setMinOutput(-3);
-    this.turnPID.setMaxOutput(3);
+    this.turnPID.setMinOutput(-2);
+    this.turnPID.setMaxOutput(2);
     this.speakerAngleDegrees = 0;
-    this.canSeeTag = false;
   }
 
   @Override
@@ -48,22 +47,35 @@ public class TurnToTarget extends Command {
 
     ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
 
-    this.canSeeTag = false;
+    boolean canSeeTag = false;
     for (int id : ids){
+      // System.out.println("ID: " + id);
       if (id == 7 || id == 4){
-        this.canSeeTag = true;
+        canSeeTag = true;
       }
     }
 
-    if (this.canSeeTag){
-      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-      this.turnPID.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees);
+    double prevSpeakerAngleDegrees = this.speakerAngleDegrees;
+    this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+    if (canSeeTag && this.speakerAngleDegrees < 90 && Math.abs(this.speakerAngleDegrees - prevSpeakerAngleDegrees) > 0.01){
+      this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
     }
 
+    this.turnPID.setSetPoint(targetPigeonAngleDegrees);
     this.turnPID.updatePID(pigeonAngleDegrees);
     double turnResult = -this.turnPID.getResult();
 
-    this.drive.autoRobotCentricTurn(turnResult);
+    if (Math.abs(this.targetPigeonAngleDegrees - pigeonAngleDegrees) < this.robotAngleAllowedErrorDegrees){
+      this.drive.driveAutoAligned(0);
+    } else {
+      this.drive.driveAutoAligned(turnResult);
+    }
+
+    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ Angle: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Turn Result: " + turnResult);
+    // System.out.println("Can See Tag: " + canSeeTag);
   }
 
   @Override

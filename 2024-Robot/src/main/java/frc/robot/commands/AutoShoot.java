@@ -38,7 +38,7 @@ public class AutoShoot extends Command {
 
   private double shooterDegreesAllowedError = 1;
   private double shooterRPMAllowedError = 200;
-  private double driveAngleAllowedError = 2;
+  private double driveAngleAllowedError = 3;
 
   private double lookAheadTime = 0.0;
 
@@ -46,9 +46,9 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.03;
+  private double kP = 0.04;
   private double kI = 0;
-  private double kD = 0.06;
+  private double kD = 0.07;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;

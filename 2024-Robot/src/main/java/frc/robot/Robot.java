@@ -270,8 +270,8 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
-    // OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 4000,  600));
+    OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
     OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13));
     // OI.driverA.whileTrue(new RunFeeder(feeder, 600));
