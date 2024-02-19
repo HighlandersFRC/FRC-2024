@@ -14,9 +14,9 @@ public class TurnToTarget extends Command {
   private Peripherals peripherals;
 
   private PID turnPID;
-  private double kP = 0.04;
+  private double kP = 0.05;
   private double kI = 0.0;
-  private double kD = 0.08;
+  private double kD = 0.09;
 
   private double speakerAngleDegrees;
   private double targetPigeonAngleDegrees;

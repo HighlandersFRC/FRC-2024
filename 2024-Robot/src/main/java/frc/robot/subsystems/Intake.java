@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.GravityTypeValue;
@@ -24,6 +25,7 @@ public class Intake extends SubsystemBase {
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.INTAKE_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
   private final PositionTorqueCurrentFOC anglefalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC angleFalconCurrentRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX rollerFalcon = new TalonFX(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
@@ -112,6 +114,10 @@ public class Intake extends SubsystemBase {
   //Set intake angle motor percent
   public void setAnglePercent(double percent){
     this.angleFalcon.set(percent);
+  }
+
+  public void setAngleTorqueCurrent(double current, double maxPercent){
+    this.angleFalcon.setControl(this.angleFalconCurrentRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setAngleEncoderPosition(double rotations){

@@ -71,132 +71,68 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.30695, 19.41, 58, 4500},
-      {1.53695, 12.46, 54, 5000},
-      {1.84695, 5.57, 49, 5000},
-      {2.10695, 0.69, 45, 5500},
-      {2.48695, -4.76, 41, 5500},
-      {2.86195, -8.46, 35.5, 6000},
-      {3.18695, -11.12, 33.75, 6000},
-      {3.53195, -13.37, 31, 6500},
-      {3.84195, -15.05, 30, 6500},
-      {4.13695, -16.37, 28.5, 7000},
-      {4.47695, -17.53, 26.5, 7000},
-      {4.79195, -18.59, 25.5, 7000},
-      {5.31195, -19.96, 23.25, 7500},
-      {5.92195, -22.46, 20.5, 7750},
-      {6.42195, -22.63, 20, 8000},
-      {6.78195, -23.38, 19.5, 8500}
+      {1.30695, 19.41, 58, 4500, 2},
+      {1.53695, 12.46, 54, 5000, 1.5},
+      {1.84695, 5.57, 49, 5000, 1.5},
+      {2.10695, 0.69, 45, 5500, 1.25},
+      {2.48695, -4.76, 41, 5500, 1.25},
+      {2.86195, -8.46, 35.5, 6000, 1},
+      {3.18695, -11.12, 33.75, 6000, 1},
+      {3.53195, -13.37, 31, 6500, 1},
+      {3.84195, -15.05, 30, 6500, 1},
+      {4.13695, -16.37, 28.5, 7000, 1},
+      {4.47695, -17.53, 26.5, 7000, 1},
+      {4.79195, -18.59, 25.5, 7000, 0.8},
+      {5.31195, -19.96, 23.25, 7500, 0.8},
+      {5.92195, -22.46, 20.5, 7750, 0.7},
+      {6.42195, -22.63, 20, 8000, 0.7},
+      {6.78195, -23.38, 19.5, 8500, 0.6}
     };
 
-    public static double[] getShooterValuesFromAngle(double angle) {
+    public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
         int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (angle > SHOOTING_LOOKUP_TABLE[0][1]) {
-            //If the angle is closer than the first setpoint
-            double[] returnArr = {SHOOTING_LOOKUP_TABLE[0][2], SHOOTING_LOOKUP_TABLE[0][3]};
-            return returnArr;
-        } else if (angle < SHOOTING_LOOKUP_TABLE[lastIndex][1]) {
-            //If the angle is farther than the last setpoint
-            double[] returnArr = {SHOOTING_LOOKUP_TABLE[lastIndex][2], SHOOTING_LOOKUP_TABLE[lastIndex][3]};
-            return returnArr;
+        if (xValue > SHOOTING_LOOKUP_TABLE[0][xIndex]) {
+            //If the xValue is closer than the first setpoint
+            double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        } else if (xValue < SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
+            //If the xValue is farther than the last setpoint
+            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][0];
+            return returnValue;
         } else {
             for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (angle < SHOOTING_LOOKUP_TABLE[i][1] && angle > SHOOTING_LOOKUP_TABLE[i + 1][1]) {
-                    //If the angle is in the table of setpoints
-                    //Calculate where angle is between setpoints
-                    double leftDif = angle - SHOOTING_LOOKUP_TABLE[i][1];
-                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][1] - SHOOTING_LOOKUP_TABLE[i][1]);
+                if (xValue < SHOOTING_LOOKUP_TABLE[i][xIndex] && xValue > SHOOTING_LOOKUP_TABLE[i + 1][xIndex]) {
+                    //If the xValue is in the table of setpoints
+                    //Calculate where xValue is between setpoints
+                    double leftDif = xValue - SHOOTING_LOOKUP_TABLE[i][xIndex];
+                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][xIndex] - SHOOTING_LOOKUP_TABLE[i][xIndex]);
 
-                    double hood1 = SHOOTING_LOOKUP_TABLE[i][2];
-                    double rpm1 = SHOOTING_LOOKUP_TABLE[i][3];
-                    double hood2 = SHOOTING_LOOKUP_TABLE[i + 1][2];
-                    double rpm2 = SHOOTING_LOOKUP_TABLE[i + 1][3];
+                    double value1 = SHOOTING_LOOKUP_TABLE[i][yIndex];
+                    double value2 = SHOOTING_LOOKUP_TABLE[i + 1][yIndex];
 
-                    //Interpolate in-between values for hood angle and shooter rpm
-                    double newHood = hood1 + (percent * (hood2 - hood1));
-                    double newRPM = rpm1 + (percent * (rpm2 - rpm1));
+                    //Interpolate in-between values for value xValue and shooter rpm
+                    double newValue = value1 + (percent * (value2 - value1));
                     
-                    double[] returnArr = {newHood, newRPM};
-                    return returnArr;
+                    double returnValue = newValue;
+                    return returnValue;
                 }
             }
             //Should never run
-            System.out.println("preset selection error");
-            double[] returnArr = {0, 0};
-            return returnArr;
-        }  
+            double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        }
+    }
+
+    public static double[] getShooterValuesFromAngle(double angle) {
+      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)}; 
     }
 
     public static double[] getShooterValuesFromDistance(double dist) {
-        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (dist < SHOOTING_LOOKUP_TABLE[0][0]) {
-            //If the dist is closer than the first setpoint
-            double[] returnArr = {SHOOTING_LOOKUP_TABLE[0][2], SHOOTING_LOOKUP_TABLE[0][3]};
-            return returnArr;
-        } else if (dist > SHOOTING_LOOKUP_TABLE[lastIndex][0]) {
-            //If the dist is farther than the last setpoint
-            double[] returnArr = {SHOOTING_LOOKUP_TABLE[lastIndex][2], SHOOTING_LOOKUP_TABLE[lastIndex][3]};
-            return returnArr;
-        } else {
-            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (dist > SHOOTING_LOOKUP_TABLE[i][0] && dist < SHOOTING_LOOKUP_TABLE[i + 1][0]) {
-                    //If the dist is in the table of setpoints
-                    //Calculate where dist is between setpoints
-                    double leftDif = dist - SHOOTING_LOOKUP_TABLE[i][0];
-                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][0] - SHOOTING_LOOKUP_TABLE[i][0]);
-
-                    double hood1 = SHOOTING_LOOKUP_TABLE[i][2];
-                    double rpm1 = SHOOTING_LOOKUP_TABLE[i][3];
-                    double hood2 = SHOOTING_LOOKUP_TABLE[i + 1][2];
-                    double rpm2 = SHOOTING_LOOKUP_TABLE[i + 1][3];
-
-                    //Interpolate in-between values for hood dist and shooter rpm
-                    double newHood = hood1 + (percent * (hood2 - hood1));
-                    double newRPM = rpm1 + (percent * (rpm2 - rpm1));
-                    
-                    double[] returnArr = {newHood, newRPM};
-                    return returnArr;
-                }
-            }
-            //Should never run
-            System.out.println("preset selection error");
-            double[] returnArr = {0, 0};
-            return returnArr;
-        }  
+      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
     }
 
     public static double getDistFromAngle(double ty) {
-        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (ty > SHOOTING_LOOKUP_TABLE[0][1]) {
-            //If the ty is closer than the first setpoint
-            double returnDist = SHOOTING_LOOKUP_TABLE[0][0];
-            return returnDist;
-        } else if (ty < SHOOTING_LOOKUP_TABLE[lastIndex][1]) {
-            //If the ty is farther than the last setpoint
-            double returnDist = SHOOTING_LOOKUP_TABLE[lastIndex][0];
-            return returnDist;
-        } else {
-            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (ty < SHOOTING_LOOKUP_TABLE[i][1] && ty > SHOOTING_LOOKUP_TABLE[i + 1][1]) {
-                    //If the ty is in the table of setpoints
-                    //Calculate where ty is between setpoints
-                    double leftDif = ty - SHOOTING_LOOKUP_TABLE[i][1];
-                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][1] - SHOOTING_LOOKUP_TABLE[i][1]);
-
-                    double dist1 = SHOOTING_LOOKUP_TABLE[i][0];
-                    double dist2 = SHOOTING_LOOKUP_TABLE[i + 1][0];
-
-                    //Interpolate in-between values for dist ty and shooter rpm
-                    double newDist = dist1 + (percent * (dist2 - dist1));
-                    
-                    double returnDist = newDist;
-                    return returnDist;
-                }
-            }
-            //Should never run
-            double returnDist = 1;
-            return returnDist;
-        }  
+      return getInterpolatedValue(1, 0, ty);
     }
 
     public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees, double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS){
