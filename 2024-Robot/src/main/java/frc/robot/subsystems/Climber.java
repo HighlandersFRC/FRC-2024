@@ -61,7 +61,7 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, true));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
-    
+
   }
 
   public void setElevatorPosition(double positionMeters){
@@ -74,7 +74,7 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void setElevatorPercents(double percent){
+  public void setElevatorPercent(double percent){
     this.elevatorFalconMaster.set(percent);
   }
   

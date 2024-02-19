@@ -31,13 +31,10 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.PresetAutoShoot;
-import frc.robot.commands.RunCarriageMotor;
-import frc.robot.commands.RunElevator;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
-import frc.robot.commands.SetServoAngle;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.TurnToTarget;
@@ -48,9 +45,7 @@ import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.sensors.TOF;
-import frc.robot.subsystems.Carriage;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Elevator;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
@@ -67,8 +62,6 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Feeder feeder = new Feeder();
-  private Elevator elevator = new Elevator();
-  private Carriage carriage = new Carriage();
   //Sensors
   private TOF tof = new TOF();
 
@@ -118,8 +111,6 @@ public class Robot extends LoggedRobot {
     intake.init();
     shooter.init();
     feeder.init();
-    elevator.init();
-    carriage.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -280,11 +271,6 @@ public class Robot extends LoggedRobot {
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 58, 4500, 1200, 0));
     // OI.driverB.whileTrue(new RunShooter(shooter, 50, 0));
     // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
-    OI.driverRB.whileTrue(new RunElevator(elevator, 0.2, 0.2));
-    OI.driverLB.whileTrue(new RunElevator(elevator, 0.0, 0.2));
-    OI.driverB.whileTrue(new RunElevator(elevator, 0.2, 0.0));
-    OI.driverA.whileTrue(new SetServoAngle(carriage, 90));
-    OI.driverMenuButton.whileTrue(new RunCarriageMotor(carriage, 0.2));
     OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
 
     //Operator
