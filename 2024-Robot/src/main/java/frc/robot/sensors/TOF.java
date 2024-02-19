@@ -3,9 +3,11 @@ package frc.robot.sensors;
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
+import frc.robot.Constants;
+
 public class TOF {
-    private final TimeOfFlight feederTOF = new TimeOfFlight(0);
-    private final TimeOfFlight intakeTOF = new TimeOfFlight(1);
+    private final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
+    private final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
 
     public TOF(){
         this.feederTOF.setRangingMode(RangingMode.Short, 50);

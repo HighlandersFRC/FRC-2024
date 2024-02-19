@@ -171,6 +171,18 @@ public final class Constants {
 
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 180;
+
+    //climber
+    public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
+    public static final double ELEVATOR_TOP_POSITION_M = 0.25;
+
+    public static double elevatorRotationsToMeters(double rotations){
+      return 0;
+    }
+
+    public static double elevatorMetersToRotations(double meters){
+      return 0;
+    }
   }
 
   //Vision constants (e.g. camera offsets)
@@ -295,10 +307,14 @@ public final class Constants {
     //shooter
     public static final double SHOOTER_ANGLE_GEAR_RATIO = 75.0;
     public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 30.0 / 56.0;
-    //1.8666
 
     //feeder
     public static final double FEEDER_ROLLER_GEAR_RATIO = 3;
+
+    //climber
+    public static final double ELEVATOR_GEAR_RATIO = 4.0;
+    public static final double TRAP_ROLLER_GEAR_RATIO = 1.0;
+    public static final double TRAP_SERVO_GEAR_RATIO = 1.0;
   }
 
   //Can info such as IDs
@@ -334,11 +350,12 @@ public final class Constants {
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;
+    public static final int INTAKE_TOF_ID = 1;
 
     //Climber
-    public static final int CLIMBER_LEFT_MOTOR_ID = 16;
-    public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
-    public static final int CLIMBER_BRAKE_PORT = 0;
+    public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
+    public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
+    public static final int TRAP_ROLLER_MOTOR_ID = 18;
   }
 
   //Misc. controller values
