@@ -31,6 +31,7 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.PresetAutoShoot;
+import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
@@ -45,6 +46,7 @@ import frc.robot.commands.autos.FourPieceOneFarAuto;
 import frc.robot.commands.autos.FourPieceTwoFarAuto;
 import frc.robot.commands.autos.ThreePieceBottomAuto;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -62,6 +64,8 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Feeder feeder = new Feeder();
+  private Climber climber = new Climber(lights);
+
   //Sensors
   private TOF tof = new TOF();
 
@@ -111,6 +115,7 @@ public class Robot extends LoggedRobot {
     intake.init();
     shooter.init();
     feeder.init();
+    climber.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -225,6 +230,7 @@ public class Robot extends LoggedRobot {
 
     drive.periodic(); // remove for competition
     peripherals.periodic();
+    climber.periodic();
   }
 
   @Override
@@ -262,16 +268,18 @@ public class Robot extends LoggedRobot {
     //CONTROLS
 
     //Driver
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 4000,  600));
-    OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
-    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 4000,  600));
+    // OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, Constants.SetPoints.IntakePosition.kUP, -800, -800));
+    // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 58, 4500, 1200, 0));
     // OI.driverB.whileTrue(new RunShooter(shooter, 50, 0));
     // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
-    OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
+    // OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
+    OI.driverY.whileTrue(new RunClimber(climber, 0.2, 0));
+    OI.driverA.whileTrue(new RunClimber(climber, -0.1, 0));
 
     //Operator
   }

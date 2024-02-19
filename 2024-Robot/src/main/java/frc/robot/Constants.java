@@ -50,7 +50,8 @@ public final class Constants {
 
     //Intake up and down positions
     public enum IntakePosition {
-      kDOWN(INTAKE_DOWN_ANGLE_DEG, INTAKE_DOWN_ANGLE_ROT), kUP(INTAKE_UP_ANGLE_DEG, INTAKE_UP_ANGLE_ROT);
+      kDOWN(INTAKE_DOWN_ANGLE_DEG, INTAKE_DOWN_ANGLE_ROT),
+      kUP(INTAKE_UP_ANGLE_DEG, INTAKE_UP_ANGLE_ROT);
 
       public final double degrees;
       public final double rotations;
@@ -176,12 +177,17 @@ public final class Constants {
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
 
-    public static double elevatorRotationsToMeters(double rotations){
-      return 0;
-    }
+    public enum ElevatorPosition {
+      kDOWN(ELEVATOR_BOTTOM_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
+      kUP(ELEVATOR_TOP_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M));
 
-    public static double elevatorMetersToRotations(double meters){
-      return 0;
+      public final double meters;
+      public final double rotations;
+
+      private ElevatorPosition(double meters, double rotations){
+        this.meters = meters;
+        this.rotations = rotations;
+      }
     }
   }
 
@@ -315,6 +321,15 @@ public final class Constants {
     public static final double ELEVATOR_GEAR_RATIO = 4.0;
     public static final double TRAP_ROLLER_GEAR_RATIO = 1.0;
     public static final double TRAP_SERVO_GEAR_RATIO = 1.0;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 69.989;
+
+    public static double elevatorRotationsToMeters(double rotations){
+      return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
+    }
+
+    public static double elevatorMetersToRotations(double meters){
+      return meters * ELEVATOR_MOTOR_ROTATIONS_PER_METER;
+    }
   }
 
   //Can info such as IDs
@@ -356,6 +371,7 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
     public static final int TRAP_ROLLER_MOTOR_ID = 18;
+    public static final int TRAP_SERVO_CHANNEL = 0;
   }
 
   //Misc. controller values

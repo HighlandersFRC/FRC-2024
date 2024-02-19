@@ -7,11 +7,14 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
@@ -27,9 +30,13 @@ public class Climber extends SubsystemBase {
   private final TalonFX elevatorFalconMaster = new TalonFX(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconMasterConfiguration = new TalonFXConfiguration();
   private final PositionTorqueCurrentFOC elevatorFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC elevatorFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX trapRollerFalcon = new TalonFX(Constants.CANInfo.TRAP_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration trapRollerFalconConfiguration = new TalonFXConfiguration();
+  private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
+
+  private final Servo trapServo = new Servo(Constants.CANInfo.TRAP_SERVO_CHANNEL);
 
   /** Creates a new Climber. */
   public Climber(Lights lights) {
@@ -45,39 +52,101 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconFollowerConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconFollowerConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconFollowerConfiguration.Slot0.kD = elevatorFalconD;
+    this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
     this.elevatorFalconFollowerConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.elevatorFalconFollower.getConfigurator().apply(this.elevatorFalconFollowerConfiguration);
-    this.elevatorFalconFollower.setNeutralMode(NeutralModeValue.Brake);
+    this.elevatorFalconFollower.setNeutralMode(NeutralModeValue.Coast);
     this.elevatorFalconFollower.setPosition(0);
 
     this.elevatorFalconMasterConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconMasterConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconMasterConfiguration.Slot0.kD = elevatorFalconD;
-    this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
+    this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     this.elevatorFalconMaster.getConfigurator().apply(this.elevatorFalconMasterConfiguration);
-    this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
+    this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Coast);
     this.elevatorFalconMaster.setPosition(0);
 
     this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, true));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
-
+    this.trapRollerFalconConfiguration.Slot0.kI = 0;
+    this.trapRollerFalconConfiguration.Slot0.kD = 0;
+    this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
+    this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.trapRollerFalcon.getConfigurator().apply(this.trapRollerFalconConfiguration);
+    this.trapRollerFalcon.setNeutralMode(NeutralModeValue.Brake);
   }
 
-  public void setElevatorPosition(double positionMeters){
+  public void setElevatorPositionMeters(double positionMeters){
     if (positionMeters > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
     } else if (positionMeters < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
     } else {
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.elevatorMetersToRotations(positionMeters)));
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
     }
+  }
+
+  public void setElevatorPositionRotations(double positionRotations){
+    if (positionRotations > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_TOP_POSITION_M));
+    } else if (positionRotations < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M));
+    } else {
+      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(positionRotations));
+    }
+  }
+
+  public void setElevatorTorque(double current, double maxPercent){
+    this.elevatorFalconMaster.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setElevatorPercent(double percent){
     this.elevatorFalconMaster.set(percent);
   }
+
+  public void setTrapRollerPercent(double percent){
+    this.trapRollerFalcon.set(percent);
+  }
+
+  public void setTrapRollerTorque(double current, double maxPercent){
+    this.trapRollerFalcon.setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+  }
+
+  public void setTrapServoDegrees(double degrees){
+    this.trapServo.setAngle(degrees * Constants.Ratios.TRAP_SERVO_GEAR_RATIO);
+  }
+
+  public double getElevatorPositionMeters(){
+    return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getPosition().getValueAsDouble());
+  }
+
+  public double getElevatorPositionRotations(){
+    return this.elevatorFalconMaster.getPosition().getValueAsDouble();
+  }
+
+  public double getTrapRollerRPM(){
+    return this.trapRollerFalcon.getVelocity().getValueAsDouble() / Constants.Ratios.TRAP_ROLLER_GEAR_RATIO;
+  }
+
+  public double getTrapServoDegrees(){
+    return this.trapServo.getAngle() / Constants.Ratios.TRAP_SERVO_GEAR_RATIO;
+  }
   
   @Override
-  public void periodic() {}
+  public void periodic() {
+    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
+    SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    SmartDashboard.putNumber("Trap Servo Degrees", getTrapServoDegrees());
+  }
 }

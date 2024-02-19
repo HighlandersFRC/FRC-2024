@@ -16,6 +16,7 @@ public class ClimberDefault extends Command {
   @Override
   public void execute() {
     this.climber.setElevatorPercent(0);
+    this.climber.setTrapRollerPercent(0);
   }
 
   @Override
