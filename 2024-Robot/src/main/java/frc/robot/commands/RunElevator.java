@@ -5,19 +5,19 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Elevator;
 
-public class RunClimber extends Command {
-  Climber climber;
+public class RunElevator extends Command {
+  Elevator elevator;
   double leftPosition;
   double rightPosition;
 
   /** Creates a new RunClimber. */
-  public RunClimber(Climber climber, double leftPosition, double rightPosition) {
-    this.climber = climber;
+  public RunElevator(Elevator elevator, double leftPosition, double rightPosition) {
+    this.elevator = elevator;
     this.leftPosition = leftPosition;
     this.rightPosition = rightPosition;
-    addRequirements(climber);
+    addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
@@ -28,13 +28,13 @@ public class RunClimber extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    this.climber.setPercents(leftPosition, rightPosition);
+    this.elevator.setPercents(leftPosition, rightPosition);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    this.climber.setPercents(0.0, 0.0);
+    this.elevator.setPercents(0.0, 0.0);
   }
 
   // Returns true when the command should end.

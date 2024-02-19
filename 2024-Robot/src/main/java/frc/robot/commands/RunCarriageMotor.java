@@ -5,36 +5,38 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Carriage;
 
-public class ToggleBrake extends Command {
-  /** Creates a new SetBrake. */
-  Climber climber;
-  public ToggleBrake(Climber climber) {
-    this.climber = climber;
-    addRequirements(climber);
+public class RunCarriageMotor extends Command {
+  Carriage carriage;
+  double speed;
+  /** Creates a new RunCarriageMotor. */
+  public RunCarriageMotor(Carriage carriage, double speed) {
+    this.carriage = carriage;
+    this.speed = speed;
+    addRequirements(carriage);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-    climber.toggle();
-    // System.out.println("Toggling");
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    carriage.setPercent(speed);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
+    carriage.setPercent(0.0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return true;
+    return false;
   }
 }

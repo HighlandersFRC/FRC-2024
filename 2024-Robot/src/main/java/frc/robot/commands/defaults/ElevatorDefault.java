@@ -5,14 +5,14 @@
 package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Elevator;
 
-public class ClimberDefault extends Command {
-  Climber climber;
+public class ElevatorDefault extends Command {
+  Elevator elevator;
   /** Creates a new ClimberDefault. */
-  public ClimberDefault(Climber climber) {
-    this.climber = climber;
-    addRequirements(climber);
+  public ElevatorDefault(Elevator elevator) {
+    this.elevator = elevator;
+    addRequirements(elevator);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

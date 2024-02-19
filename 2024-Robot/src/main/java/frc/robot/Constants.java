@@ -336,9 +336,11 @@ public final class Constants {
     public static final int FEEDER_TOF_ID = 0;
 
     //Climber
-    public static final int CLIMBER_LEFT_MOTOR_ID = 16;
-    public static final int CLIMBER_RIGHT_MOTOR_ID = 17;
-    public static final int CLIMBER_BRAKE_PORT = 0;
+    public static final int ELEVATOR_LEFT_MOTOR_ID = 16;
+    public static final int ELEVATOR_RIGHT_MOTOR_ID = 17;
+    public static final int ELEVATOR_CARRIAGE_MOTOR_ID = 18;
+    public static final int CARRIAGE_SERVO_CHANNEL = 0;
+    // public static final int CLIMBER_BRAKE_PORT = 0;
   }
 
   //Misc. controller values
