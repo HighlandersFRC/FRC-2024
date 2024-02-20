@@ -3,33 +3,48 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Intake;
 
 public class SetClimber extends Command {
   private Climber climber;
+  private Intake intake;
   private double positionMeters;
-  private double servoDegrees;
+  private boolean intakeIsClear = false;
 
-  public SetClimber(Climber climber, double positionMeters, double servoDegrees) {
+  public SetClimber(Climber climber, Intake intake, double positionMeters) {
     this.climber = climber;
+    this.intake = intake;
     this.positionMeters = positionMeters;
-    this.servoDegrees = servoDegrees;
     addRequirements(this.climber);
   }
 
-  public SetClimber(Climber climber, Constants.SetPoints.ElevatorPosition position, double servoDegrees) {
+  public SetClimber(Climber climber, Intake intake, Constants.SetPoints.ElevatorPosition position) {
     this.climber = climber;
+    this.intake = intake;
+    this.intake = intake;
     this.positionMeters = position.meters;
-    this.servoDegrees = servoDegrees;
     addRequirements(this.climber);
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.intakeIsClear = false;
+  }
 
   @Override
   public void execute() {
-    this.climber.setElevatorPositionMeters(this.positionMeters);
     this.climber.setTrapRollerPercent(0);
+    this.intake.setAngle(Constants.SetPoints.IntakePosition.kDOWN);
+
+    if (this.intake.getAngleRotations() < -0.1){
+      this.intakeIsClear = true;
+    }
+
+    if (this.intakeIsClear){
+      this.climber.setElevatorPositionMeters(this.positionMeters);
+    } else {
+      this.climber.setElevatorTorque(-5, 0.1);
+    }
   }
 
   @Override

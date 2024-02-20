@@ -278,8 +278,8 @@ public class Robot extends LoggedRobot {
     // OI.driverB.whileTrue(new RunShooter(shooter, 50, 0));
     // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
     // OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
-    OI.driverY.whileTrue(new RunClimber(climber, 0.2, 0));
-    OI.driverA.whileTrue(new RunClimber(climber, -0.1, 0));
+    OI.driverY.whileTrue(new RunClimber(climber, intake, 0.2));
+    OI.driverA.whileTrue(new RunClimber(climber, intake, -0.1));
 
     //Operator
   }

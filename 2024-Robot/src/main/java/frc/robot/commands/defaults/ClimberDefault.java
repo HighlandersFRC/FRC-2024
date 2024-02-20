@@ -22,7 +22,6 @@ public class ClimberDefault extends Command {
   @Override
   public void execute() {
     this.climber.setTrapRollerPercent(0);
-    // this.climber.setTrapServoPercent(0);
 
     if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){
       this.numTimesHitBottom ++;
