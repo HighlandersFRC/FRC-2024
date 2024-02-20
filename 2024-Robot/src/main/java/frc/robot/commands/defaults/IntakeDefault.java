@@ -18,7 +18,10 @@ public class IntakeDefault extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.isZeroed = false;
+    this.numTimesOverCurrentLimit = 0;
+  }
 
   @Override
   public void execute() {

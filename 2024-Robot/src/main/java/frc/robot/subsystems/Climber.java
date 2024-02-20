@@ -32,11 +32,9 @@ public class Climber extends SubsystemBase {
   private final PositionTorqueCurrentFOC elevatorFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final TorqueCurrentFOC elevatorFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
-  private final TalonFX trapRollerFalcon = new TalonFX(Constants.CANInfo.TRAP_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX trapRollerFalcon = new TalonFX(Constants.CANInfo.TRAP_ROLLER_MOTOR_ID);
   private final TalonFXConfiguration trapRollerFalconConfiguration = new TalonFXConfiguration();
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
-
-  private final Servo trapServo = new Servo(Constants.CANInfo.TRAP_SERVO_CHANNEL);
 
   /** Creates a new Climber. */
   public Climber(Lights lights) {
@@ -82,7 +80,7 @@ public class Climber extends SubsystemBase {
     this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
     this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
-    this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     this.trapRollerFalcon.getConfigurator().apply(this.trapRollerFalconConfiguration);
     this.trapRollerFalcon.setNeutralMode(NeutralModeValue.Brake);
   }
@@ -123,10 +121,6 @@ public class Climber extends SubsystemBase {
     this.trapRollerFalcon.setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
-  public void setTrapServoDegrees(double degrees){
-    this.trapServo.setAngle(degrees * Constants.Ratios.TRAP_SERVO_GEAR_RATIO);
-  }
-
   public double getElevatorPositionMeters(){
     return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getPosition().getValueAsDouble());
   }
@@ -138,15 +132,22 @@ public class Climber extends SubsystemBase {
   public double getTrapRollerRPM(){
     return this.trapRollerFalcon.getVelocity().getValueAsDouble() / Constants.Ratios.TRAP_ROLLER_GEAR_RATIO;
   }
-
-  public double getTrapServoDegrees(){
-    return this.trapServo.getAngle() / Constants.Ratios.TRAP_SERVO_GEAR_RATIO;
-  }
   
+  public double getElevatorCurrent(){
+    return this.elevatorFalconMaster.getStatorCurrent().getValueAsDouble();
+  }
+
+  public double getElevatorVelocityMPS(){
+    return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getVelocity().getValueAsDouble());
+  }
+
+  public double getElevatorVelocityRPS(){
+    return this.elevatorFalconMaster.getVelocity().getValueAsDouble();
+  }
+
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
     SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
-    SmartDashboard.putNumber("Trap Servo Degrees", getTrapServoDegrees());
   }
 }

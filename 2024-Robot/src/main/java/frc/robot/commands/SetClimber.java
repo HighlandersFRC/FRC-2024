@@ -30,7 +30,6 @@ public class SetClimber extends Command {
   public void execute() {
     this.climber.setElevatorPositionMeters(this.positionMeters);
     this.climber.setTrapRollerPercent(0);
-    this.climber.setTrapServoDegrees(this.servoDegrees);
   }
 
   @Override

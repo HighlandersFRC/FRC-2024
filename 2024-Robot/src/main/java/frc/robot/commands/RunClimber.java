@@ -23,7 +23,6 @@ public class RunClimber extends Command {
   public void execute() {
     this.climber.setElevatorPercent(this.percent);
     this.climber.setTrapRollerPercent(0);
-    this.climber.setTrapServoDegrees(this.servoDegrees);
   }
 
   @Override
