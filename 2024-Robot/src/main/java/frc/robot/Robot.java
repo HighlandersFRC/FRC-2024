@@ -36,6 +36,8 @@ import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
+import frc.robot.commands.RunTrap;
+import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.TurnToTarget;
@@ -279,7 +281,8 @@ public class Robot extends LoggedRobot {
     // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
     // OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
     OI.driverY.whileTrue(new RunClimber(climber, intake, 0.2));
-    OI.driverA.whileTrue(new RunClimber(climber, intake, -0.1));
+    OI.driverA.whileTrue(new SetClimber(climber, intake, -0.1));
+    OI.driverB.whileTrue(new RunTrap(climber, -0.5));
 
     //Operator
   }

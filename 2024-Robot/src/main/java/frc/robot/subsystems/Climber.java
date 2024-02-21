@@ -50,36 +50,36 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconFollowerConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconFollowerConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconFollowerConfiguration.Slot0.kD = elevatorFalconD;
-    this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-    this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 80;
-    this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
+    // this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    // this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    // this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
     this.elevatorFalconFollowerConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.elevatorFalconFollower.getConfigurator().apply(this.elevatorFalconFollowerConfiguration);
-    this.elevatorFalconFollower.setNeutralMode(NeutralModeValue.Coast);
+    this.elevatorFalconFollower.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconFollower.setPosition(0);
 
     this.elevatorFalconMasterConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconMasterConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconMasterConfiguration.Slot0.kD = elevatorFalconD;
-    this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-    this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimit = 80;
-    this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
+    // this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    // this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    // this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
     this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     this.elevatorFalconMaster.getConfigurator().apply(this.elevatorFalconMasterConfiguration);
-    this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Coast);
+    this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconMaster.setPosition(0);
 
-    this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, true));
+    // this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, true));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
     this.trapRollerFalconConfiguration.Slot0.kI = 0;
     this.trapRollerFalconConfiguration.Slot0.kD = 0;
-    this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
-    this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
-    this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
+    // this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    // this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    // this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 80;
     this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
     this.trapRollerFalcon.getConfigurator().apply(this.trapRollerFalconConfiguration);
     this.trapRollerFalcon.setNeutralMode(NeutralModeValue.Brake);
@@ -107,6 +107,7 @@ public class Climber extends SubsystemBase {
 
   public void setElevatorTorque(double current, double maxPercent){
     this.elevatorFalconMaster.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+    this.elevatorFalconFollower.setControl(this.elevatorFalconTorqueRequest.withOutput(-current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setElevatorPercent(double percent){
