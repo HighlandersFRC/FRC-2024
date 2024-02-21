@@ -36,8 +36,7 @@ public class RunIntake extends Command {
 
   @Override
   public void execute() {
-    // this.intake.set(this.degrees, this.RPM);
-    this.intake.setRollers(RPM);
+    this.intake.set(this.degrees, this.RPM);
   }
 
   @Override

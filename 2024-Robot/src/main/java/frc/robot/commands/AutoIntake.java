@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
@@ -13,6 +14,7 @@ import frc.robot.subsystems.Lights;
 public class AutoIntake extends Command {
   private Intake intake;
   private Feeder feeder;
+  private Climber climber;
   private Lights lights;
   private TOF tof;
   private double intakeDegrees;
@@ -23,27 +25,29 @@ public class AutoIntake extends Command {
   private double timeout = 5;
   private double initTime;
 
-  public AutoIntake(Intake intake, Feeder feeder, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
     this.feeder = feeder;
+    this.climber = climber;
     this.lights = lights;
     this.tof = tof;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
-    addRequirements(this.intake, this.feeder);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
-  public AutoIntake(Intake intake, Feeder feeder, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout) {
     this.intake = intake;
     this.feeder = feeder;
+    this.climber = climber;
     this.lights = lights;
     this.tof = tof;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
-    addRequirements(this.intake, this.feeder);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
   @Override
@@ -55,6 +59,7 @@ public class AutoIntake extends Command {
   @Override
   public void execute() {
     this.intake.set(this.intakeDegrees, this.intakeRPM);
+    this.climber.setTrapRollerPercent(-0.7);
     if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
       this.feeder.set(0);
       this.haveNote = true;

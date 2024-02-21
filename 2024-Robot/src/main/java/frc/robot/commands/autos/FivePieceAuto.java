@@ -30,6 +30,7 @@ import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -69,7 +70,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private JSONArray pathJSON7;
   private JSONObject pathRead7;
   /** Creates a new FivePieceAuto. */
-  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Lights lights, TOF tof) {
+  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
     try {
       pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -149,7 +150,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON, 0, false),
@@ -160,7 +161,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON2, 0, false),
@@ -171,7 +172,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, pathJSON3, 0, false),

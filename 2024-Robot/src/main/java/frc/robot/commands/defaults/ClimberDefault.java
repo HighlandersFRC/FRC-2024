@@ -37,7 +37,7 @@ public class ClimberDefault extends Command {
     }
 
     if (this.isZeroed){
-      this.climber.setElevatorTorque(-5, 0.1);
+      this.climber.setElevatorTorque(0, 0.1);
     } else {
       this.climber.setElevatorTorque(-15, 0.3);
     }

@@ -16,7 +16,7 @@ public class FeederDefault extends Command {
 
   @Override
   public void execute() {
-    this.feeder.set(0);
+    this.feeder.setPercent(0);
   }
 
   @Override

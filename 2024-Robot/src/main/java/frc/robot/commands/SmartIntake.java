@@ -31,7 +31,7 @@ public class SmartIntake extends Command {
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
-    addRequirements(this.intake);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
   public SmartIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean rumble) {
@@ -44,7 +44,7 @@ public class SmartIntake extends Command {
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.rumbleControllers = rumble;
-    addRequirements(this.intake);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
   @Override

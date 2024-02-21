@@ -200,7 +200,7 @@ public class Robot extends LoggedRobot {
     //   this.auto = new FourPieceCloseAuto(drive, peripherals);
     //   auto.schedule();
     // } else if (OI.is5PieceAuto()) {
-      this.auto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, lights, tof);
+      this.auto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
       auto.schedule();
     // } else if (OI.is4Piece1FarAuto()){
     //   this.auto = new FourPieceOneFarAuto(drive, peripherals);
@@ -271,18 +271,12 @@ public class Robot extends LoggedRobot {
 
     //Driver
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    // OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1000,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     // OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
-    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 58, 4500, 1200, 0));
-    // OI.driverB.whileTrue(new RunShooter(shooter, 50, 0));
-    // OI.driverA.whileTrue(new RunShooter(shooter, 35, 0));
-    // OI.driverX.whileTrue(new RunShooter(shooter, 20, 5000));
-    OI.driverY.whileTrue(new RunClimber(climber, intake, 0.2));
-    OI.driverA.whileTrue(new SetClimber(climber, intake, -0.1));
-    OI.driverB.whileTrue(new RunTrap(climber, -0.5));
+    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 58, 4500, 1200, 0));
 
     //Operator
   }
