@@ -59,6 +59,8 @@ public class TurnToTarget extends Command {
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
     if (canSeeTag && this.speakerAngleDegrees < 90 && Math.abs(this.speakerAngleDegrees - prevSpeakerAngleDegrees) > 0.01){
       this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+    } else {
+      this.targetPigeonAngleDegrees = pigeonAngleDegrees;
     }
 
     this.turnPID.setSetPoint(targetPigeonAngleDegrees);
@@ -71,11 +73,11 @@ public class TurnToTarget extends Command {
       this.drive.driveAutoAligned(turnResult);
     }
 
-    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
-    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    // System.out.println("Targ Angle: " + this.targetPigeonAngleDegrees);
-    // System.out.println("Turn Result: " + turnResult);
-    // System.out.println("Can See Tag: " + canSeeTag);
+    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Targ Angle: " + this.targetPigeonAngleDegrees);
+    System.out.println("Turn Result: " + turnResult);
+    System.out.println("Can See Tag: " + canSeeTag);
   }
 
   @Override

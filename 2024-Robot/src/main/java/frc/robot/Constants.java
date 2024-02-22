@@ -67,7 +67,7 @@ public final class Constants {
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.08;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.04;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 

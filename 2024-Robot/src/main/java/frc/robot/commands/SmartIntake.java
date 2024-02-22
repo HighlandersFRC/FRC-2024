@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
@@ -19,6 +20,9 @@ public class SmartIntake extends Command {
   private double intakeDegrees;
   private double intakeRPM;
   private double feederRPM;
+
+  private boolean haveNote = false;
+  private double haveNoteTime = 0;
 
   private boolean rumbleControllers = true;
 
@@ -48,29 +52,45 @@ public class SmartIntake extends Command {
   }
 
   @Override
-  public void initialize() {}
+  public void initialize() {
+    this.haveNote = false;
+    if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+      this.haveNote = true;
+    }
+  }
 
   @Override
   public void execute() {
     this.intake.set(this.intakeDegrees, this.intakeRPM);
-    this.climber.setTrapRollerPercent(0.7);
+    
     if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
-      this.feeder.setPercent(0);
+      if (!this.haveNote){
+        this.haveNoteTime = Timer.getFPGATimestamp();
+      }
+      this.haveNote = true;
       if (this.rumbleControllers){
         OI.driverController.setRumble(RumbleType.kBothRumble, 0.7);
         OI.operatorController.setRumble(RumbleType.kBothRumble, 0.7);
       }
     } else {
-      this.feeder.set(this.feederRPM);
       OI.driverController.setRumble(RumbleType.kBothRumble, 0);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
+    }
+
+    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.15){
+      this.feeder.setPercent(-0.1);
+      this.climber.setTrapRollerPercent(0);
+    } else if (this.haveNote){
+      this.feeder.setPercent(0);
+      this.climber.setTrapRollerPercent(0);
+    } else {
+      this.feeder.set(this.feederRPM);
+      this.climber.setTrapRollerPercent(0.7);
     }
   }
 
   @Override
-  public void end(boolean interrupted) {
-    this.feeder.set(0);
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

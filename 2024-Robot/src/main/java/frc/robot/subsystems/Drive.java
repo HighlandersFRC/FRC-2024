@@ -992,7 +992,7 @@ public class Drive extends SubsystemBase {
         velocityArray[1] = -yVel;
         velocityArray[2] = thetaVel;
 
-        System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
+        // System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
         // System.out.println("PID side: " + this.fieldSide);
 
         return velocityArray;

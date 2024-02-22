@@ -22,6 +22,7 @@ public class AutoIntake extends Command {
   private double feederRPM;
 
   private boolean haveNote;
+  private double haveNoteTime = 0;
   private double timeout = 5;
   private double initTime;
 
@@ -59,23 +60,32 @@ public class AutoIntake extends Command {
   @Override
   public void execute() {
     this.intake.set(this.intakeDegrees, this.intakeRPM);
-    this.climber.setTrapRollerPercent(-0.7);
+
     if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
-      this.feeder.set(0);
       this.haveNote = true;
+    }
+
+    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.3){
+      this.feeder.setPercent(-0.1);
+      this.climber.setTrapRollerPercent(0);
+    } else if (this.haveNote){
+      this.feeder.set(0);
+      this.climber.setTrapRollerPercent(0);
     } else {
       this.feeder.set(this.feederRPM);
+      this.climber.setTrapRollerPercent(0.7);
     }
   }
 
   @Override
   public void end(boolean interrupted) {
-    this.feeder.set(0);
+    this.feeder.setPercent(0);
+    this.climber.setTrapRollerPercent(0);
   }
 
   @Override
   public boolean isFinished() {
-    if (this.haveNote){
+    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime > 0.15){
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
       return true;
