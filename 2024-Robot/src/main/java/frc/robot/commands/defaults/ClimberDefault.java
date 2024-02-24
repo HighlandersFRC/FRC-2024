@@ -36,11 +36,12 @@ public class ClimberDefault extends Command {
       this.isZeroed = false;
     }
 
-    if (this.isZeroed){
-      this.climber.setElevatorTorque(0, 0.1);
-    } else {
-      this.climber.setElevatorTorque(-15, 0.3);
-    }
+    // if (this.isZeroed){
+    //   this.climber.setElevatorTorque(0, 0.1);
+    // } else {
+    //   this.climber.setElevatorTorque(-15, 0.3);
+    // }
+    this.climber.setElevatorPercent(0);
   }
 
   @Override

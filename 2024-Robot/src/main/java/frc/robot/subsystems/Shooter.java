@@ -8,6 +8,7 @@ import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionVoltage;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
@@ -35,6 +36,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
   private final TalonFX flywheelFalconFollower = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC flywheelTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final double angleFalconJerk = 10;
   private final double angleFalconAcceleration = 1.25;
@@ -50,7 +52,7 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 3800;
+    this.angleFalconConfiguration.Slot0.kP = 5000;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
@@ -58,9 +60,6 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
     this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = this.angleFalconAcceleration;
     this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = this.angleFalconCruiseVelocity;
-
-    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 40;
-    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 40;
 
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
@@ -118,6 +117,10 @@ public class Shooter extends SubsystemBase {
   //Set flywheel percent
   public void setFlywheelPercent(double percent){
     this.flywheelFalconMaster.set(percent);
+  }
+
+  public void setFlywheelTorque(double current, double maxPercent){
+    this.flywheelFalconMaster.setControl(this.flywheelTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setAnglePercent(double percent){
