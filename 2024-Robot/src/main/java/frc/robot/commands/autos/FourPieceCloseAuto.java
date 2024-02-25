@@ -11,10 +11,32 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
+import frc.robot.commands.AutoIntake;
+import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
+import frc.robot.commands.IdleShooter;
+import frc.robot.commands.PresetAutoShoot;
+import frc.robot.commands.RunFeeder;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunShooter;
+import frc.robot.commands.ShootWhilePathingAndIntaking;
+import frc.robot.commands.SmartIntake;
+import frc.robot.commands.SmartShoot;
+import frc.robot.commands.SpinUpShooter;
+import frc.robot.commands.TurnToTarget;
+import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
+import frc.robot.subsystems.Shooter;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
@@ -36,8 +58,19 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
   private JSONArray pathJSON4;
   private JSONObject pathRead4;
 
-  /** Creates a new FourPieceCenterAuto. */
-  public FourPieceCloseAuto(Drive drive, Peripherals peripherals) {
+  private File pathingFile5;
+  private JSONArray pathJSON5;
+  private JSONObject pathRead5;
+
+  private File pathingFile6;
+  private JSONArray pathJSON6;
+  private JSONObject pathRead6;
+
+  private File pathingFile7;
+  private JSONArray pathJSON7;
+  private JSONObject pathRead7;
+  /** Creates a new FourPieceCloseAuto. */
+  public FourPieceCloseAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
     try {
       pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -69,7 +102,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile4 = new File("/home/lvuser/deploy/4PieceClosePart4.json");
+      pathingFile4 = new File("/home/lvuser/deploy/5PieceCenterPart4.json");
       FileReader scanner4 = new FileReader(pathingFile4);
       pathRead4 = new JSONObject(new JSONTokener(scanner4));
       pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
@@ -78,14 +111,85 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
-    addRequirements(drive);
-    // Add your commands in the addCommands() call, e.g.
-    // addCommands(new FooCommand(), new BarCommand());
+    try {
+      pathingFile5 = new File("/home/lvuser/deploy/5PiecePart5.json");
+      FileReader scanner5 = new FileReader(pathingFile5);
+      pathRead5 = new JSONObject(new JSONTokener(scanner5));
+      pathJSON5 = (JSONArray) pathRead5.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      pathingFile6 = new File("/home/lvuser/deploy/6PiecePart6.json");
+      FileReader scanner6 = new FileReader(pathingFile6);
+      pathRead6 = new JSONObject(new JSONTokener(scanner6));
+      pathJSON6 = (JSONArray) pathRead6.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      pathingFile7 = new File("/home/lvuser/deploy/6PiecePart7.json");
+      FileReader scanner7 = new FileReader(pathingFile7);
+      pathRead7 = new JSONObject(new JSONTokener(scanner7));
+      pathJSON7 = (JSONArray) pathRead7.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+
+    addRequirements(drive, intake, feeder, shooter, lights);
+
     addCommands(
-      new AutonomousFollower(drive, pathJSON, 0, false),
-      new AutonomousFollower(drive, pathJSON2, 0, false),
-      new AutonomousFollower(drive, pathJSON3, 0, false),
-      new AutonomousFollower(drive, pathJSON4, 0, false)
+      new ParallelDeadlineGroup(
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new ParallelDeadlineGroup(
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON2, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new ParallelDeadlineGroup(
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new ParallelCommandGroup(
+          new SequentialCommandGroup(
+            new AutonomousFollower(drive, pathJSON3, 0, false),
+            new TurnToTarget(drive, peripherals)
+          ),
+          new SpinUpShooter(shooter, peripherals)
+        )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+
+      //End
+      new ParallelCommandGroup(
+        new RunFeeder(feeder, 0),
+        new IdleShooter(shooter, 0),
+        new RunIntake(intake, 0, 0)
+      ),
+      new WaitCommand(3)
     );
   }
 }

@@ -189,6 +189,7 @@ public final class Constants {
 
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 180;
+    public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
@@ -382,7 +383,8 @@ public final class Constants {
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;
-    public static final int INTAKE_TOF_ID = 1;
+    public static final int CARRIAGE_TOF_ID = 1;
+    public static final int INTAKE_TOF_ID = 2;
 
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;

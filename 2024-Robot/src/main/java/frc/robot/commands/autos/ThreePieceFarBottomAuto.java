@@ -41,7 +41,7 @@ import frc.robot.subsystems.Shooter;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class FivePieceAuto extends SequentialCommandGroup {
+public class ThreePieceFarBottomAuto extends SequentialCommandGroup {
   private File pathingFile;
   private JSONArray pathJSON;
   private JSONObject pathRead;
@@ -69,8 +69,8 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private File pathingFile7;
   private JSONArray pathJSON7;
   private JSONObject pathRead7;
-  /** Creates a new FivePieceAuto. */
-  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
+  /** Creates a new ThreePieceFarBottomAuto. */
+  public ThreePieceFarBottomAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
     try {
       pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -145,51 +145,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
     addRequirements(drive, intake, feeder, shooter, lights);
 
     addCommands(
-      new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13),
-        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
-      ),
-      new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
-        new ParallelCommandGroup(
-          new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON, 0, false),
-            new TurnToTarget(drive, peripherals)
-          ),
-          new SpinUpShooter(shooter, peripherals)
-        )
-      ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
-      new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
-        new ParallelCommandGroup(
-          new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON2, 0, false),
-            new TurnToTarget(drive, peripherals)
-          ),
-          new SpinUpShooter(shooter, peripherals)
-        )
-      ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
-      new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
-        new ParallelCommandGroup(
-          new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON3, 0, false),
-            new TurnToTarget(drive, peripherals)
-          ),
-          new SpinUpShooter(shooter, peripherals)
-        )
-      ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
-
-      //End
-      new ParallelCommandGroup(
-        new RunFeeder(feeder, 0),
-        new IdleShooter(shooter, 0),
-        new RunIntake(intake, 0, 0)
-      ),
-      new WaitCommand(3)
+      new RunIntake(intake, 600)
     );
   }
 }

@@ -7,15 +7,21 @@ import frc.robot.Constants;
 
 public class TOF {
     private final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
+    private final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CARRIAGE_TOF_ID);
     private final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
 
     public TOF(){
         this.feederTOF.setRangingMode(RangingMode.Short, 50);
+        this.carriageTOF.setRangingMode(RangingMode.Short, 50);
         this.intakeTOF.setRangingMode(RangingMode.Medium, 50);
     }
 
     public double getFeederDistMillimeters(){
         return this.feederTOF.getRange();
+    }
+
+    public double getCarriageDistMillimeters(){
+        return this.carriageTOF.getRange();
     }
 
     public double getIntakeDistMillimeters(){
