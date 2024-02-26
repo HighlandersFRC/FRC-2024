@@ -66,8 +66,8 @@ public final class Constants {
     public static final double SHOOTER_CENTER_OFFSET_DEG = 22.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
-    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.04;
+    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
@@ -142,11 +142,13 @@ public final class Constants {
     }
 
     public static double[] getShooterValuesFromAngle(double angle) {
-      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)}; 
+      // return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
+      return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
     }
 
     public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      // return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
     public static double getDistFromAngle(double ty) {

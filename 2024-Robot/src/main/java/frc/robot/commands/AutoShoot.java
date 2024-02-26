@@ -127,8 +127,10 @@ public class AutoShoot extends Command {
     //velocity compensation
     double[] currentSetpoints = Constants.SetPoints.getVelocityAdjustedSetpoint(pigeonAngleDegrees, this.speakerAngleDegrees, this.shooterDegrees, this.shooterRPM, this.drive.getRobotVelocityVector());
     double targetCurrentPigeonAngleDegrees = currentSetpoints[0];
-    double targetCurrentShooterDegrees = currentSetpoints[1];
-    double targetCurrentShooterRPM = currentSetpoints[2];
+    // double targetCurrentShooterDegrees = currentSetpoints[1];
+    // double targetCurrentShooterRPM = currentSetpoints[2];
+    double targetCurrentShooterDegrees = 25;
+    double targetCurrentShooterRPM = 3000;
 
     this.pid.setSetPoint(targetCurrentPigeonAngleDegrees);
     this.pid.updatePID(pigeonAngleDegrees);
@@ -145,7 +147,7 @@ public class AutoShoot extends Command {
       this.drive.driveAutoAligned(0);
     }
 
-    this.shooter.set(targetCurrentShooterDegrees, targetCurrentShooterRPM);    
+    this.shooter.set(targetCurrentShooterDegrees, targetCurrentShooterRPM);
 
     if (this.hasReachedSetPoint == true){
       this.feeder.set(this.feederRPM);

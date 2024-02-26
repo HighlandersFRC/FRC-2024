@@ -11,9 +11,10 @@ public class TOF {
     private final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
 
     public TOF(){
-        this.feederTOF.setRangingMode(RangingMode.Short, 50);
-        this.carriageTOF.setRangingMode(RangingMode.Short, 50);
-        this.intakeTOF.setRangingMode(RangingMode.Medium, 50);
+        this.feederTOF.setRangingMode(RangingMode.Short, 0);
+        this.feederTOF.setRangeOfInterest(12, 16, 16, 0);
+        this.carriageTOF.setRangingMode(RangingMode.Short, 25);
+        this.intakeTOF.setRangingMode(RangingMode.Medium, 25);
     }
 
     public double getFeederDistMillimeters(){

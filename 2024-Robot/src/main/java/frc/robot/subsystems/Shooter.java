@@ -75,6 +75,8 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconConfiguration.Slot0.kD = 0;
     this.flywheelFalconConfiguration.Slot0.kS = 1;
     this.flywheelFalconConfiguration.Slot0.kV = 0.2;
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.flywheelFalconMaster.getConfigurator().apply(this.flywheelFalconConfiguration);
     this.flywheelFalconMaster.setNeutralMode(NeutralModeValue.Coast);
     this.flywheelFalconFollower.getConfigurator().apply(this.flywheelFalconConfiguration);
@@ -110,8 +112,8 @@ public class Shooter extends SubsystemBase {
   }
 
   //Set flywheel velocity in RPM
-  public void setVelocity(double RPM){
-    this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest.withVelocity(Constants.RPSToRPM(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+  public void setFlywheelRPM(double RPM){
+    this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   //Set flywheel percent

@@ -148,7 +148,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
-    SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    // SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
+    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
   }
 }

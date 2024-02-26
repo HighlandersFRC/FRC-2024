@@ -65,14 +65,23 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
-    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.3){
-      this.feeder.setPercent(-0.1);
-      this.climber.setTrapRollerPercent(0);
-    } else if (this.haveNote){
-      this.feeder.set(0);
+    // if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.3){
+    //   this.feeder.setPercent(-0.1);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else if (this.haveNote){
+    //   this.feeder.set(0);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else {
+    //   this.feeder.set(this.feederRPM);
+    //   this.climber.setTrapRollerPercent(0.7);
+    // }
+
+    if (this.haveNote){
+      this.feeder.setPercent(0);
       this.climber.setTrapRollerPercent(0);
     } else {
       this.feeder.set(this.feederRPM);
+      // this.climber.setTrapRollerTorque(30, 0.7);
       this.climber.setTrapRollerPercent(0.7);
     }
   }

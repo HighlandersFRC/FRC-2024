@@ -41,7 +41,7 @@ import frc.robot.subsystems.Shooter;
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class FourPieceCloseAuto extends SequentialCommandGroup {
+public class FivePieceAuto extends SequentialCommandGroup {
   private File pathingFile;
   private JSONArray pathJSON;
   private JSONObject pathRead;
@@ -54,8 +54,12 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
   private JSONArray pathJSON3;
   private JSONObject pathRead3;
 
-  /** Creates a new FourPieceCloseAuto. */
-  public FourPieceCloseAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
+  private File pathingFile4;
+  private JSONArray pathJSON4;
+  private JSONObject pathRead4;
+
+  /** Creates a new FivePieceAuto. */
+  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
     try {
       pathingFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -86,11 +90,22 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
+    try {
+      pathingFile4 = new File("/home/lvuser/deploy/5PiecePart4.json");
+      FileReader scanner4 = new FileReader(pathingFile4);
+      pathRead4 = new JSONObject(new JSONTokener(scanner4));
+      pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+
     addRequirements(drive, intake, feeder, shooter, lights);
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 20, 3000, 1200, 13),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
@@ -124,6 +139,12 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           ),
           new SpinUpShooter(shooter, peripherals)
         )
+      ),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new ParallelDeadlineGroup(
+        new AutonomousFollower(drive, pathJSON4, 0, false),
+        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+        new SpinUpShooter(shooter, peripherals)
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
 

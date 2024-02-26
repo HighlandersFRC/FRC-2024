@@ -72,7 +72,7 @@ public class ThreePieceFarBottomAuto extends SequentialCommandGroup {
   /** Creates a new ThreePieceFarBottomAuto. */
   public ThreePieceFarBottomAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
     try {
-      pathingFile = new File("/home/lvuser/deploy/2PieceCenterPart1.json");
+      pathingFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
       FileReader scanner = new FileReader(pathingFile);
       pathRead = new JSONObject(new JSONTokener(scanner));
       pathJSON = (JSONArray) pathRead.get("sampled_points");
@@ -82,7 +82,7 @@ public class ThreePieceFarBottomAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile2 = new File("/home/lvuser/deploy/3PieceSpikePart2.json");
+      pathingFile2 = new File("/home/lvuser/deploy/4PieceClosePart2.json");
       FileReader scanner2 = new FileReader(pathingFile2);
       pathRead2 = new JSONObject(new JSONTokener(scanner2));
       pathJSON2 = (JSONArray) pathRead2.get("sampled_points");
@@ -92,7 +92,7 @@ public class ThreePieceFarBottomAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile3 = new File("/home/lvuser/deploy/4PieceSpikePart3.json");
+      pathingFile3 = new File("/home/lvuser/deploy/4PieceClosePart3.json");
       FileReader scanner3 = new FileReader(pathingFile3);
       pathRead3 = new JSONObject(new JSONTokener(scanner3));
       pathJSON3 = (JSONArray) pathRead3.get("sampled_points");
@@ -102,7 +102,7 @@ public class ThreePieceFarBottomAuto extends SequentialCommandGroup {
     }
 
     try {
-      pathingFile4 = new File("/home/lvuser/deploy/5PieceCenterPart4.json");
+      pathingFile4 = new File("/home/lvuser/deploy/5PiecePart4.json");
       FileReader scanner4 = new FileReader(pathingFile4);
       pathRead4 = new JSONObject(new JSONTokener(scanner4));
       pathJSON4 = (JSONArray) pathRead4.get("sampled_points");

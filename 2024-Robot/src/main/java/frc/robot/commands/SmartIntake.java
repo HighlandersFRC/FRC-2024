@@ -84,14 +84,23 @@ public class SmartIntake extends Command {
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
     }
 
-    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.15){
-      this.feeder.setPercent(-0.1);
-      this.climber.setTrapRollerPercent(0);
-    } else if (this.haveNote){
+    // if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.15){
+    //   this.feeder.setPercent(-0.1);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else if (this.haveNote){
+    //   this.feeder.setPercent(0);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else {
+    //   this.feeder.set(this.feederRPM);
+    //   this.climber.setTrapRollerPercent(0.7);
+    // }
+
+    if (this.haveNote){
       this.feeder.setPercent(0);
       this.climber.setTrapRollerPercent(0);
     } else {
       this.feeder.set(this.feederRPM);
+      // this.climber.setTrapRollerTorque(30, 0.7);
       this.climber.setTrapRollerPercent(0.7);
     }
   }
