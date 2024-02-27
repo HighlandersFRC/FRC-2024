@@ -19,8 +19,8 @@ public final class Constants {
 
     public static final double TOP_SPEED = feetToMeters(20);
 
-    public static final double ROBOT_WIDTH = inchesToMeters(25);
-    public static final double ROBOT_LENGTH = inchesToMeters(28.5);
+    public static final double ROBOT_LENGTH = inchesToMeters(25);
+    public static final double ROBOT_WIDTH = inchesToMeters(28.5);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
     public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;

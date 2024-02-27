@@ -28,6 +28,7 @@ import frc.robot.commands.ShootWhilePathingAndIntaking;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
+import frc.robot.commands.StopDriving;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
@@ -152,7 +153,8 @@ public class FivePieceAuto extends SequentialCommandGroup {
       new ParallelCommandGroup(
         new RunFeeder(feeder, 0),
         new IdleShooter(shooter, 0),
-        new RunIntake(intake, 0, 0)
+        new RunIntake(intake, 0, 0),
+        new StopDriving(drive)
       ),
       new WaitCommand(3)
     );

@@ -44,7 +44,7 @@ import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
-import frc.robot.commands.autos.ThreePieceFarBottomAuto;
+import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -75,9 +75,9 @@ public class Robot extends LoggedRobot {
   JSONArray fourPieceCloseJSON;
   Command fourPieceCloseAuto;
 
-  File threePieceFarBottomFile;
-  JSONArray threePieceFarBottomJSON;
-  Command threePieceFarBottomAuto;
+  File fourPieceFarBottomFile;
+  JSONArray fourPieceFarBottomJSON;
+  Command fourPieceFarBottomAuto;
 
   File fivePieceFile;
   JSONArray fivePieceJSON;
@@ -151,11 +151,11 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.threePieceFarBottomFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
-      FileReader scanner = new FileReader(this.threePieceFarBottomFile);
+      this.fourPieceFarBottomFile = new File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
+      FileReader scanner = new FileReader(this.fourPieceFarBottomFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-      this.threePieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");
-      this.threePieceFarBottomAuto = new ThreePieceFarBottomAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
+      this.fourPieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");
+      this.fourPieceFarBottomAuto = new FourPieceFarBottomAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -213,9 +213,9 @@ public class Robot extends LoggedRobot {
       this.fourPieceCloseAuto.schedule();
       this.drive.autoInit(this.fourPieceCloseJSON);
     } else if (OI.is3PieceFarBottomAuto()){
-      System.out.println("Three Piece Far Bottom");
-      this.threePieceFarBottomAuto.schedule();
-      this.drive.autoInit(this.threePieceFarBottomJSON);
+      System.out.println("Four Piece Far Bottom");
+      this.fourPieceFarBottomAuto.schedule();
+      this.drive.autoInit(this.fourPieceFarBottomJSON);
     } else if (OI.is5PieceAuto()){
       System.out.println("Five Piece");
       this.fivePieceAuto.schedule();
