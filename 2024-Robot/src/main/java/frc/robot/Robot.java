@@ -45,6 +45,7 @@ import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
+import frc.robot.commands.autos.NothingAuto;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -70,6 +71,8 @@ public class Robot extends LoggedRobot {
   private TOF tof = new TOF();
 
   // private Logger logger = Logger.getInstance();
+
+  Command nothingAuto;
   
   File fourPieceCloseFile;
   JSONArray fourPieceCloseJSON;
@@ -140,6 +143,7 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "10.44.99.44", 5800);
     PortForwarder.add(5801, "10.44.99.44", 5801);
 
+    this.nothingAuto = new NothingAuto();
     try {
       this.fourPieceCloseFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
       FileReader scanner = new FileReader(this.fourPieceCloseFile);
@@ -208,7 +212,10 @@ public class Robot extends LoggedRobot {
     this.drive.setFieldSide(fieldSide);
 
     System.out.println("Selected Auto: ");
-    if (OI.is4PieceCloseAuto()) {
+    if (OI.isNothingAuto()){
+      System.out.println("Nothing Auto");
+      this.nothingAuto.schedule();
+    } else if (OI.is4PieceCloseAuto()) {
       System.out.println("Four Piece Close");
       this.fourPieceCloseAuto.schedule();
       this.drive.autoInit(this.fourPieceCloseJSON);

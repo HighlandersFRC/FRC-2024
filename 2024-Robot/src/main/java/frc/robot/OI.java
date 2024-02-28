@@ -101,6 +101,10 @@ public class OI {
         return autoChooser.getRawButton(6);
     }
 
+    public static boolean isNothingAuto(){
+        return autoChooser.getRawButton(7);
+    }
+
     public static boolean isBlueSide() {
         return autoChooser.getRawButton(8);
     }
