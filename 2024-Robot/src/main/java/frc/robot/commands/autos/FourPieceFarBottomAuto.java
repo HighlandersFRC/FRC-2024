@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.AutoIntake;
+import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
@@ -97,19 +98,19 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON, 0, false),
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
-        new SpinUpShooter(shooter, peripherals)
+        new AutoPrepForShot(shooter, tof, 20, 3000)
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 2),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON2, 0, false),
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
-        new SpinUpShooter(shooter, peripherals)
+        new AutoPrepForShot(shooter, tof, 20, 3000)
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 2),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON3, 0, false),
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
-        new SpinUpShooter(shooter, peripherals)
+        new AutoPrepForShot(shooter, tof, 20, 3000)
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 2),
 

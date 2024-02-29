@@ -40,6 +40,10 @@ public class Intake extends SubsystemBase {
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 0.1;
     this.angleFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
     this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
     this.angleFalcon.setPosition(0);
@@ -48,6 +52,10 @@ public class Intake extends SubsystemBase {
     this.rollerFalconConfiguration.Slot0.kI = 0;
     this.rollerFalconConfiguration.Slot0.kD = 0.1;
     this.rollerFalconConfiguration.Slot0.kS = 4;
+    this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
+    this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }

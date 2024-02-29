@@ -60,11 +60,14 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
     this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = this.angleFalconAcceleration;
     this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = this.angleFalconCruiseVelocity;
-
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
     this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
     this.angleFalconConfiguration.Feedback.RotorToSensorRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
     this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
     this.angleFalcon.setPosition(this.angleEncoder.getAbsolutePosition().getValue());
@@ -76,6 +79,8 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconConfiguration.Slot0.kS = 1;
     this.flywheelFalconConfiguration.Slot0.kV = 0.2;
     this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.flywheelFalconMaster.getConfigurator().apply(this.flywheelFalconConfiguration);
     this.flywheelFalconMaster.setNeutralMode(NeutralModeValue.Coast);
