@@ -293,6 +293,56 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    boolean swerveCan1 = false;
+    boolean swerveCan2 = false;
+    boolean swerveCan3 = false;
+
+    boolean swerveCan4 = false;
+    boolean frontRight = false;
+    boolean frontLeft = false;
+    boolean backLeft = false;
+    boolean backRight = false;
+  if(driveMotor.getDeviceID() == 1 && driveMotor.getMotorVoltage().getValue() != 0.0){
+      if(angleMotor.getDeviceID() == 2 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        frontRight = true;
+      }} else if(driveMotor.getDeviceID() == 3 && driveMotor.getMotorVoltage().getValue() != 0.0){
+      if(angleMotor.getDeviceID() == 4 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        frontLeft = true;
+      }} else if(driveMotor.getDeviceID() == 5 && driveMotor.getMotorVoltage().getValue() != 0.0){
+      if(angleMotor.getDeviceID() == 6 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        backLeft = true;
+      }} else if(driveMotor.getDeviceID() == 7 && driveMotor.getMotorVoltage().getValue() != 0.0){
+      if(angleMotor.getDeviceID() == 8 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        backRight = true;
+      }}
+
+    boolean can1 = false;
+    boolean can2 = false;
+    boolean can3 = false;
+    boolean can4 = false;
+    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0){
+      can1 = true;
+    } else if(canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0){
+      can2 = true;
+    } else if(canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0){
+      can3 = true;
+    } else if(canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0){
+      can4 = true;
+    }
+
+    if(can1 == true && frontRight == true){
+      swerveCan1 = true;
+    } else if(can2 == true && frontLeft == true){
+      swerveCan2 = true;
+    } else if(can3 == true && backLeft == true){
+      swerveCan3 = true;
+    } else if(can4 == true && backRight == true){
+      swerveCan4 = true;
+    }
+
+    SmartDashboard.putBoolean(" Swerve can(1)", swerveCan1);
+    SmartDashboard.putBoolean(" Swerve can(2)", swerveCan2);
+    SmartDashboard.putBoolean(" Swerve can(3)", swerveCan3);
+    SmartDashboard.putBoolean(" Swerve can(4)", swerveCan4);    
   }
 }
