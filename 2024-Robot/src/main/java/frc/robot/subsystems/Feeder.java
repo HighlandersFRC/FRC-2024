@@ -23,6 +23,8 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.FeederDefault;
 
+import frc.robot.sensors.TOF;
+
 public class Feeder extends SubsystemBase {
   double startTime;
   // private final CANSparkFlex rollerVortex = new CANSparkFlex(Constants.CANInfo.FEEDER_ROLLER_MOTOR_ID, MotorType.kBrushless);
@@ -66,5 +68,10 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
+    boolean feederTof = false;
+    SmartDashboard.putBoolean(" Feeder TOF", feederTof);
+    if(TOF.feederTOF.getRange() > 0 && TOF.feederTOF.getRange() < 1000.0){
+      feederTof = true;
+    }
   }
 }

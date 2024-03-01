@@ -367,6 +367,7 @@ public final class Constants {
     //TOF
     public static final int FEEDER_TOF_ID = 0;
     public static final int INTAKE_TOF_ID = 1;
+    public static final int CLIMBER_TOF_ID = 2;
 
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;

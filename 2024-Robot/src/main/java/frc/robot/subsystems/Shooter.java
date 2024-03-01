@@ -153,5 +153,33 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
+    boolean shooterEncoder = false;
+    boolean shooterAngle = false;
+    // SmartDashboard.getNumber("Flywheel P value", this.flywheelVortexMasterPID.getP());
+		// SmartDashboard.getNumber("Flywheel I value",  this.flywheelVortexMasterPID.getI());
+		// SmartDashboard.getNumber("Flywheel D value", this.flywheelVortexMasterPID.getD());
+    // SmartDashboard.getNumber("Flywheel FF value", this.flywheelVortexMasterPID.getFF());
+    SmartDashboard.putBoolean(" Shooter encoder", shooterEncoder);
+    SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
+
+    // double newPIDP = SmartDashboard.getNumber("Flywheel P value", flywheelVortexMasterPID.getP());
+    // flywheelVortexMasterPID.setP(newPIDP);
+
+    // double newPIDI = SmartDashboard.getNumber("Flywheel I value",  flywheelVortexMasterPID.getI());
+    // flywheelVortexMasterPID.setI(newPIDI);
+
+    // double newPIDD = 	SmartDashboard.getNumber("Flywheel D value", flywheelVortexMasterPID.getD());
+    //   flywheelVortexMasterPID.setD(newPIDD);
+
+    // double newPIDFF =  SmartDashboard.getNumber("Flywheel FF value", flywheelVortexMasterPID.getFF());
+    //   this.flywheelVortexMasterPID.setFF(newPIDFF);
+
+    if(angleEncoder.getAbsolutePosition().getValue() != 0){
+          shooterEncoder = true;
+        }
+    if(angleFalcon.getMotorVoltage().getValue() != 0){
+      shooterAngle = true;
+    }
+    
   }
 }

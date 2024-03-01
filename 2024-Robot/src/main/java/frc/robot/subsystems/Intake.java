@@ -19,6 +19,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.sensors.TOF;
 
 public class Intake extends SubsystemBase {
 
@@ -156,7 +157,21 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Intake Angle", getAngleDegrees());
-    SmartDashboard.putNumber("Intake Roller RPM", getRPM());
+    boolean angleMotor = false;
+    boolean intakeMotor = false;
+    boolean intakeTOF = false;
+    SmartDashboard.putBoolean(" Intake Angle Motor", angleMotor);
+    SmartDashboard.putBoolean(" Intake Roller Motor", intakeMotor);
+    SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
+    if(angleFalcon.getMotorVoltage().getValue() != 0 ){
+      angleMotor = true;
+    }
+    if(rollerFalcon.getMotorVoltage().getValue() != 0){
+      intakeMotor = true;
+    }
+    if(TOF.intakeTOF.getRange() > 0 && TOF.intakeTOF.getRange() < 1000.0){
+      intakeTOF = true;
+    }
+
   }
 }

@@ -13,12 +13,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
-import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.sensors.TOF;
 import frc.robot.tools.EMBrake;
 
 public class Climber extends SubsystemBase {
@@ -148,7 +148,22 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
+    boolean climbMaster = false;
+    boolean climbFollower = false;
+    boolean climbTOF = false;
+    SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
+    SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
+    SmartDashboard.putBoolean(" Climber TOF", climbTOF);
+    SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
     SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
+      climbMaster = true;
+    }
+    if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
+      climbFollower = true;
+    }
+    if(TOF.climberTOF.getRange() > 0 && TOF.climberTOF.getRange() < 1000.0){
+      climbTOF = true;
+    }
   }
 }

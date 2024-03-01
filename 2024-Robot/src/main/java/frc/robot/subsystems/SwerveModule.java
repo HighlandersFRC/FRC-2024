@@ -294,5 +294,30 @@ public class SwerveModule extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    boolean swerveCan1 = false;
+    boolean swerveCan2 = false;
+    boolean swerveCan3 = false;
+    boolean swerveCan4 = false;
+    double canId;
+    double canVolt;
+    SmartDashboard.putBoolean(" Swerve can(1)", swerveCan1);
+    SmartDashboard.putBoolean(" Swerve can(2)", swerveCan2);
+    SmartDashboard.putBoolean(" Swerve can(3)", swerveCan3);
+    SmartDashboard.putBoolean(" Swerve can(4)", swerveCan4);
+    if(angleMotor.getDeviceID() == 1 && angleMotor.getMotorVoltage().getValue() != 0){
+      
+    }
+
+    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan1 = true;
+    } else if (canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan2 = true;
+    } else if (canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan3 = true;
+    } else if (canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0.0){
+      swerveCan4 = true;
+    }
+    
+    
   }
 }
