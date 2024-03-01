@@ -22,6 +22,7 @@ public class SmartIntake extends Command {
   private double feederRPM;
 
   private boolean haveNote = false;
+  private boolean haveIntakedNote = false;
   private double haveNoteTime = 0;
 
   private boolean rumbleControllers = true;
@@ -57,6 +58,7 @@ public class SmartIntake extends Command {
     if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
       this.haveNote = true;
     }
+    this.haveIntakedNote = false;
   }
 
   @Override
@@ -68,23 +70,37 @@ public class SmartIntake extends Command {
         this.haveNoteTime = Timer.getFPGATimestamp();
       }
       this.haveNote = true;
-      if (this.rumbleControllers){
-        OI.driverController.setRumble(RumbleType.kBothRumble, 0.7);
-        OI.operatorController.setRumble(RumbleType.kBothRumble, 0.7);
-      }
+    }
+
+    if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM && this.rumbleControllers){
+      this.haveIntakedNote = true;  
+    }
+
+    if (this.haveIntakedNote){
+      OI.driverController.setRumble(RumbleType.kBothRumble, 0.5);
+      OI.operatorController.setRumble(RumbleType.kBothRumble, 0.5);
     } else {
       OI.driverController.setRumble(RumbleType.kBothRumble, 0);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
     }
 
-    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.15){
-      this.feeder.setPercent(-0.1);
-      this.climber.setTrapRollerPercent(0);
-    } else if (this.haveNote){
+    // if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime < 0.15){
+    //   this.feeder.setPercent(-0.1);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else if (this.haveNote){
+    //   this.feeder.setPercent(0);
+    //   this.climber.setTrapRollerPercent(0);
+    // } else {
+    //   this.feeder.set(this.feederRPM);
+    //   this.climber.setTrapRollerPercent(0.7);
+    // }
+
+    if (this.haveNote){
       this.feeder.setPercent(0);
       this.climber.setTrapRollerPercent(0);
     } else {
       this.feeder.set(this.feederRPM);
+      // this.climber.setTrapRollerTorque(30, 0.7);
       this.climber.setTrapRollerPercent(0.7);
     }
   }

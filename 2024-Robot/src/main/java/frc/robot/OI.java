@@ -101,6 +101,10 @@ public class OI {
         return autoChooser.getRawButton(6);
     }
 
+    public static boolean isNothingAuto(){
+        return autoChooser.getRawButton(7);
+    }
+
     public static boolean isBlueSide() {
         return autoChooser.getRawButton(8);
     }
@@ -113,19 +117,7 @@ public class OI {
         return autoChooser.getRawButton(2);
     }
 
-    public static boolean is4Piece1FarAuto() {
+    public static boolean is3PieceFarBottomAuto() {
         return autoChooser.getRawButton(3);
-    }
-
-    public static boolean is3PieceBottomAuto() {
-        return autoChooser.getRawButton(4);
-    }
-
-    public static boolean is4Piece2FarAuto(){
-        return autoChooser.getRawButton(5);
-    }
-
-    public static boolean isPodiumPickup() {
-        return autoChooser.getRawButton(7);
     }
 }

@@ -19,7 +19,7 @@ public class IdleShooter extends Command {
 
   @Override
   public void execute() {
-    this.shooter.setVelocity(this.RPM);
+    this.shooter.setFlywheelRPM(this.RPM);
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);
     } else {

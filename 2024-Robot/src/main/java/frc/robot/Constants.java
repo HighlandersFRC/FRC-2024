@@ -19,8 +19,8 @@ public final class Constants {
 
     public static final double TOP_SPEED = feetToMeters(20);
 
-    public static final double ROBOT_WIDTH = inchesToMeters(25);
-    public static final double ROBOT_LENGTH = inchesToMeters(28.5);
+    public static final double ROBOT_LENGTH = inchesToMeters(25);
+    public static final double ROBOT_WIDTH = inchesToMeters(28.5);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
     public static final double SHOOTER_RESTING_ANGLE_DEG = 8.0;
@@ -67,28 +67,44 @@ public final class Constants {
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.04;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
+      // {1.30695, 19.41, 58, 4500, 2},
+      // {1.53695, 12.46, 54, 5000, 1.5},
+      // {1.84695, 5.57, 49, 5000, 1.5},
+      // {2.10695, 0.69, 45, 5500, 1.25},
+      // {2.48695, -4.76, 41, 5500, 1.25},
+      // {2.86195, -10.06, 35.5, 6000, 1},
+      // {3.18695, -11.63, 33.75, 6000, 1},
+      // {3.53195, -12.73, 31, 6500, 1},
+      // {3.84195, -13.75, 30, 6500, 1},
+      // {4.13695, -14.55, 28.5, 7000, 1},
+      // {4.47695, -15.23, 26.5, 7000, 1},
+      // {4.79195, -15.77, 25.5, 7000, 0.8},
+      // {5.31195, -16.28, 23.25, 7500, 0.8},
+      // {5.92195, -18.42, 20.5, 7750, 0.7},
+      // {6.42195, -18.59, 20, 8000, 0.7},
+      // {6.78195, -18.83, 19.5, 8500, 0.6}
       {1.30695, 19.41, 58, 4500, 2},
       {1.53695, 12.46, 54, 5000, 1.5},
       {1.84695, 5.57, 49, 5000, 1.5},
       {2.10695, 0.69, 45, 5500, 1.25},
-      {2.48695, -4.76, 41, 5500, 1.25},
-      {2.86195, -8.46, 35.5, 6000, 1},
-      {3.18695, -11.12, 33.75, 6000, 1},
-      {3.53195, -13.37, 31, 6500, 1},
-      {3.84195, -15.05, 30, 6500, 1},
-      {4.13695, -16.37, 28.5, 7000, 1},
-      {4.47695, -17.53, 26.5, 7000, 1},
-      {4.79195, -18.59, 25.5, 7000, 0.8},
-      {5.31195, -19.96, 23.25, 7500, 0.8},
-      {5.92195, -22.46, 20.5, 7750, 0.7},
-      {6.42195, -22.63, 20, 8000, 0.7},
-      {6.78195, -23.38, 19.5, 8500, 0.6}
+      {2.48695, -4.76, 41 + 0.5, 5500, 1.25},
+      {2.86195, -10.06, 35.5 + 0.5, 6000, 1},
+      {3.18695, -11.63, 33.75 + 0.5, 6000, 1},
+      {3.53195, -12.73, 31 + 0.5, 6500, 1},
+      {3.84195, -13.75, 30 + 0.5, 6500, 1},
+      {4.13695, -14.55, 28.5 + 0.5, 7000, 1},
+      {4.47695, -15.23, 26.5 + 0.5, 7000, 1},
+      {4.79195, -15.77, 25.5 + 0.5, 7000, 0.8},
+      {5.31195, -16.28, 23.25 + 0.5, 7500, 0.8},
+      {5.92195, -18.42, 20.5 + 0.5, 7750, 0.7},
+      {6.42195, -18.59, 20 + 0.5, 8000, 0.7},
+      {6.78195, -18.83, 19.5 + 0.5, 8500, 0.6}
     };
 
     public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
@@ -126,11 +142,13 @@ public final class Constants {
     }
 
     public static double[] getShooterValuesFromAngle(double angle) {
-      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)}; 
+      // return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
+      return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
     }
 
     public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      // return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
     public static double getDistFromAngle(double ty) {
@@ -173,6 +191,7 @@ public final class Constants {
 
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 180;
+    public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
@@ -366,8 +385,8 @@ public final class Constants {
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;
-    public static final int INTAKE_TOF_ID = 1;
-    public static final int CLIMBER_TOF_ID = 2;
+    public static final int CARRIAGE_TOF_ID = 1;
+    public static final int INTAKE_TOF_ID = 2;
 
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;

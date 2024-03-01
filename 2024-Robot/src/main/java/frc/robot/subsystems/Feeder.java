@@ -43,6 +43,10 @@ public class Feeder extends SubsystemBase {
     this.rollerFalconConfiguration.Slot0.kI = 0.0;
     this.rollerFalconConfiguration.Slot0.kD = 0.0;
     this.rollerFalconConfiguration.Slot0.kS = 0.0;
+    this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
+    this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
+    this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Brake);
 

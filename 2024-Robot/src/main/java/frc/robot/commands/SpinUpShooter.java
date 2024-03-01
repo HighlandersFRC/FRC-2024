@@ -47,7 +47,13 @@ public class SpinUpShooter extends Command {
       this.shooterRPM = shooterSetpoints[1];
     }
 
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    // this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    this.shooter.setFlywheelRPM(3000);
+    if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
+      this.shooter.setAnglePercent(0);
+    } else {
+      this.shooter.setAnglePercent(-0.05);
+    }
   }
 
   @Override
