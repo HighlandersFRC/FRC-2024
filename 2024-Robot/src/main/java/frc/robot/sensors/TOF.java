@@ -6,10 +6,15 @@ import com.playingwithfusion.TimeOfFlight.RangingMode;
 import frc.robot.Constants;
 
 public class TOF {
-    private final TimeOfFlight feederTOF = new TimeOfFlight(0);
+    public static final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
+    public static final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
+    public static final TimeOfFlight climberTOF = new TimeOfFlight(Constants.CANInfo.CLIMBER_TOF_ID);
 
     public TOF(){
-        this.feederTOF.setRangingMode(RangingMode.Short, 50);
+        TOF.feederTOF.setRangingMode(RangingMode.Short, 50);
+        TOF.intakeTOF.setRangingMode(RangingMode.Short, 50);
+        TOF.climberTOF.setRangingMode(RangingMode.Short, 50);
+
     }
 
     public double getFeederDistMillimeters(){
@@ -17,6 +22,10 @@ public class TOF {
     }
 
     public double getIntakeDistMillimeters(){
-        return this.intakeTOF.getRange();
+        return TOF.intakeTOF.getRange();
+    }
+
+    public double getClimberDistMillimeters(){
+        return TOF.climberTOF.getRange();
     }
 }

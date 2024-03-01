@@ -67,11 +67,12 @@ public class Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
     boolean feederTof = false;
-    SmartDashboard.putBoolean(" Feeder TOF", feederTof);
     if(TOF.feederTOF.getRange() > 0 && TOF.feederTOF.getRange() < 1000.0){
       feederTof = true;
     }
+
+    SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
+    SmartDashboard.putBoolean(" Feeder TOF", feederTof);
   }
 }

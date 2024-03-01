@@ -151,11 +151,12 @@ public class Climber extends SubsystemBase {
     boolean climbMaster = false;
     boolean climbFollower = false;
     boolean climbTOF = false;
-    SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
-    SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
-    SmartDashboard.putBoolean(" Climber TOF", climbTOF);
     SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
-    SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+
+    double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
+    setElevatorPositionMeters(newElevator);
+
     if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
       climbMaster = true;
     }
@@ -165,5 +166,9 @@ public class Climber extends SubsystemBase {
     if(TOF.climberTOF.getRange() > 0 && TOF.climberTOF.getRange() < 1000.0){
       climbTOF = true;
     }
+
+    SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
+    SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
+    SmartDashboard.putBoolean(" Climber TOF", climbTOF);
   }
 }

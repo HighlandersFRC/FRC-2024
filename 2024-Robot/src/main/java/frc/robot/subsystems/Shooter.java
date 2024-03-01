@@ -140,6 +140,18 @@ public class Shooter extends SubsystemBase {
     return Constants.rotationsToDegrees(getAngleRotations());
   }
 
+  public double getP(){
+    return this.flywheelFalconConfiguration.Slot0.kP;
+  }
+
+  public double getI(){
+    return this.flywheelFalconConfiguration.Slot0.kI;
+  }
+
+  public double getD(){
+    return this.flywheelFalconConfiguration.Slot0.kD;
+  }
+
   //Constantly set flywheel velocity PID
   public void teleopPeriodic(){
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
@@ -152,34 +164,31 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
     boolean shooterEncoder = false;
     boolean shooterAngle = false;
-    // SmartDashboard.getNumber("Flywheel P value", this.flywheelVortexMasterPID.getP());
-		// SmartDashboard.getNumber("Flywheel I value",  this.flywheelVortexMasterPID.getI());
-		// SmartDashboard.getNumber("Flywheel D value", this.flywheelVortexMasterPID.getD());
-    // SmartDashboard.getNumber("Flywheel FF value", this.flywheelVortexMasterPID.getFF());
-    SmartDashboard.putBoolean(" Shooter encoder", shooterEncoder);
-    SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
 
-    // double newPIDP = SmartDashboard.getNumber("Flywheel P value", flywheelVortexMasterPID.getP());
-    // flywheelVortexMasterPID.setP(newPIDP);
+    double newPIDP = SmartDashboard.getNumber("Flywheel P value", getP());
+    this.flywheelFalconConfiguration.Slot0.kP = newPIDP;
 
-    // double newPIDI = SmartDashboard.getNumber("Flywheel I value",  flywheelVortexMasterPID.getI());
-    // flywheelVortexMasterPID.setI(newPIDI);
+    double newPIDI = SmartDashboard.getNumber("Flywheel I value",  getI());
+    this.flywheelFalconConfiguration.Slot0.kI = newPIDI;
 
-    // double newPIDD = 	SmartDashboard.getNumber("Flywheel D value", flywheelVortexMasterPID.getD());
-    //   flywheelVortexMasterPID.setD(newPIDD);
+    double newPIDD = 	SmartDashboard.getNumber("Flywheel D value", getD());
+    this.flywheelFalconConfiguration.Slot0.kD = newPIDD;
 
-    // double newPIDFF =  SmartDashboard.getNumber("Flywheel FF value", flywheelVortexMasterPID.getFF());
-    //   this.flywheelVortexMasterPID.setFF(newPIDFF);
-
-    if(angleEncoder.getAbsolutePosition().getValue() != 0){
+    if(angleEncoder.getSupplyVoltage().getValue() != 0){
           shooterEncoder = true;
         }
     if(angleFalcon.getMotorVoltage().getValue() != 0){
       shooterAngle = true;
     }
     
+    SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
+    SmartDashboard.getNumber("Flywheel P value", getP());
+		SmartDashboard.getNumber("Flywheel I value",  getI());
+		SmartDashboard.getNumber("Flywheel D value", getD());
+    SmartDashboard.putBoolean(" Shooter Encoder", shooterEncoder);
+    SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
+
   }
 }
