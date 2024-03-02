@@ -1,6 +1,7 @@
 package frc.robot.commands.defaults;
 
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 
 public class ClimberDefault extends Command {
@@ -42,6 +43,7 @@ public class ClimberDefault extends Command {
     //   this.climber.setElevatorTorque(-15, 0.3);
     // }
     this.climber.setElevatorPercent(0);
+    this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN);
   }
 
   @Override

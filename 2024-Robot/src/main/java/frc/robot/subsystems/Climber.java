@@ -9,9 +9,12 @@ import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +23,7 @@ import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.commands.defaults.IntakeDefault;
 import frc.robot.sensors.TOF;
 import frc.robot.tools.EMBrake;
+import frc.robot.tools.controlloops.PID;
 
 public class Climber extends SubsystemBase {
   private Lights lights;
@@ -36,10 +40,26 @@ public class Climber extends SubsystemBase {
   private final TalonFXConfiguration trapRollerFalconConfiguration = new TalonFXConfiguration();
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
+  private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
+  private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
+
+  private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+  private final PID rotationPID;
+  private final double kP = 0.0;
+  private final double kI = 0.0;
+  private final double kD = 0.0;
+  private final double kG = 0.0;
+
   /** Creates a new Climber. */
   public Climber(Lights lights) {
     this.lights = lights;
     setDefaultCommand(new ClimberDefault(this));
+
+    this.rotationPID = new PID(this.kP, this.kI, this.kD);
+    this.rotationPID.setMaxOutput(0.2);
+    this.rotationPID.setMinOutput(-0.2);
+    this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
+    this.rotationPID.updatePID(getCarriageRotationDegrees());
   }
 
   public void init(){
@@ -122,6 +142,39 @@ public class Climber extends SubsystemBase {
     this.trapRollerFalcon.setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
+  public void setCarriageRotationDegrees(double degrees){
+    if (getElevatorPositionMeters() < Constants.SetPoints.CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+      return;
+    }
+    if (degrees < Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+    } else if (degrees > Constants.SetPoints.CARRIAGE_TOP_ROTATION_DEG){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_TOP_ROTATION_DEG;
+    } else {
+      this.carriageRotationSetpoint = degrees;
+    }
+  }
+
+  public void setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation carriageRotation){
+    double degrees = carriageRotation.degrees;
+    if (getElevatorPositionMeters() < Constants.SetPoints.CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+      return;
+    }
+    if (degrees < Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+    } else if (degrees > Constants.SetPoints.CARRIAGE_TOP_ROTATION_DEG){
+      this.carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_TOP_ROTATION_DEG;
+    } else {
+      this.carriageRotationSetpoint = degrees;
+    }
+  }
+
+  public void setCarriageRotationPercent(double percent){
+    this.carriageRotationNeo.set(percent);
+  }
+
   public double getElevatorPositionMeters(){
     return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getPosition().getValueAsDouble());
   }
@@ -146,16 +199,15 @@ public class Climber extends SubsystemBase {
     return this.elevatorFalconMaster.getVelocity().getValueAsDouble();
   }
 
+  public double getCarriageRotationDegrees(){
+    return this.rotationCanCoder.getAbsolutePosition().getValueAsDouble();
+  }
+
   @Override
   public void periodic() {
     boolean climbMaster = false;
     boolean climbFollower = false;
-    boolean climbTOF = false;
-    SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
-    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
-
-    double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
-    setElevatorPositionMeters(newElevator);
+    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
 
     if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
       climbMaster = true;
@@ -163,12 +215,17 @@ public class Climber extends SubsystemBase {
     if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
       climbFollower = true;
     }
-    if(TOF.carriageTOF.getRange() > 0 && TOF.carriageTOF.getRange() < 1000.0){
-      climbTOF = true;
-    }
 
     SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
     SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
-    SmartDashboard.putBoolean(" Climber TOF", climbTOF);
+  }
+
+  public void teleopPeriodic(){
+    //DO NOT REMOVE FOR COMP
+    this.rotationPID.setSetPoint(this.carriageRotationSetpoint);
+    this.rotationPID.updatePID(getCarriageRotationDegrees());
+    double result = this.rotationPID.getResult() + Math.cos(Math.toRadians(getCarriageRotationDegrees())) * this.kG;
+    setCarriageRotationPercent(result);
+    //DO NOT REMOVE FOR COMP
   }
 }

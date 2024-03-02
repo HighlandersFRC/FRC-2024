@@ -265,6 +265,7 @@ public class Robot extends LoggedRobot {
     intake.teleopPeriodic();
     shooter.teleopPeriodic();
     feeder.teleopPeriodic();
+    climber.teleopPeriodic();
   }
 
   @Override

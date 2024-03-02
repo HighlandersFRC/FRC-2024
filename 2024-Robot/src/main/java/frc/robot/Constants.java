@@ -151,6 +151,10 @@ public final class Constants {
       return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
+    public static double getAllowedAngleErrFromAngle(double angle){
+      return getInterpolatedValue(1, 4, angle);
+    }
+
     public static double getDistFromAngle(double ty) {
       return getInterpolatedValue(1, 0, ty);
     }
@@ -196,6 +200,9 @@ public final class Constants {
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
+    public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
+    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = 0.0;
+    public static final double CARRIAGE_TOP_ROTATION_DEG = 0.0;
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
@@ -207,6 +214,17 @@ public final class Constants {
       private ElevatorPosition(double meters, double rotations){
         this.meters = meters;
         this.rotations = rotations;
+      }
+    }
+
+    public enum CarriageRotation {
+      kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
+      kUP(CARRIAGE_TOP_ROTATION_DEG);
+      
+      public final double degrees;
+
+      private CarriageRotation(double degrees){
+        this.degrees = degrees;
       }
     }
   }
@@ -327,7 +345,7 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
-    public static final double INTAKE_ANGLE_GEAR_RATIO = 600.0 / 18.0;
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 30.0;
     public static final double INTAKE_ROLLER_GEAR_RATIO = 24.0 / 11.0;
 
     //shooter
@@ -338,10 +356,10 @@ public final class Constants {
     public static final double FEEDER_ROLLER_GEAR_RATIO = 3;
 
     //climber
-    public static final double ELEVATOR_GEAR_RATIO = 4.0;
+    public static final double ELEVATOR_GEAR_RATIO = 23.52;
     public static final double TRAP_ROLLER_GEAR_RATIO = 1.0;
     public static final double TRAP_SERVO_GEAR_RATIO = 1.0;
-    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 69.989;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 1;
 
     public static double elevatorRotationsToMeters(double rotations){
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
@@ -392,7 +410,8 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
     public static final int TRAP_ROLLER_MOTOR_ID = 18;
-    public static final int TRAP_SERVO_CHANNEL = 0;
+    public static final int CARRIAGE_ROTATION_MOTOR_ID = 19;
+    public static final int CARRIAGE_ROTATION_CANCODER_ID = 6;
   }
 
   //Misc. controller values
