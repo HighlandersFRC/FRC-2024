@@ -31,7 +31,7 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
-import frc.robot.commands.FollowNote;
+import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -255,7 +255,7 @@ public class Robot extends LoggedRobot {
     OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverA.whileTrue(new AutoPrepForShot(shooter, tof, 20, 6000));
     OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 23.5, 7500, 1200, 0));
-    OI.driverRB.whileTrue(new FollowNote(drive, peripherals));
+    OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
 
     //Operator
   }

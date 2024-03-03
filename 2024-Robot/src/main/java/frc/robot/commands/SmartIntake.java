@@ -7,20 +7,14 @@ import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.Peripherals;
-import frc.robot.tools.controlloops.PID;
-import frc.robot.tools.math.Vector;
 
 public class SmartIntake extends Command {
   private Intake intake;
   private Feeder feeder;
   private Climber climber;
-  private Drive drive;
-  private Peripherals peripherals;
   private Lights lights;
   private TOF tof;
   private double intakeDegrees;
@@ -33,38 +27,29 @@ public class SmartIntake extends Command {
 
   private boolean rumbleControllers = true;
 
-  private PID pid;
-  private double kP = 3;
-  private double kI = 0;
-  private double kD = 0;
-
-  public SmartIntake(Intake intake, Feeder feeder, Climber climber, Drive drive, Peripherals peripherals, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
+  public SmartIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
     this.feeder = feeder;
     this.climber = climber;
-    this.drive = drive;
-    this.peripherals = peripherals;
     this.lights = lights;
     this.tof = tof;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
-    addRequirements(this.intake, this.feeder, this.climber, this.drive, this.peripherals);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
-  public SmartIntake(Intake intake, Feeder feeder, Climber climber, Drive drive, Peripherals peripherals, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean rumble) {
+  public SmartIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean rumble) {
     this.intake = intake;
     this.feeder = feeder;
     this.lights = lights;
     this.climber = climber;
-    this.drive = drive;
-    this.peripherals = peripherals;
     this.tof = tof;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.rumbleControllers = rumble;
-    addRequirements(this.intake, this.feeder, this.climber, this.drive, this.peripherals);
+    addRequirements(this.intake, this.feeder, this.climber);
   }
 
   @Override
@@ -74,11 +59,6 @@ public class SmartIntake extends Command {
       this.haveNote = true;
     }
     this.haveIntakedNote = false;
-
-    pid = new PID(kP, kI, kD);
-    pid.setSetPoint(0);
-    pid.setMinOutput(-4);
-    pid.setMaxOutput(4);
   }
 
   @Override
@@ -123,18 +103,10 @@ public class SmartIntake extends Command {
       // this.climber.setTrapRollerTorque(30, 0.7);
       this.climber.setTrapRollerPercent(0.7);
     }
-
-    double angleToPiece = peripherals.getBackCamTargetTx();
-    pid.updatePID(angleToPiece);
-    double result = -pid.getResult();
-
-    drive.autoRobotCentricDrive(new Vector(-3, 0), result);
   }
 
   @Override
-  public void end(boolean interrupted) {
-    drive.autoRobotCentricDrive(new Vector(0, 0), 0);
-  }
+  public void end(boolean interrupted) {}
 
   @Override
   public boolean isFinished() {

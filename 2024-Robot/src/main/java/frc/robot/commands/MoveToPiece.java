@@ -11,7 +11,7 @@ import frc.robot.subsystems.Peripherals;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class FollowNote extends CommandBase {
+public class MoveToPiece extends CommandBase {
   private Drive drive;
   private Peripherals peripherals;
 
@@ -21,7 +21,7 @@ public class FollowNote extends CommandBase {
   private double kD = 0;
 
   /** Creates a new MoveToPiece. */
-  public FollowNote(Drive drive, Peripherals peripherals) {
+  public MoveToPiece(Drive drive, Peripherals peripherals) {
     this.drive = drive;
     this.peripherals = peripherals;
     addRequirements(drive, peripherals);
