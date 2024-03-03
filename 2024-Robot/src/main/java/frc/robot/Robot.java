@@ -31,6 +31,7 @@ import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -48,6 +49,8 @@ import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.commands.autos.NothingAuto;
+import frc.robot.commands.presets.AmpPreset;
+import frc.robot.commands.presets.TrapPreset;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -256,14 +259,15 @@ public class Robot extends LoggedRobot {
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
   
-    OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
-    OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
-    OI.driverB.whileTrue(new Test(climber, 224, true));
-    OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
+    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
+    // OI.driverB.whileTrue(new Test(climber, 224, true));
+    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
     // OI.driverB.whileTrue(new Test(climber, 0.1, false));
     // OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
     // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    
+    OI.driverA.whileTrue(new AmpPreset(climber, feeder, intake, tof));
+    OI.driverB.whileTrue(new TrapPreset(climber, feeder, intake, tof));
     //Operator
   }
 
