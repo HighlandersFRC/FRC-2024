@@ -16,6 +16,7 @@ public class TOF {
         this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
         this.intakeTOF.setRangingMode(RangingMode.Short, 50);
         this.carriageTOF.setRangingMode(RangingMode.Short, 50);
+        this.carriageTOF.setRangeOfInterest(6, 8, 8, 6);
     }
 
     public double getFeederDistMillimeters(){
