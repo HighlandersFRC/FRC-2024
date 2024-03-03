@@ -795,6 +795,14 @@ public class Drive extends SubsystemBase {
     backRight.drive(controllerVector, turn, pigeonAngle);
   }
 
+  public void autoRobotCentricDrive(Vector velocityVector, double turnRadiansPerSec){
+    updateOdometryFusedArray();
+    frontLeft.drive(velocityVector, turnRadiansPerSec, 0);
+    frontRight.drive(velocityVector, turnRadiansPerSec, 0);
+    backLeft.drive(velocityVector, turnRadiansPerSec, 0);
+    backRight.drive(velocityVector, turnRadiansPerSec, 0);
+  }
+
   public void autoRobotCentricTurn(double turn){
     frontLeft.drive(new Vector(0, 0), turn, 0.0);
     frontRight.drive(new Vector(0, 0), turn, 0.0);

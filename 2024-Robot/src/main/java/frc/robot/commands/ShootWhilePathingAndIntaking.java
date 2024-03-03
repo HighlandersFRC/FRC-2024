@@ -67,8 +67,9 @@ public class ShootWhilePathingAndIntaking extends Command {
   private double intakeRPM;
 
   private boolean haveIntakeNote;
+  private boolean pickupNote;
 
-  public ShootWhilePathingAndIntaking(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, TOF tof, JSONArray pathPoints, double intakeRPM, double feederRPM, double shootDelay) {
+  public ShootWhilePathingAndIntaking(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, TOF tof, JSONArray pathPoints, double intakeRPM, double feederRPM, double shootDelay, boolean pickupNote) {
     this.drive = drive;
     this.intake = intake;
     this.feeder = feeder;
@@ -79,6 +80,7 @@ public class ShootWhilePathingAndIntaking extends Command {
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.shootDelay = shootDelay;
+    this.pickupNote = pickupNote;
     addRequirements(this.drive, this.feeder, this.shooter);
   }
 
@@ -174,7 +176,7 @@ public class ShootWhilePathingAndIntaking extends Command {
     this.odometryY = this.drive.getFusedOdometryY();
     this.odometryTheta = this.drive.getFusedOdometryTheta();
 
-    double[] desiredVelocityArray = this.drive.pidController(this.odometryX, this.odometryY, this.odometryTheta, this.currentTime, this.path);
+    double[] desiredVelocityArray = this.drive.pidController(this.odometryX, this.odometryY, this.odometryTheta, this.currentTime, this.path, this.pickupNote);
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0]);
     velocityVector.setJ(desiredVelocityArray[1]);
