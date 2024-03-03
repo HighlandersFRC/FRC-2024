@@ -13,7 +13,7 @@ public class TOF {
 
     public TOF(){
         this.feederTOF.setRangingMode(RangingMode.Short, 0);
-        this.feederTOF.setRangeOfInterest(12, 16, 16, 0);
+        this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
         this.intakeTOF.setRangingMode(RangingMode.Short, 50);
         this.carriageTOF.setRangingMode(RangingMode.Short, 50);
     }

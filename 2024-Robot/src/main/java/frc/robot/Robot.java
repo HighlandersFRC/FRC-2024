@@ -27,6 +27,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
@@ -253,16 +254,17 @@ public class Robot extends LoggedRobot {
     //Driver
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-  
-    OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
-    OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
-    OI.driverB.whileTrue(new Test(climber, 224, true));
-    OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    // OI.driverLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
+
+    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
+    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
+    // OI.driverB.whileTrue(new Test(climber, 224, true));
+    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
     // OI.driverB.whileTrue(new Test(climber, 0.1, false));
-    // OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
-    // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    OI.driverA.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 36.5, 5125, 1200, 0));
+    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     
     //Operator
   }

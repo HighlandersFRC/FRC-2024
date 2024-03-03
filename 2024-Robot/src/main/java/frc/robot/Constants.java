@@ -79,9 +79,11 @@ public final class Constants {
       {2.072, 3.57, 48, 4500, 1},
       {2.442, 0.92, 42, 4750, 1},
       {2.842, -1.09, 38, 5000, 1},
-      {3.412, -3.13, 33.5, 5250, 1},
-      {3.722, -4.01, 31.5, 5500, 1},
-      {4.072, -5.03, 29.75, 5750, 1},
+      {3.062, -1.95, 36.5, 5125, 1},
+      {3.302, -2.55, 35, 5250, 1},
+      {3.412, -3.13, 33, 5250, 1},
+      {3.722, -4.01, 31.25, 5500, 1},
+      {4.072, -5.03, 28.5, 5750, 1},
       {4.372, -5.69, 27.5, 6000, 1},
       {4.592, -5.91, 26, 6250, 1},
       {4.812, -6.27, 26, 6375, 1},
@@ -189,7 +191,7 @@ public final class Constants {
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
-    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -13.0;
+    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
     public static final double CARRIAGE_TOP_ROTATION_DEG = 224.0;
 
     public enum ElevatorPosition {

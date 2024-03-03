@@ -222,9 +222,7 @@ public class Climber extends SubsystemBase {
 
     // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
     // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
-  }
 
-  public void teleopPeriodic(){
     //DO NOT REMOVE FOR COMP
     this.rotationPID.setSetPoint(this.carriageRotationSetpoint);
     this.rotationPID.updatePID(getCarriageRotationDegrees());
@@ -232,5 +230,9 @@ public class Climber extends SubsystemBase {
     setCarriageRotationPercent(result);
     SmartDashboard.putNumber("Carriage Rotation", getCarriageRotationDegrees());
     //DO NOT REMOVE FOR COMP
+  }
+
+  public void teleopPeriodic(){
+    
   }
 }
