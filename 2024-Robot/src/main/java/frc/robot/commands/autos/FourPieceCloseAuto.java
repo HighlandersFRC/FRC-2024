@@ -99,7 +99,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON, 0, false),
+            new AutonomousFollower(drive, pathJSON, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 20, 3000)
@@ -110,7 +110,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON2, 0, false),
+            new AutonomousFollower(drive, pathJSON2, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 20, 3000)
@@ -121,7 +121,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON3, 0, false),
+            new AutonomousFollower(drive, pathJSON3, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 20, 3000)
