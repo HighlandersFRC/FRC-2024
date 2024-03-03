@@ -22,6 +22,10 @@ public class ClimberDefault extends Command {
 
   @Override
   public void execute() {
+    if (climber.getExtensionLimitSwitch()) {
+      climber.setElevatorEncoderPosition(0);
+    }
+
     this.climber.setTrapRollerTorque(5, 0.1);
 
     if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){

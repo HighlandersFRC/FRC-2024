@@ -12,9 +12,8 @@ import frc.robot.Constants;
 import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetCarriage;
-import frc.robot.commands.SetClimber;
+import frc.robot.commands.SetClimberWithoutIntake;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Feeder;
@@ -30,12 +29,12 @@ public class AmpPreset extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addRequirements(climber, feeder, intake);
     addCommands(
-      new IndexNoteToCarriage(feeder, climber, intake, tof)
-      // new ParallelDeadlineGroup(
-      //   new SetClimber(climber, intake, Constants.SetPoints.ElevatorPosition.kUP),
-      //   new RunFeeder(feeder, -60),
-      //   new RunIntake(intake, 60)
-      // ),
+      new IndexNoteToCarriage(feeder, climber, intake, tof),
+      new ParallelDeadlineGroup(
+        new SetClimberWithoutIntake(climber, intake, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.IntakePosition.kUP),
+        new RunFeeder(feeder, -60),
+        new RunIntake(intake, 60)
+      )
       // new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kUP, 0, 0)
     );
   }
