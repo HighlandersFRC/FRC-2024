@@ -28,6 +28,7 @@ public class RunClimber extends Command {
   @Override
   public void execute() {
     this.climber.setTrapRollerPercent(0);
+    this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
     // this.intake.setAngle(Constants.SetPoints.IntakePosition.kDOWN);
 
     // if (this.intake.getAngleRotations() < -0.1){

@@ -199,7 +199,7 @@ public class Climber extends SubsystemBase {
   }
 
   public double getCarriageRotations(){
-    return this.rotationCanCoder.getAbsolutePosition().getValueAsDouble();
+    return this.rotationCanCoder.getPosition().getValueAsDouble();
   }
 
   public double getCarriageRotationDegrees(){

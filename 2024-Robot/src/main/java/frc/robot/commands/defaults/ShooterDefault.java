@@ -20,11 +20,11 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    if (this.shooter.getFlywheelRPM() > 1000){
-      this.shooter.setFlywheelTorque(-15, 0.1);;
-    } else {
+    // if (this.shooter.getFlywheelRPM() > 1000){
+    //   this.shooter.setFlywheelTorque(-15, 0.1);;
+    // } else {
       this.shooter.setFlywheelPercent(0);
-    }
+    // }
 
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);

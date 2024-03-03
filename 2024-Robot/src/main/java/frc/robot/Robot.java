@@ -192,6 +192,8 @@ public class Robot extends LoggedRobot {
     // drive.periodic(); // remove for competition
     peripherals.periodic();
     climber.periodic();
+
+    SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
   @Override
@@ -249,19 +251,19 @@ public class Robot extends LoggedRobot {
     //CONTROLS
 
     //Driver
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
   
-    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.3));
-    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.3));
-    // OI.driverX.whileTrue(new Test(climber, 90, true));
-    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
+    OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
+    OI.driverB.whileTrue(new Test(climber, 224, true));
+    OI.driverX.whileTrue(new RunTrap(climber, 0.5));
     // OI.driverB.whileTrue(new Test(climber, 0.1, false));
-    OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
-    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 19.25, 8000, 1200, 0));
-
+    // OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
+    // OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    
     //Operator
   }
 

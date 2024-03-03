@@ -73,38 +73,26 @@ public final class Constants {
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      // {1.30695, 19.41, 58, 4500, 2},
-      // {1.53695, 12.46, 54, 5000, 1.5},
-      // {1.84695, 5.57, 49, 5000, 1.5},
-      // {2.10695, 0.69, 45, 5500, 1.25},
-      // {2.48695, -4.76, 41, 5500, 1.25},
-      // {2.86195, -10.06, 35.5, 6000, 1},
-      // {3.18695, -11.63, 33.75, 6000, 1},
-      // {3.53195, -12.73, 31, 6500, 1},
-      // {3.84195, -13.75, 30, 6500, 1},
-      // {4.13695, -14.55, 28.5, 7000, 1},
-      // {4.47695, -15.23, 26.5, 7000, 1},
-      // {4.79195, -15.77, 25.5, 7000, 0.8},
-      // {5.31195, -16.28, 23.25, 7500, 0.8},
-      // {5.92195, -18.42, 20.5, 7750, 0.7},
-      // {6.42195, -18.59, 20, 8000, 0.7},
-      // {6.78195, -18.83, 19.5, 8500, 0.6}
-      {1.30695, 19.41, 58, 4500, 2},
-      {1.53695, 12.46, 54, 5000, 1.5},
-      {1.84695, 5.57, 49, 5000, 1.5},
-      {2.10695, 0.69, 45, 5500, 1.25},
-      {2.48695, -4.76, 41, 5500, 1.25},
-      {2.86195, -10.06, 35.5, 6000, 1},
-      {3.18695, -11.63, 33.75, 6000, 1},
-      {3.53195, -12.73, 31, 6500, 1},
-      {3.84195, -13.75, 30, 6500, 1},
-      {4.13695, -14.55, 28.5, 7000, 1},
-      {4.47695, -15.23, 26.5, 7000, 1},
-      {4.79195, -15.77, 25.5, 7000, 0.8},
-      {5.31195, -16.28, 23.25, 7500, 0.8},
-      {5.92195, -18.42, 20.5, 7750, 0.7},
-      {6.42195, -18.59, 20, 8000, 0.7},
-      {6.78195, -18.83, 19.5, 8500, 0.6}
+      {1.302, 11.87, 58, 4000, 1},
+      {1.442, 10.20, 56, 4000, 1},
+      {1.732, 6.70, 52, 4250, 1},
+      {2.072, 3.57, 48, 4500, 1},
+      {2.442, 0.92, 42, 4750, 1},
+      {2.842, -1.09, 38, 5000, 1},
+      {3.412, -3.13, 33.5, 5250, 1},
+      {3.722, -4.01, 31.5, 5500, 1},
+      {4.072, -5.03, 29.75, 5750, 1},
+      {4.372, -5.69, 27.5, 6000, 1},
+      {4.592, -5.91, 26, 6250, 1},
+      {4.812, -6.27, 26, 6375, 1},
+      {5.152, -6.59, 25.25, 6500, 0.75},
+      {5.442, -7.16, 24, 6625, 0.75},
+      {5.712, -8.26, 22.25, 6750, 0.75},
+      {6.117, -8.51, 21.25, 7000, 0.75},
+      {6.382, -8.60, 21, 7250, 0.75},
+      {6.682, -8.82, 20.5, 7500, 0.75},
+      {6.912, -9.20, 19.5, 7750, 0.75},
+      {7.252, -9.44, 19.25, 8000, 0.75}
     };
 
     public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
@@ -142,13 +130,13 @@ public final class Constants {
     }
 
     public static double[] getShooterValuesFromAngle(double angle) {
-      // return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
-      return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
+      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
+      // return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
     }
 
     public static double[] getShooterValuesFromDistance(double dist) {
-      // return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
-      return new double[] {25, getInterpolatedValue(0, 3, dist)};
+      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
     public static double getAllowedAngleErrFromAngle(double angle){
@@ -220,7 +208,7 @@ public final class Constants {
 
     public enum CarriageRotation {
       kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
-      kFEED(0),
+      kFEED(1),
       kUP(CARRIAGE_TOP_ROTATION_DEG);
       
       public final double degrees;
