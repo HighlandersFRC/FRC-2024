@@ -31,26 +31,29 @@ public class AutonomousFollower extends Command {
   private double desiredThetaChange = 0;
 
   private boolean record;
+  private boolean pickupNote;
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   private double pathStartTime;
   private double pathEndTime;
 
-  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record) {
+  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
     this.pathEndTime = pathEndTime;
+    this.pickupNote = pickupNote;
     addRequirements(drive);
   }
 
-  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, boolean record) {
+  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
     this.pathEndTime = path.getJSONArray(path.length() - 1).getDouble(0);
+    this.pickupNote = pickupNote;
     addRequirements(drive);
   }
 
@@ -73,7 +76,7 @@ public class AutonomousFollower extends Command {
     currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
     
     // call PIDController function
-    desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path);
+    desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path, pickupNote);
     
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();

@@ -7,16 +7,10 @@ import org.json.JSONObject;
 
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.networktables.ConnectionInfo;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.SPI.Port;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.PeripheralsDefault;
@@ -25,6 +19,7 @@ import frc.robot.tools.math.Vector;
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
+  private NetworkTableEntry backCamTx = backCam.getEntry("tx");
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
   private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
@@ -112,6 +107,10 @@ public class Peripherals extends SubsystemBase {
     latencies.put("tl", this.frontCamTl.getDouble(0) / 1000);
     latencies.put("cl", this.frontCamCl.getDouble(0) / 1000);
     return latencies;
+  }
+
+  public double getBackCamTargetTx(){
+    return backCamTx.getDouble(0.0) * Math.PI / 180;
   }
 
   public void setFrontCamPipeline(int pipeline){
