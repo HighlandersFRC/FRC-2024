@@ -52,7 +52,7 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 5000;
+    this.angleFalconConfiguration.Slot0.kP = 6000;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;

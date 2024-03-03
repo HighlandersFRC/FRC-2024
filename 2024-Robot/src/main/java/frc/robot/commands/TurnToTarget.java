@@ -24,7 +24,7 @@ public class TurnToTarget extends Command {
   private double initTime;
   private double timeout = 1.5;
 
-  private double robotAngleAllowedErrorDegrees = 2;
+  private double robotAngleAllowedErrorDegrees = 0.25;
 
   public TurnToTarget(Drive drive, Peripherals peripherals) {
     this.drive = drive;

@@ -66,8 +66,8 @@ public final class Constants {
     public static final double SHOOTER_CENTER_OFFSET_DEG = 22.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
-    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
+    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
@@ -194,18 +194,19 @@ public final class Constants {
     //feeder
 
     //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 180;
+    public static final double FEEDER_TOF_THRESHOLD_MM = 110;
     public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
-    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = 0.0;
-    public static final double CARRIAGE_TOP_ROTATION_DEG = 0.0;
+    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -13.0;
+    public static final double CARRIAGE_TOP_ROTATION_DEG = 224.0;
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
+      kFIRST_EXTEND(0.5, Constants.Ratios.elevatorMetersToRotations(0.5)),
       kUP(ELEVATOR_TOP_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M));
 
       public final double meters;
@@ -219,6 +220,7 @@ public final class Constants {
 
     public enum CarriageRotation {
       kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
+      kFEED(0),
       kUP(CARRIAGE_TOP_ROTATION_DEG);
       
       public final double degrees;
@@ -353,13 +355,13 @@ public final class Constants {
     public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 30.0 / 56.0;
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 3;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 3.0;
 
     //climber
     public static final double ELEVATOR_GEAR_RATIO = 23.52;
-    public static final double TRAP_ROLLER_GEAR_RATIO = 1.0;
-    public static final double TRAP_SERVO_GEAR_RATIO = 1.0;
-    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 1;
+    public static final double TRAP_ROLLER_GEAR_RATIO = 3.0;
+    public static final double CARRIAGE_ROTATION_GEAR_RATIO = 100.0;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 219.254;
 
     public static double elevatorRotationsToMeters(double rotations){
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;

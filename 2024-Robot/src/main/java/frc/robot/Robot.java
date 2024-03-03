@@ -41,6 +41,7 @@ import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.Test;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
@@ -186,6 +187,7 @@ public class Robot extends LoggedRobot {
     intake.periodic();
     shooter.periodic();
     feeder.periodic();
+    tof.periodic();
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
@@ -251,9 +253,14 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    OI.driverA.whileTrue(new AutoPrepForShot(shooter, tof, 20, 6000));
-    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 23.5, 7500, 1200, 0));
+  
+    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.3));
+    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.3));
+    // OI.driverX.whileTrue(new Test(climber, 90, true));
+    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    // OI.driverB.whileTrue(new Test(climber, 0.1, false));
+    OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 19.25, 8000, 1200, 0));
 
     //Operator
   }

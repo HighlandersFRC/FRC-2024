@@ -112,11 +112,16 @@ public class AutoPositionalShoot extends Command {
         } else {
           speakerTagID = 4;
         }
+
         double distToSpeaker = Constants.getDistance(this.position[0], this.position[1], Constants.Vision.TAG_POSES[speakerTagID - 1][0], Constants.Vision.TAG_POSES[speakerTagID - 1][1]);
         double[] shooterParams = Constants.SetPoints.getShooterValuesFromDistance(distToSpeaker);
         this.shooterDegrees = shooterParams[0];
         this.shooterRPM = shooterParams[1];
         
+        double speakerFieldAngleDegrees = Math.atan2(this.position[1] - Constants.Vision.TAG_POSES[speakerTagID - 1][1], this.position[0] - Constants.Vision.TAG_POSES[speakerTagID - 1][0]);
+        double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
+        double speakerAngleOffsetDegrees = pigeonAngleDegrees - speakerFieldAngleDegrees;
+        // this.targetPigeonAngleDegrees = 
       }
     }
   }

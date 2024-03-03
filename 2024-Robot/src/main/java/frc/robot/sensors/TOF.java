@@ -12,7 +12,7 @@ public class TOF {
     public final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CARRIAGE_TOF_ID);
 
     public TOF(){
-        this.feederTOF.setRangingMode(RangingMode.Short, 10);
+        this.feederTOF.setRangingMode(RangingMode.Short, 0);
         this.feederTOF.setRangeOfInterest(12, 16, 16, 0);
         this.intakeTOF.setRangingMode(RangingMode.Short, 50);
         this.carriageTOF.setRangingMode(RangingMode.Short, 50);
@@ -47,5 +47,6 @@ public class TOF {
         SmartDashboard.putBoolean(" Climber TOF", climbTOF);
         SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
         SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
+        SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
     }
 }

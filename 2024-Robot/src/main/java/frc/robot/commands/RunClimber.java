@@ -8,13 +8,15 @@ import frc.robot.subsystems.Intake;
 public class RunClimber extends Command {
   private Climber climber;
   private Intake intake;
-  private double percent;
+  private double current;
+  private double maxPercent;
   private boolean intakeIsClear = false;
 
-  public RunClimber(Climber climber, Intake intake, double percent) {
+  public RunClimber(Climber climber, Intake intake, double current, double maxPercent) {
     this.climber = climber;
     this.intake = intake;
-    this.percent = percent;
+    this.current = current;
+    this.maxPercent = maxPercent;
     addRequirements(this.climber);
   }
 
@@ -26,17 +28,17 @@ public class RunClimber extends Command {
   @Override
   public void execute() {
     this.climber.setTrapRollerPercent(0);
-    this.intake.setAngle(Constants.SetPoints.IntakePosition.kDOWN);
+    // this.intake.setAngle(Constants.SetPoints.IntakePosition.kDOWN);
 
-    if (this.intake.getAngleRotations() < -0.1){
-      this.intakeIsClear = true;
-    }
+    // if (this.intake.getAngleRotations() < -0.1){
+    //   this.intakeIsClear = true;
+    // }
 
-    if (this.intakeIsClear){
-      this.climber.setElevatorPercent(this.percent);
-    } else {
-      this.climber.setElevatorTorque(-5, 0.1);
-    }
+    // if (this.intakeIsClear){
+      this.climber.setElevatorTorque(this.current, this.maxPercent);
+    // } else {
+      // this.climber.setElevatorTorque(-5, 0.1);
+    // }
   }
 
   @Override

@@ -38,8 +38,8 @@ public class PresetAutoShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.0;
 
-  private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 250;
+  private double shooterDegreesAllowedError = 0.75;
+  private double shooterRPMAllowedError = 200;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;

@@ -22,7 +22,7 @@ public class ClimberDefault extends Command {
 
   @Override
   public void execute() {
-    this.climber.setTrapRollerPercent(0);
+    this.climber.setTrapRollerTorque(5, 0.1);
 
     if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){
       this.numTimesHitBottom ++;
@@ -31,19 +31,21 @@ public class ClimberDefault extends Command {
     if (this.numTimesHitBottom > 2){
       this.isZeroed = true;
       this.numTimesHitBottom = 0;
+      this.climber.zeroElevator();
     }
 
     if (Math.abs(this.climber.getElevatorPositionMeters()) > 0.05){
       this.isZeroed = false;
+      this.numTimesHitBottom = 0;
     }
 
     // if (this.isZeroed){
-    //   this.climber.setElevatorTorque(0, 0.1);
+      this.climber.setElevatorTorque(0, 0.1);
     // } else {
-    //   this.climber.setElevatorTorque(-15, 0.3);
+    //   this.climber.setElevatorTorque(-5, 0.3);
     // }
-    this.climber.setElevatorPercent(0);
-    this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN);
+
+    this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
   }
 
   @Override
