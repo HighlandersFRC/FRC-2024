@@ -74,7 +74,7 @@ public class AutoIntake extends Command {
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerTorque(20, 0.45);
+      this.climber.setTrapRollerTorque(20, 0.5);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
     }
   }

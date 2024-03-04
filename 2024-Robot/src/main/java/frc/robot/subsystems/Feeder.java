@@ -33,6 +33,7 @@ public class Feeder extends SubsystemBase {
   private final TalonFX rollerFalcon = new TalonFX(Constants.CANInfo.FEEDER_ROLLER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   public Feeder(TOF tof) {
     setDefaultCommand(new FeederDefault(this,tof));
@@ -54,13 +55,16 @@ public class Feeder extends SubsystemBase {
 
   //Set roller velocity in RPM
   public void set(double RPM){
-    SmartDashboard.putNumber("Feeder Target", RPM);
     rollerFalcon.setControl(rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO));
   }
 
   //Set roller output in percent
   public void setPercent(double percent){
     rollerFalcon.set(percent);
+  }
+
+  public void setTorque(double current, double maxPercent){
+    this.rollerFalcon.setControl(this.rollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public double getRPM(){

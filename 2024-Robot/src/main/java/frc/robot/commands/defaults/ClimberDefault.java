@@ -66,7 +66,7 @@ public class ClimberDefault extends Command {
       this.climber.setTrapRollerTorque(5, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else {
-      this.climber.setTrapRollerTorque(5, 0.1);
+      this.climber.setTrapRollerTorque(20, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     }
   }

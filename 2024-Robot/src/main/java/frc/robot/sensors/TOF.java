@@ -15,7 +15,7 @@ public class TOF {
         this.feederTOF.setRangingMode(RangingMode.Short, 0);
         this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
         this.intakeTOF.setRangingMode(RangingMode.Short, 50);
-        this.carriageTOF.setRangingMode(RangingMode.Short, 50);
+        this.carriageTOF.setRangingMode(RangingMode.Short, 0);
         this.carriageTOF.setRangeOfInterest(6, 8, 8, 6);
     }
 
@@ -49,5 +49,6 @@ public class TOF {
         SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
         SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
         SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
+        SmartDashboard.putNumber("Carriage TOF Dist", getCarriageDistMillimeters());
     }
 }

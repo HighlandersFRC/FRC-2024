@@ -226,7 +226,7 @@ public final class Constants {
 
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
-    public static final double CARRIAGE_TOF_THRESHOLD_MM = 110;
+    public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
     public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
     //climber

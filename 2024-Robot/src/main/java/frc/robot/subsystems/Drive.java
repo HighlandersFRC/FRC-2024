@@ -136,7 +136,7 @@ public class Drive extends SubsystemBase {
   private double yI = 0.0;
   private double yD = 1.2;
 
-  private double thetaP = 3.0;
+  private double thetaP = 2.7;
   private double thetaI = 0.0;
   private double thetaD = 2.0;
 

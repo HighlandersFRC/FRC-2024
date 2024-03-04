@@ -39,7 +39,7 @@ public class FeederDefault extends Command {
     } else if (this.haveNote){
       this.feeder.setPercent(0);
     } else {
-      this.feeder.setPercent(0);
+      this.feeder.setTorque(10, 0.1);
     }
   }
 
