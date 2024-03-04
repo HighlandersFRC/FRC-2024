@@ -68,7 +68,7 @@ public class Robot extends LoggedRobot {
   private TOF tof = new TOF();
 
   //Subsystems
-  private Lights lights = new Lights();
+  private Lights lights = new Lights(tof);
   private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();

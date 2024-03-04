@@ -22,7 +22,8 @@ public class Lights extends SubsystemBase {
   StrobeAnimation flashPurple = new StrobeAnimation(127, 0, 255, 0, 0.7, 308, 0);
   private TOF tof;
 
-  public Lights() {
+  public Lights(TOF tof) {
+    this.tof = tof;
   }
 
   public void Candle(){
@@ -33,7 +34,7 @@ public class Lights extends SubsystemBase {
   public void periodic() {
     // This method will be called once per scheduler run
     candle.animate(rainbowAnimation);
-    if(TOF.intakeTOF.getRange() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
+    if(this.tof.intakeTOF.getRange() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
       candle.animate(flashGreen);
     } else {
       candle.animate(rainbowAnimation);

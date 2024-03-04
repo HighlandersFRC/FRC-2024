@@ -444,7 +444,11 @@ public final class Constants {
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
     public static final int TRAP_ROLLER_MOTOR_ID = 18;
-    public static final int TRAP_SERVO_CHANNEL = 0;
+    public static final int CARRIAGE_ROTATION_MOTOR_ID = 19;
+    public static final int CARRIAGE_ROTATION_CANCODER_ID = 6;
+
+    //Lights
+    public static final int CANDLE_ID = 0;
   }
 
   //Misc. controller values

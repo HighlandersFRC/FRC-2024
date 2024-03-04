@@ -7,14 +7,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class TOF {
-    public static final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
-    public static final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
-    public static final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CLIMBER_TOF_ID);
+    public final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
+    public final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
+    public final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CARRIAGE_TOF_ID);
 
     public TOF(){
         this.feederTOF.setRangingMode(RangingMode.Short, 0);
         this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
-        this.intakeTOF.setRangingMode(RangingMode.Short, 50);
+        this.intakeTOF.setRangingMode(RangingMode.Short, 0);
         this.carriageTOF.setRangingMode(RangingMode.Short, 0);
         this.carriageTOF.setRangeOfInterest(6, 8, 8, 6);
     }
