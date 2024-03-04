@@ -27,9 +27,12 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
+import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoParser;
+import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -40,12 +43,15 @@ import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.Test;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.commands.autos.NothingAuto;
+import frc.robot.commands.presets.AmpPreset;
+import frc.robot.commands.presets.TrapPreset;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -58,17 +64,17 @@ import frc.robot.subsystems.Shooter;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
+  //Sensors
+  private TOF tof = new TOF();
+
   //Subsystems
   private Lights lights = new Lights();
   private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Feeder feeder = new Feeder();
-  private Climber climber = new Climber(lights);
-
-  //Sensors
-  private TOF tof = new TOF();
+  private Feeder feeder = new Feeder(tof);
+  private Climber climber = new Climber(lights, tof);
 
   // private Logger logger = Logger.getInstance();
 
@@ -185,10 +191,13 @@ public class Robot extends LoggedRobot {
     intake.periodic();
     shooter.periodic();
     feeder.periodic();
+    tof.periodic();
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
     climber.periodic();
+
+    SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
   @Override
@@ -246,14 +255,20 @@ public class Robot extends LoggedRobot {
     //CONTROLS
 
     //Driver
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  600));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  400));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    OI.driverA.whileTrue(new TurnToTarget(drive, peripherals));
-    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 23.5, 7500, 1200, 0));
+    // OI.driverLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
 
+    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
+    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
+    // OI.driverB.whileTrue(new Test(climber, 224, true));
+    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    // OI.driverB.whileTrue(new Test(climber, 0.1, false));
+    OI.driverA.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 36.5, 5125, 1200, 0));
+    OI.driverY.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
+    
     //Operator
   }
 
@@ -264,6 +279,7 @@ public class Robot extends LoggedRobot {
     intake.teleopPeriodic();
     shooter.teleopPeriodic();
     feeder.teleopPeriodic();
+    climber.teleopPeriodic();
   }
 
   @Override

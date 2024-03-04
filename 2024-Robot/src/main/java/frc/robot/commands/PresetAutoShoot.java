@@ -38,8 +38,8 @@ public class PresetAutoShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.0;
 
-  private double shooterDegreesAllowedError = 1;
-  private double shooterRPMAllowedError = 250;
+  private double shooterDegreesAllowedError = 0.75;
+  private double shooterRPMAllowedError = 200;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;
@@ -124,7 +124,7 @@ public class PresetAutoShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM && !this.hasShot){
+    if (this.tof.getFeederDistMillimeters() >= 110 && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }

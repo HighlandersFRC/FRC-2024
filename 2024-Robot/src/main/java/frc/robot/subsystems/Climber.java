@@ -6,12 +6,16 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
+import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
+import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -20,6 +24,7 @@ import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.commands.defaults.IntakeDefault;
 import frc.robot.sensors.TOF;
 import frc.robot.tools.EMBrake;
+import frc.robot.tools.controlloops.PID;
 
 public class Climber extends SubsystemBase {
   private Lights lights;
@@ -29,17 +34,33 @@ public class Climber extends SubsystemBase {
   
   private final TalonFX elevatorFalconMaster = new TalonFX(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconMasterConfiguration = new TalonFXConfiguration();
-  private final PositionTorqueCurrentFOC elevatorFalconPositionRequest = new PositionTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
+  private final MotionMagicTorqueCurrentFOC elevatorFalconPositionRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
   private final TorqueCurrentFOC elevatorFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX trapRollerFalcon = new TalonFX(Constants.CANInfo.TRAP_ROLLER_MOTOR_ID);
   private final TalonFXConfiguration trapRollerFalconConfiguration = new TalonFXConfiguration();
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
+  private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
+  private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
+
+  private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+  private final PID rotationPID;
+  private final double kP = 0.01;
+  private final double kI = 0.0;
+  private final double kD = 0.0;
+  private final double kG = 0.015;
+
   /** Creates a new Climber. */
-  public Climber(Lights lights) {
+  public Climber(Lights lights, TOF tof) {
     this.lights = lights;
-    setDefaultCommand(new ClimberDefault(this));
+    setDefaultCommand(new ClimberDefault(this, tof));
+
+    this.rotationPID = new PID(this.kP, this.kI, this.kD);
+    this.rotationPID.setMaxOutput(0.2);
+    this.rotationPID.setMinOutput(-0.2);
+    this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
+    this.rotationPID.updatePID(getCarriageRotations());
   }
 
   public void init(){
@@ -47,9 +68,16 @@ public class Climber extends SubsystemBase {
     double elevatorFalconI = 0;
     double elevatorFalconD = 0;
 
+    double elevatorFalconAccel = 0.0;
+    double elevatorFalconCruiseVel = 0.0;
+    double elevatorFalconJerk = 0.0;
+
     this.elevatorFalconFollowerConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconFollowerConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconFollowerConfiguration.Slot0.kD = elevatorFalconD;
+    this.elevatorFalconFollowerConfiguration.MotionMagic.MotionMagicAcceleration = elevatorFalconAccel;
+    this.elevatorFalconFollowerConfiguration.MotionMagic.MotionMagicCruiseVelocity = elevatorFalconCruiseVel;
+    this.elevatorFalconFollowerConfiguration.MotionMagic.MotionMagicJerk = elevatorFalconJerk;
     this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 60;
@@ -62,16 +90,19 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconMasterConfiguration.Slot0.kP = elevatorFalconP;
     this.elevatorFalconMasterConfiguration.Slot0.kI = elevatorFalconI;
     this.elevatorFalconMasterConfiguration.Slot0.kD = elevatorFalconD;
+    this.elevatorFalconMasterConfiguration.MotionMagic.MotionMagicAcceleration = elevatorFalconAccel;
+    this.elevatorFalconMasterConfiguration.MotionMagic.MotionMagicCruiseVelocity = elevatorFalconCruiseVel;
+    this.elevatorFalconMasterConfiguration.MotionMagic.MotionMagicJerk = elevatorFalconJerk;
     this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
-    this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.elevatorFalconMaster.getConfigurator().apply(this.elevatorFalconMasterConfiguration);
     this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconMaster.setPosition(0);
 
-    // this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, true));
+    this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, false));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
     this.trapRollerFalconConfiguration.Slot0.kI = 0;
@@ -80,7 +111,7 @@ public class Climber extends SubsystemBase {
     this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.trapRollerFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.trapRollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
-    this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.CounterClockwise_Positive;
+    this.trapRollerFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.trapRollerFalcon.getConfigurator().apply(this.trapRollerFalconConfiguration);
     this.trapRollerFalcon.setNeutralMode(NeutralModeValue.Brake);
   }
@@ -95,6 +126,10 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public void setElevatorPosition(Constants.SetPoints.ElevatorPosition elevatorPosition){
+
+  }
+
   public void setElevatorPositionRotations(double positionRotations){
     if (positionRotations > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
       this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_TOP_POSITION_M));
@@ -107,7 +142,6 @@ public class Climber extends SubsystemBase {
 
   public void setElevatorTorque(double current, double maxPercent){
     this.elevatorFalconMaster.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
-    this.elevatorFalconFollower.setControl(this.elevatorFalconTorqueRequest.withOutput(-current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setElevatorPercent(double percent){
@@ -120,6 +154,24 @@ public class Climber extends SubsystemBase {
 
   public void setTrapRollerTorque(double current, double maxPercent){
     this.trapRollerFalcon.setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+  }
+
+  public void setCarriageRotationDegrees(double degrees){
+    this.carriageRotationSetpoint = degrees;
+  }
+
+  public void setCarriageRotation(Constants.SetPoints.CarriageRotation carriageRotation){
+    double degrees = carriageRotation.degrees;
+    this.carriageRotationSetpoint = degrees;
+  }
+
+  public void zeroElevator(){
+    this.elevatorFalconMaster.setPosition(0.0);
+    this.elevatorFalconFollower.setPosition(0.0);
+  }
+
+  public void setCarriageRotationPercent(double percent){
+    this.carriageRotationNeo.set(percent);
   }
 
   public double getElevatorPositionMeters(){
@@ -146,29 +198,45 @@ public class Climber extends SubsystemBase {
     return this.elevatorFalconMaster.getVelocity().getValueAsDouble();
   }
 
+  public double getCarriageRotations(){
+    return this.rotationCanCoder.getPosition().getValueAsDouble();
+  }
+
+  public double getCarriageRotationDegrees(){
+    return getCarriageRotations() * 360.0;
+  }
+
   @Override
   public void periodic() {
     boolean climbMaster = false;
     boolean climbFollower = false;
-    boolean climbTOF = false;
-    SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
-    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
+    SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
 
     double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
     setElevatorPositionMeters(newElevator);
 
-    if(elevatorFalconMaster.getSupplyVoltage().getValue() != 0){
+    if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
       climbMaster = true;
     }
-    if(elevatorFalconFollower.getSupplyVoltage().getValue() != 0){
+    if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
       climbFollower = true;
     }
-    if(TOF.carriageTOF.getRange() > 0 && TOF.carriageTOF.getRange() < 1000.0){
-      climbTOF = true;
-    }
 
-    SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
-    SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
-    SmartDashboard.putBoolean(" Climber TOF", climbTOF);
+
+    // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
+    // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
+
+    //DO NOT REMOVE FOR COMP
+    this.rotationPID.setSetPoint(this.carriageRotationSetpoint);
+    this.rotationPID.updatePID(getCarriageRotationDegrees());
+    double result = this.rotationPID.getResult() + Math.sin(Math.toRadians(getCarriageRotationDegrees())) * this.kG;
+    setCarriageRotationPercent(result);
+    SmartDashboard.putNumber("Carriage Rotation", getCarriageRotationDegrees());
+    //DO NOT REMOVE FOR COMP
+  }
+
+  public void teleopPeriodic(){
+    
   }
 }

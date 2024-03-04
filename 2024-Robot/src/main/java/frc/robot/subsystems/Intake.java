@@ -168,17 +168,14 @@ public class Intake extends SubsystemBase {
     boolean angleMotor = false;
     boolean intakeMotor = false;
     boolean intakeTOF = false;
-    if(angleFalcon.getSupplyVoltage().getValue() != 0.0 ){
+    if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
       angleMotor = true;
     }
     if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
       intakeMotor = true;
     }
-    if(TOF.intakeTOF.getRange() > 0 && TOF.intakeTOF.getRange() < 1000.0){
-      intakeTOF = true;
-    }
+    
     SmartDashboard.putBoolean(" Intake Angle Motor", angleMotor);
     SmartDashboard.putBoolean(" Intake Roller Motor", intakeMotor);
-    SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
   }
 }

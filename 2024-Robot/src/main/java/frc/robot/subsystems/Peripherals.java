@@ -35,8 +35,12 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
+  private NetworkTableEntry leftCamRobotFieldPose = leftCam.getEntry("botpose_wpiblue");
+  private NetworkTableEntry leftCamRobotTagPose = leftCam.getEntry("botpose_targetspace");
   private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
+  private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
+  private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
 
   private double[] noTrackLimelightArray = new double[6];
 
@@ -161,8 +165,18 @@ public class Peripherals extends SubsystemBase {
     return accelVector;
   }
 
-  public double getBackHorizontalDistToTag(){
-    double[] pose = this.frontCamRobotTagPose.getDoubleArray(new double[] {0, 0, 0, 0, 0, 0});
+  public double getFrontHorizontalDistToTag(){
+    double[] pose = this.frontCamRobotTagPose.getDoubleArray(new double[] {0, 0, 1000, 0, 0, 0});
+    return -pose[2];
+  }
+
+  public double getLeftHorizontalDistToTag(){
+    double[] pose = this.leftCamRobotTagPose.getDoubleArray(new double[] {0, 0, 1000, 0, 0, 0});
+    return -pose[2];
+  }
+
+  public double getRightHorizontalDistToTag(){
+    double[] pose = this.rightCamRobotTagPose.getDoubleArray(new double[] {0, 0, 1000, 0, 0, 0});
     return -pose[2];
   }
 
@@ -175,7 +189,7 @@ public class Peripherals extends SubsystemBase {
     noTrack.put(0);
     try {
       result = this.frontCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
-      tagDist = getBackHorizontalDistToTag();
+      tagDist = getFrontHorizontalDistToTag();
     } catch (Exception e) {
       return noTrack;
     }
@@ -190,6 +204,72 @@ public class Peripherals extends SubsystemBase {
     fieldPosArray.put(0, fieldX);
     fieldPosArray.put(1, fieldY);
     // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
+  public JSONArray getRawFrontCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.frontCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Front X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
+  public JSONArray getRawLeftCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.leftCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Left X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
+  public JSONArray getRawRightCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.rightCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Right X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
     return fieldPosArray;
   }
 

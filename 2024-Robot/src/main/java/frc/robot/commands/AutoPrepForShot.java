@@ -28,7 +28,7 @@ public class AutoPrepForShot extends Command {
 
   @Override
   public void execute() {
-    if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+    if (this.tof.getFeederDistMillimeters() <= 110){
       this.haveNote = true;
     }
 
@@ -38,7 +38,7 @@ public class AutoPrepForShot extends Command {
       if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
         this.shooter.setAnglePercent(0);
       } else {
-        this.shooter.setAnglePercent(-0.05);
+        this.shooter.setAngleTorque(-10, 0.3);;
       }
       this.shooter.setFlywheelRPM(this.predictedShooterRPM);
     }

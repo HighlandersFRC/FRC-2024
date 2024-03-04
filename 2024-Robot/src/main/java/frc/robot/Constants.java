@@ -17,6 +17,8 @@ public final class Constants {
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
+    public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
+
     public static final double TOP_SPEED = feetToMeters(20);
 
     public static final double ROBOT_LENGTH = inchesToMeters(25);
@@ -66,45 +68,35 @@ public final class Constants {
     public static final double SHOOTER_CENTER_OFFSET_DEG = 22.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
-    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
+    // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     // {distance(inches), target angle(deg), hood angle(deg), RPM}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      // {1.30695, 19.41, 58, 4500, 2},
-      // {1.53695, 12.46, 54, 5000, 1.5},
-      // {1.84695, 5.57, 49, 5000, 1.5},
-      // {2.10695, 0.69, 45, 5500, 1.25},
-      // {2.48695, -4.76, 41, 5500, 1.25},
-      // {2.86195, -10.06, 35.5, 6000, 1},
-      // {3.18695, -11.63, 33.75, 6000, 1},
-      // {3.53195, -12.73, 31, 6500, 1},
-      // {3.84195, -13.75, 30, 6500, 1},
-      // {4.13695, -14.55, 28.5, 7000, 1},
-      // {4.47695, -15.23, 26.5, 7000, 1},
-      // {4.79195, -15.77, 25.5, 7000, 0.8},
-      // {5.31195, -16.28, 23.25, 7500, 0.8},
-      // {5.92195, -18.42, 20.5, 7750, 0.7},
-      // {6.42195, -18.59, 20, 8000, 0.7},
-      // {6.78195, -18.83, 19.5, 8500, 0.6}
-      {1.30695, 19.41, 58, 4500, 2},
-      {1.53695, 12.46, 54, 5000, 1.5},
-      {1.84695, 5.57, 49, 5000, 1.5},
-      {2.10695, 0.69, 45, 5500, 1.25},
-      {2.48695, -4.76, 41 + 0.5, 5500, 1.25},
-      {2.86195, -10.06, 35.5 + 0.5, 6000, 1},
-      {3.18695, -11.63, 33.75 + 0.5, 6000, 1},
-      {3.53195, -12.73, 31 + 0.5, 6500, 1},
-      {3.84195, -13.75, 30 + 0.5, 6500, 1},
-      {4.13695, -14.55, 28.5 + 0.5, 7000, 1},
-      {4.47695, -15.23, 26.5 + 0.5, 7000, 1},
-      {4.79195, -15.77, 25.5 + 0.5, 7000, 0.8},
-      {5.31195, -16.28, 23.25 + 0.5, 7500, 0.8},
-      {5.92195, -18.42, 20.5 + 0.5, 7750, 0.7},
-      {6.42195, -18.59, 20 + 0.5, 8000, 0.7},
-      {6.78195, -18.83, 19.5 + 0.5, 8500, 0.6}
+      {1.302, 11.87, 58, 4000, 1},
+      {1.442, 10.20, 56, 4000, 1},
+      {1.732, 6.70, 52, 4250, 1},
+      {2.072, 3.57, 48, 4500, 1},
+      {2.442, 0.92, 42, 4750, 1},
+      {2.842, -1.09, 38, 5000, 1},
+      {3.062, -1.95, 36.5, 5125, 1},
+      {3.302, -2.55, 35, 5250, 1},
+      {3.412, -3.13, 33, 5250, 1},
+      {3.722, -4.01, 31.25, 5500, 1},
+      {4.072, -5.03, 28.5, 5750, 1},
+      {4.372, -5.69, 27.5, 6000, 1},
+      {4.592, -5.91, 26, 6250, 1},
+      {4.812, -6.27, 26, 6375, 1},
+      {5.152, -6.59, 25.25, 6500, 0.75},
+      {5.442, -7.16, 24, 6625, 0.75},
+      {5.712, -8.26, 22.25, 6750, 0.75},
+      {6.117, -8.51, 21.25, 7000, 0.75},
+      {6.382, -8.60, 21, 7250, 0.75},
+      {6.682, -8.82, 20.5, 7500, 0.75},
+      {6.912, -9.20, 19.5, 7750, 0.75},
+      {7.252, -9.44, 19.25, 8000, 0.75}
     };
 
     public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
@@ -142,13 +134,17 @@ public final class Constants {
     }
 
     public static double[] getShooterValuesFromAngle(double angle) {
-      // return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
-      return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
+      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
+      // return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
     }
 
     public static double[] getShooterValuesFromDistance(double dist) {
-      // return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
-      return new double[] {25, getInterpolatedValue(0, 3, dist)};
+      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      // return new double[] {25, getInterpolatedValue(0, 3, dist)};
+    }
+
+    public static double getAllowedAngleErrFromAngle(double angle){
+      return getInterpolatedValue(1, 4, angle);
     }
 
     public static double getDistFromAngle(double ty) {
@@ -187,18 +183,62 @@ public final class Constants {
       return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
     }
 
+    public static double getAddedTheta(double targetAngleDegrees, double distanceMeters, double depthAddedMeters) {
+      targetAngleDegrees = standardizeAngleDegrees(targetAngleDegrees);
+      double targetAngleRadians = Math.toRadians(targetAngleDegrees);
+      targetAngleRadians -= (Math.PI)/2;
+      double addedAngleRadians;
+      if(targetAngleRadians >= Math.PI/2) {
+        targetAngleRadians -= Math.PI;
+        addedAngleRadians = (targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+      } else {
+        addedAngleRadians = -(targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+      }
+      return Math.toDegrees(addedAngleRadians);
+    }
+  
+    public static double standardizeAngleDegrees(double angleDegrees) {
+      if(angleDegrees >= 0 && angleDegrees < 360) {
+        return angleDegrees;
+      } else if(angleDegrees < 0) {
+        while(angleDegrees < 0) {
+          angleDegrees += 360;
+        }
+        return angleDegrees;
+      } else if(angleDegrees >= 360) {
+        while(angleDegrees >= 360) {
+          angleDegrees -= 360;
+        }
+        return angleDegrees;
+      } else {
+        System.out.println("Weird ErroR");
+        return angleDegrees;
+      }
+    }
+
+    public static double getAdjustedPigeonAngle(double targetPigeonAngleDegrees, double distToSpeakerMeters){
+      double adjustment = getAddedTheta(targetPigeonAngleDegrees, distToSpeakerMeters, (Constants.Physical.SPEAKER_DEPTH / 2));
+      // System.out.println("Angle Adjustment: " + adjustment);
+      return targetPigeonAngleDegrees + adjustment;
+    }
+
     //feeder
 
     //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 180;
+    public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
+    public static final double CARRIAGE_TOF_THRESHOLD_MM = 110;
     public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
+    public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
+    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
+    public static final double CARRIAGE_TOP_ROTATION_DEG = 224.0;
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
+      kFIRST_EXTEND(0.5, Constants.Ratios.elevatorMetersToRotations(0.5)),
       kUP(ELEVATOR_TOP_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M));
 
       public final double meters;
@@ -207,6 +247,18 @@ public final class Constants {
       private ElevatorPosition(double meters, double rotations){
         this.meters = meters;
         this.rotations = rotations;
+      }
+    }
+
+    public enum CarriageRotation {
+      kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
+      kFEED(1),
+      kUP(CARRIAGE_TOP_ROTATION_DEG);
+      
+      public final double degrees;
+
+      private CarriageRotation(double degrees){
+        this.degrees = degrees;
       }
     }
   }
@@ -327,7 +379,7 @@ public final class Constants {
     public static final double STEER_GEAR_RATIO = 21.43;
 
     //intake
-    public static final double INTAKE_ANGLE_GEAR_RATIO = 600.0 / 18.0;
+    public static final double INTAKE_ANGLE_GEAR_RATIO = 30.0;
     public static final double INTAKE_ROLLER_GEAR_RATIO = 24.0 / 11.0;
 
     //shooter
@@ -335,13 +387,13 @@ public final class Constants {
     public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 30.0 / 56.0;
 
     //feeder
-    public static final double FEEDER_ROLLER_GEAR_RATIO = 3;
+    public static final double FEEDER_ROLLER_GEAR_RATIO = 3.0;
 
     //climber
-    public static final double ELEVATOR_GEAR_RATIO = 4.0;
-    public static final double TRAP_ROLLER_GEAR_RATIO = 1.0;
-    public static final double TRAP_SERVO_GEAR_RATIO = 1.0;
-    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 69.989;
+    public static final double ELEVATOR_GEAR_RATIO = 23.52;
+    public static final double TRAP_ROLLER_GEAR_RATIO = 3.0;
+    public static final double CARRIAGE_ROTATION_GEAR_RATIO = 100.0;
+    public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 219.254;
 
     public static double elevatorRotationsToMeters(double rotations){
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
@@ -393,9 +445,6 @@ public final class Constants {
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
     public static final int TRAP_ROLLER_MOTOR_ID = 18;
     public static final int TRAP_SERVO_CHANNEL = 0;
-
-    //Candle
-    public static final int CANDLE_ID = 0;
   }
 
   //Misc. controller values

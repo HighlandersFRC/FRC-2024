@@ -14,9 +14,9 @@ public class TurnToTarget extends Command {
   private Peripherals peripherals;
 
   private PID turnPID;
-  private double kP = 0.05;
+  private double kP = 0.04;
   private double kI = 0.0;
-  private double kD = 0.09;
+  private double kD = 0.06;
 
   private double speakerAngleDegrees;
   private double targetPigeonAngleDegrees;
@@ -24,7 +24,7 @@ public class TurnToTarget extends Command {
   private double initTime;
   private double timeout = 1.5;
 
-  private double robotAngleAllowedErrorDegrees = 2;
+  private double robotAngleAllowedErrorDegrees = 0.25;
 
   public TurnToTarget(Drive drive, Peripherals peripherals) {
     this.drive = drive;
@@ -59,8 +59,6 @@ public class TurnToTarget extends Command {
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
     if (canSeeTag && this.speakerAngleDegrees < 90 && Math.abs(this.speakerAngleDegrees - prevSpeakerAngleDegrees) > 0.01){
       this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
-    } else {
-      this.targetPigeonAngleDegrees = pigeonAngleDegrees;
     }
 
     this.turnPID.setSetPoint(targetPigeonAngleDegrees);

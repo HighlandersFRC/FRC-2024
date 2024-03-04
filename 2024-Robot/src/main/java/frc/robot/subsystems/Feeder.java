@@ -34,8 +34,8 @@ public class Feeder extends SubsystemBase {
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  public Feeder() {
-    setDefaultCommand(new FeederDefault(this));
+  public Feeder(TOF tof) {
+    setDefaultCommand(new FeederDefault(this,tof));
   }
 
   public void init(){
@@ -71,12 +71,6 @@ public class Feeder extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean feederTof = false;
-    if(TOF.feederTOF.getRange() > 0 && TOF.feederTOF.getRange() < 1000.0){
-      feederTof = true;
-    }
-
     SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
-    SmartDashboard.putBoolean(" Feeder TOF", feederTof);
   }
 }
