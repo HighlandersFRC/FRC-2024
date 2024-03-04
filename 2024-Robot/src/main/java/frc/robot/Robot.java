@@ -64,17 +64,17 @@ import frc.robot.subsystems.Shooter;
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
+  //Sensors
+  private TOF tof = new TOF();
+
   //Subsystems
   private Lights lights = new Lights();
   private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Feeder feeder = new Feeder();
-  private Climber climber = new Climber(lights);
-
-  //Sensors
-  private TOF tof = new TOF();
+  private Feeder feeder = new Feeder(tof);
+  private Climber climber = new Climber(lights, tof);
 
   // private Logger logger = Logger.getInstance();
 
@@ -257,7 +257,7 @@ public class Robot extends LoggedRobot {
     //Driver
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
+    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  400));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     // OI.driverLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
 

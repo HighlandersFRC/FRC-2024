@@ -86,25 +86,16 @@ public class AutoShoot extends Command {
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
-
     this.reachedSetPointTime = 0;
-
     this.speakerElevationDegrees = 0;
     this.speakerAngleDegrees = 0;
-
-    // System.out.println("INIT");
-    // System.out.println("Init pigeon angle: " + this.peripherals.getPigeonAngle());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    // System.out.println("Init shooter degrees: " + this.shooterDegrees);
-    // System.out.println("Init shooter RPM: " + this.shooterRPM);
   }
 
   @Override
   public void execute() {
-    // System.out.println("Speaker Elev: " + this.speakerElevationDegrees);
-    // System.out.println("Speaker Angle: " + this.speakerAngleDegrees);
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
@@ -118,7 +109,6 @@ public class AutoShoot extends Command {
     }
 
     if (canSeeTag){
-      // System.out.println("SAW TAG");
       this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
       if (this.speakerElevationDegrees < 90 && this.speakerAngleDegrees < 90){
@@ -130,7 +120,10 @@ public class AutoShoot extends Command {
     }
 
     if (canSeeTag && this.speakerAngleDegrees < 90){
-      this.targetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+      double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+      // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
+      this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
+      // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
     }
 
     this.pid.setSetPoint(targetPigeonAngleDegrees);
@@ -157,7 +150,7 @@ public class AutoShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM && !this.hasShot){
+    if (this.tof.getFeederDistMillimeters() >= 110.0 && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }
@@ -181,13 +174,11 @@ public class AutoShoot extends Command {
     // System.out.println("<================>");
   }
 
-  // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
     this.feeder.set(0);
   }
 
-  // Returns true when the command should end.
   @Override
   public boolean isFinished() {
     // System.out.println("Duration " + (Timer.getFPGATimestamp() - this.startTime));

@@ -52,9 +52,9 @@ public class Climber extends SubsystemBase {
   private final double kG = 0.015;
 
   /** Creates a new Climber. */
-  public Climber(Lights lights) {
+  public Climber(Lights lights, TOF tof) {
     this.lights = lights;
-    setDefaultCommand(new ClimberDefault(this));
+    setDefaultCommand(new ClimberDefault(this, tof));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
     this.rotationPID.setMaxOutput(0.2);

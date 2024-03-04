@@ -61,7 +61,7 @@ public class AutoIntake extends Command {
   public void execute() {
     this.intake.set(this.intakeDegrees, this.intakeRPM);
 
-    if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+    if (this.tof.getFeederDistMillimeters() <= 110){
       if (!this.haveNote){
         this.haveNoteTime = Timer.getFPGATimestamp();
       }
@@ -70,14 +70,12 @@ public class AutoIntake extends Command {
 
     if (this.haveNote){
       this.feeder.setPercent(0);
-      this.climber.setTrapRollerTorque(-5, 0.1);
+      this.climber.setTrapRollerTorque(5, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
-      System.out.println("1");
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerPercent(0.6);
+      this.climber.setTrapRollerTorque(20, 0.45);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-      System.out.println("2");
     }
   }
 
@@ -89,7 +87,7 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (this.haveNote && Timer.getFPGATimestamp() - this.haveNoteTime > 0.5){
+    if (this.haveNote){
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
       return true;

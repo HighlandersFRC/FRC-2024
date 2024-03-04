@@ -31,6 +31,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
   private final DynamicMotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0.3, 0, 0, 0, 0, false, false, false);
+  private final TorqueCurrentFOC angleFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
@@ -132,6 +133,10 @@ public class Shooter extends SubsystemBase {
 
   public void setAnglePercent(double percent){
     this.angleFalcon.set(percent);
+  }
+
+  public void setAngleTorque(double current, double maxPercent){
+    this.angleFalcon.setControl(this.angleFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public double getFlywheelRPM(){

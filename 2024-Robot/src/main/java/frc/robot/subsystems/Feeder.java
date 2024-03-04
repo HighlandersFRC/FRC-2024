@@ -34,8 +34,8 @@ public class Feeder extends SubsystemBase {
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
-  public Feeder() {
-    setDefaultCommand(new FeederDefault(this));
+  public Feeder(TOF tof) {
+    setDefaultCommand(new FeederDefault(this,tof));
   }
 
   public void init(){

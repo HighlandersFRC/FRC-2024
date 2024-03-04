@@ -23,6 +23,7 @@ public class SmartIntake extends Command {
 
   private boolean haveNote = false;
   private boolean haveIntakedNote = false;
+  private boolean haveCarriageNote = false;
   private double haveNoteTime = 0;
 
   private boolean rumbleControllers = true;
@@ -55,6 +56,7 @@ public class SmartIntake extends Command {
   @Override
   public void initialize() {
     this.haveNote = false;
+    this.haveCarriageNote = false;
     if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
       this.haveNote = true;
     }
@@ -76,6 +78,10 @@ public class SmartIntake extends Command {
       this.haveIntakedNote = true;  
     }
 
+    if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
+      this.haveCarriageNote = true;
+    }
+
     if (this.haveIntakedNote){
       OI.driverController.setRumble(RumbleType.kBothRumble, 0.5);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0.5);
@@ -84,13 +90,17 @@ public class SmartIntake extends Command {
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
     }
 
-    if (this.haveNote){
+    if (this.haveCarriageNote && !this.haveNote){
+      this.feeder.set(120);
+      this.climber.setTrapRollerTorque(20, 0.2);
+      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+    } else if (this.haveNote){
       this.feeder.setPercent(0);
-      this.climber.setTrapRollerTorque(-5, 0.1);
+      this.climber.setTrapRollerTorque(5, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerPercent(0.6);
+      this.climber.setTrapRollerTorque(20, 0.6);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
     }
   }

@@ -17,6 +17,8 @@ public final class Constants {
     public static final double WHEEL_CIRCUMFERENCE = Math.PI * WHEEL_DIAMETER;
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
+    public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
+
     public static final double TOP_SPEED = feetToMeters(20);
 
     public static final double ROBOT_LENGTH = inchesToMeters(25);
@@ -181,10 +183,49 @@ public final class Constants {
       return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
     }
 
+    public static double getAddedTheta(double targetAngleDegrees, double distanceMeters, double depthAddedMeters) {
+      targetAngleDegrees = standardizeAngleDegrees(targetAngleDegrees);
+      double targetAngleRadians = Math.toRadians(targetAngleDegrees);
+      targetAngleRadians -= (Math.PI)/2;
+      double addedAngleRadians;
+      if(targetAngleRadians >= Math.PI/2) {
+        targetAngleRadians -= Math.PI;
+        addedAngleRadians = (targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+      } else {
+        addedAngleRadians = -(targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+      }
+      return Math.toDegrees(addedAngleRadians);
+    }
+  
+    public static double standardizeAngleDegrees(double angleDegrees) {
+      if(angleDegrees >= 0 && angleDegrees < 360) {
+        return angleDegrees;
+      } else if(angleDegrees < 0) {
+        while(angleDegrees < 0) {
+          angleDegrees += 360;
+        }
+        return angleDegrees;
+      } else if(angleDegrees >= 360) {
+        while(angleDegrees >= 360) {
+          angleDegrees -= 360;
+        }
+        return angleDegrees;
+      } else {
+        System.out.println("Weird ErroR");
+        return angleDegrees;
+      }
+    }
+
+    public static double getAdjustedPigeonAngle(double targetPigeonAngleDegrees, double distToSpeakerMeters){
+      double adjustment = getAddedTheta(targetPigeonAngleDegrees, distToSpeakerMeters, (Constants.Physical.SPEAKER_DEPTH / 2));
+      // System.out.println("Angle Adjustment: " + adjustment);
+      return targetPigeonAngleDegrees + adjustment;
+    }
+
     //feeder
 
     //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 110;    
+    public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 110;
     public static final double INTAKE_TOF_THRESHOLD_MM = 200;
 
