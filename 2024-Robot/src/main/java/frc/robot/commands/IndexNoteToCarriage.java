@@ -18,7 +18,7 @@ public class IndexNoteToCarriage extends Command {
   private Intake intake;
   private TOF tof;
   private boolean haveNote = false;
-  private double timeToCenterNote = 0.8;
+  private double timeToCenterNote = 1.0;
   private double haveNoteTime;
   /** Creates a new IndexNoteToCarriage. */
   public IndexNoteToCarriage(Feeder feeder, Climber climber, Intake intake, TOF tof) {
@@ -57,9 +57,9 @@ public class IndexNoteToCarriage extends Command {
     //     feeder.set(-60);
     //   }
     // } else {
-      feeder.set(-60);
+      feeder.set(-80);
       climber.setTrapRollerTorque(-15, 0.3);
-      intake.setRollers(60);
+      intake.setRollers(-60);
     // }
   }
 

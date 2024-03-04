@@ -45,7 +45,7 @@ public class Climber extends SubsystemBase {
   private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
   private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
 
-  private final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
+  // private final DigitalInput elevatorLimitSwitch = new DigitalInput(0);
 
   private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
   private final PID rotationPID;
@@ -86,6 +86,10 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconFollowerConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.elevatorFalconFollowerConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
     this.elevatorFalconFollowerConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.elevatorFalconFollowerConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.SetPoints.ElevatorPosition.kUP.rotations;
+    this.elevatorFalconFollowerConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.SetPoints.ElevatorPosition.kDOWN.rotations;
+    this.elevatorFalconFollowerConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    this.elevatorFalconFollowerConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     this.elevatorFalconFollower.getConfigurator().apply(this.elevatorFalconFollowerConfiguration);
     this.elevatorFalconFollower.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconFollower.setPosition(0);
@@ -101,6 +105,10 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconMasterConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.elevatorFalconMasterConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
     this.elevatorFalconMasterConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
+    this.elevatorFalconMasterConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.SetPoints.ElevatorPosition.kUP.rotations;
+    this.elevatorFalconMasterConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.SetPoints.ElevatorPosition.kDOWN.rotations;
+    this.elevatorFalconMasterConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    this.elevatorFalconMasterConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
     this.elevatorFalconMaster.getConfigurator().apply(this.elevatorFalconMasterConfiguration);
     this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconMaster.setPosition(0);
@@ -131,11 +139,13 @@ public class Climber extends SubsystemBase {
       setElevatorTorque(0.0, 0.0);
     } else {
       if (positionMeters > getElevatorPositionMeters()){
-        setElevatorTorque(-50, 0.5);
-      } else {
         setElevatorTorque(20, 0.5);
+      } else {
+        setElevatorTorque(-20, 0.5);
       }
     }
+
+    setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
   }
 
   public void setElevatorPosition(Constants.SetPoints.ElevatorPosition position){
@@ -231,17 +241,17 @@ public class Climber extends SubsystemBase {
     return getCarriageRotations() * 360.0;
   }
 
-  public boolean getExtensionLimitSwitch() {
-    return elevatorLimitSwitch.get();
-  }
+  // public boolean getExtensionLimitSwitch() {
+  //   return elevatorLimitSwitch.get();
+  // }
 
   @Override
   public void periodic() {
-    if (getExtensionLimitSwitch()) {
-      setElevatorEncoderPosition(0);
-    }
+    // if (getExtensionLimitSwitch()) {
+    //   setElevatorEncoderPosition(0);
+    // }
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", getExtensionLimitSwitch());
+    // SmartDashboard.putBoolean("Elevator Limit Switch", getExtensionLimitSwitch());
     boolean climbMaster = false;
     boolean climbFollower = false;
     SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());

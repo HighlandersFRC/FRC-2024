@@ -40,6 +40,10 @@ public class SetCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    return false;
+    if (this.degrees > this.climber.getCarriageRotationDegrees() - 2 && this.degrees < this.climber.getCarriageRotationDegrees() + 2){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

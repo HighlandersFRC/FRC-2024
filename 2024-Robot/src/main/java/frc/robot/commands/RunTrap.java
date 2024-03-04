@@ -14,7 +14,7 @@ public class RunTrap extends Command {
   public RunTrap(Climber climber, double percent) {
     this.climber = climber;
     this.percent = percent;
-    // addRequirements(this.climber);
+    addRequirements(this.climber);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 

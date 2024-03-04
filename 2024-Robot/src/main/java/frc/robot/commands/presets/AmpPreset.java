@@ -31,11 +31,14 @@ public class AmpPreset extends SequentialCommandGroup {
     addCommands(
       new IndexNoteToCarriage(feeder, climber, intake, tof),
       new ParallelDeadlineGroup(
-        new SetClimberWithoutIntake(climber, intake, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.IntakePosition.kUP),
-        new RunFeeder(feeder, -60),
-        new RunIntake(intake, 60)
+        new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED),
+        new RunFeeder(feeder, -150),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 60)
+      ),
+      new ParallelDeadlineGroup(
+        new WaitCommand(3),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kUP, 0, 0)
       )
-      // new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kUP, 0, 0)
     );
   }
 }

@@ -31,13 +31,8 @@ public class TrapPreset extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addRequirements(climber, feeder, intake);
     addCommands(
-      new IndexNoteToCarriage(feeder, climber, intake, tof),
-      new ParallelDeadlineGroup(
-        new SetClimberWithoutIntake(climber, intake, Constants.SetPoints.ElevatorPosition.kUP, Constants.SetPoints.IntakePosition.kDOWN),
-        new RunFeeder(feeder, -60),
-        new RunIntake(intake, 60)
-      )
-      // new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kUP, 0, 0)
+      new AmpPreset(climber, feeder, intake, tof),
+      new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kUP, Constants.SetPoints.CarriageRotation.kUP)
     );
   }
 }

@@ -3,29 +3,24 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Intake;
 
 public class SetClimberWithoutIntake extends Command {
   private Climber climber;
-  private Intake intake;
   private double positionMeters;
-  private double intakeDegrees;
+  private double carriageDegrees;
   private boolean intakeIsClear = false;
 
-  public SetClimberWithoutIntake(Climber climber, Intake intake, double positionMeters, Constants.SetPoints.IntakePosition intakePosition) {
+  public SetClimberWithoutIntake(Climber climber, double positionMeters, double carriageDegrees) {
     this.climber = climber;
-    this.intake = intake;
-    this.intakeDegrees = intakePosition.degrees;
     this.positionMeters = positionMeters;
+    this.carriageDegrees = carriageDegrees;
     addRequirements(this.climber);
   }
 
-  public SetClimberWithoutIntake(Climber climber, Intake intake, Constants.SetPoints.ElevatorPosition position, Constants.SetPoints.IntakePosition intakePosition) {
+  public SetClimberWithoutIntake(Climber climber, Constants.SetPoints.ElevatorPosition position, Constants.SetPoints.CarriageRotation carriagePosition) {
     this.climber = climber;
-    this.intake = intake;
-    this.intake = intake;
-    this.intakeDegrees = intakePosition.degrees;
     this.positionMeters = position.meters;
+    this.carriageDegrees = carriagePosition.degrees;
     addRequirements(this.climber);
   }
 
@@ -37,8 +32,6 @@ public class SetClimberWithoutIntake extends Command {
   @Override
   public void execute() {
     this.climber.setTrapRollerPercent(0);
-    // this.intake.setAngle(intakeDegrees);
-
   //   if (this.intake.getAngleRotations() < -0.1){
   //     this.intakeIsClear = true;
   //   }
@@ -49,6 +42,7 @@ public class SetClimberWithoutIntake extends Command {
   //     this.climber.setElevatorTorque(-5, 0.1);
   //   }
     this.climber.setElevatorPositionMeters(positionMeters);
+    this.climber.setCarriageRotationDegrees(carriageDegrees);
   }
 
   @Override
