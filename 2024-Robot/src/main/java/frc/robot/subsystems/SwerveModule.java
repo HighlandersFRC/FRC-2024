@@ -29,6 +29,19 @@ public class SwerveModule extends SubsystemBase {
   VelocityTorqueCurrentFOC velocityTorqueFOCRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   VelocityTorqueCurrentFOC velocityTorqueFOCRequestAngleMotor = new VelocityTorqueCurrentFOC(0, 0, 0, 1, false, false, false);
 
+  boolean swerveCan1;
+  boolean swerveCan2;
+  boolean swerveCan3;
+  boolean swerveCan4;
+  boolean frontRight;
+  boolean frontLeft;
+  boolean backLeft;
+  boolean backRight;
+  boolean can1;
+  boolean can2;
+  boolean can3;
+  boolean can4;
+
   /** Creates a new SwerveModule. */
   public SwerveModule(int mModuleNum, TalonFX mAngleMotor, TalonFX mDriveMotor, CANcoder mCanCoder) {
     // creates values for a single module
@@ -293,51 +306,35 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean swerveCan1 = false;
-    boolean swerveCan2 = false;
-    boolean swerveCan3 = false;
-
-    boolean swerveCan4 = false;
-    boolean frontRight = false;
-    boolean frontLeft = false;
-    boolean backLeft = false;
-    boolean backRight = false;
-  if(driveMotor.getDeviceID() == 1 && driveMotor.getMotorVoltage().getValue() != 0.0){
-      if(angleMotor.getDeviceID() == 2 && angleMotor.getMotorVoltage().getValue() != 0.0){
+      if(driveMotor.getDeviceID() == 1 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 2 && angleMotor.getSupplyVoltage().getValue() != 0.0){
         frontRight = true;
-      }} else if(driveMotor.getDeviceID() == 3 && driveMotor.getMotorVoltage().getValue() != 0.0){
-      if(angleMotor.getDeviceID() == 4 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        // System.out.println("front right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+      } 
+      if(driveMotor.getDeviceID() == 3 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 4 && angleMotor.getSupplyVoltage().getValue() != 0.0){
         frontLeft = true;
-      }} else if(driveMotor.getDeviceID() == 5 && driveMotor.getMotorVoltage().getValue() != 0.0){
-      if(angleMotor.getDeviceID() == 6 && angleMotor.getMotorVoltage().getValue() != 0.0){
+        // System.out.println("front left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+      } 
+      if(driveMotor.getDeviceID() == 5 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 6 && angleMotor.getSupplyVoltage().getValue() != 0.0){
         backLeft = true;
-      }} else if(driveMotor.getDeviceID() == 7 && driveMotor.getMotorVoltage().getValue() != 0.0){
-      if(angleMotor.getDeviceID() == 8 && angleMotor.getMotorVoltage().getValue() != 0.0){
-        backRight = true;
-      }}
+        // System.out.println("back left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+      }
+      if(driveMotor.getDeviceID() == 7 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 8 && angleMotor.getSupplyVoltage().getValue() != 0.0){
+        backRight = true;        
+        // System.out.println("back right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+      }
 
-    boolean can1 = false;
-    boolean can2 = false;
-    boolean can3 = false;
-    boolean can4 = false;
-    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0){
-      can1 = true;
-    } else if(canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0){
-      can2 = true;
-    } else if(canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0){
-      can3 = true;
-    } else if(canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0){
-      can4 = true;
-    }
-
-    if(can1 == true && frontRight == true){
+    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0 && frontRight == true){
       swerveCan1 = true;
-    } else if(can2 == true && frontLeft == true){
+      // System.out.println("can 1 - " + canCoder.getSupplyVoltage().getValue());
+    } else if(canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0 && frontLeft == true){
       swerveCan2 = true;
-    } else if(can3 == true && backLeft == true){
+      // System.out.println("can 2 - " + canCoder.getSupplyVoltage().getValue());
+    } else if(canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0 && backLeft == true){
       swerveCan3 = true;
-    } else if(can4 == true && backRight == true){
+      // System.out.println("can 3 - " + canCoder.getSupplyVoltage().getValue());
+    } else if(canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0 && backRight == true){
       swerveCan4 = true;
+      // System.out.println("can 4 - " + canCoder.getSupplyVoltage().getValue());
     }
 
     SmartDashboard.putBoolean(" Swerve can(1)", swerveCan1);

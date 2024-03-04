@@ -213,12 +213,16 @@ public class Climber extends SubsystemBase {
     SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
     SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
 
-    // if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
-    //   climbMaster = true;
-    // }
-    // if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
-    //   climbFollower = true;
-    // }
+    double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
+    setElevatorPositionMeters(newElevator);
+
+    if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
+      climbMaster = true;
+    }
+    if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
+      climbFollower = true;
+    }
+
 
     // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
     // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);

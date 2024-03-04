@@ -167,10 +167,11 @@ public class Intake extends SubsystemBase {
   public void periodic() {
     boolean angleMotor = false;
     boolean intakeMotor = false;
+    boolean intakeTOF = false;
     if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
       angleMotor = true;
     }
-    if(rollerFalcon.getMotorVoltage().getValue() != 0.0){
+    if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
       intakeMotor = true;
     }
     

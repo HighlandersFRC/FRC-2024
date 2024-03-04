@@ -194,7 +194,7 @@ public class Shooter extends SubsystemBase {
     if(angleEncoder.getSupplyVoltage().getValue() != 0){
           shooterEncoder = true;
         }
-    if(angleFalcon.getMotorVoltage().getValue() != 0){
+    if(angleFalcon.getSupplyVoltage().getValue() != 0){
       shooterAngle = true;
     }
     
