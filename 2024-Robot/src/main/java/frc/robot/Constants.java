@@ -191,7 +191,7 @@ public final class Constants {
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.25;
-    public static final double ELEVATOR_AMP_POSITION_M = 0.15;
+    public static final double ELEVATOR_AMP_POSITION_M = 0.25;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
     public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
     public static final double CARRIAGE_TOP_ROTATION_DEG = 224.0;

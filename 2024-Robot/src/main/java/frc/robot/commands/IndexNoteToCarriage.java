@@ -43,7 +43,6 @@ public class IndexNoteToCarriage extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    System.out.println("running");
     System.out.println("tof: " + this.tof.getCarriageDistMillimeters());
     if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
       if (!this.haveNote){

@@ -127,7 +127,7 @@ public class Climber extends SubsystemBase {
     // } else {
     //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
     // }
-    if (positionMeters == getElevatorPositionMeters()){
+    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02){
       setElevatorTorque(0.0, 0.0);
     } else {
       if (positionMeters > getElevatorPositionMeters()){

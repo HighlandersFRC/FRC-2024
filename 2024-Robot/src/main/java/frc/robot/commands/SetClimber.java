@@ -48,10 +48,16 @@ public class SetClimber extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.climber.setElevatorTorque(0.0, 0.0);
+  }
 
   @Override
   public boolean isFinished() {
-    return false;
+    if (this.positionMeters < this.climber.getElevatorPositionMeters() + 0.02 && this.positionMeters > this.climber.getElevatorPositionMeters() - 0.02){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

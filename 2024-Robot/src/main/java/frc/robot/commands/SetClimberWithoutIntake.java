@@ -58,7 +58,7 @@ public class SetClimberWithoutIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (positionMeters == climber.getElevatorPositionMeters()){
+    if (this.positionMeters < this.climber.getElevatorPositionMeters() + 0.02 && this.positionMeters > this.climber.getElevatorPositionMeters() - 0.02){
       return true;
     } else {
       return false;
