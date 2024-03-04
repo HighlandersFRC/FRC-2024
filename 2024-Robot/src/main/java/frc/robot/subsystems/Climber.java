@@ -157,10 +157,10 @@ public class Climber extends SubsystemBase {
     double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
     setElevatorPositionMeters(newElevator);
 
-    if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
+    if(elevatorFalconMaster.getSupplyVoltage().getValue() != 0){
       climbMaster = true;
     }
-    if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
+    if(elevatorFalconFollower.getSupplyVoltage().getValue() != 0){
       climbFollower = true;
     }
     if(TOF.carriageTOF.getRange() > 0 && TOF.carriageTOF.getRange() < 1000.0){

@@ -8,7 +8,7 @@ import frc.robot.Constants;
 public class TOF {
     public static final TimeOfFlight feederTOF = new TimeOfFlight(Constants.CANInfo.FEEDER_TOF_ID);
     public static final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
-    public static final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CLIMBER_TOF_ID);
+    public static final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CARRIAGE_TOF_ID);
 
     public TOF(){
         TOF.feederTOF.setRangingMode(RangingMode.Short, 50);

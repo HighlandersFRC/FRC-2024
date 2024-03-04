@@ -17,6 +17,7 @@ import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
 public class AutoShoot extends Command {
+  public static boolean canSeeTag;
   private Drive drive;
   private Shooter shooter;
   private Feeder feeder;
@@ -106,7 +107,7 @@ public class AutoShoot extends Command {
 
     ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
 
-    boolean canSeeTag = false;
+    canSeeTag = false;
     for (int id : ids){
       if (id == 7 || id == 4){
         canSeeTag = true;
