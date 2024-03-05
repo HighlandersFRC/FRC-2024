@@ -37,9 +37,9 @@ public class Intake extends SubsystemBase {
   }
 
   public void init(){
-    this.angleFalconConfiguration.Slot0.kP = 1;
+    this.angleFalconConfiguration.Slot0.kP = 40;
     this.angleFalconConfiguration.Slot0.kI = 0;
-    this.angleFalconConfiguration.Slot0.kD = 0.1;
+    this.angleFalconConfiguration.Slot0.kD = 6;
     this.angleFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
@@ -147,6 +147,10 @@ public class Intake extends SubsystemBase {
 
   public double getAngleCurrent(){
     return this.angleFalcon.getStatorCurrent().getValue();
+  }
+
+  public double getAngleRPS(){
+    return this.angleFalcon.getVelocity().getValueAsDouble();
   }
 
   // //Get value of intake rotation limit switch
