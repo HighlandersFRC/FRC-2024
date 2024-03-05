@@ -57,8 +57,8 @@ public class Climber extends SubsystemBase {
     setDefaultCommand(new ClimberDefault(this, tof));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
-    this.rotationPID.setMaxOutput(0.2);
-    this.rotationPID.setMinOutput(-0.2);
+    this.rotationPID.setMaxOutput(0.65);
+    this.rotationPID.setMinOutput(-0.65);
     this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
     this.rotationPID.updatePID(getCarriageRotations());
   }
@@ -102,7 +102,7 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconMaster.setPosition(0);
 
-    this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, false));
+    // this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, false));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
     this.trapRollerFalconConfiguration.Slot0.kI = 0;
@@ -117,31 +117,59 @@ public class Climber extends SubsystemBase {
   }
 
   public void setElevatorPositionMeters(double positionMeters){
-    if (positionMeters > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
-    } else if (positionMeters < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
+    // if (positionMeters > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
+    // } else if (positionMeters < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
+    // } else {
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
+    // }
+    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02){
+      setElevatorTorque(0.0, 0.0);
     } else {
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
+      if (positionMeters > getElevatorPositionMeters()){
+        setElevatorTorque(20, 0.5);
+      } else {
+        setElevatorTorque(-20, 0.5);
+      }
     }
   }
 
   public void setElevatorPosition(Constants.SetPoints.ElevatorPosition elevatorPosition){
-
+    double positionMeters = elevatorPosition.meters;
+    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02){
+      setElevatorTorque(0.0, 0.0);
+    } else {
+      if (positionMeters > getElevatorPositionMeters()){
+        setElevatorTorque(20, 0.5);
+      } else {
+        setElevatorTorque(-20, 0.5);
+      }
+    }
   }
 
   public void setElevatorPositionRotations(double positionRotations){
-    if (positionRotations > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_TOP_POSITION_M));
-    } else if (positionRotations < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M));
+    // if (positionRotations > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_TOP_POSITION_M));
+    // } else if (positionRotations < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M));
+    // } else {
+    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(positionRotations));
+    // }
+    if (positionRotations == getElevatorPositionRotations()){
+      setElevatorTorque(0.0, 0.0);
     } else {
-      this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(positionRotations));
+      if (positionRotations > getElevatorPositionRotations()){
+        setElevatorTorque(-50, 0.5);
+      } else {
+        setElevatorTorque(20, 0.5);
+      }
     }
   }
 
   public void setElevatorTorque(double current, double maxPercent){
     this.elevatorFalconMaster.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+    this.elevatorFalconFollower.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   public void setElevatorPercent(double percent){
@@ -212,9 +240,6 @@ public class Climber extends SubsystemBase {
     boolean climbFollower = false;
     SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
     SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
-
-    double newElevator =  SmartDashboard.getNumber("Elevator Meters", getElevatorPositionMeters());
-    setElevatorPositionMeters(newElevator);
 
     if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
       climbMaster = true;

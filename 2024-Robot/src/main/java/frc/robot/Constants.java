@@ -231,14 +231,17 @@ public final class Constants {
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
-    public static final double ELEVATOR_TOP_POSITION_M = 0.25;
+    public static final double ELEVATOR_TOP_POSITION_M = 0.43;
+    public static final double ELEVATOR_AMP_POSITION_M = 0.22;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
     public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
-    public static final double CARRIAGE_TOP_ROTATION_DEG = 224.0;
+    public static final double CARRIAGE_AMP_ROTATION_DEG = 215.0;
+    public static final double CARRIAGE_TRAP_ROTATION_DEG = 215;
 
     public enum ElevatorPosition {
       kDOWN(ELEVATOR_BOTTOM_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_BOTTOM_POSITION_M)),
       kFIRST_EXTEND(0.5, Constants.Ratios.elevatorMetersToRotations(0.5)),
+      kAMP(ELEVATOR_AMP_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_AMP_POSITION_M)),
       kUP(ELEVATOR_TOP_POSITION_M, Constants.Ratios.elevatorMetersToRotations(ELEVATOR_TOP_POSITION_M));
 
       public final double meters;
@@ -253,7 +256,9 @@ public final class Constants {
     public enum CarriageRotation {
       kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
       kFEED(1),
-      kUP(CARRIAGE_TOP_ROTATION_DEG);
+      kAMP(CARRIAGE_AMP_ROTATION_DEG),
+      kTRAP(CARRIAGE_TRAP_ROTATION_DEG);
+
       
       public final double degrees;
 

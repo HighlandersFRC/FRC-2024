@@ -49,8 +49,6 @@ public class ClimberDefault extends Command {
       this.numTimesHitBottom = 0;
     }
 
-    this.climber.setElevatorTorque(0, 0.1);
-
     if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
       this.haveCarriageNote = true;
     }
@@ -59,15 +57,26 @@ public class ClimberDefault extends Command {
       this.haveNote = true;
     }
 
-    if (this.haveCarriageNote && !this.haveNote){
-      this.climber.setTrapRollerTorque(20, 0.2);
-      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-    } else if (this.haveNote){
-      this.climber.setTrapRollerTorque(5, 0.1);
-      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+    if (this.isZeroed){
+      this.climber.setElevatorTorque(0, 0.1);
+      if (this.haveCarriageNote && !this.haveNote){
+        this.climber.setTrapRollerTorque(20, 0.2);
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      } else if (this.haveNote){
+        this.climber.setTrapRollerTorque(5, 0.1);
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      } else {
+        this.climber.setTrapRollerTorque(20, 0.1);
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      }
     } else {
-      this.climber.setTrapRollerTorque(20, 0.1);
-      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      this.climber.setTrapRollerPercent(0);
+      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 6){
+        this.climber.setElevatorTorque(-5, 0.45);
+      } else {
+        this.climber.setElevatorTorque(0, 0);
+      }
     }
   }
 

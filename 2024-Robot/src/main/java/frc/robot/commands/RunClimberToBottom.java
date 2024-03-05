@@ -5,15 +5,12 @@ import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Intake;
 
-public class RunClimber extends Command {
+public class RunClimberToBottom extends Command {
   private Climber climber;
   private double current;
   private double maxPercent;
 
-  private boolean hitLimit;
-  private int numTimesHitLimit;
-
-  public RunClimber(Climber climber, double current, double maxPercent) {
+  public RunClimberToBottom(Climber climber, double current, double maxPercent) {
     this.climber = climber;
     this.current = current;
     this.maxPercent = maxPercent;
@@ -21,30 +18,13 @@ public class RunClimber extends Command {
   }
 
   @Override
-  public void initialize() {
-    this.hitLimit = false;
-    this.numTimesHitLimit = 0;
-  }
+  public void initialize() {}
 
   @Override
   public void execute() {
     this.climber.setTrapRollerPercent(0);
     this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-
-    if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){
-      this.numTimesHitLimit ++;
-    }
-
-    if (this.numTimesHitLimit > 2){
-      this.hitLimit = true;
-      this.numTimesHitLimit = 0;
-    }
-      
-    if (this.hitLimit){
-      this.climber.setElevatorTorque(0, 0);
-    } else {
-      this.climber.setElevatorTorque(this.current, this.maxPercent);
-    }
+    this.climber.setElevatorTorque(this.current, this.maxPercent);
   }
 
   @Override

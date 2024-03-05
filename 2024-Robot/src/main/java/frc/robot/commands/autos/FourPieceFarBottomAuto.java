@@ -95,7 +95,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 47, 4000, 1200, 15),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON, 0, false),
@@ -104,7 +104,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON2, 0, false),
@@ -113,7 +113,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
 
       //End
