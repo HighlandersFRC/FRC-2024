@@ -83,8 +83,8 @@ public class SmartIntake extends Command {
     }
 
     if (this.haveIntakedNote){
-      OI.driverController.setRumble(RumbleType.kBothRumble, 0.5);
-      OI.operatorController.setRumble(RumbleType.kBothRumble, 0.5);
+      OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
+      OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
     } else {
       OI.driverController.setRumble(RumbleType.kBothRumble, 0);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
@@ -96,11 +96,11 @@ public class SmartIntake extends Command {
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
     } else if (this.haveNote){
       this.feeder.setPercent(0);
-      this.climber.setTrapRollerTorque(5, 0.1);
+      this.climber.setTrapRollerTorque(20, 0.2);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerTorque(20, 0.6);
+      this.climber.setTrapRollerTorque(20, 0.4);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
     }
   }

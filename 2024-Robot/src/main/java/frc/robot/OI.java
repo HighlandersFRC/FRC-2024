@@ -97,6 +97,10 @@ public class OI {
         return driverController.getRightBumper();
     }
 
+    public static boolean getDriverLB(){
+        return driverController.getLeftBumper();
+    }
+
     public static int getPOV() {
         return driverController.getPOV();
     }

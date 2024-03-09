@@ -32,16 +32,12 @@ public class AutoPrepForShot extends Command {
       this.haveNote = true;
     }
 
-    if (this.haveNote){
-      this.shooter.set(this.predictedShooterDegrees, this.predictedShooterRPM);
+    if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
+      this.shooter.setAnglePercent(0);
     } else {
-      if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
-        this.shooter.setAnglePercent(0);
-      } else {
-        this.shooter.setAngleTorque(-10, 0.3);;
-      }
-      this.shooter.setFlywheelRPM(this.predictedShooterRPM);
+      this.shooter.setAngleTorque(-10, 0.3);;
     }
+    this.shooter.setFlywheelRPM(this.predictedShooterRPM);
   }
 
   @Override

@@ -252,6 +252,10 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
+    if (this.fieldSide == "red"){
+      this.drive.setPigeonAfterAuto();
+    }
+
     //CONTROLS
 
     //Driver
@@ -259,20 +263,17 @@ public class Robot extends LoggedRobot {
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
-
-    // OI.driverY.whileTrue(new RunClimber(climber, intake, 20, 0.5));
-    // OI.driverA.whileTrue(new RunClimber(climber, intake, -50, 0.5));
-    // OI.driverB.whileTrue(new Test(climber, 224, true));
-    // OI.driverX.whileTrue(new RunTrap(climber, 0.5));
-    // OI.driverB.whileTrue(new Test(climber, 0.1, false));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    OI.driverX.whileTrue(new RunTrap(climber, 0.5));
+    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
 
     //Operator
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof));
+    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof, shooter));
+    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
+
+    // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     
 
   }

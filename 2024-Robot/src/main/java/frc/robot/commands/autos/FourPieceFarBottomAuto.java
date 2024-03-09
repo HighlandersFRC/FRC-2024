@@ -93,7 +93,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 47, 4000, 1200, 15),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 43, 4000, 1200, 10),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),

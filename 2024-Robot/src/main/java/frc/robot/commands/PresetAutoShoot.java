@@ -32,7 +32,7 @@ public class PresetAutoShoot extends Command {
   private double feederRPM;
 
   private double startTime;
-  private double timeout = 2;
+  private double timeout = 1;
 
   private double shotTime = 0;
   private boolean hasShot;
@@ -70,6 +70,24 @@ public class PresetAutoShoot extends Command {
     if (this.drive.getFieldSide() == "blue"){
       this.robotAngleOffset *= -1;
     }
+    addRequirements(this.drive, this.shooter, this.feeder);
+  }
+
+  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
+    this.drive = drive;
+    this.shooter = shooter;
+    this.feeder = feeder;
+    this.peripherals = peripherals;
+    this.lights = lights;
+    this.tof = tof;
+    this.shooterDegrees = shooterDegrees;
+    this.shooterRPM = shooterRPM;
+    this.feederRPM = feederRPM;
+    this.robotAngleOffset = robotAngleOffset;
+    if (this.drive.getFieldSide() == "blue"){
+      this.robotAngleOffset *= -1;
+    }
+    this.timeout = timeout;
     addRequirements(this.drive, this.shooter, this.feeder);
   }
 

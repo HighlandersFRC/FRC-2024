@@ -29,7 +29,7 @@ public class ShooterDefault extends Command {
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);
     } else {
-      this.shooter.setAnglePercent(-0.05);
+      this.shooter.setAngleTorque(-5, 0.15);
     }
   }
 

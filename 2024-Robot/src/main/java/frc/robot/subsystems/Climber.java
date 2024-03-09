@@ -46,7 +46,7 @@ public class Climber extends SubsystemBase {
 
   private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
   private final PID rotationPID;
-  private final double kP = 0.01;
+  private final double kP = 0.012;
   private final double kI = 0.0;
   private final double kD = 0.0;
   private final double kG = 0.015;

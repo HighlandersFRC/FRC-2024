@@ -39,11 +39,11 @@ public class Shooter extends SubsystemBase {
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final TorqueCurrentFOC flywheelTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
-  private final double angleFalconJerk = 10;
+  private final double angleFalconJerk = 7.5;
   private final double angleFalconAcceleration = 1.25;
   private final double angleFalconCruiseVelocity = 0.5;
 
-  private final double angleFalconProfileScalarFactor = 0.5;
+  private final double angleFalconProfileScalarFactor = 0.25;
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 6000;
+    this.angleFalconConfiguration.Slot0.kP = 5500;
     this.angleFalconConfiguration.Slot0.kI = 0;
     this.angleFalconConfiguration.Slot0.kD = 60;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;

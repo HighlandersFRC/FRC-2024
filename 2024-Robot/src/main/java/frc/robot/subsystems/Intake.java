@@ -57,6 +57,8 @@ public class Intake extends SubsystemBase {
     this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
     this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    // this.rollerFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 50;
+    // this.rollerFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -50;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }

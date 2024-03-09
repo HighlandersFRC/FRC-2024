@@ -20,7 +20,7 @@ public class SmartShoot extends Command {
   private double feederRPM;
 
   private double startTime;
-  private double timeout = 15;
+  private double timeout = 3;
 
   private double shotTime = 0;
   private boolean hasShot;
@@ -68,7 +68,7 @@ public class SmartShoot extends Command {
     } else {
       this.feeder.set(0);
     }
-    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+    if (this.tof.getFeederDistMillimeters() >= 110){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }

@@ -20,12 +20,13 @@ import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Shooter;
 
 public class TrapPreset extends SequentialCommandGroup {
-  public TrapPreset(Climber climber, Feeder feeder, Intake intake, TOF tof) {
-    addRequirements(climber, feeder, intake);
+  public TrapPreset(Climber climber, Feeder feeder, Intake intake, TOF tof, Shooter shooter) {
+    addRequirements(climber, feeder, intake, shooter);
     addCommands(
-      new IndexNoteToCarriage(feeder, climber, intake, tof),
+      new IndexNoteToCarriage(feeder, climber, intake, tof, shooter),
       new ParallelDeadlineGroup(
         new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED),
         new RunFeeder(feeder, -150),

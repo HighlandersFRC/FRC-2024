@@ -41,7 +41,9 @@ public class SetCarriageWithControl extends Command {
   public void execute() {
     this.climber.setCarriageRotationDegrees(this.degrees);
     if (OI.getDriverRB()){
-      this.climber.setTrapRollerTorque(20, 0.5);
+      this.climber.setTrapRollerTorque(30, 0.5);
+    } else if (OI.getDriverLB()){
+      this.climber.setTrapRollerTorque(-30, 0.1);
     } else {
       this.climber.setTrapRollerTorque(this.current, this.maxPercent);
     }
