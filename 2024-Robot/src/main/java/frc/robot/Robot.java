@@ -191,7 +191,7 @@ public class Robot extends LoggedRobot {
       FileReader scanner = new FileReader(this.autoNoteFollowingFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.autoNoteFollowingJSON = (JSONArray) pathRead.get("sampled_points");
-      this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, peripherals);
+      this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, peripherals, intake, feeder, climber, lights, tof);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -227,36 +227,36 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    if (OI.isBlueSide()) {
-      System.out.println("ON BLUE SIDE");
-      fieldSide = "blue";
-    } else {
-      System.out.println("ON RED SIDE");
+    // if (OI.isBlueSide()) {
+    //   System.out.println("ON BLUE SIDE");
+      // fieldSide = "blue";
+    // } else {
+    //   System.out.println("ON RED SIDE");
       fieldSide = "red";
-    }
+    // }
     this.drive.setFieldSide(fieldSide);
 
-    System.out.println("Selected Auto: ");
-    if (OI.isNothingAuto()){
-      System.out.println("Nothing Auto");
-      this.nothingAuto.schedule();
-    } else if (OI.is4PieceCloseAuto()) {
-      System.out.println("Four Piece Close");
-      this.fourPieceCloseAuto.schedule();
-      this.drive.autoInit(this.fourPieceCloseJSON);
-    } else if (OI.is3PieceFarBottomAuto()){
-      System.out.println("Four Piece Far Bottom");
-      this.fourPieceFarBottomAuto.schedule();
-      this.drive.autoInit(this.fourPieceFarBottomJSON);
-    } else if (OI.is5PieceAuto()){
-      System.out.println("Five Piece");
-      this.fivePieceAuto.schedule();
-      this.drive.autoInit(this.fivePieceJSON);
-    }else {
-      System.out.println("NO AUTO SELECTED");
-    }
-    // this.autoNoteFollowingAuto.schedule();
-    // this.drive.autoInit(this.autoNoteFollowingJSON);
+    // System.out.println("Selected Auto: ");
+    // if (OI.isNothingAuto()){
+    //   System.out.println("Nothing Auto");
+    //   this.nothingAuto.schedule();
+    // } else if (OI.is4PieceCloseAuto()) {
+    //   System.out.println("Four Piece Close");
+    //   this.fourPieceCloseAuto.schedule();
+    //   this.drive.autoInit(this.fourPieceCloseJSON);
+    // } else if (OI.is3PieceFarBottomAuto()){
+    //   System.out.println("Four Piece Far Bottom");
+    //   this.fourPieceFarBottomAuto.schedule();
+    //   this.drive.autoInit(this.fourPieceFarBottomJSON);
+    // } else if (OI.is5PieceAuto()){
+    //   System.out.println("Five Piece");
+    //   this.fivePieceAuto.schedule();
+    //   this.drive.autoInit(this.fivePieceJSON);
+    // }else {
+    //   System.out.println("NO AUTO SELECTED");
+    // }
+    this.autoNoteFollowingAuto.schedule();
+    this.drive.autoInit(this.autoNoteFollowingJSON);
 
     this.intake.autoInit();
   }
