@@ -38,7 +38,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
 
   private ArrayList<Command> autoCommands = new ArrayList<Command>();
 
-  public AutoParser(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, String pathName) {    
+  public AutoParser(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, String pathName, boolean pickupNote) {    
     
     this.drive = drive;
     this.intake = intake;
@@ -128,7 +128,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
         }
       }
       ArrayListParallelDeadlineGroup parallelDeadlineGroup = new ArrayListParallelDeadlineGroup(
-        new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, haltingTime, false),
+        new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, haltingTime, false, pickupNote),
         parallelCommands
       );
       this.autoCommands.add(parallelDeadlineGroup);
@@ -154,7 +154,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
       previousHaltingTime = haltingTime;
     }
     this.autoCommands.add(
-      new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, false)
+      new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, false, false)
     );
 
     addCommands(this.autoCommands);

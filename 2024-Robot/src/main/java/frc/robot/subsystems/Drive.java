@@ -802,6 +802,14 @@ public class Drive extends SubsystemBase {
     backRight.drive(new Vector(0, 0), turn, 0.0);
     updateOdometryFusedArray();
   }
+
+  public void autoRobotCentricDrive(Vector velocityVector, double turnRadiansPerSec){
+    updateOdometryFusedArray();
+    frontLeft.drive(velocityVector, turnRadiansPerSec, 0);
+    frontRight.drive(velocityVector, turnRadiansPerSec, 0);
+    backLeft.drive(velocityVector, turnRadiansPerSec, 0);
+    backRight.drive(velocityVector, turnRadiansPerSec, 0);
+  }
   
   public void teleopDrive() {
     updateOdometryFusedArray();
@@ -916,7 +924,7 @@ public class Drive extends SubsystemBase {
   }
 
   // Autonomous algorithm
-  public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints) {
+  public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints, boolean pickupNote) {
     if(time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {
         JSONArray currentPoint = pathPoints.getJSONArray(0);
         JSONArray targetPoint = pathPoints.getJSONArray(0);
@@ -963,6 +971,18 @@ public class Drive extends SubsystemBase {
         if(this.fieldSide == "blue") {
           currentPointX = Constants.Physical.FIELD_LENGTH - currentPointX;
           currentPointTheta = Math.PI - currentPointTheta;
+        }
+
+        if (pickupNote){
+          double angleToNote =  (-peripherals.getBackCamTargetTx());
+          double differenceX = Math.abs(targetX - currentPointX);
+          double differenceY = Math.abs(targetY - currentPointY);
+          double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
+          double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
+          double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
+          targetX = targetX + adjustedX;
+          targetY = targetY + (3 * adjustedY);
+          targetTheta = targetTheta - angleToNote;
         }
 
         double feedForwardX = (targetX - currentPointX)/(targetTime - currentPointTime);

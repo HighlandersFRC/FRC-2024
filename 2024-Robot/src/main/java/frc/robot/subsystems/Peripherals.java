@@ -33,6 +33,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
   private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
   private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
+  private NetworkTableEntry backCamTx = backCam.getEntry("tx");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
   private NetworkTableEntry leftCamRobotFieldPose = leftCam.getEntry("botpose_wpiblue");
@@ -112,6 +113,10 @@ public class Peripherals extends SubsystemBase {
     latencies.put("tl", this.frontCamTl.getDouble(0) / 1000);
     latencies.put("cl", this.frontCamCl.getDouble(0) / 1000);
     return latencies;
+  }
+
+  public double getBackCamTargetTx(){
+    return backCamTx.getDouble(0.0) * Math.PI / 180;
   }
 
   public void setFrontCamPipeline(int pipeline){
