@@ -83,8 +83,8 @@ public class SmartIntake extends Command {
     }
 
     if (this.haveIntakedNote){
-      OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
-      OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
+      // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
+      // OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
     } else {
       OI.driverController.setRumble(RumbleType.kBothRumble, 0);
       OI.operatorController.setRumble(RumbleType.kBothRumble, 0);

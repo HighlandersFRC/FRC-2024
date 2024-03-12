@@ -160,7 +160,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, tof, 0, 7000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 0.75),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
 
