@@ -61,6 +61,8 @@ public class SmartIntake extends Command {
       this.haveNote = true;
     }
     this.haveIntakedNote = false;
+    lights.setCommandRunning(true);
+    lights.setStrobePurple();
   }
 
   @Override
@@ -75,7 +77,8 @@ public class SmartIntake extends Command {
     }
 
     if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM && this.rumbleControllers){
-      this.haveIntakedNote = true;  
+      this.haveIntakedNote = true;
+      lights.setStrobeGreen();
     }
 
     if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
@@ -106,7 +109,10 @@ public class SmartIntake extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    lights.setCommandRunning(false);
+    lights.clearAnimations();
+  }
 
   @Override
   public boolean isFinished() {
