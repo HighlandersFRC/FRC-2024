@@ -255,8 +255,8 @@ public class Robot extends LoggedRobot {
     }else {
       System.out.println("NO AUTO SELECTED");
     }
-    this.autoNoteFollowingAuto.schedule();
-    this.drive.autoInit(this.autoNoteFollowingJSON);
+    // this.autoNoteFollowingAuto.schedule();
+    // this.drive.autoInit(this.autoNoteFollowingJSON);
 
     this.intake.autoInit();
   }
