@@ -181,6 +181,22 @@ public class Robot extends LoggedRobot {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN()) {
       lights.blinkGreen(3);
     } else {
@@ -277,7 +293,8 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber));
-    OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
+    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
+    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
