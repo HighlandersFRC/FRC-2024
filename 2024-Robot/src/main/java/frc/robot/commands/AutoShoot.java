@@ -189,6 +189,7 @@ public class AutoShoot extends Command {
   @Override
   public void end(boolean interrupted) {
     this.feeder.set(0);
+    this.shooter.setAngleTorque(-10, 0.3);
   }
 
   @Override

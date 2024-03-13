@@ -976,10 +976,7 @@ public class Drive extends SubsystemBase {
         if (pickupNote){
           double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
           double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
-          System.out.println("tx to note: " + angleToNote);
-          System.out.println("ty to note: " + tyToNote);
           if (tyToNote < 0.15 && (Math.abs(angleToNote) > 0.01)){
-            System.out.println("target angle: " + targetTheta);
             double differenceX = Math.abs(targetX - currentPointX);
             double differenceY = Math.abs(targetY - currentPointY);
             double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
