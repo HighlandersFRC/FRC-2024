@@ -281,13 +281,13 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    // OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    // OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
-    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
+    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
     
     // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
-    OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
+    // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
     // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
     // OI.driverX.whileTrue(new RunShooter(shooter, 35, 0));
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0));
