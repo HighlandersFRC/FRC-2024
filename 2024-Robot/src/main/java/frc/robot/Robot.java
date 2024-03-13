@@ -246,8 +246,8 @@ public class Robot extends LoggedRobot {
     //   this.drive.autoInit(this.fourPieceCloseJSON);
     // } else if (OI.is3PieceFarBottomAuto()){
     //   System.out.println("Four Piece Far Bottom");
-    //   this.fourPieceFarBottomAuto.schedule();
-    //   this.drive.autoInit(this.fourPieceFarBottomJSON);
+      this.fourPieceFarBottomAuto.schedule();
+      this.drive.autoInit(this.fourPieceFarBottomJSON);
     // } else if (OI.is5PieceAuto()){
     //   System.out.println("Five Piece");
     //   this.fivePieceAuto.schedule();
@@ -255,8 +255,8 @@ public class Robot extends LoggedRobot {
     // }else {
     //   System.out.println("NO AUTO SELECTED");
     // }
-    this.autoNoteFollowingAuto.schedule();
-    this.drive.autoInit(this.autoNoteFollowingJSON);
+    // this.autoNoteFollowingAuto.schedule();
+    // this.drive.autoInit(this.autoNoteFollowingJSON);
 
     this.intake.autoInit();
   }

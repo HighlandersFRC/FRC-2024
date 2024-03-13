@@ -974,15 +974,25 @@ public class Drive extends SubsystemBase {
         }
 
         if (pickupNote){
-          double angleToNote =  peripherals.getBackCamTargetTx();
-          double differenceX = Math.abs(targetX - currentPointX);
-          double differenceY = Math.abs(targetY - currentPointY);
-          double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
-          double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
-          double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
-          targetX = targetX + adjustedX;
-          targetY = targetY + (2.6 * adjustedY);
-          targetTheta = targetTheta - angleToNote;
+          double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
+          double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
+          boolean startedAdjusting = false;
+          double initTime = 0.0;
+          double timeout = 3;
+          if (tyToNote < 0.15 && (Math.abs(angleToNote) > 0.01) && (Timer.getFPGATimestamp() - initTime < timeout)){
+            if (!startedAdjusting){
+              initTime = Timer.getFPGATimestamp();
+              startedAdjusting = true;
+            }
+            double differenceX = Math.abs(targetX - currentPointX);
+            double differenceY = Math.abs(targetY - currentPointY);
+            double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
+            double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
+            double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
+            targetX = targetX + adjustedX;
+            targetY = targetY + (3 * adjustedY);
+            targetTheta = targetTheta - angleToNote;
+          }
         }
 
         double feedForwardX = (targetX - currentPointX)/(targetTime - currentPointTime);
