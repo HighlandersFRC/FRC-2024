@@ -8,6 +8,7 @@ import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -20,21 +21,19 @@ public class Lights extends SubsystemBase {
   /** Creates a new Lights. */
   private String fieldSide = "none";
   private boolean commandRunning = false;
-  private Boolean flip = true;
+  private double time = Timer.getFPGATimestamp();
+  private double timeout = 0.0;
+  private boolean timedFlashes = false;
   CANdle candle = new CANdle(Constants.CANInfo.CANDLE_ID, Constants.CANInfo.CANBUS_NAME);
   
   RainbowAnimation rainbowAnimation = new RainbowAnimation(1, 0.4, 308, true, 0);
   StrobeAnimation flashGreen = new StrobeAnimation(0, 255, 0, 0, 0.7, 308, 0);
   StrobeAnimation flashPurple = new StrobeAnimation(255, 0, 255, 0, 0.7, 308, 0);
-  StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.7, 308, 0);
+  StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.5, 308, 0);
   private TOF tof;
 
   public Lights(TOF tof) {
     this.tof = tof;
-  }
-
-  public void Candle(){
-    
   }
 
   public void setCommandRunning(boolean input) {
@@ -48,36 +47,57 @@ public class Lights extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    // candle.animate(rainbowAnimation);
     if(!commandRunning) {
-      if(OI.autoChooserIsBlue.getAsBoolean() && OI.autoChooserIsRed.getAsBoolean()) {
-        fieldSide = "both";
-      } else if (OI.autoChooserIsBlue.getAsBoolean()) {
-        fieldSide = "blue";
-      } else if (OI.autoChooserIsRed.getAsBoolean()) {
-        fieldSide = "red";
-      } else {
+      if(!OI.autoChooserConnected()) {
         fieldSide = "none";
+      } else if (OI.isBlueSide()) {
+        fieldSide = "blue";
+      } else {
+        fieldSide = "red";
       }
-      SmartDashboard.putString("Field Side", fieldSide);
+
       if (fieldSide == "red") {
         candle.setLEDs(255, 0, 0);
       } else if (fieldSide == "blue") {
         candle.setLEDs(0, 0, 255);
       } else if(fieldSide == "none") {
         candle.setLEDs(255, 255, 0);
-      } else if(fieldSide == "both") {
-        if (flip) {
-          flip = false;
-          candle.setLEDs(255, 0, 0);
-        } else {
-          flip = true;
-          candle.setLEDs(0, 0, 255);
-        }
       } else {
         candle.setLEDs(255, 255, 255);
       }
+    } else if (timedFlashes) {
+      if(Timer.getFPGATimestamp() - time > timeout) {
+        timedFlashes = false;
+        candle.clearAnimation(0);
+        setCommandRunning(false);
+      }
     }
+  }
+
+  public void setTimedFlashes(boolean input) {
+    timedFlashes = input;
+  }
+
+  public void blinkGreen(double seconds) {
+    setCommandRunning(true);
+    candle.clearAnimation(0);
+    if(seconds != -1) {
+      time = Timer.getFPGATimestamp();
+      timeout = seconds;
+      timedFlashes = true;
+    }
+    candle.animate(flashGreen);
+  }
+
+  public void blinkYellow(double seconds) {
+    setCommandRunning(true);
+    candle.clearAnimation(0);
+    if(seconds != -1) {
+      time = Timer.getFPGATimestamp();
+      timeout = seconds;
+      timedFlashes = true;
+    }
+    candle.animate(flashYellow);
   }
 
   public void clearAnimations() {
@@ -90,6 +110,10 @@ public class Lights extends SubsystemBase {
 
   public void setStrobePurple() {
     candle.animate(flashPurple);
+  }
+
+  public void setStrobeYellow() {
+    candle.animate(flashYellow);
   }
 
   public void init(String fieldSide){

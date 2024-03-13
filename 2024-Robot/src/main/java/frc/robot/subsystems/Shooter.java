@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
@@ -47,6 +48,12 @@ public class Shooter extends SubsystemBase {
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
+  }
+
+  public boolean getShooterCAN() {
+    if(angleEncoder.clearStickyFault_BadMagnet() == StatusCode.OK && angleFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && flywheelFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK && flywheelFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      return true;
+    } else return false;
   }
 
   public void init(){

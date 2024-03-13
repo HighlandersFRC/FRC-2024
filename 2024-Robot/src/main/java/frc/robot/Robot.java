@@ -44,6 +44,7 @@ import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.Test;
+import frc.robot.commands.TestCAN;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePieceAuto;
@@ -179,6 +180,15 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
+
+    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN()) {
+      lights.blinkGreen(3);
+    } else {
+      lights.clearAnimations();
+      lights.setCommandRunning(true);
+      lights.setStrobeYellow();
+    }
+
   }
 
   @Override
@@ -192,6 +202,12 @@ public class Robot extends LoggedRobot {
     shooter.periodic();
     feeder.periodic();
     tof.periodic();
+    // System.out.println("Swerve Can: " + drive.getSwerveCAN());
+    // System.out.println("Shooter Can: " + shooter.getShooterCAN());
+    // System.out.println("Intake Can: " + intake.getIntakeCAN());
+    // System.out.println("Feeder Can: " + feeder.getFeederCAN());
+    // System.out.println("Climber Can: " + climber.getClimberCAN());
+    // System.out.println("Testing neo can" + climber.testNEOCAN());
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
@@ -260,6 +276,7 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber));
     OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));

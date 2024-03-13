@@ -12,6 +12,7 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.Slot0Configs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -57,6 +58,58 @@ public class Drive extends SubsystemBase {
   private final CANcoder frontLeftCanCoder = new CANcoder(Constants.CANInfo.FRONT_LEFT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
   private final CANcoder backLeftCanCoder = new CANcoder(Constants.CANInfo.BACK_LEFT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
   private final CANcoder backRightCanCoder = new CANcoder(Constants.CANInfo.BACK_RIGHT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
+
+  public boolean getSwerveCAN() {
+    if(getSwerveMotorsConnected() == 8 && getSwerveCANCodersConnected() == 4) {
+      return true;
+    } else return false;
+  }
+
+  public int getSwerveMotorsConnected() {
+    int count = 0;
+    if(frontRightDriveMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(frontLeftDriveMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(backRightDriveMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(backLeftDriveMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(frontRightAngleMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(frontLeftAngleMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(backRightAngleMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    if(backLeftAngleMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      count++;
+    }
+    return count;
+  }
+
+  public int getSwerveCANCodersConnected() {
+    int count = 0;
+    if(frontRightCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK) {
+      count++;
+    }
+    if(frontLeftCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK) {
+      count++;
+    }
+    if(backRightCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK) {
+      count++;
+    }
+    if(backLeftCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK) {
+      count++;
+    }
+    return count;
+  }
 
   // creates all 4 modules
   private final SwerveModule frontRight = new SwerveModule(1, frontRightAngleMotor, frontRightDriveMotor, frontRightCanCoder);

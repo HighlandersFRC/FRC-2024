@@ -4,6 +4,7 @@ import com.revrobotics.CANSparkBase.IdleMode;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
@@ -37,6 +38,12 @@ public class Feeder extends SubsystemBase {
 
   public Feeder(TOF tof) {
     setDefaultCommand(new FeederDefault(this,tof));
+  }
+
+  public boolean getFeederCAN() {
+    if(rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      return true;
+    } else return false;
   }
 
   public void init(){

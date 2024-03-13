@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -34,6 +35,12 @@ public class Intake extends SubsystemBase {
 
   public Intake() {
     setDefaultCommand(new IntakeDefault(this));
+  }
+
+  public boolean getIntakeCAN() {
+    if(angleFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      return true;
+    } else return false;
   }
 
   public void init(){

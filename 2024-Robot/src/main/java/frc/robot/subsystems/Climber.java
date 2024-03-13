@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -15,6 +16,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.REVLibError;
+import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -50,6 +53,12 @@ public class Climber extends SubsystemBase {
   private final double kI = 0.0;
   private final double kD = 0.0;
   private final double kG = 0.015;
+
+  public boolean getClimberCAN() {
+    if(elevatorFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK && elevatorFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK && trapRollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rotationCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK && carriageRotationNeo.setIdleMode(IdleMode.kBrake) == REVLibError.kOk) {
+      return true;
+    } else return false;
+  }
 
   /** Creates a new Climber. */
   public Climber(Lights lights, TOF tof) {
