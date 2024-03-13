@@ -18,8 +18,10 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkBase.IdleMode;
+import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -45,7 +47,9 @@ public class Climber extends SubsystemBase {
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
+  private final RelativeEncoder carriageEncoder;
   private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
+  DigitalInput elevatorLimitSwitch = new DigitalInput(0);
 
   private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
   private final PID rotationPID;
@@ -70,6 +74,7 @@ public class Climber extends SubsystemBase {
     this.rotationPID.setMinOutput(-0.65);
     this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
     this.rotationPID.updatePID(getCarriageRotations());
+    carriageEncoder = carriageRotationNeo.getEncoder();
   }
 
   public void init(){
@@ -185,6 +190,11 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconMaster.set(percent);
   }
 
+  public void setElevatorEncoderPosition(double position){
+    this.elevatorFalconMaster.setPosition(position);
+    this.elevatorFalconFollower.setPosition(position);
+  }
+
   public void setTrapRollerPercent(double percent){
     this.trapRollerFalcon.set(percent);
   }
@@ -243,6 +253,16 @@ public class Climber extends SubsystemBase {
     return getCarriageRotations() * 360.0;
   }
 
+  public boolean getElevatorLimitSwitch(){
+    //default returns false when triggered so this flips it
+    return elevatorLimitSwitch.get();
+    // if (elevatorLimitSwitch.get()){
+    //   return false;
+    // } else {
+    //   return true;
+    // }
+  }
+
   @Override
   public void periodic() {
     boolean climbMaster = false;
@@ -257,7 +277,13 @@ public class Climber extends SubsystemBase {
       climbFollower = true;
     }
 
+    SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
 
+    // if (getElevatorLimitSwitch()){
+    //   setElevatorEncoderPosition(0.0);
+    // }
+    // System.out.println("Carriage RPM: " + carriageEncoder.getVelocity());
+    // System.out.println("Carriage amps: " + carriageRotationNeo.getOutputCurrent());
     // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
     // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
 

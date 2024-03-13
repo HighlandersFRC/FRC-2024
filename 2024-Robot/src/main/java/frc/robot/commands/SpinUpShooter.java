@@ -36,6 +36,7 @@ public class SpinUpShooter extends Command {
     boolean canSeeTag = false;
     for (int id : ids){
       if (id == 7 || id == 4){
+        System.out.println("Can See Tag: " + canSeeTag);
         canSeeTag = true;
       }
     }
@@ -48,12 +49,13 @@ public class SpinUpShooter extends Command {
     }
 
     // this.shooter.set(this.shooterDegrees, this.shooterRPM);
-    this.shooter.setFlywheelRPM(3000);
-    if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
-      this.shooter.setAnglePercent(0);
-    } else {
-      this.shooter.setAngleTorque(-5, 0.15);
-    }
+    this.shooter.set(this.shooterDegrees, 0);
+    // this.shooter.setFlywheelRPM(3000);
+    // if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
+    //   this.shooter.setAnglePercent(0);
+    // } else {
+    //   this.shooter.setAngleTorque(-5, 0.15);
+    // }
   }
 
   @Override

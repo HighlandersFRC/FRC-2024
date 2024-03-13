@@ -33,6 +33,7 @@ import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.IndexNoteToCarriage;
+import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -43,10 +44,12 @@ import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartShoot;
+import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.Test;
 import frc.robot.commands.TestCAN;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
+import frc.robot.commands.autos.AutoNoteFollowing;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
@@ -92,6 +95,10 @@ public class Robot extends LoggedRobot {
   File fivePieceFile;
   JSONArray fivePieceJSON;
   Command fivePieceAuto;
+
+  File autoNoteFollowingFile;
+  JSONArray autoNoteFollowingJSON;
+  Command autoNoteFollowingAuto;
 
   String fieldSide = "blue";
 
@@ -188,6 +195,16 @@ public class Robot extends LoggedRobot {
       lights.setStrobeYellow();
     }
 
+
+    try {
+      this.autoNoteFollowingFile = new File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
+      FileReader scanner = new FileReader(this.autoNoteFollowingFile);
+      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
+      this.autoNoteFollowingJSON = (JSONArray) pathRead.get("sampled_points");
+      this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, peripherals);
+    } catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
   }
 
   @Override
@@ -254,6 +271,8 @@ public class Robot extends LoggedRobot {
     }else {
       System.out.println("NO AUTO SELECTED");
     }
+    // this.autoNoteFollowingAuto.schedule();
+    // this.drive.autoInit(this.autoNoteFollowingJSON);
 
     this.intake.autoInit();
   }
@@ -283,12 +302,20 @@ public class Robot extends LoggedRobot {
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
     OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
+    
+    // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
+    // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
+    // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
+    // OI.driverX.whileTrue(new RunShooter(shooter, 35, 0));
+    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0));
 
     //Operator
     OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof, shooter));
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
+
+    // OI.operatorMenuButton.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     

@@ -45,6 +45,7 @@ public class AutoShoot extends Command {
   private double lookAheadTime = 0.0;
 
   private boolean hasReachedSetPoint;
+  private int numTimesHitSetPoint;
 
   private PID pid;
 
@@ -88,6 +89,7 @@ public class AutoShoot extends Command {
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
     this.reachedSetPointTime = 0;
+    this.numTimesHitSetPoint = 0;
     this.speakerElevationDegrees = 0;
     this.speakerAngleDegrees = 0;
     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
@@ -138,6 +140,12 @@ public class AutoShoot extends Command {
     double turnResult = -pid.getResult();
 
     if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
+      this.numTimesHitSetPoint ++;
+    } else {
+      this.numTimesHitSetPoint = 0;
+    }
+
+    if (this.numTimesHitSetPoint > 2){
       this.hasReachedSetPoint = true;
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;
@@ -154,6 +162,7 @@ public class AutoShoot extends Command {
     if (this.hasReachedSetPoint == true){
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
+      // System.out.println("Shooting");
       this.feeder.set(this.feederRPM);
     } else {
       this.feeder.set(0.0);
@@ -168,6 +177,7 @@ public class AutoShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
+    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
     // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
     // System.out.println("Targ. RPM: " + this.shooterRPM);
     // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));

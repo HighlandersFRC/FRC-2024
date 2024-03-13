@@ -16,7 +16,7 @@ public class IndexNoteToCarriage extends Command {
   private TOF tof;
   private Shooter shooter;
   private boolean haveNote = false;
-  private double timeToCenterNote = 0.55;
+  private double timeToCenterNote = 0.7;
   private double haveNoteTime;
   public IndexNoteToCarriage(Feeder feeder, Climber climber, Intake intake, TOF tof, Shooter shooter) {
     this.feeder = feeder;
@@ -24,6 +24,17 @@ public class IndexNoteToCarriage extends Command {
     this.intake = intake;
     this.tof = tof;
     this.shooter = shooter;
+    this.timeToCenterNote = 0.7;
+    addRequirements(feeder, climber, intake, shooter);
+  }
+
+  public IndexNoteToCarriage(Feeder feeder, Climber climber, Intake intake, TOF tof, Shooter shooter, double timeToCenter) {
+    this.feeder = feeder;
+    this.climber = climber;
+    this.intake = intake;
+    this.tof = tof;
+    this.shooter = shooter;
+    this.timeToCenterNote = timeToCenter;
     addRequirements(feeder, climber, intake, shooter);
   }
 
@@ -42,13 +53,13 @@ public class IndexNoteToCarriage extends Command {
       this.haveNote = true;
     }
 
-    if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kDOWN.degrees) < 2){
+    // if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kDOWN.degrees) < 2){
       this.feeder.set(-150);
-    } else {
-      this.feeder.setTorque(5, 0.5);
-    }
+    // } else {
+    //   this.feeder.setTorque(10, 0.5);
+    // }
     this.climber.setTrapRollerTorque(-20, 0.5);
-    this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+    this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
     this.intake.setRollers(-150);
     this.intake.setAngleTorqueCurrent(15, 0.6);
     if (this.shooter.getFlywheelRPM() > 100){
