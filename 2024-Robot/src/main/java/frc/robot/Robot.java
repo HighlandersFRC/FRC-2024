@@ -180,23 +180,6 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN()) {
       lights.blinkGreen(3);
     } else {
