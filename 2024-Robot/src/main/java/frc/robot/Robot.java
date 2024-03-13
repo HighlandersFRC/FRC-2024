@@ -82,6 +82,9 @@ public class Robot extends LoggedRobot {
 
   // private Logger logger = Logger.getInstance();
 
+  private double shooterAngleDegreesTuning = 0;
+  private double shooterRPMTuning = 0;
+
   Command nothingAuto;
   
   File fourPieceCloseFile;
@@ -121,6 +124,8 @@ public class Robot extends LoggedRobot {
     // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
     this.fieldSide = "blue";
+    SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
+    SmartDashboard.putNumber("Shooter RPM (input)", 0);
 
     lights.init(fieldSide);
     peripherals.init();
@@ -209,6 +214,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+    shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
+    shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
 
     // Logger.recordOutput("Odometry", drive.getOdometry());
@@ -301,8 +308,11 @@ public class Robot extends LoggedRobot {
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
-    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
-    
+   
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
+    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
+
+
     // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
     // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
     // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));

@@ -56,6 +56,8 @@ public class PresetAutoShoot extends Command {
 
   private double robotAngleOffset;
 
+  private boolean smartDashboardTuning;
+
   public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
     this.drive = drive;
     this.shooter = shooter;
