@@ -2,7 +2,9 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.DynamicMotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
+import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
 import com.ctre.phoenix6.controls.Follower;
 import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
@@ -30,7 +32,8 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFX angleFalcon = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration angleFalconConfiguration = new TalonFXConfiguration();
-  private final DynamicMotionMagicTorqueCurrentFOC angleFalconPositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0.3, 0, 0, 0, 0, false, false, false);
+  // private final DynamicMotionMagicTorqueCurrentFOC angleFalconMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0.5, 0, 0, 0, 0, false, false, false);
+  private final DynamicMotionMagicVoltage angleFalconMotionProfileRequest = new DynamicMotionMagicVoltage(0, 0.5, 0, 0, true, 0, 0, false, false, false);
   private final TorqueCurrentFOC angleFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
@@ -39,11 +42,11 @@ public class Shooter extends SubsystemBase {
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final TorqueCurrentFOC flywheelTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
-  private final double angleFalconJerk = 7.5;
-  private final double angleFalconAcceleration = 1.25;
-  private final double angleFalconCruiseVelocity = 0.5;
+  private final double angleFalconJerk = 15;
+  private final double angleFalconAcceleration = 3;
+  private final double angleFalconCruiseVelocity = 0.75;
 
-  private final double angleFalconProfileScalarFactor = 0.25;
+  private final double angleFalconProfileScalarFactor = 1;
 
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -53,11 +56,17 @@ public class Shooter extends SubsystemBase {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
 
-    this.angleFalconConfiguration.Slot0.kP = 5500;
+
+    this.angleFalconConfiguration.SoftwareLimitSwitch.ForwardSoftLimitEnable = true;
+    this.angleFalconConfiguration.SoftwareLimitSwitch.ForwardSoftLimitThreshold = Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT;
+    this.angleFalconConfiguration.SoftwareLimitSwitch.ReverseSoftLimitEnable = true;
+    this.angleFalconConfiguration.SoftwareLimitSwitch.ReverseSoftLimitThreshold = Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT;
+
+    this.angleFalconConfiguration.Slot0.kP = 350;
     this.angleFalconConfiguration.Slot0.kI = 0;
-    this.angleFalconConfiguration.Slot0.kD = 60;
+    this.angleFalconConfiguration.Slot0.kD = 0;
     this.angleFalconConfiguration.Slot0.GravityType = GravityTypeValue.Arm_Cosine;
-    this.angleFalconConfiguration.Slot0.kG = 7;
+    this.angleFalconConfiguration.Slot0.kG = 0;
     this.angleFalconConfiguration.MotionMagic.MotionMagicJerk = this.angleFalconJerk;
     this.angleFalconConfiguration.MotionMagic.MotionMagicAcceleration = this.angleFalconAcceleration;
     this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = this.angleFalconCruiseVelocity;
@@ -96,11 +105,11 @@ public class Shooter extends SubsystemBase {
     double motionProfileScalar = (1.0 - this.angleFalconProfileScalarFactor) * Math.cos(Math.toRadians(getAngleDegrees())) + this.angleFalconProfileScalarFactor;
     // System.out.println("Scalar: " + motionProfileScalar);
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees) + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees) + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     }
     this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
@@ -109,11 +118,11 @@ public class Shooter extends SubsystemBase {
   public void setAngle(double degrees){
     double motionProfileScalar = (1 - this.angleFalconProfileScalarFactor) * Math.cos(Math.toRadians(getAngleDegrees())) + this.angleFalconProfileScalarFactor;
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_MAX_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     } else if (degrees < Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG){
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.SetPoints.SHOOTER_DOWN_ANGLE_ROT + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     } else {
-      this.angleFalcon.setControl(this.angleFalconPositionMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees) + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
+      this.angleFalcon.setControl(this.angleFalconMotionProfileRequest.withPosition(Constants.degreesToRotations(degrees) + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT).withAcceleration(this.angleFalconAcceleration * motionProfileScalar).withJerk(this.angleFalconJerk * motionProfileScalar + Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT));
     }
   }
 
