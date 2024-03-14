@@ -205,10 +205,9 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-    // while(Timer.getFPGATimestamp() - startTime < 30) {
+    while(Timer.getFPGATimestamp() - startTime < 30) {
       
-    // }
-    elapsedTime = Timer.getFPGATimestamp() - startTime;
+    }
     if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
       lights.blinkGreen(3);
     } else {
@@ -221,7 +220,6 @@ public class Robot extends LoggedRobot {
  
   @Override
   public void robotPeriodic() {
-    System.out.println("Elapsed Time: " + elapsedTime);
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
