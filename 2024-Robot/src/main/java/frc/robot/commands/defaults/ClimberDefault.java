@@ -33,7 +33,7 @@ public class ClimberDefault extends Command {
 
   @Override
   public void execute() {
-
+    this.climber.setElevatorPercent(0.0);
     if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){
       this.numTimesHitBottom ++;
     }
@@ -58,7 +58,7 @@ public class ClimberDefault extends Command {
     }
 
     if (this.isZeroed){
-      this.climber.setElevatorTorque(0, 0.1);
+      // this.climber.setElevatorTorque(0, 0.1);
       if (this.haveCarriageNote && !this.haveNote){
         this.climber.setTrapRollerTorque(20, 0.2);
         this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
@@ -72,11 +72,11 @@ public class ClimberDefault extends Command {
     } else {
       this.climber.setTrapRollerPercent(0);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-      if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 6){
-        this.climber.setElevatorTorque(-5, 0.45);
-      } else {
-        this.climber.setElevatorTorque(0, 0);
-      }
+      // if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 6){
+      //   this.climber.setElevatorTorque(-5, 0.45);
+      // } else {
+      //   this.climber.setElevatorTorque(0, 0);
+      // }
     }
   }
 

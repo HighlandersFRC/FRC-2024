@@ -179,6 +179,7 @@ public class Climber extends SubsystemBase {
 
   public void setElevatorPercent(double percent){
     this.elevatorFalconMaster.set(percent);
+    this.elevatorFalconFollower.set(percent);
   }
 
   public void setElevatorEncoderPosition(double position){

@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.OI;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Feeder;
@@ -17,6 +18,7 @@ public class AutoIntake extends Command {
   private Climber climber;
   private Lights lights;
   private TOF tof;
+  private Proximity proximity;
   private double intakeDegrees;
   private double intakeRPM;
   private double feederRPM;
@@ -26,24 +28,26 @@ public class AutoIntake extends Command {
   private double timeout = 5;
   private double initTime;
 
-  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
     this.feeder = feeder;
     this.climber = climber;
     this.lights = lights;
     this.tof = tof;
+    this.proximity = proximity;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     addRequirements(this.intake, this.feeder, this.climber);
   }
 
-  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout) {
     this.intake = intake;
     this.feeder = feeder;
     this.climber = climber;
     this.lights = lights;
     this.tof = tof;
+    this.proximity = proximity;
     this.intakeDegrees = intakePosition.degrees;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
@@ -61,21 +65,29 @@ public class AutoIntake extends Command {
   public void execute() {
     this.intake.set(this.intakeDegrees, this.intakeRPM);
 
-    if (this.tof.getFeederDistMillimeters() <= 110){
+    if (this.proximity.getShooterProximity()){
       if (!this.haveNote){
         this.haveNoteTime = Timer.getFPGATimestamp();
       }
       this.haveNote = true;
     }
 
-    if (this.haveNote){
+    if (this.haveNote && !this.proximity.getShooterProximity()){
       this.feeder.setPercent(0);
-      this.climber.setTrapRollerTorque(5, 0.1);
+      this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      System.out.println("ready to shoot");
+    } else if (this.haveNote){
+      this.feeder.set(70);
+      this.climber.setTrapRollerTorque(10, 0.1);
+      this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+      System.out.println("slow moving");
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerTorque(20, 0.35);
+      // this.climber.setTrapRollerTorque(40, 0.35);
+      this.climber.setTrapRollerPercent(0.4);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+      System.out.println("not in shooter");
     }
   }
 
@@ -87,7 +99,7 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (this.haveNote){
+    if (this.haveNote && !this.proximity.getShooterProximity()){
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
       return true;

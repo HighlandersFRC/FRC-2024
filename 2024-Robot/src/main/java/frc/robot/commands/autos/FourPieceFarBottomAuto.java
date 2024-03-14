@@ -25,6 +25,7 @@ import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
+import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetCarriage;
 import frc.robot.commands.ShootWhilePathingAndIntaking;
 import frc.robot.commands.SmartIntake;
@@ -32,6 +33,7 @@ import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StopDriving;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -58,7 +60,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
   private JSONObject pathRead3;
 
   /** Creates a new FourPieceFarBottomAuto. */
-  public FourPieceFarBottomAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
+  public FourPieceFarBottomAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof, Proximity proximity) {
     try {
       pathingFile = new File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -93,13 +95,16 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 43, 4000, 1200, 10),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 43, 4000, 1200, 15),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON, 0, false, true),
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+        new SequentialCommandGroup(
+          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
+        ),
         new AutoPrepForShot(shooter, tof, 25, 6500)
       ),
       new ParallelDeadlineGroup(
@@ -108,7 +113,10 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, pathJSON2, 0, false, true),
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+        new SequentialCommandGroup(
+          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
+          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
+        ),
         new AutoPrepForShot(shooter, tof, 25, 6500)
       ),
       new ParallelDeadlineGroup(

@@ -55,6 +55,7 @@ import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.commands.autos.NothingAuto;
 import frc.robot.commands.presets.AmpPreset;
 import frc.robot.commands.presets.TrapPreset;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -69,6 +70,7 @@ public class Robot extends LoggedRobot {
 
   //Sensors
   private TOF tof = new TOF();
+  private Proximity proximity = new Proximity();
 
   //Subsystems
   private Lights lights = new Lights(tof);
@@ -76,7 +78,7 @@ public class Robot extends LoggedRobot {
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Feeder feeder = new Feeder(tof);
+  private Feeder feeder = new Feeder(tof, proximity);
   private Climber climber = new Climber(lights, tof);
 
   // private Logger logger = Logger.getInstance();
@@ -162,7 +164,7 @@ public class Robot extends LoggedRobot {
       FileReader scanner = new FileReader(this.fourPieceCloseFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fourPieceCloseJSON = (JSONArray) pathRead.get("sampled_points");
-      this.fourPieceCloseAuto = new FourPieceCloseAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
+      this.fourPieceCloseAuto = new FourPieceCloseAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -172,7 +174,7 @@ public class Robot extends LoggedRobot {
       FileReader scanner = new FileReader(this.fourPieceFarBottomFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fourPieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");
-      this.fourPieceFarBottomAuto = new FourPieceFarBottomAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
+      this.fourPieceFarBottomAuto = new FourPieceFarBottomAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -182,7 +184,7 @@ public class Robot extends LoggedRobot {
       FileReader scanner = new FileReader(this.fivePieceFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fivePieceJSON = (JSONArray) pathRead.get("sampled_points");
-      this.fivePieceAuto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof);
+      this.fivePieceAuto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -209,6 +211,7 @@ public class Robot extends LoggedRobot {
     shooter.periodic();
     feeder.periodic();
     tof.periodic();
+    proximity.periodic();
 
     // drive.periodic(); // remove for competition
     peripherals.periodic();
@@ -279,14 +282,14 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
+    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 800));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
     OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
     
-    // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
+    OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
     // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
     // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
     // OI.driverX.whileTrue(new RunShooter(shooter, 35, 0));
