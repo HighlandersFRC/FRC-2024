@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.MoveToPiece;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -27,7 +28,7 @@ public class AutoNoteFollowing extends SequentialCommandGroup {
   private JSONArray pathJSON;
   private JSONObject pathRead;
   /** Creates a new AutoNoteFollowing. */
-  public AutoNoteFollowing(Drive drive, Peripherals peripherals) {
+  public AutoNoteFollowing(Drive drive, Lights lights, Peripherals peripherals) {
     try {
       pathingFile = new File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -42,7 +43,7 @@ public class AutoNoteFollowing extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutonomousFollower(drive, pathJSON, 0, false, true)
+      new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true)
     );
   }
 }

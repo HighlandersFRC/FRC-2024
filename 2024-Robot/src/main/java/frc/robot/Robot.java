@@ -23,6 +23,7 @@ import edu.wpi.first.wpilibj.PowerDistribution;
 import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
@@ -84,6 +85,8 @@ public class Robot extends LoggedRobot {
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
+  private double startTime = Timer.getFPGATimestamp();
+  private double elapsedTime = 0;
 
   Command nothingAuto;
   
@@ -192,7 +195,21 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN()) {
+
+    try {
+      this.autoNoteFollowingFile = new File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
+      FileReader scanner = new FileReader(this.autoNoteFollowingFile);
+      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
+      this.autoNoteFollowingJSON = (JSONArray) pathRead.get("sampled_points");
+      this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, lights, peripherals);
+    } catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+    // while(Timer.getFPGATimestamp() - startTime < 30) {
+      
+    // }
+    elapsedTime = Timer.getFPGATimestamp() - startTime;
+    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
       lights.blinkGreen(3);
     } else {
       lights.clearAnimations();
@@ -200,20 +217,11 @@ public class Robot extends LoggedRobot {
       lights.setStrobeYellow();
     }
 
-
-    try {
-      this.autoNoteFollowingFile = new File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
-      FileReader scanner = new FileReader(this.autoNoteFollowingFile);
-      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-      this.autoNoteFollowingJSON = (JSONArray) pathRead.get("sampled_points");
-      this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, peripherals);
-    } catch(Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
-    }
   }
-
+ 
   @Override
   public void robotPeriodic() {
+    System.out.println("Elapsed Time: " + elapsedTime);
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
@@ -301,7 +309,7 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber));
+    OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals));
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
     // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
@@ -329,7 +337,6 @@ public class Robot extends LoggedRobot {
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     
-
   }
 
   @Override

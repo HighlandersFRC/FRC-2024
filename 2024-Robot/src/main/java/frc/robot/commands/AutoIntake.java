@@ -55,6 +55,9 @@ public class AutoIntake extends Command {
   public void initialize() {
     this.haveNote = false;
     this.initTime = Timer.getFPGATimestamp();
+    lights.clearAnimations();
+    lights.setCommandRunning(true);
+    lights.setStrobePurple();
   }
 
   @Override
@@ -88,8 +91,10 @@ public class AutoIntake extends Command {
   @Override
   public boolean isFinished() {
     if (this.haveNote){
+      lights.blinkGreen(2);
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
+      lights.clearAnimations();
       return true;
     } else {
       return false;

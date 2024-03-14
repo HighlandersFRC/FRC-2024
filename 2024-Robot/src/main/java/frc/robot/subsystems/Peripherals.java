@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
@@ -25,6 +26,7 @@ import frc.robot.tools.math.Vector;
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
+  private NetworkTableEntry backCamTrack = backCam.getEntry("tv");
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
   private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
@@ -50,6 +52,29 @@ public class Peripherals extends SubsystemBase {
   
   public Peripherals() {}
 
+  public boolean limelightsConnected() {
+    boolean reachable = true;
+    try {
+      InetAddress address3 = InetAddress.getByName("10.44.99.43");
+      if(!address3.isReachable(100)) {
+        reachable = false;
+      }
+    } catch (Exception e) {
+      System.out.println("What an absolute L piece of code");
+    }
+    try {
+      InetAddress address4 = InetAddress.getByName("10.44.99.44");
+      if(!address4.isReachable(100)) {
+        reachable = false;
+      }
+    } catch (Exception e) {
+      System.out.println("What an absolute W piece of code");
+    }
+    // System.out.println("Back Cam: " + );
+    // System.out.println("Front Cam: " + );
+    return reachable;
+  }
+
   public void init() {
     pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
     pigeonConfig.MountPose.MountPoseRoll = 32.49883270263672;
@@ -63,6 +88,12 @@ public class Peripherals extends SubsystemBase {
     noTrackLimelightArray[4] = 0;
     noTrackLimelightArray[5] = 0;
     setDefaultCommand(new PeripheralsDefault(this));
+  }
+
+  public boolean getBackCamTrack() {
+    if(backCam.getEntry("tv").getInteger(0) == 1) {
+      return true;
+    } else return false;
   }
 
   public double getFrontCamTargetTy(){

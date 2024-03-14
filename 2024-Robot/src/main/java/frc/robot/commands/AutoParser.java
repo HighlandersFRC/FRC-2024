@@ -19,10 +19,12 @@ import frc.robot.commands.templates.ArrayListSequentialCommandGroup;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 public class AutoParser extends ArrayListSequentialCommandGroup {
   private Drive drive;
+  private Lights lights;
   private Intake intake;
   private Feeder feeder;
   private Shooter shooter;
@@ -38,9 +40,10 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
 
   private ArrayList<Command> autoCommands = new ArrayList<Command>();
 
-  public AutoParser(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, String pathName, boolean pickupNote) {    
+  public AutoParser(Drive drive, Lights lights, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, String pathName, boolean pickupNote) {    
     
     this.drive = drive;
+    this.lights = lights;
     this.intake = intake;
     this.feeder = feeder;
     this.shooter = shooter;
@@ -128,7 +131,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
         }
       }
       ArrayListParallelDeadlineGroup parallelDeadlineGroup = new ArrayListParallelDeadlineGroup(
-        new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, haltingTime, false, pickupNote),
+        new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, haltingTime, false, pickupNote),
         parallelCommands
       );
       this.autoCommands.add(parallelDeadlineGroup);
@@ -154,7 +157,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
       previousHaltingTime = haltingTime;
     }
     this.autoCommands.add(
-      new AutonomousFollower(drive, this.sampledPoints, previousHaltingTime, false, false)
+      new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, false, false)
     );
 
     addCommands(this.autoCommands);

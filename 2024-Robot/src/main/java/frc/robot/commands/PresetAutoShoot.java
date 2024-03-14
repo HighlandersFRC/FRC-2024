@@ -101,7 +101,8 @@ public class PresetAutoShoot extends Command {
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
-
+    lights.setCommandRunning(true);
+    lights.setStrobePurple();
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
   }
 
@@ -119,6 +120,7 @@ public class PresetAutoShoot extends Command {
     }
 
     if (canSeeTag){
+      lights.setStrobeGreen();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
     }
 
@@ -135,6 +137,8 @@ public class PresetAutoShoot extends Command {
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
     if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){
+      lights.clearAnimations();
+      lights.setCandleRGB(0, 255, 0);
       this.hasReachedSetPoint = true;
     }
 
@@ -168,6 +172,8 @@ public class PresetAutoShoot extends Command {
   @Override
   public void end(boolean interrupted) {
     this.feeder.set(0);
+    lights.clearAnimations();
+    lights.setCommandRunning(false);
   }
 
   @Override

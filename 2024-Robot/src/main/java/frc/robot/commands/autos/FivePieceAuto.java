@@ -116,7 +116,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 0, 5000)
@@ -130,7 +130,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON2, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 0, 5000)
@@ -144,7 +144,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, pathJSON3, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false),
             new TurnToTarget(drive, peripherals)
           ),
           new AutoPrepForShot(shooter, tof, 0, 5000)
@@ -155,7 +155,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, pathJSON4, 0, false, false),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON4, 0, false, false),
         new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500),
         new AutoPrepForShot(shooter, tof, 0, 7000)
       ),

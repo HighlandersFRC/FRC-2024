@@ -13,6 +13,7 @@ import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 
 public class TestCAN extends Command {
@@ -23,13 +24,15 @@ public class TestCAN extends Command {
   private Shooter shooter;
   private Feeder feeder;
   private Climber climber;
-  public TestCAN(Lights lights, Drive drive, Intake intake, Shooter shooter, Feeder feeder, Climber climber) {
+  private Peripherals peripherals;
+  public TestCAN(Lights lights, Drive drive, Intake intake, Shooter shooter, Feeder feeder, Climber climber, Peripherals peripherals) {
     this.lights = lights;
     this.drive = drive;
     this.intake = intake;
     this.shooter = shooter;
     this.feeder = feeder;
     this.climber = climber;
+    this.peripherals = peripherals;
     addRequirements(this.lights);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -39,9 +42,8 @@ public class TestCAN extends Command {
   public void initialize() {
     lights.setCommandRunning(true);
     lights.clearAnimations();
-    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN()) {
+    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
       lights.blinkGreen(-1);
-      System.out.println("Wow it worked");
     } else {
       lights.blinkYellow(-1);
       OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
