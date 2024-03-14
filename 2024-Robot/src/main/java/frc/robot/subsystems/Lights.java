@@ -32,22 +32,39 @@ public class Lights extends SubsystemBase {
   StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.5, 308, 0);
   private TOF tof;
 
+  /*
+   * Lights codes are as follows:
+   * solid yellow - robot can't see auto chooser (might mean that robot is disconected)
+   * flashing yellow - error: usually means that the robot cannot see all of its CAN devices and limelights
+   * solid red - red alliance
+   * solid blue - blue alliance
+   * flashing purple:
+   *      intaking - robot has not intaken note yet
+   *      shooting - robot cannot see apriltag
+   * flashing green:
+   *      boot up/CAN check - all CAN is good and limelights are connected
+   *      intake - robot has intaken note
+   *      shooting - robot can see apriltag
+   * solid green:
+   *      shooting - robot is aligned and ready to shoot 
+   */
+
   public Lights(TOF tof) {
     this.tof = tof;
   }
 
-  public void setCommandRunning(boolean input) {
+  public void setCommandRunning(boolean input) { // used to bypass the default light colors (red/blue)
     commandRunning = input;
   }
 
-  public void setCandleRGB(int r, int g, int b) {
+  public void setCandleRGB(int r, int g, int b) { // sets the RGB values of the lights
     candle.setLEDs(r, g, b);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    if(!commandRunning) {
+    if(!commandRunning) { // only makes lights red/blue if a command is not trying to change light colors
       if(!OI.autoChooserConnected()) {
         fieldSide = "none";
       } else if (OI.isBlueSide()) {
@@ -56,7 +73,7 @@ public class Lights extends SubsystemBase {
         fieldSide = "red";
       }
 
-      if (fieldSide == "red") {
+      if (fieldSide == "red") { // sets lights to color of alliance
         candle.setLEDs(255, 0, 0);
       } else if (fieldSide == "blue") {
         candle.setLEDs(0, 0, 255);
@@ -65,7 +82,7 @@ public class Lights extends SubsystemBase {
       } else {
         candle.setLEDs(255, 255, 255);
       }
-    } else if (timedFlashes) {
+    } else if (timedFlashes) { // allows lights to flash for a certain period of time before returning to default colors
       if(Timer.getFPGATimestamp() - time > timeout) {
         timedFlashes = false;
         candle.clearAnimation(0);
@@ -78,7 +95,7 @@ public class Lights extends SubsystemBase {
     timedFlashes = input;
   }
 
-  public void blinkGreen(double seconds) {
+  public void blinkGreen(double seconds) { // blinks green for a certain amount of time
     setCommandRunning(true);
     candle.clearAnimation(0);
     if(seconds != -1) {
@@ -89,7 +106,7 @@ public class Lights extends SubsystemBase {
     candle.animate(flashGreen);
   }
 
-  public void blinkYellow(double seconds) {
+  public void blinkYellow(double seconds) { // blinks yellow for a certain amount of time
     setCommandRunning(true);
     candle.clearAnimation(0);
     if(seconds != -1) {
@@ -100,19 +117,19 @@ public class Lights extends SubsystemBase {
     candle.animate(flashYellow);
   }
 
-  public void clearAnimations() {
+  public void clearAnimations() { // clears all animations currently running
     candle.clearAnimation(0);
   }
 
-  public void setStrobeGreen() {
+  public void setStrobeGreen() { // flashing green animation
     candle.animate(flashGreen);
   }
 
-  public void setStrobePurple() {
+  public void setStrobePurple() { // flashing purple animation
     candle.animate(flashPurple);
   }
 
-  public void setStrobeYellow() {
+  public void setStrobeYellow() { // flashing yellow animation
     candle.animate(flashYellow);
   }
 

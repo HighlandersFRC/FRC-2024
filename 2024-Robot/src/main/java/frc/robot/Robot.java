@@ -205,9 +205,12 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-    while(Timer.getFPGATimestamp() - startTime < 30) {
+
+    while(Timer.getFPGATimestamp() - startTime < 30) { // waits for 30 seconds before checking for the CAN and Limelights because they take a while to boot up
       
     }
+
+    // checks CAN and limelights, blinks green if good and blinks yellow if bad
     if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
       lights.blinkGreen(3);
     } else {
@@ -307,7 +310,7 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals));
+    OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
     // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
@@ -315,6 +318,7 @@ public class Robot extends LoggedRobot {
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
    
+    /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
     OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
 
