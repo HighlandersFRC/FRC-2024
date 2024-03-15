@@ -59,7 +59,7 @@ public class ClimberDefault extends Command {
       this.numTimesHitBottom = 0;
     }
 
-    if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
+    if (this.proximity.getCarriageProximity()){
       this.haveCarriageNote = true;
     }
 
@@ -68,7 +68,8 @@ public class ClimberDefault extends Command {
     }
 
     System.out.println("have note climber: " + haveNote);
-    SmartDashboard.putBoolean("have note climber", haveNote);
+    // SmartDashboard.putBoolean("have note climber", haveNote);
+    System.out.println("carriage have note climber: " + haveCarriageNote);
     if (this.isZeroed){
       // this.climber.setElevatorTorque(0, 0.1);
       if (this.haveCarriageNote && !this.haveNote){

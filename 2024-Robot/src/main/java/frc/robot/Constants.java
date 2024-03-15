@@ -442,9 +442,13 @@ public final class Constants {
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;
-    public static final int SHOOTER_PROXIMITY_PORT = 1;
     public static final int CARRIAGE_TOF_ID = 1;
     public static final int INTAKE_TOF_ID = 2;
+
+    //proximity
+    public static final int SHOOTER_PROXIMITY_PORT = 1;
+    public static final int CARRIAGE_PROXIMITY_PORT = 2;
+    public static final int FEEDER_PROXIMITY_PORT = 3;
 
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;

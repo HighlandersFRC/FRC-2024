@@ -35,7 +35,7 @@ public class FeederDefault extends Command {
 
   @Override
   public void execute() {
-    if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
+    if (this.proximity.getCarriageProximity()){
       this.haveCarriageNote = true;
     }
 
@@ -43,7 +43,9 @@ public class FeederDefault extends Command {
       this.haveNote = true;
     }
     System.out.println("Have note: " + haveNote);
-    SmartDashboard.putBoolean("have note", haveNote);
+    // SmartDashboard.putBoolean("have note", haveNote);
+    System.out.println("Have carriage note: " + haveCarriageNote);
+    // SmartDashboard.putBoolean("have carriage note", haveCarriageNote);
     if (this.haveCarriageNote && !this.haveNote){
       this.feeder.set(120);
       System.out.println("1");
