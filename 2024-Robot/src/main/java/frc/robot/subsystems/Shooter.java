@@ -72,7 +72,7 @@ public class Shooter extends SubsystemBase {
     this.angleFalconConfiguration.MotionMagic.MotionMagicCruiseVelocity = this.angleFalconCruiseVelocity;
     this.angleFalconConfiguration.Feedback.FeedbackSensorSource = FeedbackSensorSourceValue.FusedCANcoder;
     this.angleFalconConfiguration.Feedback.FeedbackRemoteSensorID = Constants.CANInfo.SHOOTER_ANGLE_CANCODER_ID;
-    this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 1;
+    this.angleFalconConfiguration.Feedback.SensorToMechanismRatio = 3;
     this.angleFalconConfiguration.Feedback.RotorToSensorRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
