@@ -25,7 +25,7 @@ public class AutoIntake extends Command {
   private double haveNoteTime = 0;
   private double timeout = 5;
   private double initTime;
-  private boolean noteInCarriage = false;
+  // private boolean noteInCarriage = false;
   public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
     this.feeder = feeder;
@@ -58,7 +58,7 @@ public class AutoIntake extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
-    climber.intakeRunning = true;
+    // climber.intakeRunning = true;
   }
 
   @Override
@@ -72,9 +72,9 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
-    if(this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM) {
-      noteInCarriage = true;
-    }
+    // if(this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM) {
+    //   noteInCarriage = true;
+    // }
 
     if (this.haveNote){
       this.feeder.setPercent(0);
@@ -92,14 +92,14 @@ public class AutoIntake extends Command {
     this.feeder.setPercent(0);
     this.climber.setTrapRollerPercent(0);
     lights.clearAnimations();
-    climber.intakeRunning = false;
+    // climber.intakeRunning = false;
   }
 
   @Override
   public boolean isFinished() {
-    if(noteInCarriage && climber.prepareAmp) {
-      return true;
-    }
+    // if(noteInCarriage && climber.prepareAmp) {
+    //   return true;
+    // }
     if (this.haveNote){
       lights.blinkGreen(2);
       return true;

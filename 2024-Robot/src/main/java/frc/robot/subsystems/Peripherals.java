@@ -52,17 +52,17 @@ public class Peripherals extends SubsystemBase {
   
   public Peripherals() {}
 
-  public void setLimelightLights(String limelight, int ledMode) {
-    if (limelight == "left") {
-      leftCam.getEntry("ledMode").setNumber(ledMode);
-    } else if (limelight == "right") {
-      rightCam.getEntry("ledMode").setNumber(ledMode);
-    } else if (limelight == "back") {
-      backCam.getEntry("ledMode").setNumber(ledMode);
-    } else if (limelight == "front") {
-      frontCam.getEntry("ledMode").setNumber(ledMode);
-    }
-  }
+  // public void setLimelightLights(String limelight, int ledMode) {
+  //   if (limelight == "left") {
+  //     leftCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "right") {
+  //     rightCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "back") {
+  //     backCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "front") {
+  //     frontCam.getEntry("ledMode").setNumber(ledMode);
+  //   }
+  // }
 
   public boolean limelightsConnected() { // checks if the limelights are connected (currently only checking the front and back ones)
     boolean reachable = true;
