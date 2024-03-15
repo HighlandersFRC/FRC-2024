@@ -285,7 +285,7 @@ public class Robot extends LoggedRobot {
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 5000, 1200, 0, 1.5));
     OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
-    
+    // OI.driverY/whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 0, 2));
     // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
     // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
     // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
