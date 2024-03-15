@@ -24,6 +24,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.tools.EMBrake;
 import frc.robot.tools.controlloops.PID;
@@ -56,9 +57,9 @@ public class Climber extends SubsystemBase {
   private final double kG = 0.015;
 
   /** Creates a new Climber. */
-  public Climber(Lights lights, TOF tof) {
+  public Climber(Lights lights, TOF tof, Proximity proximity) {
     this.lights = lights;
-    setDefaultCommand(new ClimberDefault(this, tof));
+    setDefaultCommand(new ClimberDefault(this, tof, proximity));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
     this.rotationPID.setMaxOutput(0.65);

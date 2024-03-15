@@ -84,8 +84,7 @@ public class AutoIntake extends Command {
       System.out.println("slow moving");
     } else {
       this.feeder.set(this.feederRPM);
-      // this.climber.setTrapRollerTorque(40, 0.35);
-      this.climber.setTrapRollerPercent(0.4);
+      this.climber.setTrapRollerTorque(20, 0.35);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
       System.out.println("not in shooter");
     }

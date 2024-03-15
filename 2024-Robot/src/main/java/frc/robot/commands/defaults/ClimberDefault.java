@@ -1,14 +1,19 @@
 package frc.robot.commands.defaults;
 
+import javax.swing.text.StyleContext.SmallAttributeSet;
+
 import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 
 public class ClimberDefault extends Command {
   private Climber climber;
   private TOF tof;
+  private Proximity proximity;
 
   private boolean isZeroed = false;
   private int numTimesHitBottom = 0;
@@ -16,9 +21,10 @@ public class ClimberDefault extends Command {
   private boolean haveNote;
   private boolean haveCarriageNote;
 
-  public ClimberDefault(Climber climber, TOF tof) {
+  public ClimberDefault(Climber climber, TOF tof, Proximity proximity) {
     this.climber = climber;
     this.tof = tof;
+    this.proximity = proximity;
     addRequirements(climber);
   }
 
@@ -27,7 +33,11 @@ public class ClimberDefault extends Command {
     this.isZeroed = false;
     this.numTimesHitBottom = 0;
 
-    this.haveNote = false;
+    if (this.proximity.getShooterProximity()){
+      this.haveNote = true;
+    } else {
+      this.haveNote = false;
+    }
     this.haveCarriageNote = false;
   }
 
@@ -53,21 +63,26 @@ public class ClimberDefault extends Command {
       this.haveCarriageNote = true;
     }
 
-    if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
+    if (this.proximity.getShooterProximity()){
       this.haveNote = true;
     }
 
+    System.out.println("have note climber: " + haveNote);
+    SmartDashboard.putBoolean("have note climber", haveNote);
     if (this.isZeroed){
       // this.climber.setElevatorTorque(0, 0.1);
       if (this.haveCarriageNote && !this.haveNote){
         this.climber.setTrapRollerTorque(20, 0.2);
         this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+        System.out.println("in carriage");
       } else if (this.haveNote){
         this.climber.setTrapRollerTorque(5, 0.1);
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 3);
+        System.out.println("in feeder proximity");
       } else {
         this.climber.setTrapRollerTorque(20, 0.1);
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 3);
+        System.out.println("out of proximity");
       }
     } else {
       this.climber.setTrapRollerPercent(0);

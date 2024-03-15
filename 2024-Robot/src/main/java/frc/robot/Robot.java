@@ -79,7 +79,7 @@ public class Robot extends LoggedRobot {
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
   private Feeder feeder = new Feeder(tof, proximity);
-  private Climber climber = new Climber(lights, tof);
+  private Climber climber = new Climber(lights, tof, proximity);
 
   // private Logger logger = Logger.getInstance();
 
