@@ -31,15 +31,21 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamTx = frontCam.getEntry("tx");
   private NetworkTableEntry frontCamTl = frontCam.getEntry("tl");
   private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
+  private NetworkTableEntry frontCamPipelineLatency = frontCam.getEntry("tl");
+  private NetworkTableEntry frontCamCameraLatency = frontCam.getEntry("cl");
   private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
   private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry backCamTx = backCam.getEntry("tx");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
   private NetworkTableEntry leftCamJSON = leftCam.getEntry("json");
+  private NetworkTableEntry leftCamPipelineLatency = leftCam.getEntry("tl");
+  private NetworkTableEntry leftCamCameraLatency = leftCam.getEntry("cl");
   private NetworkTableEntry leftCamRobotFieldPose = leftCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry leftCamRobotTagPose = leftCam.getEntry("botpose_targetspace");
   private NetworkTable rightCam = NetworkTableInstance.getDefault().getTable("limelight-right");
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
+  private NetworkTableEntry rightCamPipelineLatency = rightCam.getEntry("tl");
+  private NetworkTableEntry rightCamCameraLatency = rightCam.getEntry("cl");
   private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
 
@@ -113,6 +119,21 @@ public class Peripherals extends SubsystemBase {
     latencies.put("tl", this.frontCamTl.getDouble(0) / 1000);
     latencies.put("cl", this.frontCamCl.getDouble(0) / 1000);
     return latencies;
+  }
+
+  public double getFrontCameraLatency() {
+    double latency = frontCamPipelineLatency.getDouble(-1) + frontCamCameraLatency.getDouble(-1);
+    return latency;
+  }
+
+  public double getLeftCameraLatency() {
+    double latency = leftCamPipelineLatency.getDouble(-1) + leftCamCameraLatency.getDouble(-1);
+    return latency;
+  }
+
+  public double getRightCameraLatency() {
+    double latency = rightCamPipelineLatency.getDouble(-1) + rightCamCameraLatency.getDouble(-1);
+    return latency;
   }
 
   public double getBackCamTargetTx(){
@@ -234,6 +255,33 @@ public class Peripherals extends SubsystemBase {
     return fieldPosArray;
   }
 
+  public JSONArray getLeftCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    double tagDist = 99999;
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.leftCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+      tagDist = getFrontHorizontalDistToTag();
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (tagDist > 2.25 || tagDist == 0){
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
   public JSONArray getRawLeftCamBasedPosition(){
     JSONArray fieldPosArray = new JSONArray();
     double[] result = new double[7];
@@ -253,6 +301,33 @@ public class Peripherals extends SubsystemBase {
     fieldPosArray.put(0, fieldX);
     fieldPosArray.put(1, fieldY);
     // System.out.println("Left X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    return fieldPosArray;
+  }
+
+  public JSONArray getRightCamBasedPosition(){
+    JSONArray fieldPosArray = new JSONArray();
+    double[] result = new double[7];
+    double tagDist = 99999;
+    JSONArray noTrack = new JSONArray();
+    noTrack.put(0);
+    noTrack.put(0);
+    try {
+      result = this.rightCamRobotFieldPose.getDoubleArray(noTrackLimelightArray);
+      tagDist = getFrontHorizontalDistToTag();
+    } catch (Exception e) {
+      return noTrack;
+    }
+    if (tagDist > 2.25 || tagDist == 0){
+      return noTrack;
+    }
+    if (result[0] == 0 || result[1] == 0){
+      return noTrack;
+    }
+    double fieldX = result[0];
+    double fieldY = result[1];
+    fieldPosArray.put(0, fieldX);
+    fieldPosArray.put(1, fieldY);
+    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
     return fieldPosArray;
   }
 

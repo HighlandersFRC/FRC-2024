@@ -146,6 +146,10 @@ public class Drive extends SubsystemBase {
 
   private String fieldSide = "blue";
 
+  private Boolean useCameraInOdometry = true;
+  //this does nothing, don't ask questions
+  private double timeSinceLastCameraMeasurement = 0;
+
   private int lookAheadDistance = 5;
   
   /** Creates a new SwerveDriveSubsystem. */
@@ -270,8 +274,19 @@ public class Drive extends SubsystemBase {
     return currentTime;
   }
 
+  public void useCameraInOdometry() {
+    useCameraInOdometry = true;
+  }
+
   public void updateOdometryFusedArray(){
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
+
+    JSONArray cameraCoordinatesFront = peripherals.getFrontCamBasedPosition();
+    JSONArray cameraCoordinatesLeft = peripherals.getLeftCamBasedPosition();
+    JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
+
+    double cameraBasedX = 0;
+    double cameraBasedY = 0;
 
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
@@ -292,6 +307,29 @@ public class Drive extends SubsystemBase {
     // double cameraBasedY = frontCamCoordinates.getDouble(1);
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
+    if(useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesFront.getDouble(0);
+      cameraBasedY = cameraCoordinatesFront.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency()/1000));
+    } 
+    
+    if(useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesLeft.getDouble(0);
+      cameraBasedY = cameraCoordinatesLeft.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency()/1000));
+    }
+
+    if(useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesRight.getDouble(0);
+      cameraBasedY = cameraCoordinatesRight.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency()/1000));
+    }
 
     currentTime = Timer.getFPGATimestamp() - initTime;
     timeDiff = currentTime - previousTime;
