@@ -39,9 +39,11 @@ public class Lights extends SubsystemBase {
    * solid red - red alliance
    * solid blue - blue alliance
    * flashing purple:
+   *      autonomous - the robot does not see the note
    *      intaking - robot has not intaken note yet
    *      shooting - robot cannot see apriltag
    * flashing green:
+   *      autonomous - the robot sees the note
    *      boot up/CAN check - all CAN is good and limelights are connected
    *      intake - robot has intaken note
    *      shooting - robot can see apriltag
@@ -123,6 +125,10 @@ public class Lights extends SubsystemBase {
 
   public void setStrobeGreen() { // flashing green animation
     candle.animate(flashGreen);
+  }
+
+  public void setRainbow() {
+    candle.animate(rainbowAnimation);
   }
 
   public void setStrobePurple() { // flashing purple animation

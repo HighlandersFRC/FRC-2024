@@ -37,7 +37,7 @@ public class Intake extends SubsystemBase {
     setDefaultCommand(new IntakeDefault(this));
   }
 
-  public boolean getIntakeCAN() {
+  public boolean getIntakeCAN() { // checks if the angle falcon and the roller falcon on the intake are connected
     if(angleFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
       return true;
     } else return false;

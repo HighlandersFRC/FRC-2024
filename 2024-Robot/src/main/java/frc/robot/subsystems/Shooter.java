@@ -53,7 +53,7 @@ public class Shooter extends SubsystemBase {
     setDefaultCommand(new ShooterDefault(this));
   }
 
-  public boolean getShooterCAN() {
+  public boolean getShooterCAN() { // checks the encoder, angle motor, and both flywheel motors to see if they are connected
     if(angleEncoder.clearStickyFault_BadMagnet() == StatusCode.OK && angleFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && flywheelFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK && flywheelFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
       return true;
     } else return false;

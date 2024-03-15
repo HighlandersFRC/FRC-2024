@@ -58,7 +58,10 @@ public class Climber extends SubsystemBase {
   private final double kD = 0.0;
   private final double kG = 0.015;
 
-  public boolean getClimberCAN() {
+  public boolean prepareAmp = false;
+  public boolean intakeRunning = false;
+
+  public boolean getClimberCAN() { // checks if the rotation cancoder, roller falcon, rotation NEO, and the elevator falcons are connected
     if(elevatorFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK && elevatorFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK && trapRollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rotationCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK && carriageRotationNeo.setIdleMode(IdleMode.kBrake) == REVLibError.kOk) {
       return true;
     } else return false;

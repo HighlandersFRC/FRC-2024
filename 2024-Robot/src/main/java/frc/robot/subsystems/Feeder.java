@@ -40,7 +40,7 @@ public class Feeder extends SubsystemBase {
     setDefaultCommand(new FeederDefault(this,tof));
   }
 
-  public boolean getFeederCAN() {
+  public boolean getFeederCAN() { // checks if the feeder falcon is connected
     if(rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
       return true;
     } else return false;
