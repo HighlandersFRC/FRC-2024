@@ -2,7 +2,11 @@ package frc.robot.subsystems;
 
 import com.revrobotics.CANSparkBase.IdleMode;
 
+import java.lang.annotation.Documented;
+
 import javax.swing.text.StyleContext.SmallAttributeSet;
+
+import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
@@ -36,10 +40,20 @@ public class Feeder extends SubsystemBase {
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
+  /**
+   * Constructs a new instance of the Feeder class.
+   *
+   * @param tof The Time-of-Flight (TOF) sensor used by the Feeder.
+  */
   public Feeder(TOF tof) {
     setDefaultCommand(new FeederDefault(this,tof));
   }
 
+  /**
+   * Checks if the feeder CAN is available.
+   *
+   * @return {@code true} if the feeder CAN is available, {@code false} otherwise.
+  */
   public boolean getFeederCAN() {
     if(rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
       return true;
@@ -60,28 +74,48 @@ public class Feeder extends SubsystemBase {
 
   }
 
-  //Set roller velocity in RPM
+  /**
+   * Sets the velocity of the feeder roller.
+   *
+   * @param RPM The desired velocity of the feeder roller in RPM (Revolutions Per Minute).
+  */
   public void set(double RPM){
     rollerFalcon.setControl(rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO));
   }
 
-  //Set roller output in percent
+  /**
+   * Sets the output percentage of the roller Falcon.
+   *
+   * @param percent The desired output percentage of the roller Falcon. Should be a value between 0 and 1.
+  */
   public void setPercent(double percent){
     rollerFalcon.set(percent);
   }
 
+  /**
+   * Sets the torque control parameters for the roller Falcon.
+   *
+   * @param current The desired current output in amps.
+   * @param maxPercent The maximum absolute duty cycle percentage.
+  */
   public void setTorque(double current, double maxPercent){
     this.rollerFalcon.setControl(this.rollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
-  public double getRPM(){
+  /**
+   * Retrieves the rotational speed of the feeder roller in Rotations Per Second (RPS).
+   *
+   * @return The rotational speed of the feeder roller in RPS.
+  */
+  public double getRPS(){
     return this.rollerFalcon.getRotorVelocity().getValue() / Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO;
   }
-
+  
   public void teleopPeriodic(){}
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPM()));
+    SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPS()));
+    Logger.recordOutput("Feeder RPM", Constants.RPSToRPM(getRPS()));
   }
 }

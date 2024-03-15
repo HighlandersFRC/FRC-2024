@@ -201,7 +201,12 @@ public class Drive extends SubsystemBase {
 
   private int lookAheadDistance = 5;
   
-  /** Creates a new SwerveDriveSubsystem. */
+  /**
+   * Creates a new instance of the Swerve Drive subsystem.
+   * Initializes the Swerve Drive subsystem with the provided peripherals.
+   * 
+   * @param peripherals The peripherals used by the Swerve Drive subsystem.
+  */
   public Drive(Peripherals peripherals) {
     this.peripherals = peripherals;
 
@@ -216,6 +221,14 @@ public class Drive extends SubsystemBase {
     m_odometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d((Math.toRadians(peripherals.getPigeonAngle()))), swerveModulePositions, m_pose);
   }
 
+  /**
+   * Initializes the robot with the specified field side configuration.
+   * It sets up configurations when run on robot initialization, such as setting the field side,
+   * initializing each swerve module, configuring motor inversions, and setting PID controller output limits.
+   * Additionally, it sets the default command to the DriveDefault command.
+   *
+   * @param fieldSide The side of the field (e.g., "red" or "blue").
+  */
   public void init(String fieldSide){
     // sets configurations when run on robot initalization
     this.fieldSide = fieldSide;
@@ -247,7 +260,10 @@ public class Drive extends SubsystemBase {
     setDefaultCommand(new DriveDefault(this));
   }
 
-  // method to zeroIMU mid match and reset odometry with zeroed angle
+  /**
+   * Zeros the IMU (Inertial Measurement Unit) mid-match and resets the odometry with a zeroed angle.
+   * It resets the angle reported by the pigeon sensor to zero and updates the odometry with this new zeroed angle.
+  */
   public void zeroIMU(){
     peripherals.zeroPigeon();
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
@@ -257,18 +273,35 @@ public class Drive extends SubsystemBase {
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
   }
 
+  /**
+   * Adjusts the angle reported by the pigeon sensor after an autonomous routine.
+   * It adds 180 degrees to the current angle reported by the pigeon sensor and wraps it around 360 degrees.
+  */
   public void setPigeonAfterAuto() {
     peripherals.setPigeonAngle((peripherals.getPigeonAngle() + 180)%360);
   }
 
+  /**
+   * Sets the angle reported by the pigeon sensor to the specified value.
+   *
+   * @param angle The angle to set for the pigeon sensor in degrees.
+  */
   public void setPigeonAngle(double angle){
     peripherals.setPigeonAngle(angle);
   }
 
+  /**
+   * Retrieves the current angle reported by the pigeon sensor.
+   *
+   * @return The current angle reported by the pigeon sensor in degrees.
+  */
   public double getPigeonAngle(){
     return peripherals.getPigeonAngle();
   }
 
+  /**
+   * Sets the PID values for all swerve modules to zero, keeping the wheels straight.
+   */
   public void setWheelsStraight(){
     frontRight.setWheelPID(0.0, 0.0);
     frontLeft.setWheelPID(0.0, 0.0);
@@ -276,6 +309,11 @@ public class Drive extends SubsystemBase {
     backRight.setWheelPID(0.0, 0.0);
   }
 
+  /**
+   * Initializes the robot's state for autonomous mode based on the provided path points.
+   * 
+   * @param pathPoints The array of path points representing the trajectory for the autonomous routine.
+  */
   public void autoInit(JSONArray pathPoints){
     // runs at start of autonomous
     // System.out.println("Auto init");
@@ -311,18 +349,38 @@ public class Drive extends SubsystemBase {
     updateOdometryFusedArray();
   }
 
+  /**
+   * Sets the current field side designation.
+   * 
+   * @param side The field side designation to set, indicating whether the robot is positioned on the "blue" or "red" side of the field.
+  */
   public void setFieldSide(String side){
     fieldSide = side;
   }
 
+  /**
+   * Retrieves the current field side designation.
+   * 
+   * @return The current field side designation, indicating whether the robot is positioned on the "blue" or "red" side of the field.
+  */
   public String getFieldSide(){
     return fieldSide;
   }
 
+  /**
+   * Retrieves the current timestamp relative to the start of the robot operation.
+   * 
+   * @return The current timestamp in seconds since the start of the robot operation.
+  */
   public double getCurrentTime(){
     return currentTime;
   }
 
+  /**
+   * Updates the fused odometry array with current robot position and orientation information.
+   * Calculates the robot's position and orientation using swerve module positions and the NAVX gyro angle.
+   * Updates the current X, Y, and theta values, as well as previous values and time differences.
+  */
   public void updateOdometryFusedArray(){
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
@@ -759,7 +817,20 @@ public class Drive extends SubsystemBase {
   //   trackerData.put("tracks", tracks);
   //   odometryTrackerData.setString(trackerData.toString());
   // }
-
+  
+  /**
+   * Retrieves the states of the modules (position and ground speed) of the robot's swerve drive system.
+   *
+   * @return An array containing the states of each wheel module, consisting of:
+   *         front right module position in degrees,
+   *         front right module ground speed in meters per second,
+   *         front left module position in degrees,
+   *         front left module ground speed in meters per second,
+   *         back left module position in degrees,
+   *         back left module ground speed in meters per second,
+   *         back right module position in degrees,
+   *         back right module ground speed in meters per second.
+  */
   public double[] getModuleStates(){
     double[] states = {
       frontRight.getCanCoderPosition() * 360.0, frontRight.getGroundSpeed(),
@@ -770,6 +841,15 @@ public class Drive extends SubsystemBase {
     return states;
   }
 
+  /**
+   * Retrieves the setpoints of the modules (angle and drive motors) of the robot's swerve drive system.
+   *
+   * @return An array containing the setpoints of the angle and drive motors for each wheel module, in the order:
+   *         front right angle motor, front right drive motor,
+   *         front left angle motor, front left drive motor,
+   *         back left angle motor, back left drive motor,
+   *         back right angle motor, back right drive motor.
+  */
   public double[] getModuleSetpoints(){
     double[] setpoints = {
       frontRight.getAngleMotorSetpoint(), frontRight.getDriveMotorSetpoint(),
@@ -780,6 +860,11 @@ public class Drive extends SubsystemBase {
     return setpoints;
   }
 
+  /**
+   * Retrieves the current velocity of the angle motors of the robot.
+   *
+   * @return An array containing the current velocity of the angle motors for front right, front left, back left, and back right wheels.
+  */
   public double[] getAngleMotorVelocity(){
     double[] velocity = {
       frontRight.getAngleVelocity(), frontLeft.getAngleVelocity(), backLeft.getAngleVelocity(), backRight.getAngleVelocity()
@@ -787,6 +872,11 @@ public class Drive extends SubsystemBase {
     return velocity;
   }
 
+  /**
+   * Retrieves the current odometry information of the robot.
+   *
+   * @return An array containing the current X-coordinate, Y-coordinate, and orientation angle of the robot.
+  */
   public double[] getOdometry(){
     double[] odometry = {
       getOdometryX(), getOdometryY(), getOdometryAngle()
@@ -794,30 +884,65 @@ public class Drive extends SubsystemBase {
     return odometry;
   }
 
+  /**
+   * Retrieves the current X-coordinate of the robot from fused odometry.
+   *
+   * @return The current X-coordinate of the robot.
+  */
   public double getFusedOdometryX() {
     return currentFusedOdometry[0];
   }
 
+  /**
+   * Retrieves the current Y-coordinate of the robot from fused odometry.
+   *
+   * @return The current Y-coordinate of the robot.
+  */
   public double getFusedOdometryY() {
     return currentFusedOdometry[1];
   }
 
+  /**
+   * Retrieves the current orientation angle of the robot from fused odometry.
+   *
+   * @return The current orientation angle of the robot in radians.
+  */
   public double getFusedOdometryTheta(){
     return currentFusedOdometry[2];
   }
 
+  /**
+   * Retrieves the current X-coordinate of the robot from odometry.
+   *
+   * @return The current X-coordinate of the robot.
+  */
   public double getOdometryX() {
     return m_odometry.getEstimatedPosition().getX();
   }
 
+  /**
+   * Retrieves the current Y-coordinate of the robot from odometry.
+   *
+   * @return The current Y-coordinate of the robot.
+  */
   public double getOdometryY() {
     return m_odometry.getEstimatedPosition().getY();
   }
 
+  /**
+   * Retrieves the current orientation angle of the robot from odometry.
+   *
+   * @return The current orientation angle of the robot in radians.
+  */
   public double getOdometryAngle() {
     return m_odometry.getEstimatedPosition().getRotation().getRadians();
   }
 
+  /**
+   * Drives the robot with alignment adjustment based on the specified angle from placement.
+   * 
+   * @param degreesFromPlacement The angle in degrees from the placement orientation to align with.
+  */
   public void driveAutoAligned(double degreesFromPlacement) {
     updateOdometryFusedArray();
 
@@ -848,6 +973,11 @@ public class Drive extends SubsystemBase {
     backRight.drive(controllerVector, turn, pigeonAngle);
   }
 
+  /**
+   * Turns the robot in robot-centric mode.
+   * 
+   * @param turn The rate at which the robot should turn in radians per second.
+  */
   public void autoRobotCentricTurn(double turn){
     frontLeft.drive(new Vector(0, 0), turn, 0.0);
     frontRight.drive(new Vector(0, 0), turn, 0.0);
@@ -856,6 +986,12 @@ public class Drive extends SubsystemBase {
     updateOdometryFusedArray();
   }
 
+  /**
+   * Drives the robot in robot-centric mode using velocity vector and turning rate.
+   * 
+   * @param velocityVector The velocity vector containing x and y velocities in meters per second (m/s).
+   * @param turnRadiansPerSec The rate at which the robot should spin in radians per second.
+  */
   public void autoRobotCentricDrive(Vector velocityVector, double turnRadiansPerSec){
     updateOdometryFusedArray();
     frontLeft.drive(velocityVector, turnRadiansPerSec, 0);
@@ -864,6 +1000,11 @@ public class Drive extends SubsystemBase {
     backRight.drive(velocityVector, turnRadiansPerSec, 0);
   }
   
+  /**
+   * Drives the robot during teleoperation.
+   * 
+   * @apiNote This method updates the fused odometry array and controls the robot's movement based on joystick inputs.
+  */
   public void teleopDrive() {
     updateOdometryFusedArray();
     double turnLimit = 0.35;
@@ -900,7 +1041,12 @@ public class Drive extends SubsystemBase {
     backRight.drive(controllerVector, turn, pigeonAngle);
   }
 
-  // method run in autonomous that accepts a velocity vector of xy velocities, as well as how much to spin per second
+  /**
+   * Runs autonomous driving by providing velocity vector and turning rate.
+   * 
+   * @param vector The velocity vector containing xy velocities.
+   * @param turnRadiansPerSec The rate at which the robot should spin in radians per second.
+  */
   public void autoDrive(Vector vector, double turnRadiansPerSec){
     updateOdometryFusedArray();
 
@@ -918,7 +1064,12 @@ public class Drive extends SubsystemBase {
     backRight.drive(vector, turnRadiansPerSec, pigeonAngle);
   }
 
-  //get current velocity vector of the robot in field coordinats, m/s
+  /**
+   * Retrieves the current velocity vector of the robot in field coordinates.
+   * The velocity vector is calculated based on the individual wheel speeds and orientations.
+   *
+   * @return The current velocity vector of the robot in meters per second (m/s).
+  */
   public Vector getRobotVelocityVector(){
     Vector velocityVector = new Vector(0, 0);
     double pigeonAngleRadians = Math.toRadians(this.peripherals.getPigeonAngle());
@@ -948,6 +1099,13 @@ public class Drive extends SubsystemBase {
     return velocityVector;
   }
 
+  /**
+   * Retrieves the acceleration vector of the robot.
+   * The acceleration is calculated based on the linear acceleration measured by the Pigeon IMU.
+   * The acceleration is expressed in field-centric coordinates.
+   *
+   * @return The acceleration vector of the robot in meters per second squared (m/s^2).
+  */
   public Vector getRobotAccelerationVector(){
     Vector accelerationVector = new Vector();
 
@@ -959,6 +1117,15 @@ public class Drive extends SubsystemBase {
     return accelerationVector;
   }
 
+  /**
+   * Retrieves the path point closest to the specified time from the given path.
+   * If the specified time is before the first path point, the first point is returned.
+   * If the specified time is after the last path point, the last point is returned.
+   *
+   * @param path The array containing path points, each represented as a JSONArray.
+   * @param time The time for which the closest path point is required.
+   * @return The closest path point to the specified time.
+  */
   public JSONArray getPathPoint(JSONArray path, double time){
     for (int i = 0; i < path.length() - 1; i ++){
       JSONArray currentPoint = path.getJSONArray(i + 1);
@@ -976,7 +1143,18 @@ public class Drive extends SubsystemBase {
     }
   }
 
-  // Autonomous algorithm
+  /**
+   * Performs autonomous control using PID controllers to navigate the robot along a predefined path.
+   * Adjusts robot velocity based on positional error and lookahead points.
+   *
+   * @param currentX Current x-coordinate of the robot.
+   * @param currentY Current y-coordinate of the robot.
+   * @param currentTheta Current orientation angle of the robot.
+   * @param time Current time in the autonomous period.
+   * @param pathPoints Array containing path points with timestamp, x, y, and theta values.
+   * @param pickupNote Indicates whether the robot is picking up a note.
+   * @return An array containing the calculated velocities: [x velocity, y velocity, angular velocity].
+  */
   public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints, boolean pickupNote) {
     if(time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {
         JSONArray currentPoint = pathPoints.getJSONArray(0);
@@ -1086,13 +1264,25 @@ public class Drive extends SubsystemBase {
     updateOdometryFusedArray();
   }
 
-  // get Joystick adjusted y-value
+  /**
+   * Calculates the adjusted y-coordinate based on the original x and y coordinates.
+   *
+   * @param originalX The original x-coordinate.
+   * @param originalY The original y-coordinate.
+   * @return The adjusted y-coordinate.
+  */
   public double getAdjustedY(double originalX, double originalY){
     double adjustedY = originalY * Math.sqrt((1-(Math.pow(originalX, 2))/2));
     return adjustedY;
   }
 
-  // get Joystick adjusted x-value
+  /**
+   * Calculates the adjusted x-coordinate based on the original x and y coordinates.
+   *
+   * @param originalX The original x-coordinate.
+   * @param originalY The original y-coordinate.
+   * @return The adjusted x-coordinate.
+  */
   public double getAdjustedX(double originalX, double originalY){
     double adjustedX = originalX * Math.sqrt((1-(Math.pow(originalY, 2))/2));
     return adjustedX;

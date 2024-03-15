@@ -81,7 +81,7 @@ public class Robot extends LoggedRobot {
   private Feeder feeder = new Feeder(tof);
   private Climber climber = new Climber(lights, tof);
 
-  // private Logger logger = Logger.getInstance();
+  private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
@@ -110,21 +110,20 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    // Logger.recordMetadata("ProjectName", "MyProject"); // Set a metadata value
 
-    // if (isReal()) {
-    //   Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    //   Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    //   new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    // } else {
-    //   setUseTiming(false); // Run as fast as possible
-    //   String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-    //   Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-    //   Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-    // }
+    if (isReal()) {
+      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+    } else {
+      setUseTiming(false); // Run as fast as possible
+      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
+      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
+      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
+    }
 
-    // // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
 
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
@@ -227,7 +226,9 @@ public class Robot extends LoggedRobot {
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
 
-    // Logger.recordOutput("Odometry", drive.getOdometry());
+    Logger.recordOutput("Odometry", drive.getOdometry());
+    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
+    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
 
     lights.periodic();
     intake.periodic();

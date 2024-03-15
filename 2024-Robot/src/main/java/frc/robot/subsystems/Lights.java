@@ -49,14 +49,26 @@ public class Lights extends SubsystemBase {
    *      shooting - robot is aligned and ready to shoot 
    */
 
+  /**
+   * Constructs a new Lights object.
+   * 
+   * @param tof Time of Flight sensor.
+  */
   public Lights(TOF tof) {
     this.tof = tof;
   }
 
-  public void setCommandRunning(boolean input) { // used to bypass the default light colors (red/blue)
-    commandRunning = input;
+  public void setCommandRunning(boolean commandRunning) { // used to bypass the default light colors (red/blue)
+    this.commandRunning = commandRunning;
   }
 
+  /**
+   * Sets the RGB values of the lights to the specified values.
+   *
+   * @param r The red component value (0-255).
+   * @param g The green component value (0-255).
+   * @param b The blue component value (0-255).
+  */
   public void setCandleRGB(int r, int g, int b) { // sets the RGB values of the lights
     candle.setLEDs(r, g, b);
   }
@@ -90,9 +102,13 @@ public class Lights extends SubsystemBase {
       }
     }
   }
-
-  public void setTimedFlashes(boolean input) {
-    timedFlashes = input;
+  /**
+   * Sets the flag indicating whether timed flashes are enabled or disabled.
+   * 
+   * @param timedFlashes a boolean value indicating whether timed flashes should be enabled (true) or disabled (false).
+  */
+  public void setTimedFlashes(boolean timedFlashes) {
+    this.timedFlashes = timedFlashes;
   }
 
   public void blinkGreen(double seconds) { // blinks green for a certain amount of time
@@ -129,10 +145,20 @@ public class Lights extends SubsystemBase {
     candle.animate(flashPurple);
   }
 
+  /**
+   * Sets the candle object to display a flashing yellow animation.
+   * The animation is defined by the flashYellow object.
+  */
   public void setStrobeYellow() { // flashing yellow animation
     candle.animate(flashYellow);
   }
 
+  /**
+   * Initializes the Lights subsystem with the specified field side.
+   * Clears animation at index 0 of the candle object.
+   * 
+   * @param fieldSide The side of the field to initialize with.
+  */
   public void init(String fieldSide){
     this.fieldSide = fieldSide;
     candle.clearAnimation(0);
