@@ -27,10 +27,10 @@ public class ShooterDefault extends Command {
     // }
 
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
-      System.out.println("stopped");
+      // System.out.println("stopped");
       this.shooter.setAnglePercent(0);
     } else {
-      System.out.println("going down");
+      // System.out.println("going down");
       this.shooter.setAngleTorque(-15, 0.45);
     }
   }

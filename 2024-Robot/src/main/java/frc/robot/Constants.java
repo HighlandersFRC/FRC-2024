@@ -278,7 +278,7 @@ public final class Constants {
         }
         return angleDegrees;
       } else {
-        System.out.println("Weird ErroR");
+        // System.out.println("Weird ErroR");
         return angleDegrees;
       }
     }

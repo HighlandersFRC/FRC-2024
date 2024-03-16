@@ -54,7 +54,7 @@ public class ClimberDefault extends Command {
       this.isZeroed = true;
       this.numTimesHitBottom = 0;
       this.climber.zeroElevator();
-      System.out.println("zero elevator");
+      // System.out.println("zero elevator");
     }
 
     if (Math.abs(this.climber.getElevatorPositionMeters()) > 0.05 && this.isZeroed){
@@ -74,9 +74,9 @@ public class ClimberDefault extends Command {
       this.haveFeederNote = true;
     }
 
-    System.out.println("carriage proximity: " + this.proximity.getCarriageProximity());
-    System.out.println("have note " + haveNote);
-    System.out.println("zeroed: " + isZeroed);
+    // System.out.println("carriage proximity: " + this.proximity.getCarriageProximity());
+    // System.out.println("have note " + haveNote);
+    // System.out.println("zeroed: " + isZeroed);
     if (this.isZeroed){
       this.climber.setElevatorTorque(0, 0.1);
       if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
