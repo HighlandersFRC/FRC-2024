@@ -110,21 +110,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-
-    if (isReal()) {
-      Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-      Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-      new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    } else {
-      setUseTiming(false); // Run as fast as possible
-      String logPath = LogFileUtil.findReplayLog(); // Pull the replay log from AdvantageScope (or prompt the user)
-      Logger.setReplaySource(new WPILOGReader(logPath)); // Read replay log
-      Logger.addDataReceiver(new WPILOGWriter(LogFileUtil.addPathSuffix(logPath, "_sim"))); // Save outputs to a new log
-    }
-
+    System.out.println("Starting");
+    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+    Logger.recordMetadata("Code", "Running");
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
-
+    System.out.println("Started Logger");
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
@@ -164,6 +157,7 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "10.44.99.44", 5800);
     PortForwarder.add(5801, "10.44.99.44", 5801);
 
+    System.out.println("ports forwarded");
     this.nothingAuto = new NothingAuto();
     try {
       this.fourPieceCloseFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
@@ -205,9 +199,10 @@ public class Robot extends LoggedRobot {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
-    while(Timer.getFPGATimestamp() - startTime < 30) { // waits for 30 seconds before checking for the CAN and Limelights because they take a while to boot up
+    // while(Timer.getFPGATimestamp() - startTime < 30) { // waits for 30 seconds before checking for the CAN and Limelights because they take a while to boot up
       
-    }
+    // }
+
 
     // checks CAN and limelights, blinks green if good and blinks yellow if bad
     if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
@@ -217,7 +212,7 @@ public class Robot extends LoggedRobot {
       lights.setCommandRunning(true);
       lights.setStrobeYellow();
     }
-
+    System.out.println("initiaization complete");
   }
  
   @Override
@@ -225,6 +220,7 @@ public class Robot extends LoggedRobot {
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
+    System.out.println("Running");
 
     Logger.recordOutput("Odometry", drive.getOdometry());
     Logger.recordOutput("Swerve Module States", drive.getModuleStates());
@@ -237,7 +233,7 @@ public class Robot extends LoggedRobot {
     tof.periodic();
     // System.out.println("Swerve Can: " + drive.getSwerveCAN());
     // System.out.println("Shooter Can: " + shooter.getShooterCAN());
-    // System.out.println("Intake Can: " + intake.getIntakeCAN());
+    // System.out.println("Intake Can: " + eintake.getIntakeCAN());
     // System.out.println("Feeder Can: " + feeder.getFeederCAN());
     // System.out.println("Climber Can: " + climber.getClimberCAN());
     // System.out.println("Testing neo can" + climber.testNEOCAN());
