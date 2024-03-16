@@ -65,7 +65,7 @@ public class AutoShoot extends Command {
     this.lights = lights;
     this.tof = tof;
     this.feederRPM = feederRPM;
-    addRequirements(this.drive, this.shooter, this.feeder);
+    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
   public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM, double timeout) {
@@ -77,7 +77,7 @@ public class AutoShoot extends Command {
     this.tof = tof;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
-    addRequirements(this.drive, this.shooter, this.feeder);
+    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
   @Override
@@ -95,6 +95,8 @@ public class AutoShoot extends Command {
     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
+    lights.setCommandRunning(true);
+    lights.setStrobePurple();
   }
 
   @Override
@@ -111,7 +113,10 @@ public class AutoShoot extends Command {
       }
     }
 
+    System.out.println("Can See Tag: " + canSeeTag);
+
     if (canSeeTag){
+      lights.setStrobeGreen();
       this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
       this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
       if (this.speakerElevationDegrees < 90 && this.speakerAngleDegrees < 90){
@@ -155,7 +160,9 @@ public class AutoShoot extends Command {
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
     if (this.hasReachedSetPoint == true){
-      System.out.println("Shooting");
+      lights.clearAnimations();
+      lights.setCandleRGB(0, 255, 0);
+      // System.out.println("Shooting");
       this.feeder.set(this.feederRPM);
     } else {
       this.feeder.set(0.0);
@@ -190,6 +197,8 @@ public class AutoShoot extends Command {
   public void end(boolean interrupted) {
     this.feeder.set(0);
     this.shooter.setAngleTorque(-10, 0.3);
+    lights.clearAnimations();
+    lights.setCommandRunning(false);
   }
 
   @Override

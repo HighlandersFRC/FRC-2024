@@ -1,5 +1,8 @@
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
+import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -32,8 +35,22 @@ public class Intake extends SubsystemBase {
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
 
+  /**
+   * Constructs a new instance of the Intake class.
+  */
   public Intake() {
     setDefaultCommand(new IntakeDefault(this));
+  }
+  
+  /**
+   * Checks if intake CAN is available.
+   *
+   * @return {@code true} if the intake CAN is available, {@code false} otherwise.
+  */
+  public boolean getIntakeCAN() {
+    if(angleFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
+      return true;
+    } else return false;
   }
 
   public void init(){
@@ -67,6 +84,12 @@ public class Intake extends SubsystemBase {
     this.angleFalcon.setPosition(0);
   }
 
+  /**
+   * Sets the intake angle and roller velocity.
+   *
+   * @param degrees The desired angle of the intake in degrees.
+   * @param RPM The desired velocity of the roller in RPM (Revolutions Per Minute).
+  */
   public void set(double degrees, double RPM){
     if (degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
@@ -78,7 +101,12 @@ public class Intake extends SubsystemBase {
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
-  //Set intake state, position either kUP or kDOWN, RPM in RPM
+  /**
+   * Sets the intake state and position along with the roller velocity.
+   *
+   * @param position The desired position for the intake (either kUP or kDOWN).
+   * @param RPM The desired velocity of the roller in RPM (Revolutions Per Minute).
+  */
   public void set(Constants.SetPoints.IntakePosition position, double RPM){
     if (position.degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
@@ -90,7 +118,11 @@ public class Intake extends SubsystemBase {
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
-  //Set intake angle in rotations
+  /**
+   * Sets the intake angle with the specified setpoint.
+   *
+   * @param position The desired setpoint for the intake angle in degrees.
+  */
   public void setAngle(double degrees){
     if (degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
@@ -101,7 +133,11 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  //Set intake angle with setpoint
+  /**
+   * Sets the intake angle with the specified setpoint.
+   *
+   * @param position The desired setpoint for the intake angle.
+  */
   public void setAngle(Constants.SetPoints.IntakePosition position){
     if (position.degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
@@ -112,45 +148,93 @@ public class Intake extends SubsystemBase {
     }
   }
 
-  //Set intake roller velocity in RPM
+  /**
+   * Sets the velocity of the rollers.
+   *
+   * @param RPM The desired velocity of the rollers in RPM (Revolutions Per Minute).
+  */
   public void setRollers(double RPM){
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
-  //Set intake roller percent
+  /**
+   * Set the Angle to a percent
+   * 
+   * @param percent - Current drawn from motor (amps)
+  */
   public void setRollerPercent(double percent){
     this.rollerFalcon.set(-percent);
   }
 
-  //Set intake angle motor percent
+  /**
+   * Set the Angle to a percent
+   * 
+   * @param percent - Current drawn from motor (amps)
+  */
   public void setAnglePercent(double percent){
     this.angleFalcon.set(percent);
   }
 
+  /**
+   * Set the Angle of the intake to Torque Current Control
+   * 
+   * @param current - Current drawn from motor (amps)
+   * @param maxPercent - Maximum motor power (from 0 to 1)
+  */
   public void setAngleTorqueCurrent(double current, double maxPercent){
     this.angleFalcon.setControl(this.angleFalconCurrentRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
+  /**
+   * Set the current angle of the encoder to a position
+   * 
+   * @param rotations - The position to set in rotations
+  */
   public void setAngleEncoderPosition(double rotations){
     this.angleFalcon.setPosition(rotations * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO);
   }
 
+  /**
+   * Get the velocity of intake roller in RPM
+   * 
+   * @return The velocity of the roller in RPM
+  */
   public double getRPM(){
     return this.rollerFalcon.getVelocity().getValue() / Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO;
   }
 
+  /**
+   * Get the angle of the intake in rotations
+   * 
+   * @return The position in rotations of the intake
+  */
   public double getAngleRotations(){
     return this.angleFalcon.getPosition().getValue() / Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO;
   }
 
+  /**
+   * Get the angle of the intake in degrees
+   * 
+   * @return The position in degrees of the intake
+  */
   public double getAngleDegrees(){
     return Constants.rotationsToDegrees(this.angleFalcon.getPosition().getValue() / Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO);
   }
 
+  /**
+   * Get the stator current of the angle motor (amps)
+   * 
+   * @return The stator current of the angle motor in amps
+  */
   public double getAngleCurrent(){
     return this.angleFalcon.getStatorCurrent().getValue();
   }
-
+  
+  /**
+   * Get the velocity of the intake's angle in RPS 
+   * 
+   * @return The angular velocity of the intake in RPS
+  */
   public double getAngleRPS(){
     return this.angleFalcon.getVelocity().getValueAsDouble();
   }
@@ -181,7 +265,13 @@ public class Intake extends SubsystemBase {
       intakeMotor = true;
     }
     
-    SmartDashboard.putBoolean(" Intake Angle Motor", angleMotor);
-    SmartDashboard.putBoolean(" Intake Roller Motor", intakeMotor);
+    
+    SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
+    SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
+    // Logger.recordOutput("Intake Angle Motor Online?", angleMotor);
+    // Logger.recordOutput("Intake Roller Motor Online?", intakeMotor);
+    // Logger.recordOutput("Intake Angle", getAngleDegrees());
+    // Logger.recordOutput("Intake Angle Setpoint", Constants.degreesToRotations(angleFalcon.getClosedLoopReference().getValueAsDouble()/Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    // Logger.recordOutput("Intake Roller Velocity", rollerFalcon.getRotorVelocity().getValueAsDouble()/Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO);
   }
 }

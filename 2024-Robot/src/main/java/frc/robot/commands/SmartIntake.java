@@ -61,6 +61,8 @@ public class SmartIntake extends Command {
       this.haveNote = true;
     }
     this.haveIntakedNote = false;
+    lights.setCommandRunning(true);
+    lights.setStrobePurple();
   }
 
   @Override
@@ -75,7 +77,8 @@ public class SmartIntake extends Command {
     }
 
     if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM && this.rumbleControllers){
-      this.haveIntakedNote = true;  
+      this.haveIntakedNote = true;
+      lights.setStrobeGreen();
     }
 
     if (this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM){
@@ -94,6 +97,7 @@ public class SmartIntake extends Command {
       this.feeder.set(120);
       this.climber.setTrapRollerTorque(20, 0.2);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      // System.out.println("smart intake");
     } else if (this.haveNote){
       this.feeder.setPercent(0);
       this.climber.setTrapRollerTorque(20, 0.2);
@@ -102,11 +106,15 @@ public class SmartIntake extends Command {
       this.feeder.set(this.feederRPM);
       this.climber.setTrapRollerTorque(20, 0.4);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      // System.out.println("smart intake2");
     }
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    lights.setCommandRunning(false);
+    lights.clearAnimations();
+  }
 
   @Override
   public boolean isFinished() {

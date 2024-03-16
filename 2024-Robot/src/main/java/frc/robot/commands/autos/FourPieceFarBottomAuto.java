@@ -100,7 +100,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, pathJSON, 0, false, true),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
@@ -112,7 +112,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, pathJSON2, 0, false, true),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, true),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)

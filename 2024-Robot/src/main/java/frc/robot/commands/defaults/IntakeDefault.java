@@ -29,51 +29,52 @@ public class IntakeDefault extends Command {
   @Override
   public void execute() {
     this.intake.setRollerPercent(0);
-    OI.driverController.setRumble(RumbleType.kBothRumble, 0);
-    OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
-    // if (Math.abs(this.intake.getAngleCurrent()) > 55 && !this.isZeroed){
-    //   this.intake.setAngleTorqueCurrent(10, 0.1);
-    //   this.intake.setAngleEncoderPosition(0);
-    //   this.numTimesOverCurrentLimit ++;
-    // } else if (!this.isZeroed) {
-    //   this.intake.setAnglePercent(0.25);
+    this.intake.setAnglePercent(0);
+    // OI.driverController.setRumble(RumbleType.kBothRumble, 0);
+    // OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
+    // // if (Math.abs(this.intake.getAngleCurrent()) > 55 && !this.isZeroed){
+    // //   this.intake.setAngleTorqueCurrent(10, 0.1);
+    // //   this.intake.setAngleEncoderPosition(0);
+    // //   this.numTimesOverCurrentLimit ++;
+    // // } else if (!this.isZeroed) {
+    // //   this.intake.setAnglePercent(0.25);
+    // // } else {
+    // //   this.intake.setAngleTorqueCurrent(10, 0.1);
+    // // }
+
+    // // if (numTimesOverCurrentLimit > 2){
+    // //   this.isZeroed = true;
+    // //   this.numTimesOverCurrentLimit = 0;
+    // // }
+
+    // // if (Math.abs(this.intake.getAngleRotations()) > 0.05){
+    // //   this.isZeroed = false;
+    // // }
+
+    // // ================================
+
+    // if (Timer.getFPGATimestamp() - this.initTime < 0.4){
+    //   this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP.degrees);
     // } else {
-    //   this.intake.setAngleTorqueCurrent(10, 0.1);
+    //   if (Math.abs(this.intake.getAngleRPS()) < 0.01 && !this.isZeroed){
+    //     this.intake.setAngleTorqueCurrent(10, 0.1);
+    //     this.intake.setAngleEncoderPosition(0);
+    //     this.numTimesOverCurrentLimit ++;
+    //   } else if (!this.isZeroed) {
+    //     this.intake.setAngleTorqueCurrent(30, 0.3);
+    //   } else {
+    //     this.intake.setAngleTorqueCurrent(5, 0.1);
+    //   }
+
+    //   if (numTimesOverCurrentLimit > 2){
+    //     this.isZeroed = true;
+    //     this.numTimesOverCurrentLimit = 0;
+    //   }
+
+    //   if (Math.abs(this.intake.getAngleRotations()) > 0.05){
+    //     this.isZeroed = false;
+    //   }
     // }
-
-    // if (numTimesOverCurrentLimit > 2){
-    //   this.isZeroed = true;
-    //   this.numTimesOverCurrentLimit = 0;
-    // }
-
-    // if (Math.abs(this.intake.getAngleRotations()) > 0.05){
-    //   this.isZeroed = false;
-    // }
-
-    // ================================
-
-    if (Timer.getFPGATimestamp() - this.initTime < 0.4){
-      this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP.degrees);
-    } else {
-      if (Math.abs(this.intake.getAngleRPS()) < 0.01 && !this.isZeroed){
-        this.intake.setAngleTorqueCurrent(10, 0.1);
-        this.intake.setAngleEncoderPosition(0);
-        this.numTimesOverCurrentLimit ++;
-      } else if (!this.isZeroed) {
-        this.intake.setAngleTorqueCurrent(30, 0.3);
-      } else {
-        this.intake.setAngleTorqueCurrent(5, 0.1);
-      }
-
-      if (numTimesOverCurrentLimit > 2){
-        this.isZeroed = true;
-        this.numTimesOverCurrentLimit = 0;
-      }
-
-      if (Math.abs(this.intake.getAngleRotations()) > 0.05){
-        this.isZeroed = false;
-      }
-    }
   }
 
   @Override

@@ -50,7 +50,7 @@ public class AutoNoteFollowing extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, pathJSON, 0, false, true)
+        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true)
       )
     );
   }

@@ -31,6 +31,7 @@ public class SetClimberWithoutIntake extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("amp preset");
     this.climber.setCarriageRotationDegrees(carriageDegrees);
     if (positionMeters < this.climber.getElevatorPositionMeters() + 0.02 && positionMeters > this.climber.getElevatorPositionMeters() - 0.02){
       this.climber.setElevatorTorque(0.0, 0.0);

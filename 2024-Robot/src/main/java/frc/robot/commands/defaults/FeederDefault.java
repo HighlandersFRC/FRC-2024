@@ -50,14 +50,17 @@ public class FeederDefault extends Command {
     }
     
     if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
+      // System.out.println("first");
       this.feeder.set(200);
     } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       this.feeder.setPercent(0);
     } else if (this.haveNote && !this.proximity.getShooterProximity()){
       this.feeder.setPercent(0);
     } else if (this.haveCarriageNote && !this.haveNote){
+      // System.out.println("second");
       this.feeder.set(200);
     } else if (this.haveNote){
+      // System.out.println("third");
       this.feeder.set(100);
     } else {
       this.feeder.setPercent(0.0);
