@@ -84,7 +84,7 @@ public final class Constants {
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
-    // {distance(inches), target angle(deg), hood angle(deg), RPM}
+    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg)}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
       {1.302, 11.87, 58, 4000, 1},
       {1.442, 10.20, 56, 4000, 1},
