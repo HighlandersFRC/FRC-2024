@@ -76,17 +76,14 @@ public class AutoIntake extends Command {
       this.feeder.setPercent(0);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
-      System.out.println("ready to shoot");
     } else if (this.haveNote){
-      this.feeder.set(70);
+      this.feeder.set(130);
       this.climber.setTrapRollerTorque(10, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
-      System.out.println("slow moving");
     } else {
       this.feeder.set(this.feederRPM);
-      this.climber.setTrapRollerTorque(20, 0.35);
+      this.climber.setTrapRollerTorque(30, 0.50);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
-      System.out.println("not in shooter");
     }
   }
 
@@ -98,7 +95,7 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (this.haveNote && !this.proximity.getShooterProximity()){
+    if (this.proximity.getFeederProximity()){
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
       return true;

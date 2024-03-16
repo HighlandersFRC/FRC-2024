@@ -15,6 +15,7 @@ public class FeederDefault extends Command {
 
   private boolean haveNote;
   private boolean haveCarriageNote;
+  private boolean haveFeederNote;
 
   public FeederDefault(Feeder feeder, TOF tof, Proximity proximity) {
     this.feeder = feeder;
@@ -25,9 +26,10 @@ public class FeederDefault extends Command {
 
   @Override
   public void initialize() {
-    System.out.println("Default starts");
+    this.feeder.setPercent(0);
     this.haveCarriageNote = false;
     this.haveNote = false;
+    this.haveFeederNote = false;
     if (this.proximity.getShooterProximity()){
       this.haveNote = true;
     }
@@ -42,22 +44,23 @@ public class FeederDefault extends Command {
     if (this.proximity.getShooterProximity()){
       this.haveNote = true;
     }
-    System.out.println("Have note: " + haveNote);
-    // SmartDashboard.putBoolean("have note", haveNote);
-    System.out.println("Have carriage note: " + haveCarriageNote);
-    // SmartDashboard.putBoolean("have carriage note", haveCarriageNote);
-    if (this.haveCarriageNote && !this.haveNote){
-      this.feeder.set(120);
-      System.out.println("1");
+
+    if (this.proximity.getFeederProximity()){
+      this.haveFeederNote = true;
+    }
+    
+    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
+      this.feeder.set(200);
+    } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
+      this.feeder.setPercent(0);
     } else if (this.haveNote && !this.proximity.getShooterProximity()){
       this.feeder.setPercent(0);
-      System.out.println("2");
+    } else if (this.haveCarriageNote && !this.haveNote){
+      this.feeder.set(200);
     } else if (this.haveNote){
-      this.feeder.set(70);
-      System.out.println("3");
+      this.feeder.set(100);
     } else {
       this.feeder.setPercent(0.0);
-      System.out.println("4");
     }
   }
 
