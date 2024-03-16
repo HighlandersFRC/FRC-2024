@@ -116,6 +116,6 @@ public class Feeder extends SubsystemBase {
   @Override
   public void periodic() {
     SmartDashboard.putNumber("Feeder RPM", Constants.RPSToRPM(getRPS()));
-    Logger.recordOutput("Feeder RPM", Constants.RPSToRPM(getRPS()));
+    // Logger.recordOutput("Feeder RPM", Constants.RPSToRPM(getRPS()));
   }
 }

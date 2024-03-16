@@ -484,11 +484,11 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    Logger.recordOutput("Camera Measurements", getCameraMeasurements().toString());
-    Logger.recordOutput("Pigeon Angle", getPigeonAngle());
-    Vector accelVector = getPigeonLinAccel();
-    Logger.recordOutput("Pigeon Acceleration Vector Magnitude", accelVector.magnitude());
-    Logger.recordOutput("Pigeon Acceleration Vector Magnitude", Math.atan2(accelVector.getI(), accelVector.getJ()));
+    // Logger.recordOutput("Camera Measurements", getCameraMeasurements().toString());
+    // Logger.recordOutput("Pigeon Angle", getPigeonAngle());
+    // Vector accelVector = getPigeonLinAccel();
+    // Logger.recordOutput("Pigeon Acceleration Vector Magnitude", accelVector.magnitude());
+    // Logger.recordOutput("Pigeon Acceleration Vector Magnitude", Math.atan2(accelVector.getI(), accelVector.getJ()));
 
     // ConnectionInfo[] info = NetworkTableInstance.getDefault().getConnections();
     // for (ConnectionInfo i : info){

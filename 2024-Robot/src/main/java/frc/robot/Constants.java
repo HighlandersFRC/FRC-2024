@@ -566,9 +566,9 @@ public final class Constants {
     public static final int INTAKE_TOF_ID = 2;
 
     //proximity
-    public static final int SHOOTER_PROXIMITY_PORT = 1;
+    public static final int SHOOTER_PROXIMITY_PORT = 3;
     public static final int CARRIAGE_PROXIMITY_PORT = 2;
-    public static final int FEEDER_PROXIMITY_PORT = 3;
+    public static final int FEEDER_PROXIMITY_PORT = 1;
 
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;

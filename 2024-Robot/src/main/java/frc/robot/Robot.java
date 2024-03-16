@@ -84,7 +84,7 @@ public class Robot extends LoggedRobot {
   private Feeder feeder = new Feeder(tof, proximity);
   private Climber climber = new Climber(lights, tof, proximity);
 
-  private Logger logger = Logger.getInstance();
+  // private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
@@ -113,14 +113,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    System.out.println("Starting");
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    // System.out.println("Starting");
+    // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    Logger.recordMetadata("Code", "Running");
+    // Logger.recordMetadata("Code", "Running");
     // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
-    System.out.println("Started Logger");
+    // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    // System.out.println("Started Logger");
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
@@ -160,7 +160,7 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "10.44.99.44", 5800);
     PortForwarder.add(5801, "10.44.99.44", 5801);
 
-    System.out.println("ports forwarded");
+    // System.out.println("ports forwarded");
     this.nothingAuto = new NothingAuto();
     try {
       this.fourPieceCloseFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
@@ -230,9 +230,9 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     // System.out.println("Running");
 
-    Logger.recordOutput("Odometry", drive.getOdometry());
-    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
-    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
+    // Logger.recordOutput("Odometry", drive.getOdometry());
+    // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
+    // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
 
     lights.periodic();
     intake.periodic();

@@ -54,9 +54,10 @@ public class ClimberDefault extends Command {
       this.isZeroed = true;
       this.numTimesHitBottom = 0;
       this.climber.zeroElevator();
+      System.out.println("zero elevator");
     }
 
-    if (Math.abs(this.climber.getElevatorPositionMeters()) > 0.05){
+    if (Math.abs(this.climber.getElevatorPositionMeters()) > 0.05 && this.isZeroed){
       this.isZeroed = false;
       this.numTimesHitBottom = 0;
     }
@@ -104,12 +105,17 @@ public class ClimberDefault extends Command {
       }
     } else {
       this.climber.setTrapRollerPercent(0);
-      this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      //If the elevator is down, keep the carriage down to not trip the carriage proximity
+      if (this.climber.getElevatorPositionMeters() < 0.1) {
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+      } else {
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      }
       // System.out.println("default else");
       if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 6){
-        // this.climber.setElevatorTorque(-5, 0.45);
+        this.climber.setElevatorTorque(-5, 0.45);
       } else {
-        // this.climber.setElevatorTorque(0, 0);
+        this.climber.setElevatorTorque(0, 0);
       }
     }
   }

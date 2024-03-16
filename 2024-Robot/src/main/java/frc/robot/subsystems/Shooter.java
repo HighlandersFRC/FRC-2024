@@ -277,9 +277,9 @@ public class Shooter extends SubsystemBase {
   // Constantly set flywheel velocity PID
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
-    Logger.recordOutput("Flywheel RPM", getFlywheelRPM());
+    // Logger.recordOutput("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
-    Logger.recordOutput("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
+    // Logger.recordOutput("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
     // SmartDashboard.putNumber("Flywheel %Out Master",
     // this.flywheelVortexMaster.getAppliedOutput());
     // SmartDashboard.putNumber("Flywheel %Out Follower",
@@ -314,11 +314,11 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.getNumber("Flywheel I value", getI());
     SmartDashboard.getNumber("Flywheel D value", getD());
     SmartDashboard.putBoolean(" Shooter Encoder", shooterEncoder);
-    Logger.recordOutput("Shooter Angle", getAngleDegrees());
-    Logger.recordOutput("Shooter Encoder Online?", shooterEncoder);
+    // Logger.recordOutput("Shooter Angle", getAngleDegrees());
+    // Logger.recordOutput("Shooter Encoder Online?", shooterEncoder);
     SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
-    Logger.recordOutput("Shooter Angle Motor Online?", shooterEncoder);
-    Logger.recordOutput("Shooter Angle Setpoint", angleFalcon.getClosedLoopReference().getValueAsDouble());
-    Logger.recordOutput("Shooter Velocity Setpoint", flywheelFalconMaster.getClosedLoopReference().getValueAsDouble());
+    // Logger.recordOutput("Shooter Angle Motor Online?", shooterEncoder);
+    // Logger.recordOutput("Shooter Angle Setpoint", angleFalcon.getClosedLoopReference().getValueAsDouble());
+    // Logger.recordOutput("Shooter Velocity Setpoint", flywheelFalconMaster.getClosedLoopReference().getValueAsDouble());
   }
 }

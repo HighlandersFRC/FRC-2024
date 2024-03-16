@@ -390,8 +390,8 @@ public class Climber extends SubsystemBase {
     boolean climbFollower = false;
     SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
     SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
-    Logger.recordOutput("Elevator Meters", getElevatorPositionMeters());
-    Logger.recordOutput("Elevator Rotations", getElevatorPositionRotations());
+    // Logger.recordOutput("Elevator Meters", getElevatorPositionMeters());
+    // Logger.recordOutput("Elevator Rotations", getElevatorPositionRotations());
     if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
       climbMaster = true;
     }

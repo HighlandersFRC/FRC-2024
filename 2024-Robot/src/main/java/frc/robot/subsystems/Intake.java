@@ -268,10 +268,10 @@ public class Intake extends SubsystemBase {
     
     SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
     SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
-    Logger.recordOutput("Intake Angle Motor Online?", angleMotor);
-    Logger.recordOutput("Intake Roller Motor Online?", intakeMotor);
-    Logger.recordOutput("Intake Angle", getAngleDegrees());
-    Logger.recordOutput("Intake Angle Setpoint", Constants.degreesToRotations(angleFalcon.getClosedLoopReference().getValueAsDouble()/Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
-    Logger.recordOutput("Intake Roller Velocity", rollerFalcon.getRotorVelocity().getValueAsDouble()/Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO);
+    // Logger.recordOutput("Intake Angle Motor Online?", angleMotor);
+    // Logger.recordOutput("Intake Roller Motor Online?", intakeMotor);
+    // Logger.recordOutput("Intake Angle", getAngleDegrees());
+    // Logger.recordOutput("Intake Angle Setpoint", Constants.degreesToRotations(angleFalcon.getClosedLoopReference().getValueAsDouble()/Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
+    // Logger.recordOutput("Intake Roller Velocity", rollerFalcon.getRotorVelocity().getValueAsDouble()/Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO);
   }
 }
