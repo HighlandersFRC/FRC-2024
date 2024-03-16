@@ -25,7 +25,7 @@ public class AutoIntake extends Command {
 
   private boolean haveNote;
   private double haveNoteTime = 0;
-  private double timeout = 5;
+  private double timeout = 10;
   private double initTime;
 
   public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
