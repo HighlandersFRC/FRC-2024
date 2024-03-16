@@ -97,6 +97,7 @@ public class SmartIntake extends Command {
       this.feeder.set(120);
       this.climber.setTrapRollerTorque(20, 0.2);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      // System.out.println("smart intake");
     } else if (this.haveNote){
       this.feeder.setPercent(0);
       this.climber.setTrapRollerTorque(20, 0.2);
@@ -105,6 +106,7 @@ public class SmartIntake extends Command {
       this.feeder.set(this.feederRPM);
       this.climber.setTrapRollerTorque(20, 0.4);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      // System.out.println("smart intake2");
     }
   }
 

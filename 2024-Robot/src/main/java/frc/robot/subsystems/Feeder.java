@@ -27,7 +27,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.FeederDefault;
-
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 
 public class Feeder extends SubsystemBase {
@@ -45,8 +45,8 @@ public class Feeder extends SubsystemBase {
    *
    * @param tof The Time-of-Flight (TOF) sensor used by the Feeder.
   */
-  public Feeder(TOF tof) {
-    setDefaultCommand(new FeederDefault(this,tof));
+  public Feeder(TOF tof, Proximity proximity) {
+    setDefaultCommand(new FeederDefault(this,tof,proximity));
   }
 
   /**

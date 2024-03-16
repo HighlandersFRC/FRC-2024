@@ -32,6 +32,7 @@ import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StopDriving;
 import frc.robot.commands.TurnToTarget;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
@@ -62,7 +63,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private JSONObject pathRead4;
 
   /** Creates a new FivePieceAuto. */
-  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof) {
+  public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof, Proximity proximity) {
     try {
       pathingFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -113,7 +114,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false),
@@ -127,7 +128,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false),
@@ -141,7 +142,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false),
@@ -156,7 +157,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, lights, peripherals, pathJSON4, 0, false, false),
-        new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500),
         new AutoPrepForShot(shooter, tof, 0, 7000)
       ),
       new ParallelDeadlineGroup(

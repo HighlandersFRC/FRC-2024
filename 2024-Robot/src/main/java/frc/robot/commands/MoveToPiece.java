@@ -40,7 +40,7 @@ public class MoveToPiece extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double angleToPiece = -peripherals.getBackCamTargetTx();
+    double angleToPiece = peripherals.getBackCamTargetTx();
     pid.updatePID(angleToPiece);
     double result = -pid.getResult();
 

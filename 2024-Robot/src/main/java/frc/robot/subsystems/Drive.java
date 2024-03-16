@@ -1205,15 +1205,20 @@ public class Drive extends SubsystemBase {
         }
 
         if (pickupNote){
-          double angleToNote =  (-peripherals.getBackCamTargetTx());
-          double differenceX = Math.abs(targetX - currentPointX);
-          double differenceY = Math.abs(targetY - currentPointY);
-          double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
-          double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
-          double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
-          targetX = targetX + adjustedX;
-          targetY = targetY + (3 * adjustedY);
-          targetTheta = targetTheta - angleToNote;
+          double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
+          double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
+          // double confidence = peripherals.getBackCamTargetConfidence();
+          // System.out.println("conf: " + confidence);
+          if (tyToNote < 0.15 && (Math.abs(angleToNote) > 0.01)){
+            double differenceX = Math.abs(targetX - currentPointX);
+            double differenceY = Math.abs(targetY - currentPointY);
+            double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
+            double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
+            double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
+            targetX = targetX + adjustedX;
+            targetY = targetY + (3 * adjustedY);
+            targetTheta = targetTheta - angleToNote;
+          }
         }
 
         double feedForwardX = (targetX - currentPointX)/(targetTime - currentPointTime);
