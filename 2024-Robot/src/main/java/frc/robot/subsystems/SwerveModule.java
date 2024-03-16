@@ -42,7 +42,14 @@ public class SwerveModule extends SubsystemBase {
   boolean can3;
   boolean can4;
 
-  /** Creates a new SwerveModule. */
+  /**
+   * Constructs a new SwerveModule instance.
+   *
+   * @param mModuleNum  The module number.
+   * @param mAngleMotor The TalonFX motor used for controlling the angle of the module.
+   * @param mDriveMotor The TalonFX motor used for driving the module.
+   * @param mCanCoder   The CANCoder sensor used for feedback control.
+   */
   public SwerveModule(int mModuleNum, TalonFX mAngleMotor, TalonFX mDriveMotor, CANcoder mCanCoder) {
     // creates values for a single module
     moduleNumber = mModuleNum;
@@ -50,7 +57,11 @@ public class SwerveModule extends SubsystemBase {
     driveMotor = mDriveMotor;
     canCoder = mCanCoder;
   }
-
+  /**
+   * Calculates the torque angle for the swerve module.
+   * 
+   * @return The torque angle in radians.
+   */
   public double torqueAngle(){
     // math to find turn angle
     double length = Constants.Physical.ROBOT_LENGTH/2, width = Constants.Physical.ROBOT_WIDTH/2, angle;
@@ -128,29 +139,59 @@ public class SwerveModule extends SubsystemBase {
     angleMotor.getConfigurator().apply(angleMotorConfig);
     driveMotor.getConfigurator().apply(driveMotorConfig);
   }
-
+  
+  /**
+   * Sets the position and velocity PID for the swerve module's wheel.
+   * 
+   * @param angle    The desired angle for the wheel.
+   * @param velocity The desired velocity for the wheel.
+   */
   public void setWheelPID(double angle, double velocity){
     // method used to move wheel
     angleMotor.setControl(positionTorqueFOCRequest.withPosition(degreesToRotations(Math.toDegrees(angle))));
     driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(wheelToDriveMotorRotations(velocity)));
   }
-
+  
+  /**
+   * Sets the drive motor velocity
+   * @param velocity - Wheel Velocity in RPS
+   */
   public void setDrivePID(double velocity){
     driveMotor.setControl(velocityTorqueFOCRequest.withVelocity(wheelToDriveMotorRotations(velocity)));
   }
 
+  /**
+   * Converts wheel to motor rotations for the steer motor
+   * @param rotations - Wheel angle in rotations
+   * @return - Motor angle in rotations
+   */
   public double wheelToSteerMotorRotations(double rotations){
     return (rotations * Constants.Ratios.STEER_GEAR_RATIO);
   }
-
+  
+  /**
+   * Converts motor to wheel rotations for the steer motor
+   * @param rotations - Motor angle in rotations
+   * @return Wheel angle in rotations
+   */
   public double steerMotorToWheelRotations(double rotations){
     return (rotations / Constants.Ratios.STEER_GEAR_RATIO);
   }
 
+  /**
+   * Converts wheel to motor rotations for the drive motor
+   * @param rotations - Wheel rotations
+   * @return Motor rotations
+   */
   public double wheelToDriveMotorRotations(double rotations){
     return (rotations * Constants.Ratios.DRIVE_GEAR_RATIO);
   }
 
+  /**
+   * Converts wheel to motor rotations for the drive motor
+   * @param rotations - Motor rotations
+   * @return Wheel rotations
+   */
   public double driveMotorToWheelRotations(double rotations){
     return (rotations / Constants.Ratios.DRIVE_GEAR_RATIO);
   }
@@ -163,10 +204,20 @@ public class SwerveModule extends SubsystemBase {
     return rotations * 360;
   }
 
+  /**
+   * Ground meters to wheel rotations
+   * @param mps - Meters Per Second
+   * @return - Wheel Rotations per Second
+   */
   public double MPSToRPS(double mps){
     return (mps * Constants.Physical.WHEEL_ROTATION_PER_METER);
   }
 
+  /**
+   * Ground meters to wheel rotations
+   * @param rps - Meters Per Second
+   * @return - Wheel Rotations per Second
+   */
   public double RPSToMPS(double rps){
     return (rps / Constants.Physical.WHEEL_ROTATION_PER_METER);
   }
@@ -179,6 +230,11 @@ public class SwerveModule extends SubsystemBase {
     driveMotor.set(-0.5);
   }
 
+  /**
+   * Gets the distance traveled by the swerve module's wheel.
+   * 
+   * @return The distance traveled by the wheel in meters.
+   */
   public double getModuleDistance(){
     double position = driveMotor.getPosition().getValue();
     // double wheelRotations = (position * Constants.Wheel_Rotations_In_A_Meter) / Constants.GEAR_RATIO;
@@ -186,61 +242,121 @@ public class SwerveModule extends SubsystemBase {
     double distance = RPSToMPS(wheelRotations);
     return distance;
   }
-
+  
+  /**
+   * Retrieves Wheel Angle
+   * @return Wheel angle in radians
+   */
   public double getWheelPosition(){
     double position = angleMotor.getPosition().getValue();
     return Constants.rotationsToRadians(position);
   }
 
+  /**
+   * Retrieves the current wheel velocity
+   * @return Wheel velocity in RPS
+   */
   public double getWheelSpeed(){
     double speed = driveMotorToWheelRotations(driveMotor.getVelocity().getValue());
     return speed;
   }
 
+  /**
+   * Retrieves the velocity of the angle of the wheel
+   * @return Wheel Angle Velocity in RPS
+   */
   public double getAngleVelocity(){
     return angleMotor.getVelocity().getValue();
   }
 
+  /**
+   * Retrieves the velocity of the drive motor rotor
+   * @return Rotor velocity (RPS)
+   */
   public double getWheelSpeedWithoutGearRatio(){
     return driveMotor.getVelocity().getValue();
   }
 
+  /**
+   * Retrieves the angle of the motor rotor
+   * @return Angle Rotor Position (radians)
+   */
   public double getAngleMotorPosition(){
     double degrees = rotationsToDegrees(wheelToSteerMotorRotations(angleMotor.getPosition().getValue()));
     return (Math.toRadians(degrees));
   }
 
+  /**
+   * Retrieves the absolute position of the CANCoder
+   * @return CANCoder absolute position (rotations)
+   */
   public double getCanCoderPosition(){
     return canCoder.getAbsolutePosition().getValue();
   }
 
+  /**
+   * Retrieves the absolute position of the CANCoder
+   * @return CANCoder absolute position (radians)
+   */
   public double getCanCoderPositionRadians(){
     return Constants.rotationsToRadians(canCoder.getAbsolutePosition().getValue());
   }
 
+  /**
+   * Retrieves the current ground speed of the swerve module
+   * @return Speed (MPS)
+   */
   public double getGroundSpeed(){
     return RPSToMPS(getWheelSpeed());
   }
-
+  
+  /**
+   * Retrieves the setpoint of the angle motor
+   * @return Angle motor setpoint (rotations)
+   */
   public double getAngleMotorSetpoint(){
     return angleMotor.getClosedLoopReference().getValue();
   }
 
+  /**
+   * Retrieves the setpoint of the drive motor
+   * @return Drive motor setpoint (MPS)
+   */
   public double getDriveMotorSetpoint(){
     return RPSToMPS(driveMotorToWheelRotations(driveMotor.getClosedLoopReference().getValue()));
   }
 
+  /**
+   * Calculates the angle of the joystick input relative to the positive y-axis.
+   * 
+   * @param joystickY The y-component of the joystick input.
+   * @param joystickX The x-component of the joystick input.
+   * @return The angle of the joystick input in radians, relative to the positive y-axis.
+  */
   public double getJoystickAngle(double joystickY, double joystickX) {
     double joystickAngle = Math.atan2(-joystickX, -joystickY);
     return joystickAngle;
   }
 
+  /**
+   * Calculates the position magnitude of the joystick input.
+   * 
+   * @param joystickY The y-component of the joystick input.
+   * @param joystickX The x-component of the joystick input.
+   * @return The magnitude of the joystick position.
+   */
   public double getJoystickPosition(double joystickY, double joystickX){
     double position = joystickY * joystickY + joystickX * joystickX;
     return position;
   }
   
-  // main drive method
+  /**
+   * Drives the swerve module based on the given control vector, turn value, and current orientation.
+   * 
+   * @param vector The control vector representing the desired direction and magnitude of movement.
+   * @param turnValue The turn value representing the rotation to be applied.
+   * @param navxAngle The current orientation angle from the IMU sensor.
+   */
   public void drive(Vector vector, double turnValue, double navxAngle){
     if(Math.abs(vector.getI()) < 0.001 && Math.abs(vector.getJ()) < 0.001 && Math.abs(turnValue) < 0.01) {
       // stops motors when joysticks are at 0
@@ -294,7 +410,13 @@ public class SwerveModule extends SubsystemBase {
   }
 }
 
-  // optimizer
+  /**
+   * Finds the closest angle between two given angles, considering wrap-around at 360 degrees.
+   *
+   * @param angleA The first angle.
+   * @param angleB The second angle.
+   * @return The closest angle from angle A to angle B, taking into account wrap-around.
+   */
   public double findClosestAngle(double angleA, double angleB){
     double direction = angleB - angleA;
 
@@ -306,40 +428,40 @@ public class SwerveModule extends SubsystemBase {
 
   @Override
   public void periodic() {
-      if(driveMotor.getDeviceID() == 1 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 2 && angleMotor.getSupplyVoltage().getValue() != 0.0){
-        frontRight = true;
-        // System.out.println("front right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
-      } 
-      if(driveMotor.getDeviceID() == 3 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 4 && angleMotor.getSupplyVoltage().getValue() != 0.0){
-        frontLeft = true;
-        // System.out.println("front left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
-      } 
-      if(driveMotor.getDeviceID() == 5 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 6 && angleMotor.getSupplyVoltage().getValue() != 0.0){
-        backLeft = true;
-        // System.out.println("back left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
-      }
-      if(driveMotor.getDeviceID() == 7 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 8 && angleMotor.getSupplyVoltage().getValue() != 0.0){
-        backRight = true;        
-        // System.out.println("back right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
-      }
+    //   if(driveMotor.getDeviceID() == 1 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 2 && angleMotor.getSupplyVoltage().getValue() != 0.0){
+    //     frontRight = true;
+    //     // System.out.println("front right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+    //   } 
+    //   if(driveMotor.getDeviceID() == 3 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 4 && angleMotor.getSupplyVoltage().getValue() != 0.0){
+    //     frontLeft = true;
+    //     // System.out.println("front left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+    //   } 
+    //   if(driveMotor.getDeviceID() == 5 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 6 && angleMotor.getSupplyVoltage().getValue() != 0.0){
+    //     backLeft = true;
+    //     // System.out.println("back left - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+    //   }
+    //   if(driveMotor.getDeviceID() == 7 && driveMotor.getSupplyVoltage().getValue() != 0.0 && angleMotor.getDeviceID() == 8 && angleMotor.getSupplyVoltage().getValue() != 0.0){
+    //     backRight = true;        
+    //     // System.out.println("back right - " + driveMotor.getSupplyVoltage().getValue() + " + " + angleMotor.getSupplyVoltage().getValue());
+    //   }
 
-    if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0 && frontRight == true){
-      swerveCan1 = true;
-      // System.out.println("can 1 - " + canCoder.getSupplyVoltage().getValue());
-    } else if(canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0 && frontLeft == true){
-      swerveCan2 = true;
-      // System.out.println("can 2 - " + canCoder.getSupplyVoltage().getValue());
-    } else if(canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0 && backLeft == true){
-      swerveCan3 = true;
-      // System.out.println("can 3 - " + canCoder.getSupplyVoltage().getValue());
-    } else if(canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0 && backRight == true){
-      swerveCan4 = true;
-      // System.out.println("can 4 - " + canCoder.getSupplyVoltage().getValue());
-    }
+    // if(canCoder.getDeviceID() == 1 && canCoder.getSupplyVoltage().getValue() != 0 && frontRight == true){
+    //   swerveCan1 = true;
+    //   // System.out.println("can 1 - " + canCoder.getSupplyVoltage().getValue());
+    // } else if(canCoder.getDeviceID() == 2 && canCoder.getSupplyVoltage().getValue() != 0 && frontLeft == true){
+    //   swerveCan2 = true;
+    //   // System.out.println("can 2 - " + canCoder.getSupplyVoltage().getValue());
+    // } else if(canCoder.getDeviceID() == 3 && canCoder.getSupplyVoltage().getValue() != 0 && backLeft == true){
+    //   swerveCan3 = true;
+    //   // System.out.println("can 3 - " + canCoder.getSupplyVoltage().getValue());
+    // } else if(canCoder.getDeviceID() == 4 && canCoder.getSupplyVoltage().getValue() != 0 && backRight == true){
+    //   swerveCan4 = true;
+    //   // System.out.println("can 4 - " + canCoder.getSupplyVoltage().getValue());
+    // }
 
-    SmartDashboard.putBoolean(" Swerve can(1)", swerveCan1);
-    SmartDashboard.putBoolean(" Swerve can(2)", swerveCan2);
-    SmartDashboard.putBoolean(" Swerve can(3)", swerveCan3);
-    SmartDashboard.putBoolean(" Swerve can(4)", swerveCan4);    
+    // SmartDashboard.putBoolean(" Swerve can(1)", swerveCan1);
+    // SmartDashboard.putBoolean(" Swerve can(2)", swerveCan2);
+    // SmartDashboard.putBoolean(" Swerve can(3)", swerveCan3);
+    // SmartDashboard.putBoolean(" Swerve can(4)", swerveCan4);    
   }
 }

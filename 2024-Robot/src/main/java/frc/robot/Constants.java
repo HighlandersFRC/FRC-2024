@@ -31,10 +31,21 @@ public final class Constants {
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
 
+    /**
+     * Converts flywheel RPM (Revolutions Per Minute) to linear speed in meters per second (m/s).
+     *
+     * @param rpm The flywheel speed in RPM.
+     * @return The equivalent linear speed in meters per second (m/s).
+     */
     public static double flywheelRPMToNoteMPS(double rpm){
       return rpm * (1.0 / 60.0) * FLYWHEEL_CIRCUMFERENCE_METERS;
     }
-
+    /**
+     * Converts linear speed in meters per second (m/s) to flywheel RPM (Revolutions Per Minute).
+     *
+     * @param mps The linear speed in meters per second (m/s).
+     * @return The equivalent flywheel speed in RPM.
+     */
     public static double noteMPSToFlywheelRPM(double mps){
       return (mps / FLYWHEEL_CIRCUMFERENCE_METERS) * 60.0;
     }
@@ -65,40 +76,48 @@ public final class Constants {
     }
 
     //shooter
-    public static final double SHOOTER_CENTER_OFFSET_DEG = 22.0;
+    public static final double SHOOTER_CENTER_OFFSET_DEG = 0.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18 * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
-    // {distance(inches), target angle(deg), hood angle(deg), RPM}
+    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg)}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.302, 11.87, 58, 4500, 1.5},
-      {1.442, 10.20, 57, 4500, 1.5},
-      {1.732, 6.70, 51, 4500, 1.5},
-      {2.072, 3.57, 45, 4500, 1.5},
-      {2.442, 0.92, 40, 4750, 1.5},
-      {2.842, -1.09, 35, 5000, 1.5},
-      {3.062, -1.95, 33.75, 5125, 1.5},
-      {3.302, -2.55, 33, 5250, 1.5},
-      {3.412, -3.13, 32, 5250, 1.5},
-      {3.722, -4.01, 28.5, 5500, 1.5},
-      {4.072, -5.03, 28, 5750, 1.5},
-      {4.372, -5.69, 27.5, 6000, 1.5},
-      {4.592, -5.91, 26, 6250, 1.5},
-      {4.812, -6.27, 26, 6375, 1.5},
-      {5.152, -6.59, 25.25, 6500, 1},
-      {5.442, -7.16, 24, 6625, 1},
-      {5.712, -8.26, 22.25, 6750, 1},
-      {6.117, -8.51, 21.25, 7000, 1},
-      {6.382, -8.60, 21, 7250, 1},
-      {6.682, -8.82, 20.5, 7500, 1},
-      {6.912, -9.20, 19.5, 7750, 1},
-      {7.252, -9.44, 19.25, 8000, 1}
+      {1.302, 11.87, 58, 4000, 1},
+      {1.442, 10.20, 56, 4000, 1},
+      {1.732, 6.70, 52, 4250, 1},
+      {2.072, 3.57, 48, 4500, 1},
+      {2.442, 0.92, 42, 4750, 1},
+      {2.842, -1.09, 38, 5000, 1},
+      {3.062, -1.95, 36.5, 5125, 1},
+      {3.302, -2.55, 35, 5250, 1},
+      {3.412, -3.13, 33, 5250, 1},
+      {3.722, -4.01, 31.25, 5500, 1},
+      {4.072, -5.03, 28.5, 5750, 1},
+      {4.372, -5.69, 27.5, 6000, 1},
+      {4.592, -5.91, 26, 6250, 1},
+      {4.812, -6.27, 26, 6375, 1},
+      {5.152, -6.59, 25.25, 6500, 0.75},
+      {5.442, -7.16, 24, 6625, 0.75},
+      {5.712, -8.26, 22.25, 6750, 0.75},
+      {6.117, -8.51, 21.25, 7000, 0.75},
+      {6.382, -8.60, 21, 7250, 0.75},
+      {6.682, -8.82, 20.5, 7500, 0.75},
+      {6.912, -9.20, 19.5, 7750, 0.75},
+      {7.252, -9.44, 19.25, 8000, 0.75}
     };
 
+    /**
+     * Interpolates a value from a lookup table based on the given xValue.
+     * 
+     * @param xIndex  The index of the x-values in the lookup table.
+     * @param yIndex  The index of the y-values in the lookup table.
+     * @param xValue  The x-value for which to interpolate a y-value.
+     * @return        The interpolated y-value corresponding to the given x-value.
+     */
     public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
         int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
         if (xValue > SHOOTING_LOOKUP_TABLE[0][xIndex]) {
@@ -133,24 +152,58 @@ public final class Constants {
         }
     }
 
+    /**
+     * Calculates shooter values (flywheel velocity and note velocity) based on the given angle.
+     *
+     * @param angle The angle of the shooter.
+     * @return An array containing the calculated flywheel velocity and note velocity.
+     */
     public static double[] getShooterValuesFromAngle(double angle) {
       return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
       // return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
     }
 
+    /**
+     * Calculates shooter values (flywheel velocity and note velocity) based on the given distance.
+     *
+     * @param dist The distance from the shooter to the target.
+     * @return An array containing the calculated flywheel velocity and note velocity.
+     */
     public static double[] getShooterValuesFromDistance(double dist) {
       return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
+    /**
+     * Calculates the allowed angle error based on the given angle.
+     *
+     * @param angle The angle of the shooter.
+     * @return The allowed angle error.
+     */
     public static double getAllowedAngleErrFromAngle(double angle){
       return getInterpolatedValue(1, 4, angle);
     }
 
+    /**
+     * Calculates the distance from the target based on the given vertical angle.
+     *
+     * @param ty The vertical angle of the target.
+     * @return The distance from the target.
+     */
     public static double getDistFromAngle(double ty) {
       return getInterpolatedValue(1, 0, ty);
     }
 
+    /**
+     * Calculates the velocity-adjusted setpoint for the shooter and pigeon angles based on various parameters.
+     *
+     * @param pigeonAngleDegrees  The current angle of the pigeon in degrees.
+     * @param speakerAngleDegrees The angle of the speaker in degrees.
+     * @param shooterAngleDegrees The current angle of the shooter in degrees.
+     * @param shooterRPM          The current RPM of the shooter.
+     * @param robotVelocityMPS    The velocity vector of the robot in meters per second.
+     * @return An array containing the adjusted setpoints for the pigeon angle, shooter angle, and shooter RPM.
+     */
     public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees, double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS){
       double thetaI = Math.toRadians(pigeonAngleDegrees - speakerAngleDegrees);
       double phiI = Math.toRadians(shooterAngleDegrees);
@@ -183,6 +236,14 @@ public final class Constants {
       return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
     }
 
+    /**
+     * Calculates the additional angle (addedTheta) required to adjust for depth added to the target angle.
+     *
+     * @param targetAngleDegrees The target angle in degrees.
+     * @param distanceMeters     The distance to the target in meters.
+     * @param depthAddedMeters   The additional depth added to the target in meters.
+     * @return The additional angle (addedTheta) in degrees.
+     */
     public static double getAddedTheta(double targetAngleDegrees, double distanceMeters, double depthAddedMeters) {
       targetAngleDegrees = standardizeAngleDegrees(targetAngleDegrees);
       double targetAngleRadians = Math.toRadians(targetAngleDegrees);
@@ -196,7 +257,13 @@ public final class Constants {
       }
       return Math.toDegrees(addedAngleRadians);
     }
-  
+
+    /**
+     * Standardizes an angle to be within the range [0, 360) degrees.
+     *
+     * @param angleDegrees The input angle in degrees.
+     * @return The standardized angle within the range [0, 360) degrees.
+     */
     public static double standardizeAngleDegrees(double angleDegrees) {
       if(angleDegrees >= 0 && angleDegrees < 360) {
         return angleDegrees;
@@ -211,11 +278,18 @@ public final class Constants {
         }
         return angleDegrees;
       } else {
-        System.out.println("Weird ErroR");
+        // System.out.println("Weird ErroR");
         return angleDegrees;
       }
     }
 
+    /**
+     * Calculates the adjusted pigeon angle based on the target angle and distance to the speaker.
+     *
+     * @param targetPigeonAngleDegrees The target angle for the pigeon in degrees.
+     * @param distToSpeakerMeters      The distance to the speaker in meters.
+     * @return The adjusted pigeon angle in degrees.
+     */
     public static double getAdjustedPigeonAngle(double targetPigeonAngleDegrees, double distToSpeakerMeters){
       double adjustment = getAddedTheta(targetPigeonAngleDegrees, distToSpeakerMeters, (Constants.Physical.SPEAKER_DEPTH / 2));
       // System.out.println("Angle Adjustment: " + adjustment);
@@ -336,14 +410,24 @@ public final class Constants {
     */
 
     //Standard deviation regressions
-    //Increases standard deviation with distance from tag
+    /**
+     * Calculates the standard deviation scalar based on the distance from the tag.
+     *
+     * @param dist The distance from the tag.
+     * @return The standard deviation scalar.
+     */
     public static double getTagDistStdDevScalar(double dist){
       double a = TAG_STANDARD_DEVIATION_FLATNESS;
       double b = 1 - a * Math.pow(TAG_STANDARD_DEVIATION_DISTANCE, 2);
       return Math.max(1, a * Math.pow(dist, 2) + b);
     }
 
-    // Decreases standard deviation with more tag present in one MegaTag botpose
+    /**
+     * Calculates the standard deviation scalar based on the number of detected tags.
+     *
+     * @param numTags The number of detected tags.
+     * @return The standard deviation scalar.
+     */
     public static double getNumTagStdDevScalar(int numTags){
       if (numTags == 0){
         return 99999;
@@ -356,22 +440,46 @@ public final class Constants {
       }
     }
 
-    //Regression for standard deviation in x for fiducial measurements
+    /**
+     * Calculates the standard deviation of the x-coordinate based on the given offsets.
+     *
+     * @param xOffset The x-coordinate offset.
+     * @param yOffset The y-coordinate offset.
+     * @return The standard deviation of the x-coordinate.
+     */
     public static double getTagStdDevX(double xOffset, double yOffset){
       return Math.max(0, 0.005533021491867763 * (xOffset * xOffset + yOffset * yOffset) - 0.010807566510145635) * STANDARD_DEVIATION_SCALAR;
     }
 
-    //Regression for standard deviation in y for fiducial measurements
+    /**
+     * Calculates the standard deviation of the y-coordinate based on the given offsets.
+     *
+     * @param xOffset The x-coordinate offset.
+     * @param yOffset The y-coordinate offset.
+     * @return The standard deviation of the y-coordinate.
+     */
     public static double getTagStdDevY(double xOffset, double yOffset){
       return Math.max(0, 0.0055 * (xOffset * xOffset + yOffset * yOffset) - 0.01941597810542626) * STANDARD_DEVIATION_SCALAR;
     }
 
-    //Regression for standard deviation in x for triangulation measurements
+    /**
+     * Calculates the standard deviation in the x-coordinate for triangulation measurements.
+     *
+     * @param xOffset The x-coordinate offset.
+     * @param yOffset The y-coordinate offset.
+     * @return The standard deviation in the x-coordinate.
+     */
     public static double getTriStdDevX(double xOffset, double yOffset){
       return Math.max(0, 0.004544133588821881 * (xOffset * xOffset + yOffset * yOffset) - 0.01955724864971872) * STANDARD_DEVIATION_SCALAR;
     }
 
-    //Regression for standard deviation in y for triangulation measurements
+    /**
+     * Calculates the standard deviation in the y-coordinate for triangulation measurements.
+     *
+     * @param xOffset The x-coordinate offset.
+     * @param yOffset The y-coordinate offset.
+     * @return The standard deviation in the y-coordinate.
+     */
     public static double getTriStdDevY(double xOffset, double yOffset){
       return Math.max(0, 0.002615358015002413 * (xOffset * xOffset + yOffset * yOffset) - 0.008955462032388808) * STANDARD_DEVIATION_SCALAR;
     }
@@ -400,10 +508,22 @@ public final class Constants {
     public static final double CARRIAGE_ROTATION_GEAR_RATIO = 100.0;
     public static final double ELEVATOR_MOTOR_ROTATIONS_PER_METER = 219.254;
 
+    /**
+     * Converts elevator motor rotations to meters.
+     *
+     * @param rotations The number of rotations of the elevator motor.
+     * @return The equivalent distance in meters.
+     */
     public static double elevatorRotationsToMeters(double rotations){
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
     }
 
+    /**
+     * Converts meters to elevator motor rotations.
+     *
+     * @param meters The distance in meters to be converted.
+     * @return The equivalent number of rotations of the elevator motor.
+     */
     public static double elevatorMetersToRotations(double meters){
       return meters * ELEVATOR_MOTOR_ROTATIONS_PER_METER;
     }
@@ -445,6 +565,11 @@ public final class Constants {
     public static final int CARRIAGE_TOF_ID = 1;
     public static final int INTAKE_TOF_ID = 2;
 
+    //proximity
+    public static final int SHOOTER_PROXIMITY_PORT = 3;
+    public static final int CARRIAGE_PROXIMITY_PORT = 2;
+    public static final int FEEDER_PROXIMITY_PORT = 1;
+
     //Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
@@ -462,46 +587,115 @@ public final class Constants {
     public static final double LEFT_TRIGGER_DEADZONE = 0.1;
   }
 
+  /**
+   * Converts inches to meters.
+   *
+   * @param inches The length in inches to be converted.
+   * @return The equivalent length in meters.
+   */
   public static double inchesToMeters(double inches){
     return inches / 39.37;
   }
 
+  /**
+   * Converts feet to meters.
+   *
+   * @param inches The length in feet to be converted.
+   * @return The equivalent length in meters.
+   */
   public static double feetToMeters(double feet){
     return feet / 3.281;
   }
 
+  /**
+   * Calculates the Euclidean distance between two points in a 2D plane.
+   *
+   * @param x1 The x-coordinate of the first point.
+   * @param y1 The y-coordinate of the first point.
+   * @param x2 The x-coordinate of the second point.
+   * @param y2 The y-coordinate of the second point.
+   * @return The Euclidean distance between the two points.
+   */
   public static double getDistance(double x1, double y1, double x2, double y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 
+  /**
+   * Converts a quantity in rotations to radians.
+   *
+   * @param rotations The quantity in rotations to be converted.
+   * @return The equivalent quantity in radians.
+   */
   public static double rotationsToRadians(double rotations){
     return rotations * 2 * Math.PI;
   }
 
+  /**
+   * Converts a quantity in degrees to rotations.
+   *
+   * @param rotations The quantity in degrees to be converted.
+   * @return The equivalent quantity in rotations.
+   */
   public static double degreesToRotations(double degrees){
     return degrees / 360;
   }
 
+  /**
+   * Converts a quantity in rotations to degrees.
+   *
+   * @param rotations The quantity in rotations to be converted.
+   * @return The equivalent quantity in degrees.
+   */
   public static double rotationsToDegrees(double rotations){
     return rotations * 360;
   }
 
+  /**
+   * Converts a quantity in degrees to radians.
+   *
+   * @param rotations The quantity in degrees to be converted.
+   * @return The equivalent quantity in radians.
+   */
   public static double degreesToRadians(double degrees){
     return degrees * Math.PI / 180;
   }
 
+  /**
+   * Calculates the x-component of a unit vector given an angle in radians.
+   *
+   * @param angle The angle in radians.
+   * @return The x-component of the unit vector.
+   */
   public static double angleToUnitVectorI(double angle){
     return (Math.cos(angle));
   }
 
+  /**
+   * Calculates the y-component of a unit vector given an angle in radians.
+   *
+   * @param angle The angle in radians.
+   * @return The y-component of the unit vector.
+   */
   public static double angleToUnitVectorJ(double angle){
     return (Math.sin(angle));
   }
 
+  /**
+   * Converts revolutions per minute (RPM) to revolutions per second (RPS).
+   *
+   * @param RPM The value in revolutions per minute (RPM) to be converted.
+   * @return The equivalent value in revolutions per second (RPS).
+   */
   public static double RPMToRPS(double RPM){
     return RPM / 60;
   }
 
+  /**
+   * Converts revolutions per second (RPS) to revolutions per minute (RPM).
+   *
+   * @param RPM The value in revolutions per second (RPS) to be converted.
+   * @return The equivalent value in revolutions per minute (RPM).
+   */
   public static double RPSToRPM(double RPS){
     return RPS * 60;
   }

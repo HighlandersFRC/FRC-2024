@@ -51,7 +51,6 @@ public class OI {
     public static Joystick autoChooser = new Joystick(2);
 
     public static JoystickButton autoChooserIsBlue = new JoystickButton(autoChooser, 8);
-    public static JoystickButton autoChooserIsRed = new JoystickButton(autoChooser, 6);
 
     public static void printAutoChooserInputs(){
         System.out.println("Driver Controller Connected: " + driverController.isConnected());
@@ -59,7 +58,6 @@ public class OI {
         System.out.println("Auto Chooser Connected: " + autoChooser.isConnected());
         System.out.println("Auto Chooser Num Buttons: " + autoChooser.getButtonCount());
         System.out.println("Is Blue: " + autoChooserIsBlue.getAsBoolean());
-        System.out.println("Is Red: " + autoChooserIsRed.getAsBoolean());
         for (int i = 1; i <= 16;  i ++){
             System.out.println("Auto Chooser Button " + i + " : " + autoChooser.getRawButton(i));
         }
@@ -111,6 +109,10 @@ public class OI {
 
     public static boolean isNothingAuto(){
         return autoChooser.getRawButton(7);
+    }
+
+    public static boolean autoChooserConnected() {
+        return autoChooser.isConnected();
     }
 
     public static boolean isBlueSide() {

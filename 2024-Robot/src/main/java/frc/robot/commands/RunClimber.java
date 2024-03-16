@@ -30,6 +30,7 @@ public class RunClimber extends Command {
   public void execute() {
     this.climber.setTrapRollerPercent(0);
     this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+    // System.out.println("armFeed");
 
     if (Math.abs(this.climber.getElevatorVelocityMPS()) < 0.01){
       this.numTimesHitLimit ++;

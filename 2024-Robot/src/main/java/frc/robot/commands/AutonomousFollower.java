@@ -13,9 +13,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.tools.math.Vector;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Lights;
+import frc.robot.subsystems.Peripherals;
 
 public class AutonomousFollower extends Command {
   private Drive drive;
+  private Lights lights;
+  private Peripherals peripherals;
 
   private JSONArray path;
 
@@ -38,33 +42,45 @@ public class AutonomousFollower extends Command {
 
   private boolean pickupNote;
 
-  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote) {
+  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote) {
     this.drive = drive;
+    this.lights = lights;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
     this.pathEndTime = pathEndTime;
     this.pickupNote = pickupNote;
+    this.peripherals = peripherals;
     addRequirements(drive);
   }
 
-  public AutonomousFollower(Drive drive, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote) {
+  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
     this.pathEndTime = path.getJSONArray(path.length() - 1).getDouble(0);
     this.pickupNote = pickupNote;
+    this.lights = lights;
+    this.peripherals = peripherals;
     addRequirements(drive);
   }
 
   @Override
   public void initialize() {
     initTime = Timer.getFPGATimestamp();
+    if(pickupNote) {
+      lights.clearAnimations();
+      lights.setCommandRunning(true);
+      lights.setStrobePurple();
+    }
   }
 
   @Override
   public void execute() {
+    if(pickupNote && peripherals.getBackCamTrack()) {
+      lights.setStrobeGreen();
+    }
     // System.out.println("auto runs");
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getFusedOdometryX();
@@ -99,6 +115,10 @@ public class AutonomousFollower extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    if(pickupNote) {
+      lights.clearAnimations();
+      lights.setCommandRunning(false);
+    }
     Vector velocityVector = new Vector();
     velocityVector.setI(0);
     velocityVector.setJ(0);

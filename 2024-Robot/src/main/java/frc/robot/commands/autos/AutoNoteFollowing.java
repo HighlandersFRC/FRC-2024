@@ -14,9 +14,16 @@ import org.json.JSONTokener;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.Constants;
+import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.MoveToPiece;
+import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
@@ -27,7 +34,7 @@ public class AutoNoteFollowing extends SequentialCommandGroup {
   private JSONArray pathJSON;
   private JSONObject pathRead;
   /** Creates a new AutoNoteFollowing. */
-  public AutoNoteFollowing(Drive drive, Peripherals peripherals) {
+  public AutoNoteFollowing(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof) {
     try {
       pathingFile = new File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -42,7 +49,9 @@ public class AutoNoteFollowing extends SequentialCommandGroup {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
-      new AutonomousFollower(drive, pathJSON, 0, false, true)
+      new ParallelDeadlineGroup(
+        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true)
+      )
     );
   }
 }
