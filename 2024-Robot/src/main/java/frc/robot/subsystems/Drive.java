@@ -59,13 +59,13 @@ public class Drive extends SubsystemBase {
   private final CANcoder backLeftCanCoder = new CANcoder(Constants.CANInfo.BACK_LEFT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
   private final CANcoder backRightCanCoder = new CANcoder(Constants.CANInfo.BACK_RIGHT_MODULE_CANCODER_ID, Constants.CANInfo.CANBUS_NAME);
 
-  public boolean getSwerveCAN() {
+  public boolean getSwerveCAN() { // checks to see if all of the swerve motors and encoders are connected
     if(getSwerveMotorsConnected() == 8 && getSwerveCANCodersConnected() == 4) {
       return true;
     } else return false;
   }
 
-  public int getSwerveMotorsConnected() {
+  public int getSwerveMotorsConnected() { // counts all of the swerve motors that are connected
     int count = 0;
     if(frontRightDriveMotor.clearStickyFault_BootDuringEnable() == StatusCode.OK) {
       count++;
@@ -94,7 +94,7 @@ public class Drive extends SubsystemBase {
     return count;
   }
 
-  public int getSwerveCANCodersConnected() {
+  public int getSwerveCANCodersConnected() { // counts all of the swerve encoders that are connected
     int count = 0;
     if(frontRightCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK) {
       count++;

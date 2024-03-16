@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix.led.CANdle;
 import com.ctre.phoenix.led.RainbowAnimation;
+import com.ctre.phoenix.led.RgbFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -26,6 +27,7 @@ public class Lights extends SubsystemBase {
   private boolean timedFlashes = false;
   CANdle candle = new CANdle(Constants.CANInfo.CANDLE_ID, Constants.CANInfo.CANBUS_NAME);
   
+  RgbFadeAnimation rgbFade = new RgbFadeAnimation(1, 0.2, 308);
   RainbowAnimation rainbowAnimation = new RainbowAnimation(1, 0.4, 308, true, 0);
   StrobeAnimation flashGreen = new StrobeAnimation(0, 255, 0, 0, 0.7, 308, 0);
   StrobeAnimation flashPurple = new StrobeAnimation(255, 0, 255, 0, 0.7, 308, 0);
@@ -39,9 +41,11 @@ public class Lights extends SubsystemBase {
    * solid red - red alliance
    * solid blue - blue alliance
    * flashing purple:
+   *      autonomous - the robot does not see the note
    *      intaking - robot has not intaken note yet
    *      shooting - robot cannot see apriltag
    * flashing green:
+   *      autonomous - the robot sees the note
    *      boot up/CAN check - all CAN is good and limelights are connected
    *      intake - robot has intaken note
    *      shooting - robot can see apriltag
@@ -141,6 +145,10 @@ public class Lights extends SubsystemBase {
     candle.animate(flashGreen);
   }
 
+  public void setRainbow() {
+    candle.animate(rainbowAnimation);
+  }
+
   public void setStrobePurple() { // flashing purple animation
     candle.animate(flashPurple);
   }
@@ -151,6 +159,10 @@ public class Lights extends SubsystemBase {
   */
   public void setStrobeYellow() { // flashing yellow animation
     candle.animate(flashYellow);
+  }
+
+  public void setRGBFade() {
+    candle.animate(rgbFade);
   }
 
   /**

@@ -54,6 +54,18 @@ public class Peripherals extends SubsystemBase {
   public Peripherals() {
   }
 
+  // public void setLimelightLights(String limelight, int ledMode) {
+  //   if (limelight == "left") {
+  //     leftCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "right") {
+  //     rightCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "back") {
+  //     backCam.getEntry("ledMode").setNumber(ledMode);
+  //   } else if (limelight == "front") {
+  //     frontCam.getEntry("ledMode").setNumber(ledMode);
+  //   }
+  // }
+
   /**
    * Checks the connectivity of Limelight devices.
    * 
@@ -62,20 +74,20 @@ public class Peripherals extends SubsystemBase {
   public boolean limelightsConnected() {
     boolean reachable = true;
     try {
-      InetAddress address3 = InetAddress.getByName("10.44.99.43");
-      if (!address3.isReachable(100)) {
+      InetAddress address3 = InetAddress.getByName("10.44.99.43"); // back limelight ip address
+      if(!address3.isReachable(100)) {
         reachable = false;
       }
     } catch (Exception e) {
-      System.out.println("What an absolute L piece of code");
+      System.out.println("What an absolute L piece of code: " + e);
     }
     try {
-      InetAddress address4 = InetAddress.getByName("10.44.99.44");
-      if (!address4.isReachable(100)) {
+      InetAddress address4 = InetAddress.getByName("10.44.99.44"); // front limelight ip address
+      if(!address4.isReachable(100)) {
         reachable = false;
       }
     } catch (Exception e) {
-      System.out.println("What an absolute W piece of code");
+      System.out.println("What an absolute W piece of code: " + e);
     }
     // System.out.println("Back Cam: " + );
     // System.out.println("Front Cam: " + );

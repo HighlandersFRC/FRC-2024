@@ -35,6 +35,7 @@ import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.MoveToPiece;
+// import frc.robot.commands.PrepareAmp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
@@ -86,7 +87,7 @@ public class Robot extends LoggedRobot {
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
   private double startTime = Timer.getFPGATimestamp();
-  private double elapsedTime = 0;
+  private boolean checkedCAN = false;
 
   Command nothingAuto;
   
@@ -199,24 +200,27 @@ public class Robot extends LoggedRobot {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
-    // while(Timer.getFPGATimestamp() - startTime < 30) { // waits for 30 seconds before checking for the CAN and Limelights because they take a while to boot up
-      
-    // }
+    lights.clearAnimations();
+    lights.setRGBFade();
 
-
-    // checks CAN and limelights, blinks green if good and blinks yellow if bad
-    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
-      lights.blinkGreen(3);
-    } else {
-      lights.clearAnimations();
-      lights.setCommandRunning(true);
-      lights.setStrobeYellow();
-    }
-    System.out.println("initiaization complete");
   }
  
   @Override
   public void robotPeriodic() {
+
+        // checks CAN and limelights, blinks green if good and blinks yellow if bad
+    if(!checkedCAN && Timer.getFPGATimestamp() - startTime > 30) {
+      checkedCAN = true;
+      lights.clearAnimations();
+      if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
+        lights.blinkGreen(3);
+      } else {
+        lights.clearAnimations();
+        lights.setCommandRunning(true);
+        lights.setStrobeYellow();
+      }
+    }
+
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
@@ -249,6 +253,8 @@ public class Robot extends LoggedRobot {
   public void disabledInit() {
     OI.driverController.setRumble(RumbleType.kBothRumble, 0);
     OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
+    lights.clearAnimations();
+    lights.setRainbow();
   }
 
   @Override
@@ -327,6 +333,7 @@ public class Robot extends LoggedRobot {
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0));
 
     //Operator
+    // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
     OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof, shooter));
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
