@@ -87,7 +87,7 @@ public class Robot extends LoggedRobot {
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
   private double startTime = Timer.getFPGATimestamp();
-  private double elapsedTime = 0;
+  private boolean checkedCAN = false;
 
   Command nothingAuto;
   
@@ -209,24 +209,27 @@ public class Robot extends LoggedRobot {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
-    // while(Timer.getFPGATimestamp() - startTime < 30) { // waits for 30 seconds before checking for the CAN and Limelights because they take a while to boot up
-      
-    // }
-
-    // checks CAN and limelights, blinks green if good and blinks yellow if bad
     lights.clearAnimations();
-    if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
-      lights.blinkGreen(3);
-    } else {
-      lights.clearAnimations();
-      lights.setCommandRunning(true);
-      lights.setStrobeYellow();
-    }
+    lights.setRGBFade();
 
   }
  
   @Override
   public void robotPeriodic() {
+
+        // checks CAN and limelights, blinks green if good and blinks yellow if bad
+    if(!checkedCAN && Timer.getFPGATimestamp() - startTime > 30) {
+      checkedCAN = true;
+      lights.clearAnimations();
+      if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
+        lights.blinkGreen(3);
+      } else {
+        lights.clearAnimations();
+        lights.setCommandRunning(true);
+        lights.setStrobeYellow();
+      }
+    }
+
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
