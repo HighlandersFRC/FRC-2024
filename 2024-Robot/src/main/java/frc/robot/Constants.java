@@ -65,10 +65,10 @@ public final class Constants {
     }
 
     //shooter
-    public static final double SHOOTER_CENTER_OFFSET_DEG = 22.0;
+    public static final double SHOOTER_CENTER_OFFSET_DEG = 0.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
-    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18;
+    public static final double SHOOTER_MAX_ANGLE_ROT = 0.18 * Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
