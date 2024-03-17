@@ -67,9 +67,7 @@ public class AutoIntake extends Command {
 
   @Override
   public void execute() {
-    // this.intake.set(this.intakeDegrees, this.intakeRPM);
-    this.intake.setAnglePercent(0);
-    this.intake.setRollers(this.intakeRPM);
+    this.intake.set(this.intakeDegrees, this.intakeRPM);
     if (this.proximity.getShooterProximity()){
       if (!this.haveNote){
         this.haveNoteTime = Timer.getFPGATimestamp();
@@ -79,9 +77,6 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
-    // if(this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM) {
-    //   noteInCarriage = true;
-    // } 
     // System.out.println("carriage: " + this.proximity.getCarriageProximity());
     // System.out.println("shooter: " + this.proximity.getShooterProximity());
     // System.out.println("feeder: " + this.proximity.getFeederProximity());
