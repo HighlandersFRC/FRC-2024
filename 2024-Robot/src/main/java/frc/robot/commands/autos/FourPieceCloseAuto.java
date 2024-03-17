@@ -93,42 +93,42 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 60, 3000, 1200, 13),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 3000, 1200, 13),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, tof, 20, 3000)
+          new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, tof, 20, 3000)
+          new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false),
+            new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, tof, 20, 3000)
+          new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
 
       //End
       new ParallelCommandGroup(

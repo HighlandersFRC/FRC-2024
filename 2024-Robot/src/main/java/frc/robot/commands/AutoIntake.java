@@ -82,11 +82,14 @@ public class AutoIntake extends Command {
     // if(this.tof.getCarriageDistMillimeters() <= Constants.SetPoints.CARRIAGE_TOF_THRESHOLD_MM) {
     //   noteInCarriage = true;
     // } 
+    // System.out.println("carriage: " + this.proximity.getCarriageProximity());
+    // System.out.println("shooter: " + this.proximity.getShooterProximity());
+    // System.out.println("feeder: " + this.proximity.getFeederProximity());
 
-    if (this.proximity.getFeederProximity()){
+    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       // System.out.println("runs");
       this.feeder.setPercent(0);
-      this.climber.setTrapRollerTorque(10, 0.1);
+      this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
     } else if (this.haveNote && !this.proximity.getShooterProximity()){
       // System.out.println("shooter sees");
@@ -96,15 +99,13 @@ public class AutoIntake extends Command {
     } else if (this.haveNote){
       // System.out.println("has note");
       this.feeder.set(130);
-      this.climber.setTrapRollerTorque(10, 0.1);
+      this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
-      // System.out.println("intake feed");
     } else {
       // System.out.println("else");
       this.feeder.set(this.feederRPM);
       this.climber.setTrapRollerTorque(30, 0.50);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
-      // System.out.println("intake feed2");
     }
   }
 
@@ -119,7 +120,7 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (this.proximity.getFeederProximity()){
+    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       lights.blinkGreen(2);
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {

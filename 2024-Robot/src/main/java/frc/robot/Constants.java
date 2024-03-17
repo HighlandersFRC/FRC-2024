@@ -126,7 +126,7 @@ public final class Constants {
             return returnValue;
         } else if (xValue < SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
             //If the xValue is farther than the last setpoint
-            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][0];
+            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][yIndex];
             return returnValue;
         } else {
             for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {

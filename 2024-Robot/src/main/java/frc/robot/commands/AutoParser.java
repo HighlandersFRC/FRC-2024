@@ -16,6 +16,7 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
 import frc.robot.commands.templates.ArrayListParallelDeadlineGroup;
 import frc.robot.commands.templates.ArrayListSequentialCommandGroup;
+import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -37,6 +38,8 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
   private JSONObject pathJSON;
   private JSONArray sampledPoints;
   private JSONArray pathCommands;
+
+  private Proximity proximity;
 
   private ArrayList<Command> autoCommands = new ArrayList<Command>();
 
@@ -131,7 +134,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
         }
       }
       ArrayListParallelDeadlineGroup parallelDeadlineGroup = new ArrayListParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, haltingTime, false, pickupNote),
+        new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, haltingTime, false, pickupNote, 0, proximity),
         parallelCommands
       );
       this.autoCommands.add(parallelDeadlineGroup);
@@ -157,7 +160,7 @@ public class AutoParser extends ArrayListSequentialCommandGroup {
       previousHaltingTime = haltingTime;
     }
     this.autoCommands.add(
-      new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, false, false)
+      new AutonomousFollower(drive, lights, peripherals, this.sampledPoints, previousHaltingTime, false, false, 0, proximity)
     );
 
     addCommands(this.autoCommands);

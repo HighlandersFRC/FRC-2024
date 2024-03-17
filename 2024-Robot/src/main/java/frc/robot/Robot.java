@@ -262,36 +262,34 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    // if (OI.isBlueSide()) {
-    //   System.out.println("ON BLUE SIDE");
-      // fieldSide = "blue";
-    // } else {
-    //   System.out.println("ON RED SIDE");
+    if (OI.isBlueSide()) {
+      System.out.println("ON BLUE SIDE");
+      fieldSide = "blue";
+    } else {
+      System.out.println("ON RED SIDE");
       fieldSide = "red";
-    // }
+    }
     this.drive.setFieldSide(fieldSide);
 
-    // System.out.println("Selected Auto: ");
-    // if (OI.isNothingAuto()){
-    //   System.out.println("Nothing Auto");
-    //   this.nothingAuto.schedule();
-    // } else if (OI.is4PieceCloseAuto()) {
-    //   System.out.println("Four Piece Close");
-    //   this.fourPieceCloseAuto.schedule();
-    //   this.drive.autoInit(this.fourPieceCloseJSON);
-    // } else if (OI.is3PieceFarBottomAuto()){
-    //   System.out.println("Four Piece Far Bottom");
+    System.out.println("Selected Auto: ");
+    if (OI.isNothingAuto()){
+      System.out.println("Nothing Auto");
+      this.nothingAuto.schedule();
+    } else if (OI.is4PieceCloseAuto()) {
+      System.out.println("Four Piece Close");
+      this.fourPieceCloseAuto.schedule();
+      this.drive.autoInit(this.fourPieceCloseJSON);
+    } else if (OI.is3PieceFarBottomAuto()){
+      System.out.println("Four Piece Far Bottom");
       this.fourPieceFarBottomAuto.schedule();
       this.drive.autoInit(this.fourPieceFarBottomJSON);
-    // } else if (OI.is5PieceAuto()){
-    //   System.out.println("Five Piece");
-    //   this.fivePieceAuto.schedule();
-    //   this.drive.autoInit(this.fivePieceJSON);
-    // }else {
-    //   System.out.println("NO AUTO SELECTED");
-    // }
-    // this.autoNoteFollowingAuto.schedule();
-    // this.drive.autoInit(this.autoNoteFollowingJSON);
+    } else if (OI.is5PieceAuto()){
+      System.out.println("Five Piece");
+      this.fivePieceAuto.schedule();
+      this.drive.autoInit(this.fivePieceJSON);
+    }else {
+      System.out.println("NO AUTO SELECTED");
+    }
 
     this.intake.autoInit();
   }
@@ -320,11 +318,11 @@ public class Robot extends LoggedRobot {
     // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0, 1.5));
+    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200));
+    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 45, 5000, 1200, 0, 1.5));
    
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
-    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
     // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
 
 

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.sensors.TOF;
+import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Lights;
@@ -23,7 +23,7 @@ public class AutoShoot extends Command {
   private Feeder feeder;
   private Peripherals peripherals;
   private Lights lights;
-  private TOF tof;
+  private Proximity proximity;
 
   private double[] shooterValues;
   private double shooterDegrees;
@@ -57,24 +57,24 @@ public class AutoShoot extends Command {
   private double speakerAngleDegrees;
   private double targetPigeonAngleDegrees;
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
-    this.tof = tof;
+    this.proximity = proximity;
     this.feederRPM = feederRPM;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double feederRPM, double timeout) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
-    this.tof = tof;
+    this.proximity = proximity;
     this.feederRPM = feederRPM;
     this.timeout = timeout;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
@@ -123,6 +123,8 @@ public class AutoShoot extends Command {
         this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
         this.shooterDegrees = this.shooterValues[0];
         this.shooterRPM = this.shooterValues[1];
+        System.out.println("New RPM: " + this.shooterRPM);
+        System.out.println("New Deg.: " + this.shooterDegrees);
         this.driveAngleAllowedError = Constants.SetPoints.getAllowedAngleErrFromAngle(this.speakerElevationDegrees);
       }
     }
@@ -168,7 +170,7 @@ public class AutoShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (this.tof.getFeederDistMillimeters() >= 110.0 && !this.hasShot){
+    if (!this.proximity.getFeederProximity() && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }
@@ -177,19 +179,19 @@ public class AutoShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
-    System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
     System.out.println("RPM: " + this.shooter.getFlywheelRPM());
     System.out.println("Targ. RPM: " + this.shooterRPM);
     System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
     System.out.println("Elev: " + this.shooter.getAngleDegrees());
     System.out.println("Targ. Elev: " + this.shooterDegrees);
     System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - shooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
     // System.out.println("Turn Result: " + turnResult);
-    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
-    // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
+    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
     System.out.println("<================>");
   }
 

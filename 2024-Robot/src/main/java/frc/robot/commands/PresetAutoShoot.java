@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.sensors.TOF;
+import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Lights;
@@ -25,7 +25,7 @@ public class PresetAutoShoot extends Command {
   private Feeder feeder;
   private Peripherals peripherals;
   private Lights lights;
-  private TOF tof;
+  private Proximity proximity;
 
   private double shooterDegrees;
   private double shooterRPM;
@@ -58,13 +58,13 @@ public class PresetAutoShoot extends Command {
 
   private boolean smartDashboardTuning;
 
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
+  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
-    this.tof = tof;
+    this.proximity = proximity;
     this.shooterDegrees = shooterDegrees;
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
@@ -75,13 +75,13 @@ public class PresetAutoShoot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder);
   }
 
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, TOF tof, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
+  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
     this.lights = lights;
-    this.tof = tof;
+    this.proximity = proximity;
     this.shooterDegrees = shooterDegrees;
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
@@ -148,8 +148,8 @@ public class PresetAutoShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (this.tof.getFeederDistMillimeters() >= 110 && !this.hasShot){
-      this.hasShot = true;
+    if (!this.proximity.getFeederProximity() && !this.hasShot){
+      this.hasShot = true; 
       this.shotTime = Timer.getFPGATimestamp();
     }
 
