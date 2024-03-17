@@ -315,21 +315,16 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
-    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    // OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 45, 5000, 1200, 0, 1.5));
-    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
+    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 35, 5500, 1200, 0, 2));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
-    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
+    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
     
     // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
-    // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
-    // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
-    OI.driverB.whileTrue(new RunShooter(shooter, 0, 5000));
-    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0));
 
     //Operator
     // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
@@ -338,7 +333,7 @@ public class Robot extends LoggedRobot {
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
 
-    // OI.operatorMenuButton.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
+    OI.operatorRB.whileTrue(new AutoPrepForShot(shooter, proximity, 30, 6000));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     

@@ -1206,16 +1206,16 @@ public class Drive extends SubsystemBase {
 
         if (currentPointTime > noteTrackingEndTime){
           pickupNote = false;
-          System.out.println("timeout");
+          // System.out.println("timeout");
         }
 
-        System.out.println("current time: " + currentPointTime);
+        // System.out.println("current time: " + currentPointTime);
 
         if (pickupNote){
           double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
           double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
-          System.out.println("tx: " + angleToNote);
-          System.out.println("ty: " + tyToNote);
+          // System.out.println("tx: " + angleToNote);
+          // System.out.println("ty: " + tyToNote);
           if (tyToNote < 0.15 && angleToNote != 0.0){
             double differenceX = Math.abs(targetX - currentPointX);
             double differenceY = Math.abs(targetY - currentPointY);
@@ -1226,17 +1226,17 @@ public class Drive extends SubsystemBase {
             double newY = currentPointY + adjustedY;
             // double newYWithScalar = currentPointY + (3 * adjustedY);
             double newTheta = currentPointTheta - angleToNote;
-            System.out.println("adjusting point");
-            System.out.println("old x: " + targetX);
-            System.out.println("old y: " + targetY);
-            System.out.println("old theta: " + targetTheta);
-            System.out.println("current theta: " + currentPointTheta);
-            System.out.println("adjustedX: " + adjustedX);
-            System.out.println("adjustedY: " + adjustedY);
-            System.out.println("new x: " + newX);
-            System.out.println("new Y: " + newY);
+            // System.out.println("adjusting point");
+            // System.out.println("old x: " + targetX);
+            // System.out.println("old y: " + targetY);
+            // System.out.println("old theta: " + targetTheta);
+            // System.out.println("current theta: " + currentPointTheta);
+            // System.out.println("adjustedX: " + adjustedX);
+            // System.out.println("adjustedY: " + adjustedY);
+            // System.out.println("new x: " + newX);
+            // System.out.println("new Y: " + newY);
             // System.out.println("new Y with scalar: " + newYWithScalar);
-            System.out.println("new theta: " + newTheta);
+            // System.out.println("new theta: " + newTheta);
             targetX = currentPointX + adjustedX;
             targetY = currentPointY + adjustedY;
             targetTheta = targetTheta - angleToNote;

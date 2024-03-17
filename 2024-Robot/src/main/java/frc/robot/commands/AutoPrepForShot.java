@@ -38,7 +38,7 @@ public class AutoPrepForShot extends Command {
     } else if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       this.shooter.setAnglePercent(0);
     } else {
-      this.shooter.setAngleTorque(-10, 0.3);
+      this.shooter.setAngleTorque(-10, 0.4);
     }
   }
 

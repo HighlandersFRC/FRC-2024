@@ -253,7 +253,7 @@ public class Shooter extends SubsystemBase {
    * @return Flywheel Follower Velocity (RPMs)
    */
   public double getFlywheelFollowerRPM() {
-    return Constants.RPSToRPM(
+    return -Constants.RPSToRPM(
         this.flywheelFalconFollower.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
