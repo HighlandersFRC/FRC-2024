@@ -127,7 +127,7 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconFollower.getConfigurator().apply(this.flywheelFalconConfiguration);
     this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
-    this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+    // this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
   }
 
   /**
@@ -158,6 +158,8 @@ public class Shooter extends SubsystemBase {
     }
     this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+    this.flywheelFalconFollower.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   /**
@@ -193,6 +195,8 @@ public class Shooter extends SubsystemBase {
   public void setFlywheelRPM(double RPM) {
     this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+    this.flywheelFalconFollower.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   /**
@@ -201,6 +205,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setFlywheelPercent(double percent) {
     this.flywheelFalconMaster.set(percent);
+    this.flywheelFalconFollower.set(-percent);
   }
 
   /**
@@ -234,6 +239,11 @@ public class Shooter extends SubsystemBase {
    * @return Flywheel Velocity (RPMs)
    */
   public double getFlywheelRPM() {
+    return Constants.RPSToRPM(
+        this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
+  }
+
+  public double getFlywheelMasterRPM(){
     return Constants.RPSToRPM(
         this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }

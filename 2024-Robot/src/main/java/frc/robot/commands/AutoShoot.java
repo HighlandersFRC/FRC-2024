@@ -148,7 +148,7 @@ public class AutoShoot extends Command {
       this.numTimesHitSetPoint = 0;
     }
 
-    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError){
+    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getFlywheelFollowerRPM() - this.shooterRPM) <= this.shooterRPMAllowedError){
       this.hasReachedSetPoint = true;
       this.reachedSetPointTime = Timer.getFPGATimestamp();
       turnResult = 0;

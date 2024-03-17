@@ -38,8 +38,8 @@ public class PresetAutoShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.0;
 
-  private double shooterDegreesAllowedError = 0.75;
-  private double shooterRPMAllowedError = 200;
+  private double shooterDegreesAllowedError = 0.5;
+  private double shooterRPMAllowedError = 150;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;
@@ -136,7 +136,7 @@ public class PresetAutoShoot extends Command {
 
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getFlywheelFollowerRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
       this.hasReachedSetPoint = true;
@@ -157,7 +157,8 @@ public class PresetAutoShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
-    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
+    System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
+    System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
     // System.out.println("Targ. RPM: " + this.shooterRPM);
     // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
     // System.out.println("Elev: " + this.shooter.getAngleDegrees());
