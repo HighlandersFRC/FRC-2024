@@ -328,8 +328,8 @@ public class Robot extends LoggedRobot {
 
     //Operator
     // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof, shooter));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof, shooter));
+    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
+    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
 
