@@ -386,20 +386,20 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean climbMaster = false;
-    boolean climbFollower = false;
-    SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
-    SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    // boolean climbMaster = false;
+    // boolean climbFollower = false;
+    // SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
+    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
     // Logger.recordOutput("Elevator Meters", getElevatorPositionMeters());
     // Logger.recordOutput("Elevator Rotations", getElevatorPositionRotations());
-    if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
-      climbMaster = true;
-    }
-    if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
-      climbFollower = true;
-    }
+    // if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
+    //   climbMaster = true;
+    // }
+    // if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
+    //   climbFollower = true;
+    // }
 
-    SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
+    // SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
 
     // if (getElevatorLimitSwitch()){
     //   setElevatorEncoderPosition(0.0);

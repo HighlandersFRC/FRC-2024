@@ -255,19 +255,19 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean angleMotor = false;
-    boolean intakeMotor = false;
-    boolean intakeTOF = false;
-    if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
-      angleMotor = true;
-    }
-    if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
-      intakeMotor = true;
-    }
+    // boolean angleMotor = false;
+    // boolean intakeMotor = false;
+    // boolean intakeTOF = false;
+    // if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
+    //   angleMotor = true;
+    // }
+    // if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
+    //   intakeMotor = true;
+    // }
     
     
-    SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
-    SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
+    // SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
+    // SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
     // Logger.recordOutput("Intake Angle Motor Online?", angleMotor);
     // Logger.recordOutput("Intake Roller Motor Online?", intakeMotor);
     // Logger.recordOutput("Intake Angle", getAngleDegrees());

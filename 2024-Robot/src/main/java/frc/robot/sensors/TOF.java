@@ -45,10 +45,10 @@ public class TOF {
             intakeTOF = true;
         }
 
-        SmartDashboard.putBoolean(" Climber TOF", climbTOF);
-        SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
-        SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
-        SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
-        SmartDashboard.putNumber("Carriage TOF Dist", getCarriageDistMillimeters());
+        // SmartDashboard.putBoolean(" Climber TOF", climbTOF);
+        // SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
+        // SmartDashboard.putBoolean(" Intake TOF", intakeTOF);
+        // SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
+        // SmartDashboard.putNumber("Carriage TOF Dist", getCarriageDistMillimeters());
     }
 }

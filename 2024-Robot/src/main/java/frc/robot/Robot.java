@@ -7,6 +7,8 @@ package frc.robot;
 import java.io.File;
 import java.io.FileReader;
 
+import javax.sound.sampled.SourceDataLine;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -16,6 +18,8 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -213,18 +217,22 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
 
         // checks CAN and limelights, blinks green if good and blinks yellow if bad
-    if(!checkedCAN && (Timer.getFPGATimestamp() - startTime > 30 || peripherals.limelightsConnected())) {
-      checkedCAN = true;
-      lights.clearAnimations();
-      lights.setCommandRunning(false);
-      if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
-        lights.blinkGreen(3);
-      } else {
+    // System.out.println("checkedCan: " + checkedCAN);
+    if (!checkedCAN){
+      if(Timer.getFPGATimestamp() - startTime > 10 || peripherals.limelightsConnected()) {
+        checkedCAN = true;
         lights.clearAnimations();
-        lights.setCommandRunning(true);
-        lights.setStrobeYellow();
+        lights.setCommandRunning(false);
+        if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
+          lights.blinkGreen(3);
+        } else {
+          lights.clearAnimations();
+          lights.setCommandRunning(true);
+          lights.setStrobeYellow();
+        }
       }
     }
+
 
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
@@ -246,7 +254,9 @@ public class Robot extends LoggedRobot {
     peripherals.periodic();
     climber.periodic();
 
-    SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
+    // System.out.println("0-1: " + (t1 - t0));
+
+    // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
   @Override

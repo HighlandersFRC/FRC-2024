@@ -77,9 +77,10 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
-    // System.out.println("carriage: " + this.proximity.getCarriageProximity());
-    // System.out.println("shooter: " + this.proximity.getShooterProximity());
-    // System.out.println("feeder: " + this.proximity.getFeederProximity());
+    System.out.println("carriage: " + this.proximity.getCarriageProximity());
+    System.out.println("shooter: " + this.proximity.getShooterProximity());
+    System.out.println("feeder: " + this.proximity.getFeederProximity());
+    System.out.println("have note: " + this.haveNote);
 
     if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       // System.out.println("runs");
@@ -93,7 +94,7 @@ public class AutoIntake extends Command {
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else if (this.haveNote){
       // System.out.println("has note");
-      this.feeder.set(130);
+      this.feeder.set(110);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
     } else {
