@@ -77,10 +77,10 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
-    System.out.println("carriage: " + this.proximity.getCarriageProximity());
-    System.out.println("shooter: " + this.proximity.getShooterProximity());
-    System.out.println("feeder: " + this.proximity.getFeederProximity());
-    System.out.println("have note: " + this.haveNote);
+    // System.out.println("carriage: " + this.proximity.getCarriageProximity());
+    // System.out.println("shooter: " + this.proximity.getShooterProximity());
+    // System.out.println("feeder: " + this.proximity.getFeederProximity());
+    // System.out.println("have note: " + this.haveNote);
 
     if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       // System.out.println("runs");

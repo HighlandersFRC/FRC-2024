@@ -49,7 +49,7 @@ public class IndexNoteToCarriage extends Command {
     if (this.proximity.getCarriageProximity()){
       if (!this.haveNote){
         this.haveNoteTime = Timer.getFPGATimestamp();
-        System.out.println("1");
+        // System.out.println("1");
       }
       this.haveNote = true;
     }
