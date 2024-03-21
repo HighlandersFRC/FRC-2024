@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
@@ -81,7 +82,10 @@ public class ClimberDefault extends Command {
     // System.out.println("zeroed: " + isZeroed);
     if (this.isZeroed){
       this.climber.setElevatorTorque(0, 0.1);
-      if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
+      if (OI.operatorController.getLeftBumper()){
+        this.climber.setTrapRollerPercent(0);
+        this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      } else if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
         // System.out.println("1");
         this.climber.setTrapRollerPercent(0);
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);

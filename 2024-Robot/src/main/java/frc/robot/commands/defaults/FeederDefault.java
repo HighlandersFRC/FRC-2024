@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Feeder;
@@ -49,7 +50,9 @@ public class FeederDefault extends Command {
       this.haveFeederNote = true;
     }
     
-    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
+    if (OI.operatorController.getLeftBumper()){
+      this.feeder.set(0);
+    } if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
       // System.out.println("first");
       this.feeder.set(200);
     } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){

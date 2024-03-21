@@ -27,6 +27,9 @@ public class AutoIntake extends Command {
   private double haveNoteTime = 0;
   private double timeout = 10;
   private double initTime;
+  private boolean haveCarriageNote;
+  private double timeToCenterNote = 0.2;
+  private double haveCarriageNoteTime = 0;
 
   public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM) {
     this.intake = intake;
@@ -58,6 +61,7 @@ public class AutoIntake extends Command {
   @Override
   public void initialize() {
     this.haveNote = false;
+    this.haveCarriageNote = false;
     this.initTime = Timer.getFPGATimestamp();
     lights.clearAnimations();
     lights.setCommandRunning(true);
@@ -75,6 +79,13 @@ public class AutoIntake extends Command {
         lights.setStrobeGreen();
       }
       this.haveNote = true;
+    }
+
+    if (this.proximity.getCarriageProximity()){
+      if (!this.haveCarriageNote){
+        this.haveCarriageNoteTime = Timer.getFPGATimestamp();
+      }
+      this.haveCarriageNote = true;
     }
 
     // System.out.println("carriage: " + this.proximity.getCarriageProximity());
@@ -116,7 +127,10 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
+    if (OI.operatorController.getLeftBumper() && Timer.getFPGATimestamp() - haveCarriageNoteTime > timeToCenterNote && this.haveCarriageNote){
+      lights.blinkGreen(2);
+      return true;
+    } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       lights.blinkGreen(2);
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {

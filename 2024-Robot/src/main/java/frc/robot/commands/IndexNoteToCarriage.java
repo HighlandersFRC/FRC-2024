@@ -3,6 +3,7 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Feeder;
@@ -75,7 +76,9 @@ public class IndexNoteToCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    if (Timer.getFPGATimestamp() - haveNoteTime > timeToCenterNote && this.haveNote){
+    if (OI.operatorController.getLeftBumper()){
+      return true; 
+    } else if (Timer.getFPGATimestamp() - haveNoteTime > timeToCenterNote && this.haveNote){
       return true;
     } else {
       return false;
