@@ -194,7 +194,6 @@ public class AutoShoot extends Command {
     // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
     // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
     // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
-    // System.out.println("Turn Result: " + turnResult);
     // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
     // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
     // System.out.println("<================>");

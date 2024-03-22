@@ -114,7 +114,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
@@ -128,7 +128,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
@@ -142,7 +142,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
@@ -157,7 +157,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, lights, peripherals, pathJSON4, 0, false, false, 0, proximity),
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false),
         new AutoPrepForShot(shooter, proximity, 30, 7000)
       ),
       new ParallelDeadlineGroup(

@@ -97,7 +97,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
@@ -108,7 +108,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
@@ -119,7 +119,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
       ),
       new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),

@@ -128,6 +128,10 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
     // this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+
+    if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1){
+      this.angleEncoder.setPosition(this.angleEncoder.getPosition().getValueAsDouble() + 1.0);
+    }
   }
 
   /**

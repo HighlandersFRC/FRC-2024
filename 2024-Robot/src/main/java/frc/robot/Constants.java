@@ -101,6 +101,14 @@ public final class Constants {
       {5.54, -11.73, 22, 7000, 0.5}
     };
 
+    //Red
+    //Bumper: dist: 1.39m, tag elev: 6.24
+    //Farther: dist: 4.77m, tag elev: 10.44
+
+    //Blue
+    //Farther: dist: 5.16m tag elev: -11.09
+
+
     /**
      * Interpolates a value from a lookup table based on the given xValue.
      * 
