@@ -168,7 +168,7 @@ public class AutoShoot extends Command {
     if (this.hasReachedSetPoint == true){
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
-      System.out.println("Shooting");
+      // System.out.println("Shooting");
       this.feeder.set(this.feederRPM);
     } else {
       this.feeder.set(0.0);

@@ -94,26 +94,26 @@ public class AutoIntake extends Command {
     // System.out.println("have note: " + this.haveNote);
 
     if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
-      // System.out.println("runs");
+      // System.out.println("1");
       this.feeder.setPercent(0);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
       // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
       // OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
     } else if (this.haveNote && !this.proximity.getShooterProximity()){
-      // System.out.println("shooter sees");
+      // System.out.println("2");
       this.feeder.setPercent(0);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else if (this.haveNote){
-      // System.out.println("has note");
+      // System.out.println("3");
       this.feeder.set(110);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
       // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
       // OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
     } else {
-      // System.out.println("else");
+      // System.out.println("4");
       this.feeder.set(this.feederRPM);
       this.climber.setTrapRollerTorque(30, 0.50);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
@@ -131,7 +131,7 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
+    if (/*!this.proximity.getCarriageProximity() && */!this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       lights.blinkGreen(2);
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {
