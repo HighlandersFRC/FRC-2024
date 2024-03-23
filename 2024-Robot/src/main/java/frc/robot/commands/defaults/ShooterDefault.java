@@ -5,6 +5,7 @@ import org.apache.commons.math3.analysis.function.Constant;
 import edu.wpi.first.hal.simulation.ConstBufferCallback;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.subsystems.Shooter;
 
 public class ShooterDefault extends Command {
@@ -20,8 +21,8 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    // if (this.shooter.getFlywheelRPM() > 1000){
-    //   this.shooter.setFlywheelTorque(-15, 0.1);;
+    // if (OI.getOperatorLB()){
+    //   this.shooter.setFlywheelTorque(60, 0.3);
     // } else {
       this.shooter.setFlywheelPercent(0);
     // }

@@ -99,6 +99,10 @@ public class OI {
         return driverController.getLeftBumper();
     }
 
+    public static boolean getOperatorLB(){
+        return operatorController.getLeftBumper();
+    }
+
     public static int getPOV() {
         return driverController.getPOV();
     }

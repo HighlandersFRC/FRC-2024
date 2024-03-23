@@ -44,6 +44,7 @@ import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
+import frc.robot.commands.RunFlywheel;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
@@ -345,8 +346,8 @@ public class Robot extends LoggedRobot {
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
 
-    // OI.operatorRB.whileTrue(new AutoPrepForShot(shooter, proximity, 30, 6000));
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
+    OI.operatorLB.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     
