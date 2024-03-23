@@ -399,7 +399,7 @@ public class Climber extends SubsystemBase {
     //   climbFollower = true;
     // }
 
-    // SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
+    SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
 
     // if (getElevatorLimitSwitch()){
     //   setElevatorEncoderPosition(0.0);

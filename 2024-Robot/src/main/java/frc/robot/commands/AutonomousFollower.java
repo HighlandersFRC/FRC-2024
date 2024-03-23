@@ -85,6 +85,7 @@ public class AutonomousFollower extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("Auto Follower");
     if(pickupNote && peripherals.getBackCamTrack()) {
       lights.setStrobeGreen();
     }

@@ -70,6 +70,7 @@ public class AutoIntake extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("Auto Intake");
     this.intake.set(this.intakeDegrees, this.intakeRPM);
     if (this.proximity.getShooterProximity()){
       if (!this.haveNote){

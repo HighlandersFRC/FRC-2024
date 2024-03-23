@@ -328,9 +328,9 @@ public class Robot extends LoggedRobot {
     OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4500, 1200, 0, 5));
-    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200));
-    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
+    OI.driverB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4100, 1200, 0, 5));
+    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 3));
+    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 64, 4500, 1200, 0, 1.5));
     OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 35, 5500, 1200, 0, 2));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */

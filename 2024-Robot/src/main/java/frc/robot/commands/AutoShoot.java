@@ -101,6 +101,7 @@ public class AutoShoot extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("Auto Shoot");
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
@@ -167,7 +168,7 @@ public class AutoShoot extends Command {
     if (this.hasReachedSetPoint == true){
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
-      // System.out.println("Shooting");
+      System.out.println("Shooting");
       this.feeder.set(this.feederRPM);
     } else {
       this.feeder.set(0.0);
@@ -216,6 +217,8 @@ public class AutoShoot extends Command {
     if (this.shooterDegrees > 90){
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
+      return true;
+    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
       return true;
     } else {
       return false;

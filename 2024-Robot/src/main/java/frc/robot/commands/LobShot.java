@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
@@ -88,9 +89,11 @@ public class LobShot extends Command {
 
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
 
-    if (this.drive.getFieldSide() == "red"){
-        this.targetPigeonAngleDegrees = 225;
+    if (OI.isRedSide()){
+      // System.out.println("RED");
+        this.targetPigeonAngleDegrees = 205;
     } else {
+      // System.out.println("BLUE");
         this.targetPigeonAngleDegrees = 135;
     }
     double standardizedPigeonAngleDegrees = Constants.SetPoints.standardizeAngleDegrees(this.peripherals.getPigeonAngle());
@@ -109,15 +112,15 @@ public class LobShot extends Command {
 
     this.pid.setSetPoint(this.targetPigeonAngleDegrees);
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    System.out.println("Target: " + this.targetPigeonAngleDegrees);
-    System.out.println("Current: " + Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+    // System.out.println("Target: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Current: " + Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     double turnResult = -pid.getResult();    
 
     this.drive.driveAutoAligned(turnResult);
 
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - this.targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;
     }
 
@@ -134,6 +137,7 @@ public class LobShot extends Command {
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
+      // System.out.println("Lob Timeout");
     }
 
     // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
