@@ -29,7 +29,7 @@ public class AutoPrepForShot extends Command {
 
   @Override
   public void execute() {
-    if (this.proximity.getFeederProximity() && !this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity()){
+    if (this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
       this.haveNote = true;
     }
 
