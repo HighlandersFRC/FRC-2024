@@ -1216,7 +1216,7 @@ public class Drive extends SubsystemBase {
           double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
           // System.out.println("tx: " + angleToNote);
           // System.out.println("ty: " + tyToNote);
-          if (tyToNote < 0.15 && angleToNote != 0.0){
+          if (tyToNote < 0.3 && angleToNote != 0.0){
             double differenceX = Math.abs(targetX - currentPointX);
             double differenceY = Math.abs(targetY - currentPointY);
             double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
@@ -1239,7 +1239,7 @@ public class Drive extends SubsystemBase {
             // System.out.println("new theta: " + newTheta);
             targetX = currentPointX + adjustedX;
             targetY = currentPointY + adjustedY;
-            targetTheta = targetTheta - angleToNote;
+            targetTheta = currentPointTheta - angleToNote;
           }
         }
 
