@@ -92,12 +92,16 @@ public class Intake extends SubsystemBase {
   */
   public void set(double degrees, double RPM){
     if (degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      // System.out.println("1");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else if (degrees > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      // System.out.println("2");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else {
+      // System.out.println("3");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(degrees) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     }
+    // System.out.println("Degrees: " + degrees);
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 

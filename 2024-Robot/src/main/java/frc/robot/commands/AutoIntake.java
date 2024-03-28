@@ -29,6 +29,8 @@ public class AutoIntake extends Command {
   private double initTime;
   private boolean buzzControllers;
 
+  private boolean noteInIntake;
+
   public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean buzzControllers) {
     this.intake = intake;
     this.feeder = feeder;
@@ -61,6 +63,7 @@ public class AutoIntake extends Command {
   @Override
   public void initialize() {
     this.haveNote = false;
+    this.noteInIntake = false;
     this.initTime = Timer.getFPGATimestamp();
     lights.clearAnimations();
     lights.setCommandRunning(true);
@@ -71,7 +74,10 @@ public class AutoIntake extends Command {
   @Override
   public void execute() {
     // System.out.println("Auto Intake");
-    this.intake.set(this.intakeDegrees, this.intakeRPM);
+    // System.out.println("Note in intake: " + this.noteInIntake);
+    // System.out.println("Intake Dist: " + this.tof.getIntakeDistMillimeters());
+    
+
     if (this.proximity.getShooterProximity()){
       if (!this.haveNote){
         this.haveNoteTime = Timer.getFPGATimestamp();
@@ -81,8 +87,20 @@ public class AutoIntake extends Command {
       this.haveNote = true;
     }
 
+    if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
+      this.noteInIntake = true;
+    }
+
+    if (this.noteInIntake){
+      // System.out.println("1");
+      this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
+    } else {
+      // System.out.println("2");
+      this.intake.set(this.intakeDegrees, this.intakeRPM);
+    }
+
     if (this.buzzControllers){
-      if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
+      if (noteInIntake){
         OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
         OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
       }
