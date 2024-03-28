@@ -1222,10 +1222,10 @@ public class Drive extends SubsystemBase {
             double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
             double adjustedX = r * (Math.cos((currentPointTheta) - angleToNote));
             double adjustedY = r * (Math.sin((currentPointTheta) - angleToNote));
-            double newX = currentPointX + adjustedX;
-            double newY = currentPointY + adjustedY;
+            // double newX = currentPointX + adjustedX;
+            // double newY = currentPointY + adjustedY;
             // double newYWithScalar = currentPointY + (3 * adjustedY);
-            double newTheta = currentPointTheta - angleToNote;
+            // double newTheta = currentPointTheta - angleToNote;
             // System.out.println("adjusting point");
             // System.out.println("old x: " + targetX);
             // System.out.println("old y: " + targetY);

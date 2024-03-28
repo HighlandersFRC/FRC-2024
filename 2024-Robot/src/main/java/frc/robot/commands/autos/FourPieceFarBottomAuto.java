@@ -100,7 +100,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true, 3.25, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
@@ -112,7 +112,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, true, 2.25, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
@@ -124,7 +124,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, true, 3.25, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
