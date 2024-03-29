@@ -102,7 +102,7 @@ public class AutonomousFollower extends Command {
     
     if (proximity.getFeederProximity()){
       pickupNote = false;
-      // System.out.println("sensor timeout");
+      System.out.println("sensor timeout");
     }
     // call PIDController function
     desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path, pickupNote, noteTrackingEndTime);
