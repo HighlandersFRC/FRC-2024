@@ -91,7 +91,7 @@ public class AutoIntake extends Command {
       this.noteInIntake = true;
     }
 
-    if (this.noteInIntake){
+    if (this.noteInIntake && this.tof.isIntakeTOFConnected()){
       // System.out.println("1");
       this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
     } else {

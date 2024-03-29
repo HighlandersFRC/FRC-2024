@@ -116,7 +116,11 @@ public class ClimberDefault extends Command {
 
       if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 3){
         // System.out.println("8");
-        this.climber.setElevatorTorque(-10, 0.6);
+        if (this.climber.getElevatorPositionMeters() > 0.1){
+          this.climber.setElevatorTorque(-30, 0.7);
+        } else {
+          this.climber.setElevatorTorque(-10, 0.6);
+        }
       } else {
         // System.out.println("9");
         this.climber.setElevatorTorque(0, 0);

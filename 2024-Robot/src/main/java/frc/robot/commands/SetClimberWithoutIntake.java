@@ -37,9 +37,9 @@ public class SetClimberWithoutIntake extends Command {
       this.climber.setElevatorTorque(0.0, 0.0);
     } else {
       if (positionMeters > this.climber.getElevatorPositionMeters()){
-        this.climber.setElevatorTorque(20, 0.7);
+        this.climber.setElevatorTorque(50, 0.8);
       } else {
-        this.climber.setElevatorTorque(-20, 0.5);
+        this.climber.setElevatorTorque(-50, 0.5);
       }
     }
   }

@@ -1,5 +1,7 @@
 package frc.robot.sensors;
 
+import java.util.ArrayList;
+
 import com.playingwithfusion.TimeOfFlight;
 import com.playingwithfusion.TimeOfFlight.RangingMode;
 
@@ -11,13 +13,27 @@ public class TOF {
     public final TimeOfFlight intakeTOF = new TimeOfFlight(Constants.CANInfo.INTAKE_TOF_ID);
     // public final TimeOfFlight carriageTOF = new TimeOfFlight(Constants.CANInfo.CARRIAGE_TOF_ID);
 
+    private ArrayList<Double> prevIntakeDists = new ArrayList<Double>();
+
     public TOF(){
         // this.feederTOF.setRangingMode(RangingMode.Short, 0);
         // this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
         this.intakeTOF.setRangingMode(RangingMode.Short, 0);
         this.intakeTOF.setRangeOfInterest(7, 9, 9, 7);
+        this.prevIntakeDists.add(0.0);
+        this.prevIntakeDists.add(1.0);
         // this.carriageTOF.setRangingMode(RangingMode.Short, 0);
         // this.carriageTOF.setRangeOfInterest(6, 8, 8, 6);
+    }
+
+    public boolean isIntakeTOFConnected(){
+        this.updateIntakeDist();
+        for (int i = 1; i < this.prevIntakeDists.size(); i ++){
+            if (this.prevIntakeDists.get(i).doubleValue() != this.prevIntakeDists.get(i - 1).doubleValue()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public double getFeederDistMillimeters(){
@@ -31,7 +47,16 @@ public class TOF {
     }
 
     public double getIntakeDistMillimeters(){
+        this.updateIntakeDist();
         return this.intakeTOF.getRange();
+    }
+
+    public void updateIntakeDist(){
+        double dist = this.intakeTOF.getRange();
+        this.prevIntakeDists.add(dist);
+        if (this.prevIntakeDists.size() > 10){
+            this.prevIntakeDists.remove(0);
+        }
     }
 
     public void periodic(){
@@ -51,6 +76,7 @@ public class TOF {
         // SmartDashboard.putBoolean(" Climber TOF", climbTOF);
         // SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
         SmartDashboard.putNumber(" Intake TOF", this.intakeTOF.getRange());
+        // System.out.println(this.isIntakeTOFConnected());
         // SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
         // SmartDashboard.putNumber("Carriage TOF Dist", getCarriageDistMillimeters());
     }

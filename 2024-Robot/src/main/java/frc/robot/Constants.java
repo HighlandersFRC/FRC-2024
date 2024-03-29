@@ -85,20 +85,23 @@ public final class Constants {
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg)}
+    public static final double LIMELIGHT_ANGLE_OFFSET = 0;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.20, 9.58 - 0.95, 60, 4500, 1},
-      {1.40, 6.53 - 0.95, 56, 4500, 1},
-      {1.61, 3.73 - 0.95, 53, 4750, 1},
-      {2.02, -0.30 - 0.95, 48, 5000, 0.75},
-      {2.31, -2.64 - 0.95, 44, 5125, 0.75},
-      {2.72, -4.82 - 0.95, 38.5, 5250, 0.75},
-      {3.18, -6.65 - 0.95, 33.5, 5500, 0.5},
-      {3.53, -7.74 - 0.95, 31.5, 5750, 0.5},
-      {3.86, -8.59 - 0.95, 30, 6000, 0.5},
-      {4.25, -9.33 - 0.95, 27.5, 6250, 0.5},
-      {4.68, -9.68 - 0.95, 26, 6500, 0.5},
-      {5.08, -10.47 - 0.95, 24.5, 6750, 0.5},
-      {5.54, -11.73 - 0.95, 22, 7000, 0.5}
+      {1.20, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1},
+      {1.38, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1},
+      {1.61, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1},
+      {2.02, -2.05 + LIMELIGHT_ANGLE_OFFSET, 48, 5000, 0.75},
+      {2.31, -4.39 + LIMELIGHT_ANGLE_OFFSET, 44, 5125, 0.75},
+      {2.72, -6.57 + LIMELIGHT_ANGLE_OFFSET, 38.5, 5250, 0.75},
+      {3.18, -8.40 + LIMELIGHT_ANGLE_OFFSET, 33.5, 5500, 0.5},
+      {3.53, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.5, 5750, 0.5},
+      {3.86, -10.34 + LIMELIGHT_ANGLE_OFFSET, 30, 6000, 0.5},
+      {4.25, -11.08 + LIMELIGHT_ANGLE_OFFSET, 28.5, 6250, 0.5},
+      {4.68, -11.43 + LIMELIGHT_ANGLE_OFFSET, 27, 6500, 0.5},
+      {5.08, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 0.5},
+      {5.54, -13.48 + LIMELIGHT_ANGLE_OFFSET, 24, 7000, 0.5},
+      {6.06, -14.14 + LIMELIGHT_ANGLE_OFFSET, 22.5, 7000, 0.5},
+      {6.40, -14.29 + LIMELIGHT_ANGLE_OFFSET, 21.5, 7250, 0.5}
     };
 
     //Red

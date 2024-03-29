@@ -221,7 +221,7 @@ public class Robot extends LoggedRobot {
         // checks CAN and limelights, blinks green if good and blinks yellow if bad
     // System.out.println("checkedCan: " + checkedCAN);
     if (!checkedCAN){
-      if(Timer.getFPGATimestamp() - startTime > 10 || peripherals.limelightsConnected()) {
+      if(Timer.getFPGATimestamp() - startTime > 30 || peripherals.limelightsConnected()) {
         checkedCAN = true;
         lights.clearAnimations();
         lights.setCommandRunning(false);
@@ -332,10 +332,10 @@ public class Robot extends LoggedRobot {
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4100, 1200, 0, 5));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 3));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 64, 4500, 1200, 0, 1.5));
-    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 2.5));
+    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 2.5));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
-    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
+    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
     
     // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
 
@@ -343,8 +343,8 @@ public class Robot extends LoggedRobot {
     // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
     OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
-    OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
+    OI.operatorY.whileTrue(new RunClimber(climber, 30, 0.6));
+    OI.operatorA.whileTrue(new RunClimber(climber, -30, 0.5));
 
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
     OI.operatorLB.whileTrue(new RunFlywheel(shooter, 80, 0.2));
