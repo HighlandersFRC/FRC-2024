@@ -127,7 +127,11 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconFollower.getConfigurator().apply(this.flywheelFalconConfiguration);
     this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
-    this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+    // this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+
+    if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1){
+      this.angleEncoder.setPosition(this.angleEncoder.getPosition().getValueAsDouble() + 1.0);
+    }
   }
 
   /**
@@ -158,6 +162,8 @@ public class Shooter extends SubsystemBase {
     }
     this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+    this.flywheelFalconFollower.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   /**
@@ -193,6 +199,8 @@ public class Shooter extends SubsystemBase {
   public void setFlywheelRPM(double RPM) {
     this.flywheelFalconMaster.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+    this.flywheelFalconFollower.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   /**
@@ -201,6 +209,7 @@ public class Shooter extends SubsystemBase {
    */
   public void setFlywheelPercent(double percent) {
     this.flywheelFalconMaster.set(percent);
+    this.flywheelFalconFollower.set(-percent);
   }
 
   /**
@@ -238,12 +247,17 @@ public class Shooter extends SubsystemBase {
         this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
+  public double getFlywheelMasterRPM(){
+    return Constants.RPSToRPM(
+        this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
+  }
+
   /**
    * Get the velocity of the Flywheel Follower
    * @return Flywheel Follower Velocity (RPMs)
    */
   public double getFlywheelFollowerRPM() {
-    return Constants.RPSToRPM(
+    return -Constants.RPSToRPM(
         this.flywheelFalconFollower.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
@@ -290,33 +304,33 @@ public class Shooter extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean shooterEncoder = false;
-    boolean shooterAngle = false;
+    // boolean shooterEncoder = false;
+    // boolean shooterAngle = false;
 
-    double newPIDP = SmartDashboard.getNumber("Flywheel P value", getP());
-    this.flywheelFalconConfiguration.Slot0.kP = newPIDP;
+    // double newPIDP = SmartDashboard.getNumber("Flywheel P value", getP());
+    // this.flywheelFalconConfiguration.Slot0.kP = newPIDP;
 
-    double newPIDI = SmartDashboard.getNumber("Flywheel I value", getI());
-    this.flywheelFalconConfiguration.Slot0.kI = newPIDI;
+    // double newPIDI = SmartDashboard.getNumber("Flywheel I value", getI());
+    // this.flywheelFalconConfiguration.Slot0.kI = newPIDI;
 
-    double newPIDD = SmartDashboard.getNumber("Flywheel D value", getD());
-    this.flywheelFalconConfiguration.Slot0.kD = newPIDD;
+    // double newPIDD = SmartDashboard.getNumber("Flywheel D value", getD());
+    // this.flywheelFalconConfiguration.Slot0.kD = newPIDD;
 
-    if (angleEncoder.getSupplyVoltage().getValue() != 0) {
-      shooterEncoder = true;
-    }
-    if (angleFalcon.getSupplyVoltage().getValue() != 0) {
-      shooterAngle = true;
-    }
+    // if (angleEncoder.getSupplyVoltage().getValue() != 0) {
+    //   shooterEncoder = true;
+    // }
+    // if (angleFalcon.getSupplyVoltage().getValue() != 0) {
+    //   shooterAngle = true;
+    // }
 
-    SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
-    SmartDashboard.getNumber("Flywheel P value", getP());
-    SmartDashboard.getNumber("Flywheel I value", getI());
-    SmartDashboard.getNumber("Flywheel D value", getD());
-    SmartDashboard.putBoolean(" Shooter Encoder", shooterEncoder);
+    // SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
+    // SmartDashboard.getNumber("Flywheel P value", getP());
+    // SmartDashboard.getNumber("Flywheel I value", getI());
+    // SmartDashboard.getNumber("Flywheel D value", getD());
+    // SmartDashboard.putBoolean(" Shooter Encoder", shooterEncoder);
     // Logger.recordOutput("Shooter Angle", getAngleDegrees());
     // Logger.recordOutput("Shooter Encoder Online?", shooterEncoder);
-    SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
+    // SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
     // Logger.recordOutput("Shooter Angle Motor Online?", shooterEncoder);
     // Logger.recordOutput("Shooter Angle Setpoint", angleFalcon.getClosedLoopReference().getValueAsDouble());
     // Logger.recordOutput("Shooter Velocity Setpoint", flywheelFalconMaster.getClosedLoopReference().getValueAsDouble());

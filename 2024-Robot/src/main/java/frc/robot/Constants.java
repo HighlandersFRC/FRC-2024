@@ -86,29 +86,28 @@ public final class Constants {
 
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg)}
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.302, 11.87, 58, 4000, 1},
-      {1.442, 10.20, 56, 4000, 1},
-      {1.732, 6.70, 52, 4250, 1},
-      {2.072, 3.57, 48, 4500, 1},
-      {2.442, 0.92, 42, 4750, 1},
-      {2.842, -1.09, 38, 5000, 1},
-      {3.062, -1.95, 36.5, 5125, 1},
-      {3.302, -2.55, 35, 5250, 1},
-      {3.412, -3.13, 33, 5250, 1},
-      {3.722, -4.01, 31.25, 5500, 1},
-      {4.072, -5.03, 28.5, 5750, 1},
-      {4.372, -5.69, 27.5, 6000, 1},
-      {4.592, -5.91, 26, 6250, 1},
-      {4.812, -6.27, 26, 6375, 1},
-      {5.152, -6.59, 25.25, 6500, 0.75},
-      {5.442, -7.16, 24, 6625, 0.75},
-      {5.712, -8.26, 22.25, 6750, 0.75},
-      {6.117, -8.51, 21.25, 7000, 0.75},
-      {6.382, -8.60, 21, 7250, 0.75},
-      {6.682, -8.82, 20.5, 7500, 0.75},
-      {6.912, -9.20, 19.5, 7750, 0.75},
-      {7.252, -9.44, 19.25, 8000, 0.75}
+      {1.20, 9.58 - 0.95, 60, 4500, 1},
+      {1.40, 6.53 - 0.95, 56, 4500, 1},
+      {1.61, 3.73 - 0.95, 53, 4750, 1},
+      {2.02, -0.30 - 0.95, 48, 5000, 0.75},
+      {2.31, -2.64 - 0.95, 44, 5125, 0.75},
+      {2.72, -4.82 - 0.95, 38.5, 5250, 0.75},
+      {3.18, -6.65 - 0.95, 33.5, 5500, 0.5},
+      {3.53, -7.74 - 0.95, 31.5, 5750, 0.5},
+      {3.86, -8.59 - 0.95, 30, 6000, 0.5},
+      {4.25, -9.33 - 0.95, 27.5, 6250, 0.5},
+      {4.68, -9.68 - 0.95, 26, 6500, 0.5},
+      {5.08, -10.47 - 0.95, 24.5, 6750, 0.5},
+      {5.54, -11.73 - 0.95, 22, 7000, 0.5}
     };
+
+    //Red
+    //Bumper: dist: 1.39m, tag elev: 6.24
+    //Farther: dist: 4.77m, tag elev: 10.44
+
+    //Blue
+    //Farther: dist: 5.16m tag elev: -11.09
+
 
     /**
      * Interpolates a value from a lookup table based on the given xValue.
@@ -126,7 +125,7 @@ public final class Constants {
             return returnValue;
         } else if (xValue < SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
             //If the xValue is farther than the last setpoint
-            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][0];
+            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][yIndex];
             return returnValue;
         } else {
             for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
@@ -301,7 +300,7 @@ public final class Constants {
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
-    public static final double INTAKE_TOF_THRESHOLD_MM = 200;
+    public static final double INTAKE_TOF_THRESHOLD_MM = 420;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;

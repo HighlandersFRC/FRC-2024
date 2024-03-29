@@ -7,6 +7,7 @@ import org.json.JSONArray;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -23,6 +24,7 @@ public class ShootWhilePathingAndIntaking extends Command {
   private Shooter shooter;
   private Peripherals peripherals;
   private TOF tof;
+  private Proximity proximity;
 
   private double afterPathTimeout = 2;
 
@@ -177,7 +179,7 @@ public class ShootWhilePathingAndIntaking extends Command {
     this.odometryY = this.drive.getFusedOdometryY();
     this.odometryTheta = this.drive.getFusedOdometryTheta();
 
-    double[] desiredVelocityArray = this.drive.pidController(this.odometryX, this.odometryY, this.odometryTheta, this.currentTime, this.path, this.pickupNote);
+    double[] desiredVelocityArray = this.drive.pidController(this.odometryX, this.odometryY, this.odometryTheta, this.currentTime, this.path, this.pickupNote, 0);
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0]);
     velocityVector.setJ(desiredVelocityArray[1]);

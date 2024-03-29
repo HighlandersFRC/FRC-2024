@@ -1193,7 +1193,7 @@ public class Drive extends SubsystemBase {
    * @param pickupNote Indicates whether the robot is picking up a note.
    * @return An array containing the calculated velocities: [x velocity, y velocity, angular velocity].
   */
-  public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints, boolean pickupNote) {
+  public double[] pidController(double currentX, double currentY, double currentTheta, double time, JSONArray pathPoints, boolean pickupNote, double noteTrackingEndTime) {
     if(time < pathPoints.getJSONArray(pathPoints.length() - 1).getDouble(0)) {
         JSONArray currentPoint = pathPoints.getJSONArray(0);
         JSONArray targetPoint = pathPoints.getJSONArray(0);
@@ -1242,20 +1242,42 @@ public class Drive extends SubsystemBase {
           currentPointTheta = Math.PI - currentPointTheta;
         }
 
+        if (currentPointTime > noteTrackingEndTime){
+          pickupNote = false;
+          // System.out.println("timeout");
+        }
+
+        // System.out.println("current time: " + currentPointTime);
+
         if (pickupNote){
           double angleToNote = Math.toRadians(peripherals.getBackCamTargetTx());
           double tyToNote = Math.toRadians(peripherals.getBackCamTargetTy());
-          // double confidence = peripherals.getBackCamTargetConfidence();
-          // System.out.println("conf: " + confidence);
-          if (tyToNote < 0.15 && (Math.abs(angleToNote) > 0.01)){
+          // System.out.println("tx: " + angleToNote);
+          // System.out.println("ty: " + tyToNote);
+          if (tyToNote < 0.3 && angleToNote != 0.0){
             double differenceX = Math.abs(targetX - currentPointX);
             double differenceY = Math.abs(targetY - currentPointY);
             double r = (Math.sqrt((differenceX * differenceX) + (differenceY * differenceY)));
-            double adjustedX = r * (Math.cos((targetTheta + Math.PI) - angleToNote));
-            double adjustedY = r * (Math.sin((targetTheta + Math.PI) - angleToNote));
-            targetX = targetX + adjustedX;
-            targetY = targetY + (3 * adjustedY);
-            targetTheta = targetTheta - angleToNote;
+            double adjustedX = r * (Math.cos((currentPointTheta) - angleToNote));
+            double adjustedY = r * (Math.sin((currentPointTheta) - angleToNote));
+            double newX = currentPointX + adjustedX;
+            double newY = currentPointY + adjustedY;
+            // double newYWithScalar = currentPointY + (3 * adjustedY);
+            double newTheta = currentPointTheta - angleToNote;
+            // System.out.println("adjusting point");
+            // System.out.println("old x: " + targetX);
+            // System.out.println("old y: " + targetY);
+            // System.out.println("old theta: " + targetTheta);
+            // System.out.println("current theta: " + currentPointTheta);
+            // System.out.println("adjustedX: " + adjustedX);
+            // System.out.println("adjustedY: " + adjustedY);
+            // System.out.println("new x: " + newX);
+            // System.out.println("new Y: " + newY);
+            // System.out.println("new Y with scalar: " + newYWithScalar);
+            // System.out.println("new theta: " + newTheta);
+            targetX = currentPointX + adjustedX;
+            targetY = currentPointY + adjustedY;
+            targetTheta = currentPointTheta - angleToNote;
           }
         }
 

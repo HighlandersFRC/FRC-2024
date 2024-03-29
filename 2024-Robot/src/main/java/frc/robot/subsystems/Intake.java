@@ -92,12 +92,16 @@ public class Intake extends SubsystemBase {
   */
   public void set(double degrees, double RPM){
     if (degrees < Constants.SetPoints.INTAKE_DOWN_ANGLE_DEG){
+      // System.out.println("1");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_DOWN_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else if (degrees > Constants.SetPoints.INTAKE_UP_ANGLE_DEG){
+      // System.out.println("2");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.SetPoints.INTAKE_UP_ANGLE_ROT * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     } else {
+      // System.out.println("3");
       this.angleFalcon.setControl(this.anglefalconPositionRequest.withPosition(Constants.degreesToRotations(degrees) * Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     }
+    // System.out.println("Degrees: " + degrees);
     this.rollerFalcon.setControl(this.rollerFalconVelocityRequest.withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO));
   }
 
@@ -255,19 +259,19 @@ public class Intake extends SubsystemBase {
 
   @Override
   public void periodic() {
-    boolean angleMotor = false;
-    boolean intakeMotor = false;
-    boolean intakeTOF = false;
-    if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
-      angleMotor = true;
-    }
-    if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
-      intakeMotor = true;
-    }
+    // boolean angleMotor = false;
+    // boolean intakeMotor = false;
+    // boolean intakeTOF = false;
+    // if(angleFalcon.getMotorVoltage().getValue() != 0.0 ){
+    //   angleMotor = true;
+    // }
+    // if(rollerFalcon.getSupplyVoltage().getValue() != 0.0){
+    //   intakeMotor = true;
+    // }
     
     
-    SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
-    SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
+    // SmartDashboard.putBoolean("Intake Angle Motor", angleMotor);
+    // SmartDashboard.putBoolean("Intake Roller Motor", intakeMotor);
     // Logger.recordOutput("Intake Angle Motor Online?", angleMotor);
     // Logger.recordOutput("Intake Roller Motor Online?", intakeMotor);
     // Logger.recordOutput("Intake Angle", getAngleDegrees());

@@ -81,14 +81,14 @@ public class Peripherals extends SubsystemBase {
    */
   public boolean limelightsConnected() {
     boolean reachable = true;
-    try {
-      InetAddress address3 = InetAddress.getByName("10.44.99.43"); // back limelight ip address
-      if(!address3.isReachable(100)) {
-        reachable = false;
-      }
-    } catch (Exception e) {
-      System.out.println("What an absolute L piece of code: " + e);
-    }
+    // try {
+    //   InetAddress address3 = InetAddress.getByName("10.44.99.43"); // back limelight ip address
+    //   if(!address3.isReachable(100)) {
+    //     reachable = false;
+    //   }
+    // } catch (Exception e) {
+    //   System.out.println("What an absolute L piece of code: " + e);
+    // }
     try {
       InetAddress address4 = InetAddress.getByName("10.44.99.44"); // front limelight ip address
       if(!address4.isReachable(100)) {

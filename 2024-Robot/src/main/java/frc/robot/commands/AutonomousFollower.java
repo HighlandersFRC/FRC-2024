@@ -12,6 +12,7 @@ import org.json.JSONArray;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.tools.math.Vector;
+import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
@@ -20,6 +21,7 @@ public class AutonomousFollower extends Command {
   private Drive drive;
   private Lights lights;
   private Peripherals peripherals;
+  private Proximity proximity;
 
   private JSONArray path;
 
@@ -41,8 +43,9 @@ public class AutonomousFollower extends Command {
   private double pathEndTime;
 
   private boolean pickupNote;
+  private double noteTrackingEndTime;
 
-  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote) {
+  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
     this.drive = drive;
     this.lights = lights;
     this.path = pathPoints;
@@ -50,19 +53,23 @@ public class AutonomousFollower extends Command {
     this.pathStartTime = pathStartTime;
     this.pathEndTime = pathEndTime;
     this.pickupNote = pickupNote;
+    this.noteTrackingEndTime = noteTrackingEndTime;
     this.peripherals = peripherals;
+    this.proximity = proximity;
     addRequirements(drive);
   }
 
-  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote) {
+  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
     this.pathEndTime = path.getJSONArray(path.length() - 1).getDouble(0);
     this.pickupNote = pickupNote;
+    this.noteTrackingEndTime = noteTrackingEndTime;
     this.lights = lights;
     this.peripherals = peripherals;
+    this.proximity = proximity;
     addRequirements(drive);
   }
 
@@ -78,6 +85,7 @@ public class AutonomousFollower extends Command {
 
   @Override
   public void execute() {
+    // System.out.println("Auto Follower");
     if(pickupNote && peripherals.getBackCamTrack()) {
       lights.setStrobeGreen();
     }
@@ -92,8 +100,12 @@ public class AutonomousFollower extends Command {
 
     currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
     
+    if (proximity.getFeederProximity()){
+      pickupNote = false;
+      // System.out.println("sensor timeout");
+    }
     // call PIDController function
-    desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path, pickupNote);
+    desiredVelocityArray = drive.pidController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentTime, path, pickupNote, noteTrackingEndTime);
     
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();

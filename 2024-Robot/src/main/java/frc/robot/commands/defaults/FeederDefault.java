@@ -56,7 +56,7 @@ public class FeederDefault extends Command {
       this.feeder.setPercent(0);
     } else if (this.haveNote && !this.proximity.getShooterProximity()){
       this.feeder.setPercent(0);
-    } else if (this.haveCarriageNote && !this.haveNote){
+    } else if (this.haveCarriageNote && !this.haveNote && !this.haveFeederNote){
       // System.out.println("second");
       this.feeder.set(200);
     } else if (this.haveNote){

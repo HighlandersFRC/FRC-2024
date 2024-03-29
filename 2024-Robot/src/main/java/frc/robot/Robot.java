@@ -7,6 +7,8 @@ package frc.robot;
 import java.io.File;
 import java.io.FileReader;
 
+import javax.sound.sampled.SourceDataLine;
+
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
@@ -16,6 +18,8 @@ import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
 import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+
+import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
@@ -34,17 +38,20 @@ import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.IndexNoteToCarriage;
+import frc.robot.commands.LobShot;
 import frc.robot.commands.MoveToPiece;
 // import frc.robot.commands.PrepareAmp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFeeder;
+import frc.robot.commands.RunFlywheel;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetClimber;
 import frc.robot.commands.SmartIntake;
+import frc.robot.commands.SmartPrepForShot;
 import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.Test;
@@ -212,18 +219,22 @@ public class Robot extends LoggedRobot {
   public void robotPeriodic() {
 
         // checks CAN and limelights, blinks green if good and blinks yellow if bad
-    if(!checkedCAN && (Timer.getFPGATimestamp() - startTime > 30 || peripherals.limelightsConnected())) {
-      checkedCAN = true;
-      lights.clearAnimations();
-      lights.setCommandRunning(false);
-      if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
-        lights.blinkGreen(3);
-      } else {
+    // System.out.println("checkedCan: " + checkedCAN);
+    if (!checkedCAN){
+      if(Timer.getFPGATimestamp() - startTime > 10 || peripherals.limelightsConnected()) {
+        checkedCAN = true;
         lights.clearAnimations();
-        lights.setCommandRunning(true);
-        lights.setStrobeYellow();
+        lights.setCommandRunning(false);
+        if(drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN() && climber.getClimberCAN() && peripherals.limelightsConnected()) {
+          lights.blinkGreen(3);
+        } else {
+          lights.clearAnimations();
+          lights.setCommandRunning(true);
+          lights.setStrobeYellow();
+        }
       }
     }
+
 
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
@@ -245,7 +256,9 @@ public class Robot extends LoggedRobot {
     peripherals.periodic();
     climber.periodic();
 
-    SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
+    // System.out.println("0-1: " + (t1 - t0));
+
+    // SmartDashboard.putNumber("Carriage Rotation", climber.getCarriageRotationDegrees());
   }
 
   @Override
@@ -262,36 +275,34 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void autonomousInit() {
-    // if (OI.isBlueSide()) {
-    //   System.out.println("ON BLUE SIDE");
-      // fieldSide = "blue";
-    // } else {
-    //   System.out.println("ON RED SIDE");
+    if (OI.isBlueSide()) {
+      System.out.println("ON BLUE SIDE");
+      fieldSide = "blue";
+    } else {
+      System.out.println("ON RED SIDE");
       fieldSide = "red";
-    // }
+    }
     this.drive.setFieldSide(fieldSide);
 
-    // System.out.println("Selected Auto: ");
-    // if (OI.isNothingAuto()){
-    //   System.out.println("Nothing Auto");
-    //   this.nothingAuto.schedule();
-    // } else if (OI.is4PieceCloseAuto()) {
-    //   System.out.println("Four Piece Close");
-    //   this.fourPieceCloseAuto.schedule();
-    //   this.drive.autoInit(this.fourPieceCloseJSON);
-    // } else if (OI.is3PieceFarBottomAuto()){
-    //   System.out.println("Four Piece Far Bottom");
+    System.out.println("Selected Auto: ");
+    if (OI.isNothingAuto()){
+      System.out.println("Nothing Auto");
+      this.nothingAuto.schedule();
+    } else if (OI.is4PieceCloseAuto()) {
+      System.out.println("Four Piece Close");
+      this.fourPieceCloseAuto.schedule();
+      this.drive.autoInit(this.fourPieceCloseJSON);
+    } else if (OI.is3PieceFarBottomAuto()){
+      System.out.println("Four Piece Far Bottom");
       this.fourPieceFarBottomAuto.schedule();
       this.drive.autoInit(this.fourPieceFarBottomJSON);
-    // } else if (OI.is5PieceAuto()){
-    //   System.out.println("Five Piece");
-    //   this.fivePieceAuto.schedule();
-    //   this.drive.autoInit(this.fivePieceJSON);
-    // }else {
-    //   System.out.println("NO AUTO SELECTED");
-    // }
-    // this.autoNoteFollowingAuto.schedule();
-    // this.drive.autoInit(this.autoNoteFollowingJSON);
+    } else if (OI.is5PieceAuto()){
+      System.out.println("Five Piece");
+      this.fivePieceAuto.schedule();
+      this.drive.autoInit(this.fivePieceJSON);
+    }else {
+      System.out.println("NO AUTO SELECTED");
+    }
 
     this.intake.autoInit();
   }
@@ -316,32 +327,27 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450));
-    // OI.driverRT.whileTrue(new SmartIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200,  500));
+    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverB.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, tof, 1200));
-    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0, 1.5));
-   
+    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4100, 1200, 0, 5));
+    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 3));
+    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 64, 4500, 1200, 0, 1.5));
+    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 2.5));
+
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
-    OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
-    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 35, 5500, 1200, 0, 2));
-
-
-    OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
-    // OI.driverX.whileTrue(new SpinUpShooter(shooter, peripherals));
-    // OI.driverY.whileTrue(new RunShooter(shooter, 50, 0));
-    // OI.driverX.whileTrue(new RunShooter(shooter, 35, 0));
-    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, tof, 45, 5000, 1200, 0));
+    // OI.driverY.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
+    
+    // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
 
     //Operator
     // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, tof, shooter));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, tof, shooter));
+    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
+    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, 20, 0.5));
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 0.5));
 
-    // OI.operatorMenuButton.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500));
+    OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
+    OI.operatorLB.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     
