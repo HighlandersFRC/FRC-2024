@@ -113,14 +113,14 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
-    // System.out.println("Starting");
-    // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
-    // Logger.recordMetadata("Code", "Running");
-    // Logger.disableDeterministicTimestamps() // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
-    // System.out.println("Started Logger");
+    System.out.println("Starting");
+    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
+    Logger.recordMetadata("Code", "Running");
+    // Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
+    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    System.out.println("Started Logger");
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
@@ -230,9 +230,9 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     // System.out.println("Running");
 
-    // Logger.recordOutput("Odometry", drive.getOdometry());
-    // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
-    // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
+    Logger.recordOutput("Odometry", drive.getOdometry());
+    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
+    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
 
     lights.periodic();
     intake.periodic();

@@ -377,10 +377,10 @@ public final class Constants {
     public static final int RIGHT_CAMERA_ID = 2;
 
     //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
-    public static final double[] FRONT_CAMERA_POSE = {0.3683, -0.01905, 0.23495, 0, degreesToRadians(33), 0};
-    public static final double[] LEFT_CAMERA_POSE = {0.0172, 0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(90)};
-    public static final double[] RIGHT_CAMERA_POSE = {0.073025, -0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(270)};
-    public static final double[] BACK_CAMERA_POSE = {0, 0, 0, 0, 0, degreesToRadians(180)};
+    public static final double[] FRONT_CAMERA_POSE = {inchesToMeters(-9.4), 0, inchesToMeters(26.4), 0, degreesToRadians(17.9), 0};
+    public static final double[] LEFT_CAMERA_POSE = {inchesToMeters(5.3), inchesToMeters(10.4), inchesToMeters(11.1), degreesToRadians(33.3), degreesToRadians(24.3), degreesToRadians(34.4)};
+    public static final double[] RIGHT_CAMERA_POSE = {inchesToMeters(5.3), inchesToMeters(-10.4), inchesToMeters(11.1), degreesToRadians(-33.3), degreesToRadians(24.3), degreesToRadians(360-34.4)};
+    public static final double[] BACK_CAMERA_POSE = {inchesToMeters(-14.4), 0, inchesToMeters(24.6), 0, degreesToRadians(218), degreesToRadians(180)};
     public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
     public static final double[] LEFT_CAMERA_POSITION_POLAR = {getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]), Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0])};
     public static final double[] RIGHT_CAMERA_POSITION_POLAR = {getDistance(0, 0, RIGHT_CAMERA_POSE[0], RIGHT_CAMERA_POSE[1]), Math.atan2(RIGHT_CAMERA_POSE[1], RIGHT_CAMERA_POSE[0])};
