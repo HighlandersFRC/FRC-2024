@@ -142,7 +142,6 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setCurrentLimitInAuto(double supply, double stator){
-    System.out.println("current set");
     this.currentLimitsConfigs.StatorCurrentLimit = stator;
     this.currentLimitsConfigs.SupplyCurrentLimit = supply;
     this.currentLimitsConfigs.StatorCurrentLimitEnable = true;

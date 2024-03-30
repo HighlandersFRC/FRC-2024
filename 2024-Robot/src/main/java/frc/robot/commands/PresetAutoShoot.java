@@ -181,7 +181,7 @@ public class PresetAutoShoot extends Command {
   public boolean isFinished() {
     if (this.shooterDegrees > 90){
       return true;
-    } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime){
+    } else if (this.hasShot /* && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime */){
       return true;
     } else {
       return false;

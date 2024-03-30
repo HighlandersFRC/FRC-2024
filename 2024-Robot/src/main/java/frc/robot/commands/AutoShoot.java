@@ -49,9 +49,9 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.045;
+  private double kP = 0.05;
   private double kI = 0;
-  private double kD = 0.07;
+  private double kD = 0.09;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -121,7 +121,7 @@ public class AutoShoot extends Command {
       }
     }
 
-    System.out.println("Can See Tag: " + canSeeTag);
+    // System.out.println("Can See Tag: " + canSeeTag);
 
     if (canSeeTag){
       lights.setStrobeGreen();
@@ -171,12 +171,14 @@ public class AutoShoot extends Command {
       this.drive.driveAutoAligned(0);
     }
 
-    if (canSeeTag){
-      this.shooter.set(this.shooterDegrees, this.shooterRPM);
-    } else {
-      this.shooter.set(this.defaultShooterAngle, this.defaultFlywheelRPM);
+    if (this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
+      if (canSeeTag){
+        this.shooter.set(this.shooterDegrees, this.shooterRPM);
+      } else {
+        this.shooter.set(this.defaultShooterAngle, this.defaultFlywheelRPM);
+      }
     }
-
+    
     if (this.hasReachedSetPoint == true){
       lights.clearAnimations();
       lights.setCandleRGB(0, 255, 0);
@@ -189,27 +191,27 @@ public class AutoShoot extends Command {
     if (!this.proximity.getFeederProximity() && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
-      // System.out.println("Has Shot");
+      System.out.println("Has Shot");
     }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
     }
 
-    System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
-    System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
-    System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
-    System.out.println("Targ. RPM: " + this.shooterRPM);
+    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
+    // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
+    // System.out.println("Targ. RPM: " + this.shooterRPM);
     // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
-    System.out.println("Elev: " + this.shooter.getAngleDegrees());
-    System.out.println("Targ. Elev: " + this.shooterDegrees);
+    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    // System.out.println("Targ. Elev: " + this.shooterDegrees);
     // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - shooterDegrees));
-    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
     // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
-    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
-    System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
-    System.out.println("<================>");
+    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
+    // System.out.println("<================>");
   }
 
   @Override

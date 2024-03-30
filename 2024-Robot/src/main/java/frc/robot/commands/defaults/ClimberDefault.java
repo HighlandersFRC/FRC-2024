@@ -104,7 +104,7 @@ public class ClimberDefault extends Command {
       } else if (this.haveNote){
         // System.out.println("6");
         this.climber.setTrapRollerTorque(20, 0.2);
-        this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+        this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
       } else {
         // System.out.println("7");
         this.climber.setTrapRollerTorque(20, 0.1);
