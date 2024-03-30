@@ -32,7 +32,7 @@ public class IntakeDefault extends Command {
     OI.driverController.setRumble(RumbleType.kBothRumble, 0);
     OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
 
-    if (Timer.getFPGATimestamp() - this.initTime < 0.4){
+    if (Timer.getFPGATimestamp() - this.initTime < 0.6){
       this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP.degrees);
     } else {
       if (Math.abs(this.intake.getAngleRPS()) < 0.01 && !this.isZeroed){
@@ -40,7 +40,7 @@ public class IntakeDefault extends Command {
         this.intake.setAngleEncoderPosition(0);
         this.numTimesOverCurrentLimit ++;
       } else if (!this.isZeroed) {
-        this.intake.setAngleTorqueCurrent(30, 0.3);
+        this.intake.setAngleTorqueCurrent(40, 0.3);
       } else {
         this.intake.setAngleTorqueCurrent(5, 0.1);
       }
