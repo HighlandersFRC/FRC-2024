@@ -45,16 +45,14 @@ public class TurnToTarget extends Command {
   public void execute() {
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
+    double id = this.peripherals.getFrontCamID();
 
     boolean canSeeTag = false;
-    for (int id : ids){
-      // System.out.println("ID: " + id);
+    // for (double id : ids){
       if (id == 7 || id == 4){
         canSeeTag = true;
       }
-    }
-
+    // }
     double prevSpeakerAngleDegrees = this.speakerAngleDegrees;
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
     if (canSeeTag && this.speakerAngleDegrees < 90 && Math.abs(this.speakerAngleDegrees - prevSpeakerAngleDegrees) > 0.01){

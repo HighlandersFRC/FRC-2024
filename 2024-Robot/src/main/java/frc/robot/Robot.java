@@ -283,6 +283,7 @@ public class Robot extends LoggedRobot {
       fieldSide = "red";
     }
     this.drive.setFieldSide(fieldSide);
+    this.peripherals.setFieldSide(fieldSide);
 
     System.out.println("Selected Auto: ");
     if (OI.isNothingAuto()){
@@ -319,9 +320,20 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
+    if (OI.isBlueSide()) {
+      System.out.println("ON BLUE SIDE");
+      fieldSide = "blue";
+    } else {
+      System.out.println("ON RED SIDE");
+      fieldSide = "red";
+    }
+
     if (this.fieldSide == "red"){
       this.drive.setPigeonAfterAuto();
     }
+    System.out.println("field side: " + fieldSide);
+
+    this.peripherals.setFieldSide(fieldSide);
 
     //CONTROLS
 

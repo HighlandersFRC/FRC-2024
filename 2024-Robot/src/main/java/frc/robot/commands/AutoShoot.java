@@ -49,9 +49,9 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.05;
+  private double kP = 0.045;
   private double kI = 0;
-  private double kD = 0.09;
+  private double kD = 0.07;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -112,16 +112,16 @@ public class AutoShoot extends Command {
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
+    double id = this.peripherals.getFrontCamID();
 
     canSeeTag = false;
-    for (int id : ids){
+    // for (double id : ids){
       if (id == 7 || id == 4){
         canSeeTag = true;
       }
-    }
+    // }
 
-    // System.out.println("Can See Tag: " + canSeeTag);
+    System.out.println("Can See Tag: " + canSeeTag);
 
     if (canSeeTag){
       lights.setStrobeGreen();

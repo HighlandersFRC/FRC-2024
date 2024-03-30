@@ -34,6 +34,8 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamTx = frontCam.getEntry("tx");
   private NetworkTableEntry frontCamTl = frontCam.getEntry("tl");
   private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
+  private NetworkTableEntry frontCamIDs = frontCam.getEntry("tid");
+  private NetworkTableEntry frontCamIDSet = frontCam.getEntry("priorityid");
   private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
   private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry backCamTx = backCam.getEntry("tx");  
@@ -47,6 +49,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
   private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
+  private String fieldSide = "none";
 
   private double[] noTrackLimelightArray = new double[6];
 
@@ -99,6 +102,16 @@ public class Peripherals extends SubsystemBase {
   /**
    * Initializes the peripherals.
    */
+  public void setFieldSide(String fieldSide){
+    this.fieldSide = fieldSide;
+    if (fieldSide == "blue"){
+      System.out.println("blue side");
+      frontCamIDSet.setInteger(7);
+    } else {
+      System.out.println("red side");
+      frontCamIDSet.setInteger(4);
+    }
+  }
   public void init() {
     pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
     pigeonConfig.MountPose.MountPoseRoll = 32.49883270263672;
@@ -131,18 +144,19 @@ public class Peripherals extends SubsystemBase {
    * @return Y-Axis rotation in radians
    */
   public double getFrontCamTargetTy() {
-    JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
-    if (results.isNull("Fiducial")) {
-      return 100;
-    }
-    JSONArray fiducials = results.getJSONArray("Fiducial");
-    for (int i = 0; i < fiducials.length(); i++) {
-      int id = ((JSONObject) fiducials.get(i)).getInt("fID");
-      if (id == 7 || id == 4) {
-        return ((JSONObject) fiducials.get(i)).getDouble("ty");
-      }
-    }
-    return 100;
+    // JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
+    // if (results.isNull("Fiducial")) {
+    //   return 100;
+    // }
+    // JSONArray fiducials = results.getJSONArray("Fiducial");
+    // for (int i = 0; i < fiducials.length(); i++) {
+    //   int id = ((JSONObject) fiducials.get(i)).getInt("fID");
+    //   if (id == 7 || id == 4) {
+    //     return ((JSONObject) fiducials.get(i)).getDouble("ty");
+    //   }
+    // }
+    // return 100;
+    return frontCamTy.getDouble(100);
   }
 
   /**
@@ -150,18 +164,19 @@ public class Peripherals extends SubsystemBase {
    * @return X-Axis rotation in radians
    */
   public double getFrontCamTargetTx() {
-    JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
-    if (results.isNull("Fiducial")) {
-      return 100;
-    }
-    JSONArray fiducials = results.getJSONArray("Fiducial");
-    for (int i = 0; i < fiducials.length(); i++) {
-      int id = ((JSONObject) fiducials.get(i)).getInt("fID");
-      if (id == 7 || id == 4) {
-        return ((JSONObject) fiducials.get(i)).getDouble("tx");
-      }
-    }
-    return 100;
+    // JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
+    // if (results.isNull("Fiducial")) {
+    //   return 100;
+    // }
+    // JSONArray fiducials = results.getJSONArray("Fiducial");
+    // for (int i = 0; i < fiducials.length(); i++) {
+    //   int id = ((JSONObject) fiducials.get(i)).getInt("fID");
+    //   if (id == 7 || id == 4) {
+    //     return ((JSONObject) fiducials.get(i)).getDouble("tx");
+    //   }
+    // }
+    // return 100;
+    return frontCamTx.getDouble(100);
   }
 
   /**
@@ -179,6 +194,10 @@ public class Peripherals extends SubsystemBase {
       ids.add(((JSONObject) fiducials.get(i)).getInt("fID"));
     }
     return ids;
+  }
+
+  public double getFrontCamID() {
+    return NetworkTableInstance.getDefault().getTable("limelight-front").getEntry("tid").getDouble(0);
   }
 
   /**
@@ -495,5 +514,7 @@ public class Peripherals extends SubsystemBase {
     // System.out.println(i.remote_ip);
     // System.out.println(i.remote_id);
     // }
+    SmartDashboard.putNumber("ty", getFrontCamTargetTy());
+    SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
   }
 }
