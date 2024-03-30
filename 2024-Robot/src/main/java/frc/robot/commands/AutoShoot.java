@@ -114,7 +114,7 @@ public class AutoShoot extends Command {
       }
     }
 
-    // System.out.println("Can See Tag: " + canSeeTag);
+    System.out.println("Can See Tag: " + canSeeTag);
 
     if (canSeeTag){
       lights.setStrobeGreen();
@@ -127,6 +127,7 @@ public class AutoShoot extends Command {
         // System.out.println("New RPM: " + this.shooterRPM);
         // System.out.println("New Deg.: " + this.shooterDegrees);
         this.shooterDegreesAllowedError = Constants.SetPoints.getAllowedAngleErrFromAngle(this.speakerElevationDegrees);
+        this.driveAngleAllowedError = Constants.SetPoints.getAllowedDriveAngleErrFromAngle(this.speakerElevationDegrees);
       }
     }
 
@@ -135,7 +136,7 @@ public class AutoShoot extends Command {
       double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
       // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
       // this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
-      this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
+      this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees - 0.5;
       // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
     }
 
@@ -184,20 +185,20 @@ public class AutoShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
-    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
-    // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
-    // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
-    // System.out.println("Targ. RPM: " + this.shooterRPM);
+    System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
+    System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
+    System.out.println("Targ. RPM: " + this.shooterRPM);
     // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
-    // System.out.println("Elev: " + this.shooter.getAngleDegrees());
-    // System.out.println("Targ. Elev: " + this.shooterDegrees);
+    System.out.println("Elev: " + this.shooter.getAngleDegrees());
+    System.out.println("Targ. Elev: " + this.shooterDegrees);
     // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - shooterDegrees));
-    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
     // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
     // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
     // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
-    // System.out.println("<================>");
+    System.out.println("<================>");
   }
 
   @Override

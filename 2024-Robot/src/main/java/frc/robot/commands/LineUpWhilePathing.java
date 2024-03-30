@@ -11,13 +11,15 @@ import org.json.JSONArray;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
+import frc.robot.Constants;
 import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 
-public class AutonomousFollower extends Command {
+public class LineUpWhilePathing extends Command {
   private Drive drive;
   private Lights lights;
   private Peripherals peripherals;
@@ -45,7 +47,16 @@ public class AutonomousFollower extends Command {
   private boolean pickupNote;
   private double noteTrackingEndTime;
 
-  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
+  private PID pid;
+  private double kP = 0.045;
+  private double kI = 0;
+  private double kD = 0.07;
+  public static boolean canSeeTag;
+  private double speakerElevationDegrees;
+  private double speakerAngleDegrees;
+  private double targetPigeonAngleDegrees;
+
+  public LineUpWhilePathing(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
     this.drive = drive;
     this.lights = lights;
     this.path = pathPoints;
@@ -59,7 +70,7 @@ public class AutonomousFollower extends Command {
     addRequirements(drive);
   }
 
-  public AutonomousFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
+  public LineUpWhilePathing(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, boolean pickupNote, double noteTrackingEndTime, Proximity proximity) {
     this.drive = drive;
     this.path = pathPoints;
     this.record = record;
@@ -81,15 +92,43 @@ public class AutonomousFollower extends Command {
       lights.setCommandRunning(true);
       lights.setStrobePurple();
     }
+    pid = new PID(kP, kI, kD);
+    pid.setMinOutput(-3);
+    pid.setMaxOutput(3);
   }
 
   @Override
   public void execute() {
-    // System.out.println("Auto Follower");
+    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
+
+    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
+
+    canSeeTag = false;
+    for (int id : ids){
+      if (id == 7 || id == 4){
+        canSeeTag = true;
+      }
+    }
+
+    // System.out.println("Can See Tag: " + canSeeTag);
+
+    if (canSeeTag){
+      lights.setStrobeGreen();
+      this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
+      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+    }
+
+    if (canSeeTag){
+      double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+      this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
+    }
+
+    this.pid.setSetPoint(this.targetPigeonAngleDegrees);
+    this.pid.updatePID(pigeonAngleDegrees);
+    double turnResult = -pid.getResult();
     if(pickupNote && peripherals.getBackCamTrack()) {
       lights.setStrobeGreen();
     }
-    // System.out.println("auto runs");
     drive.updateOdometryFusedArray();
     odometryFusedX = drive.getFusedOdometryX();
     odometryFusedY = drive.getFusedOdometryY();
@@ -116,13 +155,25 @@ public class AutonomousFollower extends Command {
     // velocityVector.setJ(0);
     // desiredThetaChange = 0;
 
-    drive.autoDrive(velocityVector, desiredThetaChange);
+    if (canSeeTag && this.proximity.getFeederProximity() && this.speakerAngleDegrees < 90){
+      // System.out.println("1");
+      drive.autoDrive(velocityVector, turnResult);
+    } else {
+      // System.out.println("2");
+      drive.autoDrive(velocityVector, desiredThetaChange);
+    }
 
     this.previousTime = currentTime;
 
     if (this.record){
       recordedOdometry.add(new double[] {currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta});
     }
+    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
+    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
+    // System.out.println("<================>");
   }
 
   @Override

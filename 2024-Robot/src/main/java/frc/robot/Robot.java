@@ -312,6 +312,7 @@ public class Robot extends LoggedRobot {
 
   @Override 
   public void teleopInit() {
+    shooter.teleopInit();
     lights.setCommandRunning(false);
     lights.clearAnimations();
     if (m_autonomousCommand != null) {

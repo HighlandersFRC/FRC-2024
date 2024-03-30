@@ -21,6 +21,7 @@ import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
+import frc.robot.commands.LineUpWhilePathing;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
@@ -95,41 +96,44 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4000, 1200, 8),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4500, 1200, 11),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, true, 3.25, proximity),
+        // new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 3.25, proximity),
+        new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
         ),
-        new AutoPrepForShot(shooter, proximity, 25, 6500)
+        new AutoPrepForShot(shooter, proximity, 25, 6600)
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, true, 2.25, proximity),
+        // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
+        new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
         ),
-        new AutoPrepForShot(shooter, proximity, 25, 6500)
+        new AutoPrepForShot(shooter, proximity, 25, 6600)
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, true, 3.25, proximity),
+        // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
+        new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
         ),
-        new AutoPrepForShot(shooter, proximity, 25, 6500)
+        new AutoPrepForShot(shooter, proximity, 25.5, 6600)
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2),

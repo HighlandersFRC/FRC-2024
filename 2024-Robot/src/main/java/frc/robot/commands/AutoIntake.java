@@ -30,6 +30,7 @@ public class AutoIntake extends Command {
   private boolean buzzControllers;
 
   private boolean noteInIntake;
+  private int numTimeNoteInIntake = 0;
 
   public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean buzzControllers) {
     this.intake = intake;
@@ -65,6 +66,7 @@ public class AutoIntake extends Command {
     this.haveNote = false;
     this.noteInIntake = false;
     this.initTime = Timer.getFPGATimestamp();
+    this.numTimeNoteInIntake = 0;
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
@@ -89,9 +91,10 @@ public class AutoIntake extends Command {
 
     if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
       this.noteInIntake = true;
+      this.numTimeNoteInIntake++;
     }
 
-    if (this.noteInIntake && this.tof.isIntakeTOFConnected()){
+    if (this.numTimeNoteInIntake >= 3 && this.tof.isIntakeTOFConnected()){
       // System.out.println("1");
       this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
     } else {

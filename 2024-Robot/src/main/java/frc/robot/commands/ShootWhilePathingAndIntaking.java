@@ -8,22 +8,21 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.sensors.Proximity;
-import frc.robot.sensors.TOF;
+// import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
+// import frc.robot.subsystems.Feeder;
+// import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Peripherals;
-import frc.robot.subsystems.Shooter;
+// import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
 public class ShootWhilePathingAndIntaking extends Command {
   private Drive drive;
-  private Intake intake;
-  private Feeder feeder;
-  private Shooter shooter;
+  // private Intake intake;
+  // private Feeder feeder;
+  // private Shooter shooter;
   private Peripherals peripherals;
-  private TOF tof;
   private Proximity proximity;
 
   private double afterPathTimeout = 2;
@@ -41,9 +40,9 @@ public class ShootWhilePathingAndIntaking extends Command {
 
   //Shooting stuff
   private PID turnPID;
-  private double turnP = 0.04;
-  private double turnI = 0.0;
-  private double turnD = 0.06;
+  private double turnP = 0.045;
+  private double turnI = 0;
+  private double turnD = 0.07;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -71,20 +70,18 @@ public class ShootWhilePathingAndIntaking extends Command {
   private boolean haveIntakeNote;
 
   private boolean pickupNote;
+  private double desiredThetaChange = 0;
 
-  public ShootWhilePathingAndIntaking(Drive drive, Intake intake, Feeder feeder, Shooter shooter, Peripherals peripherals, TOF tof, JSONArray pathPoints, double intakeRPM, double feederRPM, double shootDelay, boolean pickupNote) {
+  public ShootWhilePathingAndIntaking(Drive drive, Peripherals peripherals, Proximity proximity, JSONArray pathPoints, double intakeRPM, double feederRPM, double shootDelay, boolean pickupNote) {
     this.drive = drive;
-    this.intake = intake;
-    this.feeder = feeder;
-    this.shooter = shooter;
     this.peripherals = peripherals;
-    this.tof = tof;
+    this.proximity = proximity;
     this.path = pathPoints;
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.shootDelay = shootDelay;
     this.pickupNote = pickupNote;
-    addRequirements(this.drive, this.feeder, this.shooter);
+    addRequirements(this.drive);
   }
 
   @Override
@@ -166,10 +163,10 @@ public class ShootWhilePathingAndIntaking extends Command {
     // System.out.println("Elev: " + this.shooter.getAngleDegrees());
     // System.out.println("Targ. Elev: " + targetShooterDegrees);
     // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - targetShooterDegrees));
-    // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
-    // System.out.println("Targ. Pigeon Angle: " + targetPigeonAngleDegrees);
-    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetPigeonAngleDegrees));
-    // System.out.println("<================>");
+    System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
+    System.out.println("Targ. Pigeon Angle: " + targetCurrentPigeonAngleDegrees);
+    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees));
+    System.out.println("<================>");
 
     double turnResult = -this.turnPID.getResult();
 
@@ -183,47 +180,50 @@ public class ShootWhilePathingAndIntaking extends Command {
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0]);
     velocityVector.setJ(desiredVelocityArray[1]);
+    desiredThetaChange = desiredVelocityArray[2]; 
     // velocityVector.setI(0);
     // velocityVector.setJ(0);
-    if (canSeeSpeakerTag){
+    if (canSeeSpeakerTag && proximity.getFeederProximity()){
+      System.out.println("1");
       this.drive.autoDrive(velocityVector, turnResult);
     } else {
-      this.drive.autoDrive(velocityVector, 0);
+      System.out.println("2");
+      this.drive.autoDrive(velocityVector, desiredThetaChange);
     }
 
-    this.shooter.set(targetFutureShooterDegrees, targetFutureShooterRPM);
+    // this.shooter.set(targetFutureShooterDegrees, targetFutureShooterRPM);
 
-    if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - targetCurrentShooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - targetCurrentShooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
-      this.hasReachedSetPoint = true;
-    }
+    // if (Timer.getFPGATimestamp() - this.initTime >= this.shootDelay && Math.abs(this.shooter.getAngleDegrees() - targetCurrentShooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - targetCurrentShooterRPM) <= this.shooterRPMAllowedError && Math.abs(pigeonAngleDegrees - targetCurrentPigeonAngleDegrees) <= this.driveAngleAllowedError){
+    //   this.hasReachedSetPoint = true;
+    // }
 
-    if (Timer.getFPGATimestamp() - this.initTime - this.shootDelay >= this.shootTimeout){
-      this.hasReachedSetPoint = true;
-      System.out.println("\nSHOOTER TIMEOUT\n");
-    }
+    // if (Timer.getFPGATimestamp() - this.initTime - this.shootDelay >= this.shootTimeout){
+    //   this.hasReachedSetPoint = true;
+    //   System.out.println("\nSHOOTER TIMEOUT\n");
+    // }
 
-    //indexing logic
-    if (this.hasShot){
-      if (this.tof.getFeederDistMillimeters() <= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM){
-        this.feeder.set(0);
-        this.haveIntakeNote = true;
-      } else {
-        this.feeder.set(this.feederRPM);
-      }
-    } else {
-      if (this.hasReachedSetPoint){
-        this.feeder.set(this.feederRPM);
-      } else {
-        this.feeder.set(0);
-      }
-    }
+    // //indexing logic
+    // if (this.hasShot){
+    //   if (this.proximity.getFeederProximity()){
+    //     this.feeder.set(0);
+    //     this.haveIntakeNote = true;
+    //   } else {
+    //     this.feeder.set(this.feederRPM);
+    //   }
+    // } else {
+    //   if (this.hasReachedSetPoint){
+    //     this.feeder.set(this.feederRPM);
+    //   } else {
+    //     this.feeder.set(0);
+    //   }
+    // }
 
-    if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM && !this.hasShot){
-      this.hasShot = true;
-    }
+    // if (this.tof.getFeederDistMillimeters() >= Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM && !this.hasShot){
+    //   this.hasShot = true;
+    // }
 
     //Intaking
-    this.intake.set(Constants.SetPoints.IntakePosition.kDOWN, this.intakeRPM);
+    // this.intake.set(Constants.SetPoints.IntakePosition.kDOWN, this.intakeRPM);
 
     this.previousTime = this.currentTime;
   }
@@ -231,12 +231,12 @@ public class ShootWhilePathingAndIntaking extends Command {
   @Override
   public void end(boolean interrupted) {
     this.drive.autoDrive(new Vector(0, 0), 0);
-    this.feeder.set(0);
+    // this.feeder.set(0);
   }
 
   @Override
   public boolean isFinished() {
-    if (this.currentTime >= path.getJSONArray(path.length() - 1).getDouble(0) && this.hasShot && this.haveIntakeNote){
+    if (this.currentTime > path.getJSONArray(path.length() - 1).getDouble(0)){
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime > path.getJSONArray(path.length() - 1).getDouble(0) + this.afterPathTimeout){
       return true;

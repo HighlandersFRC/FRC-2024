@@ -81,6 +81,11 @@ public class Shooter extends SubsystemBase {
       return false;
   }
 
+  public void teleopInit(){
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
+  }
+
   public void init() {
     this.angleEncoderConfiguration.MagnetSensor.AbsoluteSensorRange = AbsoluteSensorRangeValue.Signed_PlusMinusHalf;
     this.angleEncoderConfiguration.MagnetSensor.SensorDirection = SensorDirectionValue.CounterClockwise_Positive;
@@ -132,6 +137,11 @@ public class Shooter extends SubsystemBase {
     if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1){
       this.angleEncoder.setPosition(this.angleEncoder.getPosition().getValueAsDouble() + 1.0);
     }
+  }
+
+  public void setCurrentLimitInAuto(double supply, double stator){
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = supply;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = stator;
   }
 
   /**
@@ -291,6 +301,7 @@ public class Shooter extends SubsystemBase {
   // Constantly set flywheel velocity PID
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
+    SmartDashboard.putNumber("Shooter angle", getAngleDegrees());
     // Logger.recordOutput("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
     // Logger.recordOutput("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());

@@ -1206,7 +1206,7 @@ public class Drive extends SubsystemBase {
 
         if (currentPointTime > noteTrackingEndTime){
           pickupNote = false;
-          System.out.println("timeout");
+          // System.out.println("timeout");
         }
 
         // System.out.println("current time: " + currentPointTime);
