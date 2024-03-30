@@ -25,6 +25,7 @@ public class AutoPrepForShot extends Command {
   @Override
   public void initialize() {
     this.haveNote = false;
+    System.out.println("current start");
     this.shooter.setCurrentLimitInAuto(10, 20);
   }
 
@@ -45,6 +46,7 @@ public class AutoPrepForShot extends Command {
 
   @Override
   public void end(boolean interrupted) {
+    System.out.println("current end");
     this.shooter.setCurrentLimitInAuto(60, 80);
   }
 

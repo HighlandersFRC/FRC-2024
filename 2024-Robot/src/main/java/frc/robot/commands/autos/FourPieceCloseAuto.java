@@ -106,7 +106,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false),
         new ParallelCommandGroup(
@@ -117,7 +117,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false),
         new ParallelCommandGroup(
@@ -128,7 +128,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1),
 
       //End
       new ParallelCommandGroup(

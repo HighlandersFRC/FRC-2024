@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
@@ -47,6 +48,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID,
       Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
+  private final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
   private final TalonFX flywheelFalconFollower = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID,
       Constants.CANInfo.CANBUS_NAME);
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
@@ -140,8 +142,13 @@ public class Shooter extends SubsystemBase {
   }
 
   public void setCurrentLimitInAuto(double supply, double stator){
-    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = supply;
-    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = stator;
+    System.out.println("current set");
+    this.currentLimitsConfigs.StatorCurrentLimit = stator;
+    this.currentLimitsConfigs.SupplyCurrentLimit = supply;
+    this.currentLimitsConfigs.StatorCurrentLimitEnable = true;
+    this.currentLimitsConfigs.SupplyCurrentLimitEnable = true;
+    flywheelFalconMaster.getConfigurator().apply(this.currentLimitsConfigs);
+    flywheelFalconFollower.getConfigurator().apply(this.currentLimitsConfigs);
   }
 
   /**

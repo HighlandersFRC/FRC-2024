@@ -57,7 +57,10 @@ public class AutoShoot extends Command {
   private double speakerAngleDegrees;
   private double targetPigeonAngleDegrees;
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
+  private double defaultShooterAngle = 0;
+  private double defaultFlywheelRPM = 0;
+
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -65,10 +68,12 @@ public class AutoShoot extends Command {
     this.lights = lights;
     this.proximity = proximity;
     this.feederRPM = feederRPM;
+    this.defaultShooterAngle = defaultShooterAngle;
+    this.defaultFlywheelRPM = defaultFlywheelRPM;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -76,6 +81,8 @@ public class AutoShoot extends Command {
     this.lights = lights;
     this.proximity = proximity;
     this.feederRPM = feederRPM;
+    this.defaultShooterAngle = defaultShooterAngle;
+    this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.timeout = timeout;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
@@ -164,7 +171,11 @@ public class AutoShoot extends Command {
       this.drive.driveAutoAligned(0);
     }
 
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    if (canSeeTag){
+      this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    } else {
+      this.shooter.set(this.defaultShooterAngle, this.defaultFlywheelRPM);
+    }
 
     if (this.hasReachedSetPoint == true){
       lights.clearAnimations();
@@ -196,8 +207,8 @@ public class AutoShoot extends Command {
     System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
     System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
     // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees));
-    // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
-    // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
+    System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
+    System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
     System.out.println("<================>");
   }
 
