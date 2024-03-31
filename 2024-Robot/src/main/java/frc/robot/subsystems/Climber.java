@@ -85,8 +85,8 @@ public class Climber extends SubsystemBase {
     setDefaultCommand(new ClimberDefault(this, tof, proximity));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
-    this.rotationPID.setMaxOutput(0.65);
-    this.rotationPID.setMinOutput(-0.65);
+    this.rotationPID.setMaxOutput(1);
+    this.rotationPID.setMinOutput(-1);
     this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
     this.rotationPID.updatePID(getCarriageRotations());
     carriageEncoder = carriageRotationNeo.getEncoder();
@@ -399,7 +399,7 @@ public class Climber extends SubsystemBase {
     //   climbFollower = true;
     // }
 
-    // SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
+    SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
 
     // if (getElevatorLimitSwitch()){
     //   setElevatorEncoderPosition(0.0);

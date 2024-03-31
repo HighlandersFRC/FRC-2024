@@ -59,7 +59,7 @@ public class IndexNoteToCarriage extends Command {
     this.climber.setTrapRollerTorque(-20, 0.5);
     this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
     this.intake.setRollers(-150);
-    this.intake.setAngleTorqueCurrent(15, 0.6);
+    this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP);
     if (this.shooter.getFlywheelRPM() > 100){
       this.shooter.setFlywheelPercent(-0.1);
     } else {

@@ -25,11 +25,12 @@ public class AutoPrepForShot extends Command {
   @Override
   public void initialize() {
     this.haveNote = false;
+    this.shooter.setCurrentLimitInAuto(10, 20);
   }
 
   @Override
   public void execute() {
-    if (this.proximity.getFeederProximity() && !this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity()){
+    if (this.proximity.getFeederProximity()){
       this.haveNote = true;
     }
 
@@ -43,7 +44,9 @@ public class AutoPrepForShot extends Command {
   }
 
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    this.shooter.setCurrentLimitInAuto(60, 80);
+  }
 
   @Override
   public boolean isFinished() {

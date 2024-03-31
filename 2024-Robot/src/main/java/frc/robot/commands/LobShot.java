@@ -10,7 +10,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
+import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Lights;
@@ -19,7 +21,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class PresetAutoShoot extends Command {
+public class LobShot extends Command {
   private Drive drive;
   private Shooter shooter;
   private Feeder feeder;
@@ -38,8 +40,8 @@ public class PresetAutoShoot extends Command {
   private boolean hasShot;
   private double shotPauseTime = 0.0;
 
-  private double shooterDegreesAllowedError = 0.5;
-  private double shooterRPMAllowedError = 150;
+  private double shooterDegreesAllowedError = 0.75;
+  private double shooterRPMAllowedError = 200;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;
@@ -48,34 +50,17 @@ public class PresetAutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.04;
+  private double kP = 0.045;
   private double kI = 0;
-  private double kD = 0.06;
+  private double kD = 0.065;
 
   private double speakerAngleDegrees;
 
+  private double targetPigeonAngleDegrees;
+
   private double robotAngleOffset;
 
-  private boolean smartDashboardTuning;
-
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
-    this.drive = drive;
-    this.shooter = shooter;
-    this.feeder = feeder;
-    this.peripherals = peripherals;
-    this.lights = lights;
-    this.proximity = proximity;
-    this.shooterDegrees = shooterDegrees;
-    this.shooterRPM = shooterRPM;
-    this.feederRPM = feederRPM;
-    this.robotAngleOffset = robotAngleOffset;
-    if (this.drive.getFieldSide() == "blue"){
-      this.robotAngleOffset *= -1;
-    }
-    addRequirements(this.drive, this.shooter, this.feeder);
-  }
-
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
+  public LobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -101,44 +86,41 @@ public class PresetAutoShoot extends Command {
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
-    lights.setCommandRunning(true);
-    lights.setStrobePurple();
+
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+
+    if (OI.isRedSide()){
+      // System.out.println("RED");
+        this.targetPigeonAngleDegrees = 205;
+    } else {
+      // System.out.println("BLUE");
+        this.targetPigeonAngleDegrees = 135;
+    }
+    double standardizedPigeonAngleDegrees = Constants.SetPoints.standardizeAngleDegrees(this.peripherals.getPigeonAngle());
+    double dif = standardizedPigeonAngleDegrees - this.targetPigeonAngleDegrees;
+    if (Math.abs(dif) > 180){
+        this.targetPigeonAngleDegrees -= 360;
+    }
+    
   }
 
   @Override
   public void execute() {
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    ArrayList<Integer> ids = peripherals.getFrontCamIDs();
+    
 
-    boolean canSeeTag = false;
-    for (int id : ids){
-      if (id == 7 || id == 4){
-        canSeeTag = true;
-      }
-    }
-
-    if (canSeeTag){
-      lights.setStrobeGreen();
-      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-    }
-
-    this.pid.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees + this.robotAngleOffset);
-    this.pid.updatePID(pigeonAngleDegrees);
+    this.pid.setSetPoint(this.targetPigeonAngleDegrees);
+    this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+    // System.out.println("Target: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Current: " + Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     double turnResult = -pid.getResult();    
 
-    if (canSeeTag && this.speakerAngleDegrees < 90){
-      this.drive.driveAutoAligned(turnResult);
-    } else {
-      this.drive.driveAutoAligned(0);
-    }
+    this.drive.driveAutoAligned(turnResult);
 
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getFlywheelFollowerRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){
-      lights.clearAnimations();
-      lights.setCandleRGB(0, 255, 0);
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - this.targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
       this.hasReachedSetPoint = true;
     }
 
@@ -149,16 +131,16 @@ public class PresetAutoShoot extends Command {
     }
 
     if (!this.proximity.getFeederProximity() && !this.hasShot){
-      this.hasShot = true; 
+      this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
     }
 
     if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
       this.hasReachedSetPoint = true;
+      // System.out.println("Lob Timeout");
     }
 
-    // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
-    // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
+    // System.out.println("RPM: " + this.shooter.getFlywheelRPM());
     // System.out.println("Targ. RPM: " + this.shooterRPM);
     // System.out.println("RPM Err: " + Math.abs(this.shooter.getFlywheelRPM() - this.shooterRPM));
     // System.out.println("Elev: " + this.shooter.getAngleDegrees());
@@ -173,15 +155,13 @@ public class PresetAutoShoot extends Command {
   @Override
   public void end(boolean interrupted) {
     this.feeder.set(0);
-    lights.clearAnimations();
-    lights.setCommandRunning(false);
   }
 
   @Override
   public boolean isFinished() {
     if (this.shooterDegrees > 90){
       return true;
-    } else if (this.hasShot /* && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime */){
+    } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime){
       return true;
     } else {
       return false;

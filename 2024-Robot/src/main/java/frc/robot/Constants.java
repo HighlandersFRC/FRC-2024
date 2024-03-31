@@ -84,22 +84,36 @@ public final class Constants {
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
-    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg)}
+    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
+    public static final double LIMELIGHT_ANGLE_OFFSET = 0;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.20, 9.58, 60, 4500, 1},
-      {1.40, 6.53, 56, 4500, 1},
-      {1.61, 3.73, 53, 4750, 1},
-      {2.02, -0.30, 48, 5000, 0.75},
-      {2.31, -2.64, 44, 5125, 0.75},
-      {2.72, -4.82, 38.5, 5250, 0.75},
-      {3.18, -6.65, 33.5, 5500, 0.5},
-      {3.53, -7.74, 31.5, 5750, 0.5},
-      {3.86, -8.59, 30, 6000, 0.5},
-      {4.25, -9.33, 27.5, 6250, 0.5},
-      {4.68, -9.68, 26, 6500, 0.5},
-      {5.08, -10.47, 24.5, 6750, 0.5},
-      {5.54, -11.73, 22, 7000, 0.5}
+      {1.20, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
+      {1.38, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
+      {1.61, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
+      {2.02, -2.05 + LIMELIGHT_ANGLE_OFFSET, 48, 5000, 0.75, 2},
+      {2.31, -4.39 + LIMELIGHT_ANGLE_OFFSET, 44, 5125, 0.75, 2},
+      {2.72, -6.57 + LIMELIGHT_ANGLE_OFFSET, 38.5, 5250, 0.75, 2},
+      {3.18, -8.40 + LIMELIGHT_ANGLE_OFFSET, 33.5, 5500, 0.5, 1.5},
+      {3.53, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.5, 5750, 0.5, 1.5},
+      {3.86, -10.34 + LIMELIGHT_ANGLE_OFFSET, 30, 6000, 0.5, 1.5},
+      {4.25, -11.08 + LIMELIGHT_ANGLE_OFFSET, 28.5, 6250, 0.5, 1.5},
+      {4.68, -11.43 + LIMELIGHT_ANGLE_OFFSET, 27, 6500, 0.5, 1.5},
+      {5.08, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.75, 6750, 0.5, 1.5},
+      {5.54, -13.48 + LIMELIGHT_ANGLE_OFFSET, 24.5, 7000, 0.5, 1.2},
+      {6.06, -14.02 + LIMELIGHT_ANGLE_OFFSET, 23, 7500, 0.5, 1.2},
+      {6.40, -14.29 + LIMELIGHT_ANGLE_OFFSET, 23, 7500, 0.5, 1.2},
+      {6.9, -14.47 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
+      {7.2, -14.56 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2},
+      {7.4, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
     };
+
+    //Red
+    //Bumper: dist: 1.39m, tag elev: 6.24
+    //Farther: dist: 4.77m, tag elev: 10.44
+
+    //Blue
+    //Farther: dist: 5.16m tag elev: -11.09
+
 
     /**
      * Interpolates a value from a lookup table based on the given xValue.
@@ -173,6 +187,10 @@ public final class Constants {
      */
     public static double getAllowedAngleErrFromAngle(double angle){
       return getInterpolatedValue(1, 4, angle);
+    }
+
+    public static double getAllowedDriveAngleErrFromAngle(double angle){
+      return getInterpolatedValue(1, 5, angle);
     }
 
     /**
@@ -292,7 +310,7 @@ public final class Constants {
     //TOF
     public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
-    public static final double INTAKE_TOF_THRESHOLD_MM = 200;
+    public static final double INTAKE_TOF_THRESHOLD_MM = 420;
 
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;

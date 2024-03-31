@@ -62,6 +62,10 @@ public class FivePieceAuto extends SequentialCommandGroup {
   private JSONArray pathJSON4;
   private JSONObject pathRead4;
 
+  private File pathingFile5;
+  private JSONArray pathJSON5;
+  private JSONObject pathRead5;
+
   /** Creates a new FivePieceAuto. */
   public FivePieceAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof, Proximity proximity) {
     try {
@@ -104,65 +108,83 @@ public class FivePieceAuto extends SequentialCommandGroup {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
+    try {
+      pathingFile5 = new File("/home/lvuser/deploy/5PiecePart5.json");
+      FileReader scanner5 = new FileReader(pathingFile5);
+      pathRead5 = new JSONObject(new JSONTokener(scanner5));
+      pathJSON5 = (JSONArray) pathRead5.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
 
     addRequirements(drive, intake, feeder, shooter, lights);
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 58, 3000, 1200, 10),
+        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 63, 4500, 1200, 5),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, proximity, 35, 5500)
+          new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, proximity, 35, 5500)
+          new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
             new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
             new TurnToTarget(drive, peripherals)
           ),
-          new AutoPrepForShot(shooter, proximity, 35, 5500)
+          new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 1),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutonomousFollower(drive, lights, peripherals, pathJSON4, 0, false, false, 0, proximity),
-        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500),
-        new AutoPrepForShot(shooter, proximity, 30, 7000)
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false),
+        new AutoPrepForShot(shooter, proximity, 25, 7000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 0.75),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 25, 6500, 0.75),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      ),
+      new ParallelDeadlineGroup(
+        new AutonomousFollower(drive, lights, peripherals, pathJSON5, 0, false, false, 0, proximity),
+        new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false),
+        new AutoPrepForShot(shooter, proximity, 25, 7000)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 25, 6500, 0.75),
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 
       //End

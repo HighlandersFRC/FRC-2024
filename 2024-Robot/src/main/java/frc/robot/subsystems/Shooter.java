@@ -4,6 +4,7 @@ import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
+import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.DynamicMotionMagicDutyCycle;
 import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
@@ -47,6 +48,7 @@ public class Shooter extends SubsystemBase {
   private final TalonFX flywheelFalconMaster = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID,
       Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration flywheelFalconConfiguration = new TalonFXConfiguration();
+  private final CurrentLimitsConfigs currentLimitsConfigs = new CurrentLimitsConfigs();
   private final TalonFX flywheelFalconFollower = new TalonFX(Constants.CANInfo.SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID,
       Constants.CANInfo.CANBUS_NAME);
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
@@ -79,6 +81,11 @@ public class Shooter extends SubsystemBase {
       return true;
     } else
       return false;
+  }
+
+  public void teleopInit(){
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
   }
 
   public void init() {
@@ -128,6 +135,19 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
     // this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+
+    if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1){
+      this.angleEncoder.setPosition(this.angleEncoder.getPosition().getValueAsDouble() + 1.0);
+    }
+  }
+
+  public void setCurrentLimitInAuto(double supply, double stator){
+    this.currentLimitsConfigs.StatorCurrentLimit = stator;
+    this.currentLimitsConfigs.SupplyCurrentLimit = supply;
+    this.currentLimitsConfigs.StatorCurrentLimitEnable = true;
+    this.currentLimitsConfigs.SupplyCurrentLimitEnable = true;
+    flywheelFalconMaster.getConfigurator().apply(this.currentLimitsConfigs);
+    flywheelFalconFollower.getConfigurator().apply(this.currentLimitsConfigs);
   }
 
   /**
@@ -287,6 +307,7 @@ public class Shooter extends SubsystemBase {
   // Constantly set flywheel velocity PID
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
+    SmartDashboard.putNumber("Shooter angle", getAngleDegrees());
     // Logger.recordOutput("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
     // Logger.recordOutput("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
