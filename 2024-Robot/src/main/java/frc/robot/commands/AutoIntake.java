@@ -31,8 +31,9 @@ public class AutoIntake extends Command {
 
   private boolean noteInIntake;
   private int numTimeNoteInIntake = 0;
+  private boolean moveUp5Inches = false;
 
-  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean buzzControllers) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, boolean buzzControllers, boolean moveUp5Inches) {
     this.intake = intake;
     this.feeder = feeder;
     this.climber = climber;
@@ -43,10 +44,11 @@ public class AutoIntake extends Command {
     this.intakeRPM = intakeRPM;
     this.feederRPM = feederRPM;
     this.buzzControllers = buzzControllers;
+    this.moveUp5Inches = moveUp5Inches;
     addRequirements(this.intake, this.feeder, this.climber);
   }
 
-  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout, boolean buzzControllers) {
+  public AutoIntake(Intake intake, Feeder feeder, Climber climber, Lights lights, TOF tof, Proximity proximity, Constants.SetPoints.IntakePosition intakePosition, double intakeRPM, double feederRPM, double timeout, boolean buzzControllers, boolean moveUp5Inches) {
     this.intake = intake;
     this.feeder = feeder;
     this.climber = climber;
@@ -58,6 +60,7 @@ public class AutoIntake extends Command {
     this.feederRPM = feederRPM;
     this.timeout = timeout;
     this.buzzControllers = buzzControllers;
+    this.moveUp5Inches = moveUp5Inches;
     addRequirements(this.intake, this.feeder, this.climber);
   }
 
@@ -94,7 +97,7 @@ public class AutoIntake extends Command {
       this.numTimeNoteInIntake++;
     }
 
-    if (this.numTimeNoteInIntake >= 5 && this.tof.isIntakeTOFConnected()){
+    if (this.numTimeNoteInIntake >= 5 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
       // System.out.println("1");
       this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
     } else {

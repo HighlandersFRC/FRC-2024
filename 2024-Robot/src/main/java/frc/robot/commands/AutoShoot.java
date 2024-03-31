@@ -121,7 +121,7 @@ public class AutoShoot extends Command {
       }
     // }
 
-    System.out.println("Can See Tag: " + canSeeTag);
+    // System.out.println("Can See Tag: " + canSeeTag);
 
     if (canSeeTag){
       lights.setStrobeGreen();
@@ -143,7 +143,7 @@ public class AutoShoot extends Command {
       double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
       // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
       // this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
-      this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees - 0.5;
+      this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
       // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
     }
 

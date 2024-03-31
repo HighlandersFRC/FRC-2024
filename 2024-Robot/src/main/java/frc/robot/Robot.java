@@ -321,17 +321,14 @@ public class Robot extends LoggedRobot {
     }
 
     if (OI.isBlueSide()) {
-      System.out.println("ON BLUE SIDE");
       fieldSide = "blue";
     } else {
-      System.out.println("ON RED SIDE");
       fieldSide = "red";
     }
 
     if (this.fieldSide == "red"){
       this.drive.setPigeonAfterAuto();
     }
-    System.out.println("field side: " + fieldSide);
 
     this.peripherals.setFieldSide(fieldSide);
 
@@ -340,7 +337,7 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverMenuButton.whileTrue(new TestCAN(lights, drive, intake, shooter, feeder, climber, peripherals)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true));
+    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4100, 1200, 0, 5));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3));
@@ -356,8 +353,8 @@ public class Robot extends LoggedRobot {
     // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder, lights, peripherals, tof));
     OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorY.whileTrue(new RunClimber(climber, 30, 0.6));
-    OI.operatorA.whileTrue(new RunClimber(climber, -30, 0.5));
+    OI.operatorY.whileTrue(new RunClimber(climber, 20, 1.0));
+    OI.operatorA.whileTrue(new RunClimber(climber, -20, 1.0));
 
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
     OI.operatorLB.whileTrue(new RunFlywheel(shooter, 80, 0.2));

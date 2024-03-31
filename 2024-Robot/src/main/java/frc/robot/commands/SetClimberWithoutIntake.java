@@ -17,10 +17,10 @@ public class SetClimberWithoutIntake extends Command {
     addRequirements(this.climber);
   }
 
-  public SetClimberWithoutIntake(Climber climber, Constants.SetPoints.ElevatorPosition position, Constants.SetPoints.CarriageRotation carriagePosition) {
+  public SetClimberWithoutIntake(Climber climber, Constants.SetPoints.ElevatorPosition position, double carriageDegrees) {
     this.climber = climber;
     this.positionMeters = position.meters;
-    this.carriageDegrees = carriagePosition.degrees;
+    this.carriageDegrees = carriageDegrees;
     addRequirements(this.climber);
   }
 
@@ -37,9 +37,9 @@ public class SetClimberWithoutIntake extends Command {
       this.climber.setElevatorTorque(0.0, 0.0);
     } else {
       if (positionMeters > this.climber.getElevatorPositionMeters()){
-        this.climber.setElevatorTorque(50, 0.8);
+        this.climber.setElevatorTorque(20, 1.0);
       } else {
-        this.climber.setElevatorTorque(-50, 0.5);
+        this.climber.setElevatorTorque(-20, 1.0);
       }
     }
   }
