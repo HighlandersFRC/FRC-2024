@@ -320,11 +320,11 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    // if (OI.isBlueSide()) {
-    //   fieldSide = "blue";
-    // } else {
-    //   fieldSide = "red";
-    // }
+    if (OI.isBlueSide()) {
+      fieldSide = "blue";
+    } else {
+      fieldSide = "red";
+    }
 
     if (this.fieldSide == "red"){
       this.drive.setPigeonAfterAuto();

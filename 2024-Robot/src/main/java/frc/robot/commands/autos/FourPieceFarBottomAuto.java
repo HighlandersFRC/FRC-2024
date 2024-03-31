@@ -98,7 +98,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4500, 1200, 8),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 3.25, proximity),
@@ -111,7 +111,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 5, 0.1, false)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
@@ -124,20 +124,20 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
-          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
       new ParallelDeadlineGroup(
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 
       //End
