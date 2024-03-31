@@ -101,14 +101,14 @@ public class LineUpWhilePathing extends Command {
   public void execute() {
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
+    double id = this.peripherals.getFrontCamID();
 
     canSeeTag = false;
-    for (int id : ids){
+    // for (double id : ids){
       if (id == 7 || id == 4){
         canSeeTag = true;
       }
-    }
+    // }
 
     // System.out.println("Can See Tag: " + canSeeTag);
 

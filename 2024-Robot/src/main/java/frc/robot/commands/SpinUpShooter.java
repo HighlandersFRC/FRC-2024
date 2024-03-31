@@ -31,15 +31,14 @@ public class SpinUpShooter extends Command {
 
   @Override
   public void execute() {
-    ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
+    double id = this.peripherals.getFrontCamID();
 
     boolean canSeeTag = false;
-    for (int id : ids){
+    // for (double id : ids){
       if (id == 7 || id == 4){
-        System.out.println("Can See Tag: " + canSeeTag);
         canSeeTag = true;
       }
-    }
+    // }
 
     if (canSeeTag){
       this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
