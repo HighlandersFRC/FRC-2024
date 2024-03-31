@@ -21,6 +21,7 @@ import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.commands.defaults.PeripheralsDefault;
 import frc.robot.tools.math.Vector;
 
@@ -105,10 +106,10 @@ public class Peripherals extends SubsystemBase {
   public void setFieldSide(String fieldSide){
     this.fieldSide = fieldSide;
     if (fieldSide == "blue"){
-      System.out.println("blue side");
+      // System.out.println("blue side");
       frontCamIDSet.setInteger(7);
     } else {
-      System.out.println("red side");
+      // System.out.println("red side");
       frontCamIDSet.setInteger(4);
     }
   }
@@ -503,6 +504,11 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
+    if (OI.isBlueSide()) {
+      setFieldSide("blue");
+    } else {
+      setFieldSide("red");
+    }
     // Logger.recordOutput("Camera Measurements", getCameraMeasurements().toString());
     // Logger.recordOutput("Pigeon Angle", getPigeonAngle());
     // Vector accelVector = getPigeonLinAccel();
