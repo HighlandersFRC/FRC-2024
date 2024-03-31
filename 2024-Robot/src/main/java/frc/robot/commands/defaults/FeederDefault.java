@@ -50,9 +50,9 @@ public class FeederDefault extends Command {
       this.haveFeederNote = true;
     }
     
-    if (OI.operatorController.getLeftBumper()){
+    if (OI.getOperatorLB()){
       this.feeder.set(0);
-    } if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
+    } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && !this.proximity.getFeederProximity()){
       // System.out.println("first");
       this.feeder.set(300);
     } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){

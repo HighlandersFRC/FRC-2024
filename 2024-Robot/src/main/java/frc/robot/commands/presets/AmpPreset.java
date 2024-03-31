@@ -1,10 +1,12 @@
 package frc.robot.commands.presets;
 
+import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
 import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.Constants;
 import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.RunFeeder;
+import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeTorque;
 import frc.robot.commands.SetCarriageWithControl;
 import frc.robot.commands.SetClimberWithoutIntake;
@@ -25,7 +27,10 @@ public class AmpPreset extends SequentialCommandGroup {
         new RunFeeder(feeder, -150),
         new RunIntakeTorque(intake, 15, 0.6, 60)
       ),
-      new SetCarriageWithControl(climber, Constants.SetPoints.CarriageRotation.kAMP, 0, 0, false)
+      new ParallelCommandGroup(
+        new SetCarriageWithControl(climber, Constants.SetPoints.CarriageRotation.kAMP, 0, 0, false),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kUP, 0)
+      )
     );
   }
 }

@@ -44,12 +44,14 @@ public class SmartPrepForShot extends Command {
   public void execute() {
     ArrayList<Integer> ids = this.peripherals.getFrontCamIDs();
 
+    double id = this.peripherals.getFrontCamID();
+
     canSeeTag = false;
-    for (int id : ids){
+    // for (double id : ids){
       if (id == 7 || id == 4){
         canSeeTag = true;
       }
-    }
+    // }
 
     if (canSeeTag){
       lights.setStrobeGreen();

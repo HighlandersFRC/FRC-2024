@@ -76,7 +76,7 @@ public class IndexNoteToCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    if (OI.operatorController.getLeftBumper()){
+    if (OI.getOperatorLB()){
       return true; 
     } else if (Timer.getFPGATimestamp() - haveNoteTime > timeToCenterNote && this.haveNote){
       return true;

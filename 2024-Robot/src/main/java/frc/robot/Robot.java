@@ -357,7 +357,7 @@ public class Robot extends LoggedRobot {
     OI.operatorA.whileTrue(new RunClimber(climber, -20, 1.0));
 
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
-    OI.operatorLB.whileTrue(new RunFlywheel(shooter, 80, 0.2));
+    OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
     

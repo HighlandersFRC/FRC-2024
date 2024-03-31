@@ -28,7 +28,7 @@ public class AutoIntake extends Command {
   private double timeout = 10;
   private double initTime;
   private boolean haveCarriageNote;
-  private double timeToCenterNote = 0.2;
+  private double timeToCenterNote = 0.1;
   private double haveCarriageNoteTime = 0;
   private boolean buzzControllers;
 
@@ -167,10 +167,10 @@ public class AutoIntake extends Command {
 
   @Override
   public boolean isFinished() {
-    if (OI.operatorController.getLeftBumper() && Timer.getFPGATimestamp() - haveCarriageNoteTime > timeToCenterNote && this.haveCarriageNote){
+    if (OI.getOperatorLB() && Timer.getFPGATimestamp() - haveCarriageNoteTime > timeToCenterNote && this.haveCarriageNote){
       lights.blinkGreen(2);
       return true;
-    } else if (!this.proximity.getCarriageProximity() && !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
+    } else if (/*!this.proximity.getCarriageProximity() &&*/ !this.proximity.getShooterProximity() && this.proximity.getFeederProximity()){
       lights.blinkGreen(2);
       return true;
     } else if (Timer.getFPGATimestamp() - this.initTime >= this.timeout) {

@@ -82,7 +82,7 @@ public class ClimberDefault extends Command {
     // System.out.println("zeroed: " + isZeroed);
     if (this.isZeroed){
       this.climber.setElevatorTorque(0, 0.1);
-      if (OI.operatorController.getLeftBumper()){
+      if (OI.getOperatorLB()){
         this.climber.setTrapRollerPercent(0);
         this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
       } else if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
