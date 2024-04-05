@@ -176,6 +176,9 @@ public class Drive extends SubsystemBase {
   SwerveDrivePoseEstimator m_odometry; 
   Pose2d m_pose;
 
+  SwerveDrivePoseEstimator loggingOdometry; 
+  Pose2d loggingPose;
+
   double initAngle;
   double setAngle;
   double diffAngle;
@@ -200,6 +203,9 @@ public class Drive extends SubsystemBase {
   private String fieldSide = "blue";
 
   private int lookAheadDistance = 5;
+
+  private Boolean useCameraInOdometry = true;
+  private double timeSinceLastCameraMeasurement = 0;
   
   /**
    * Creates a new instance of the Swerve Drive subsystem.
@@ -219,6 +225,7 @@ public class Drive extends SubsystemBase {
     Pose2d m_pose = new Pose2d();
 
     m_odometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d((Math.toRadians(peripherals.getPigeonAngle()))), swerveModulePositions, m_pose);
+    loggingOdometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
   }
 
   /**
@@ -258,6 +265,10 @@ public class Drive extends SubsystemBase {
     thetaPID.setMaxOutput(3);
 
     setDefaultCommand(new DriveDefault(this));
+  }
+
+  public void useCameraInOdometry() {
+    useCameraInOdometry = true;
   }
 
   /**
@@ -335,6 +346,7 @@ public class Drive extends SubsystemBase {
     swerveModulePositions[2] = new SwerveModulePosition(backLeft.getModuleDistance(), new Rotation2d(backLeft.getCanCoderPositionRadians()));
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
     m_odometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
+    loggingOdometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
         
     currentFusedOdometry[0] = firstPointX;
     currentFusedOdometry[1] = firstPointY;
@@ -384,6 +396,13 @@ public class Drive extends SubsystemBase {
   public void updateOdometryFusedArray(){
     double navxOffset = Math.toRadians(peripherals.getPigeonAngle());
 
+    JSONArray cameraCoordinatesFront = peripherals.getFrontCamBasedPosition();
+    JSONArray cameraCoordinatesLeft = peripherals.getLeftCamBasedPosition();
+    JSONArray cameraCoordinatesRight = peripherals.getRightCamBasedPosition();
+
+    double cameraBasedX = 0;
+    double cameraBasedY = 0;
+
     SwerveModulePosition[] swerveModulePositions = new SwerveModulePosition[4];
     swerveModulePositions[0] = new SwerveModulePosition(frontLeft.getModuleDistance(), new Rotation2d(frontLeft.getCanCoderPositionRadians()));
     swerveModulePositions[1] = new SwerveModulePosition(frontRight.getModuleDistance(), new Rotation2d(frontRight.getCanCoderPositionRadians()));
@@ -391,6 +410,7 @@ public class Drive extends SubsystemBase {
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
         
     m_pose = m_odometry.update(new Rotation2d((navxOffset)), swerveModulePositions);
+    loggingPose = loggingOdometry.update(new Rotation2d(navxOffset), swerveModulePositions);
 
     currentX = getOdometryX();
     currentY = getOdometryY();
@@ -403,6 +423,30 @@ public class Drive extends SubsystemBase {
     // double cameraBasedY = frontCamCoordinates.getDouble(1);
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
+
+    if(useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesFront.getDouble(0);
+      cameraBasedY = cameraCoordinatesFront.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      loggingOdometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency()/1000));
+    } 
+
+    if(useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesLeft.getDouble(0);
+      cameraBasedY = cameraCoordinatesLeft.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      loggingOdometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency()/1000));
+    }
+
+    if(useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
+      cameraBasedX = cameraCoordinatesRight.getDouble(0);
+      cameraBasedY = cameraCoordinatesRight.getDouble(1);
+      timeSinceLastCameraMeasurement = 0;
+      Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
+      loggingOdometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency()/1000));
+    }
 
     currentTime = Timer.getFPGATimestamp() - initTime;
     timeDiff = currentTime - previousTime;
@@ -884,6 +928,13 @@ public class Drive extends SubsystemBase {
     return odometry;
   }
 
+  public double[] getLocalizationOdometry(){
+    double[] odometry = {
+      getLocalizationOdometryX(), getLocalizationOdometryY(), getLocalizationOdometryAngle()
+    };
+    return odometry;
+  }
+
   /**
    * Retrieves the current X-coordinate of the robot from fused odometry.
    *
@@ -920,6 +971,10 @@ public class Drive extends SubsystemBase {
     return m_odometry.getEstimatedPosition().getX();
   }
 
+  public double getLocalizationOdometryX() {
+    return loggingOdometry.getEstimatedPosition().getX();
+  }
+
   /**
    * Retrieves the current Y-coordinate of the robot from odometry.
    *
@@ -929,6 +984,10 @@ public class Drive extends SubsystemBase {
     return m_odometry.getEstimatedPosition().getY();
   }
 
+  public double getLocalizationOdometryY() {
+    return loggingOdometry.getEstimatedPosition().getY();
+  }
+
   /**
    * Retrieves the current orientation angle of the robot from odometry.
    *
@@ -936,6 +995,10 @@ public class Drive extends SubsystemBase {
   */
   public double getOdometryAngle() {
     return m_odometry.getEstimatedPosition().getRotation().getRadians();
+  }
+
+  public double getLocalizationOdometryAngle() {
+    return loggingOdometry.getEstimatedPosition().getRotation().getRadians();
   }
 
   /**
