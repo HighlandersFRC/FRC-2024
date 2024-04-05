@@ -105,13 +105,13 @@ public class Peripherals extends SubsystemBase {
    */
   public void setFieldSide(String fieldSide){
     this.fieldSide = fieldSide;
-    if (fieldSide == "blue"){
-      // System.out.println("blue side");
-      frontCamIDSet.setInteger(7);
-    } else {
-      // System.out.println("red side");
-      frontCamIDSet.setInteger(4);
-    }
+    // if (fieldSide == "blue"){
+    //   // System.out.println("blue side");
+    //   frontCamIDSet.setInteger(7);
+    // } else {
+    //   // System.out.println("red side");
+    //   frontCamIDSet.setInteger(4);
+    // }
   }
   public void init() {
     pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
@@ -504,11 +504,11 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    if (OI.isBlueSide()) {
-      setFieldSide("blue");
-    } else {
-      setFieldSide("red");
-    }
+    // if (OI.isBlueSide()) {
+    //   setFieldSide("blue");
+    // } else {
+    //   setFieldSide("red");
+    // }
     // Logger.recordOutput("Camera Measurements", getCameraMeasurements().toString());
     // Logger.recordOutput("Pigeon Angle", getPigeonAngle());
     // Vector accelVector = getPigeonLinAccel();
