@@ -92,7 +92,7 @@ public class Robot extends LoggedRobot {
   private Feeder feeder = new Feeder(tof, proximity);
   private Climber climber = new Climber(lights, tof, proximity);
 
-  private Logger logger = Logger.getInstance();
+  // private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
   private double shooterRPMTuning = 0;
@@ -242,7 +242,11 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     // System.out.println("Running");
 
-    Logger.recordOutput("Localization Odometry", drive.getLocalizationOdometry());
+    try{
+      Logger.recordOutput("Localization Odometry", drive.getLocalizationOdometry());
+    } catch(Exception e) {
+      System.out.println("Problem with logging");
+    }
     // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
     // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
 
