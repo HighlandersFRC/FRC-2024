@@ -23,7 +23,7 @@ public class AmpPreset extends SequentialCommandGroup {
       new ParallelDeadlineGroup(
         new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED.degrees - 15),
         new RunFeeder(feeder, -150),
-        new RunIntakeTorque(intake, 15, 0.6, 60)
+        new RunIntakeTorque(intake, 40, 0.5, 60)
       ),
       new SetCarriageWithControl(climber, Constants.SetPoints.CarriageRotation.kAMP, 0, 0, false)
     );

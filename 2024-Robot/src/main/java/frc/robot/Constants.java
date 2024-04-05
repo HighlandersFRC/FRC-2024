@@ -85,7 +85,7 @@ public final class Constants {
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
-    public static final double LIMELIGHT_ANGLE_OFFSET = -1.75;
+    public static final double LIMELIGHT_ANGLE_OFFSET = -1.9;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
       {1.20, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
       {1.38, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
