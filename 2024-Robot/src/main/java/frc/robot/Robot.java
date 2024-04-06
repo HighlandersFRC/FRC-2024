@@ -57,6 +57,7 @@ import frc.robot.commands.SmartShoot;
 import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.Test;
 import frc.robot.commands.TestCAN;
+import frc.robot.commands.TrapIndexNoteToCarriage;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.AutoNoteFollowing;
@@ -350,10 +351,11 @@ public class Robot extends LoggedRobot {
     OI.driverMenuButton.whileTrue(new MoveOnlyArm(climber, 190)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4100, 1200, 0, 5));
+    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4300, 1200, 0, 5));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3));
     OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 64, 4500, 1200, 0, 1.5));
     OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 2.5));
+    // OI.driverB.whileTrue(new TrapIndexNoteToCarriage(feeder, climber, intake, proximity, shooter));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
