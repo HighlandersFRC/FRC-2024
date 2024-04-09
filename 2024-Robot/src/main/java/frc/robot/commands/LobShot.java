@@ -59,8 +59,10 @@ public class LobShot extends Command {
   private double targetPigeonAngleDegrees;
 
   private double robotAngleOffset;
+  private double redAngle;
+  private double blueAngle;
 
-  public LobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
+  public LobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double redAngle, double blueAngle, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -74,6 +76,8 @@ public class LobShot extends Command {
     if (this.drive.getFieldSide() == "blue"){
       this.robotAngleOffset *= -1;
     }
+    this.redAngle = redAngle;
+    this.blueAngle = blueAngle;
     this.timeout = timeout;
     addRequirements(this.drive, this.shooter, this.feeder);
   }
@@ -91,10 +95,10 @@ public class LobShot extends Command {
 
     if (OI.isRedSide()){
       // System.out.println("RED");
-        this.targetPigeonAngleDegrees = 205;
+        this.targetPigeonAngleDegrees = this.redAngle;
     } else {
       // System.out.println("BLUE");
-        this.targetPigeonAngleDegrees = 135;
+        this.targetPigeonAngleDegrees = this.blueAngle;
     }
     double standardizedPigeonAngleDegrees = Constants.SetPoints.standardizeAngleDegrees(this.peripherals.getPigeonAngle());
     double dif = standardizedPigeonAngleDegrees - this.targetPigeonAngleDegrees;

@@ -130,7 +130,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
-          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
+          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kUP, 1200, 600, false, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)

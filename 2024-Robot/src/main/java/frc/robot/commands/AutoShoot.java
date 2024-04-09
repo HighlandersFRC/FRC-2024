@@ -60,6 +60,8 @@ public class AutoShoot extends Command {
   private double defaultShooterAngle = 0;
   private double defaultFlywheelRPM = 0;
 
+  // private ArrayList<Double[]> tagReadings = new ArrayList<Double[]>();
+
   public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM) {
     this.drive = drive;
     this.shooter = shooter;
@@ -102,6 +104,7 @@ public class AutoShoot extends Command {
     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
+    // this.tagReadings = new ArrayList<Double[]>();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
   }

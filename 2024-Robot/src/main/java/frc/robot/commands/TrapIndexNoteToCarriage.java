@@ -45,19 +45,23 @@ public class TrapIndexNoteToCarriage extends Command {
     if (this.proximity.getCarriageProximity() && !this.haveNote){
       this.haveNoteTime = Timer.getFPGATimestamp();
       this.haveNote = true;
+      this.climber.setTrapRollerTorque(-20, 0.5);
     //   System.out.println("1");
     } else if (!this.proximity.getCarriageProximity() && this.haveNote){
         this.noteInMiddle = true;
+        this.climber.setTrapRollerTorque(-20, 0.5);
         // System.out.println("2");
-    } else if (this.proximity.getCarriageProximity() && this.noteInMiddle){
+    } else if (this.proximity.getCarriageProximity() && this.noteInMiddle && !this.noteInPlace){
         this.noteInPlace = true;
+        this.climber.setTrapRollerTorque(20, 0.5);
+        this.haveNoteTime = Timer.getFPGATimestamp();
         // System.out.println("3");
     }
     // System.out.println("haveNote: " + this.haveNote);
     // System.out.println("noteInPlace: " + this.noteInPlace);
 
     this.feeder.set(-150);
-    this.climber.setTrapRollerTorque(-20, 0.5);
+    
     this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
     this.intake.setRollers(-150);
     this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP);
@@ -78,9 +82,7 @@ public class TrapIndexNoteToCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    if (OI.getOperatorLB()){
-      return true; 
-    } else if (noteInPlace){
+    if (noteInPlace && Timer.getFPGATimestamp() - this.haveNoteTime > 0.1){
       return true;
     } else {
       return false;

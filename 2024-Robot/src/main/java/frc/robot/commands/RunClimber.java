@@ -3,21 +3,24 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.subsystems.Climber;
+import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
 
 public class RunClimber extends Command {
   private Climber climber;
+  private Feeder feeder;
   private double current;
   private double maxPercent;
 
   private boolean hitLimit;
   private int numTimesHitLimit;
 
-  public RunClimber(Climber climber, double current, double maxPercent) {
+  public RunClimber(Climber climber, Feeder feeder, double current, double maxPercent) {
     this.climber = climber;
     this.current = current;
+    this.feeder = feeder;
     this.maxPercent = maxPercent;
-    addRequirements(this.climber);
+    addRequirements(this.climber, this.feeder);
   }
 
   @Override
@@ -46,6 +49,9 @@ public class RunClimber extends Command {
     } else {
       this.climber.setElevatorTorque(this.current, this.maxPercent);
     }
+
+    // this.feeder.setTorque(15, 0.1);
+    this.feeder.setPercent(0);
   }
 
   @Override
