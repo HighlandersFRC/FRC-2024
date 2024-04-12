@@ -134,4 +134,8 @@ public class OI {
     public static boolean is3PieceFarBottomAuto() {
         return autoChooser.getRawButton(3);
     }
+
+    public static boolean is1PieceAuto() {
+        return autoChooser.getRawButton(4);
+    }
 }
