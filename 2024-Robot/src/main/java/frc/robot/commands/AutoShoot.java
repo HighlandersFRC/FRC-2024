@@ -49,9 +49,9 @@ public class AutoShoot extends Command {
 
   private PID pid;
 
-  private double kP = 0.06;
+  private double kP = 0.04;
   private double kI = 0;
-  private double kD = 0.0;
+  private double kD = 0.06;
 
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;
@@ -95,6 +95,7 @@ public class AutoShoot extends Command {
   @Override
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
+    this.pigeonAngles = new ArrayList<Double>();
     this.hasShot = false;
     this.hasReachedSetPoint = false;
     this.haveGoodSetpoint = false;
@@ -132,25 +133,24 @@ public class AutoShoot extends Command {
 
     // System.out.println("Can See Tag: " + canSeeTag);
 
-    // if (canSeeTag){
-    //   lights.setStrobeGreen();
-    //   this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
-    //   this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-    //   if (this.speakerElevationDegrees < 90 && this.speakerAngleDegrees < 90){
-    //     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
-    //     this.shooterDegrees = this.shooterValues[0];
-    //     this.shooterRPM = this.shooterValues[1];
-    //     // System.out.println("New RPM: " + this.shooterRPM);
-    //     // System.out.println("New Deg.: " + this.shooterDegrees);
-    //     this.shooterDegreesAllowedError = Constants.SetPoints.getAllowedAngleErrFromAngle(this.speakerElevationDegrees);
-    //     this.driveAngleAllowedError = Constants.SetPoints.getAllowedDriveAngleErrFromAngle(this.speakerElevationDegrees);
-    //   }
-    //   // double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
-    //   // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
-    //   // this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
-    //   // this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
-    //   // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
-    // }
+    if (canSeeTag){
+      this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
+      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
+      if (this.speakerElevationDegrees != 0.0 && this.speakerAngleDegrees != 0.0){
+        this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
+        this.shooterDegrees = this.shooterValues[0];
+        this.shooterRPM = this.shooterValues[1];
+        // System.out.println("New RPM: " + this.shooterRPM);
+        // System.out.println("New Deg.: " + this.shooterDegrees);
+        this.shooterDegreesAllowedError = Constants.SetPoints.getAllowedAngleErrFromAngle(this.speakerElevationDegrees);
+        this.driveAngleAllowedError = Constants.SetPoints.getAllowedDriveAngleErrFromAngle(this.speakerElevationDegrees);
+      }
+      // double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
+      // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
+      // this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
+      // this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
+      // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
+    }
 
     //get current apriltag track
     double tagElevationDegrees = this.peripherals.getFrontCamTargetTy();
@@ -163,13 +163,13 @@ public class AutoShoot extends Command {
       this.pigeonAngles.remove(0);
     }
 
-    int lookback = (int) ((tagLatency / 20.0) + 0.5);
+    int lookback = (int) ((tagLatency / 10.0));
     if (lookback >= this.pigeonAngles.size()){
       // System.out.println("over: " + lookback);
-      // System.out.println("size: " + this.pigeonAngles.size());
       lookback = this.pigeonAngles.size() - 1;
     }
-    // System.out.println("lookback: " + lookback);
+    // System.out.println("size: " + this.pigeonAngles.size());
+    // System.out.println("lookback: " + (this.pigeonAngles.size() - lookback - 1));
     double pigeonAngleOffset = this.pigeonAngles.get(this.pigeonAngles.size() - lookback - 1) - pigeonAngleDegrees;
     // System.out.println("Offset: " + pigeonAngleOffset);
 
@@ -181,11 +181,14 @@ public class AutoShoot extends Command {
       lights.setStrobePurple();
     }
 
-    if (tagAngleDegrees < 90){
-      this.speakerAngleDegrees = tagAngleDegrees;
-    }
+    // System.out.println("Targ 1: " + (pigeonAngleDegrees - this.speakerAngleDegrees));
+    // System.out.println("Targ 2: " + (pigeonAngleDegrees - this.speakerAngleDegrees + pigeonAngleOffset));
 
-    //add track to list and trim size if over 10
+    // if (tagAngleDegrees < 90){
+    //   this.speakerAngleDegrees = tagAngleDegrees;
+    // }
+
+    // //add track to list and trim size if over 10
     if (this.tagReadings.size() == 0){
       // System.out.println("1");
       this.tagReadings.add(new double[] {tagElevationDegrees, tagAngleDegrees, tagReadingHB});
@@ -202,14 +205,16 @@ public class AutoShoot extends Command {
       this.tagReadings.remove(0);
     }
 
-    //add up valid tracks
+    // //add up valid tracks
     int numValidTags = 0;
     double avgElev = 0;
     double avgAng = 0;
     for (int i = 0; i < this.tagReadings.size(); i ++){
       double elev = this.tagReadings.get(i)[0];
       double ang = this.tagReadings.get(i)[1];
-      if (elev < 90 && ang < 90){
+      // System.out.println("A: " + ang);
+      // System.out.println("E: " + elev);
+      if (elev != 0.0 && ang != 0.0){
         numValidTags ++;
         avgElev += elev;
         avgAng += ang;
@@ -218,19 +223,22 @@ public class AutoShoot extends Command {
 
     // System.out.println("Num Valid: " + numValidTags);
 
-    //average tracks, discard if not enough tracks
-    if (numValidTags > 0){
-      this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(avgElev / numValidTags);
-      this.shooterDegrees = this.shooterValues[0];
-      this.shooterRPM = this.shooterValues[1];
-      // System.out.println("Avg Elev: " + (avgElev / numValidTags));
-    }
+    // //average tracks, discard if not enough tracks
+    // if (numValidTags > 0){
+    //   this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(avgElev / numValidTags);
+    //   this.shooterDegrees = this.shooterValues[0];
+    //   this.shooterRPM = this.shooterValues[1];
+    //   // System.out.println("Avg Elev: " + (avgElev / numValidTags));
+    // }
 
     if (numValidTags < 5){
       this.haveGoodSetpoint = false;
     } else {
       this.haveGoodSetpoint = true;
     }
+    // this.haveGoodSetpoint = true;
+
+    // System.out.println("Good Setpoint: " + this.haveGoodSetpoint);
 
     this.pid.setSetPoint(this.targetPigeonAngleDegrees);
     this.pid.updatePID(pigeonAngleDegrees);
@@ -278,6 +286,9 @@ public class AutoShoot extends Command {
     }
 
     // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    // System.out.println("Angle: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    // System.out.println("RPM: " + Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM));
+    // System.out.println("Elev: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
     // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
     // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
     // System.out.println("Targ. RPM: " + this.shooterRPM);
@@ -291,7 +302,7 @@ public class AutoShoot extends Command {
     // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
     // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
     // System.out.println("<================>");
-    System.out.println(pigeonAngleDegrees + "," + this.targetPigeonAngleDegrees + "," + this.speakerAngleDegrees);
+    // System.out.println(pigeonAngleDegrees + "," + this.targetPigeonAngleDegrees + "," + this.speakerAngleDegrees);
     // System.out.println("latency: " + this.peripherals.getFrontCameraLatency());
   }
 
