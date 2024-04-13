@@ -362,19 +362,19 @@ public class Robot extends LoggedRobot {
     }
 
     this.peripherals.setFieldSide(fieldSide);
+    this.drive.setFieldSide(fieldSide);
 
     //CONTROLS
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverMenuButton.whileTrue(new MoveOnlyArm(climber, 190)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+    OI.driverMenuButton.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 175, 185, 2.5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 45, 4300, 1200, 0, 205, 135, 5));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3));
-    OI.driverX.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-    OI.driverB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 175, 185, 2.5));
-    // OI.driverB.whileTrue(new TrapIndexNoteToCarriage(feeder, climber, intake, proximity, shooter));
+    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));

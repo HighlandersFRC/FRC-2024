@@ -108,7 +108,7 @@ public class AutoIntake extends Command {
       this.numTimeNoteInIntake++;
     }
 
-    if (this.numTimeNoteInIntake >= 5 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
+    if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
       // System.out.println("1");
       this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
     } else {
@@ -157,7 +157,7 @@ public class AutoIntake extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP);
+    // this.intake.setAngle(Constants.SetPoints.IntakePosition.kUP);
     this.feeder.setPercent(0);
     this.climber.setTrapRollerPercent(0);
     lights.clearAnimations();

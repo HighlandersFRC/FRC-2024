@@ -163,7 +163,7 @@ public class AutoShoot extends Command {
       this.pigeonAngles.remove(0);
     }
 
-    int lookback = (int) ((tagLatency / 10.0));
+    int lookback = (int) ((tagLatency / 20.0));
     if (lookback >= this.pigeonAngles.size()){
       // System.out.println("over: " + lookback);
       lookback = this.pigeonAngles.size() - 1;

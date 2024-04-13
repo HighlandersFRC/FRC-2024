@@ -138,4 +138,8 @@ public class OI {
     public static boolean is1PieceAuto() {
         return autoChooser.getRawButton(4);
     }
+
+    public static boolean getDriverRightJoystickPressed(){
+        return driverController.getRightStickButton();
+    }
 }
