@@ -25,7 +25,7 @@ public class AutoIntake extends Command {
 
   private boolean haveNote;
   private double haveNoteTime = 0;
-  private double timeout = 10;
+  private double timeout = 60;
   private double initTime;
   private boolean haveCarriageNote;
   private double timeToCenterNote = 0.1;
