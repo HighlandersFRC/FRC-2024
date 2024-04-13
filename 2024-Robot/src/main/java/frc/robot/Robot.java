@@ -65,6 +65,7 @@ import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.commands.autos.NothingAuto;
+import frc.robot.commands.autos.OnePieceExitAuto;
 import frc.robot.commands.presets.AmpPreset;
 import frc.robot.commands.presets.TrapPreset;
 import frc.robot.sensors.Proximity;
@@ -113,6 +114,10 @@ public class Robot extends LoggedRobot {
   File fivePieceFile;
   JSONArray fivePieceJSON;
   Command fivePieceAuto;
+
+  File onePieceFile;
+  JSONArray onePieceJSON;
+  Command onePieceAuto;
 
   File autoNoteFollowingFile;
   JSONArray autoNoteFollowingJSON;
@@ -197,6 +202,16 @@ public class Robot extends LoggedRobot {
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fivePieceJSON = (JSONArray) pathRead.get("sampled_points");
       this.fivePieceAuto = new FivePieceAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
+    } catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      this.onePieceFile = new File("/home/lvuser/deploy/1PieceExit.json");
+      FileReader scanner = new FileReader(this.onePieceFile);
+      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
+      this.onePieceJSON = (JSONArray) pathRead.get("sampled_points");
+      this.onePieceAuto = new OnePieceExitAuto(drive, peripherals, feeder, shooter, lights, proximity);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -313,7 +328,11 @@ public class Robot extends LoggedRobot {
       System.out.println("Five Piece");
       this.fivePieceAuto.schedule();
       this.drive.autoInit(this.fivePieceJSON);
-    }else {
+    } else if (OI.is1PieceAuto()){
+      System.out.println("One Piece");
+      this.onePieceAuto.schedule();
+      this.drive.autoInit(this.onePieceJSON);
+    } else {
       System.out.println("NO AUTO SELECTED");
     }
 
