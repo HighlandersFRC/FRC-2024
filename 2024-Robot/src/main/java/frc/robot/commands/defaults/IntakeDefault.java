@@ -44,12 +44,12 @@ public class IntakeDefault extends Command {
         this.intake.setAngleEncoderPosition(0);
         this.numTimesOverCurrentLimit ++;
       } else if (!this.isZeroed) {
-        this.intake.setAngleTorqueCurrent(40, 0.3);
+        this.intake.setAngleTorqueCurrent(45, 0.3);
       } else {
         this.intake.setAngleTorqueCurrent(5, 0.1);
       }
 
-      if (numTimesOverCurrentLimit > 2){
+      if (numTimesOverCurrentLimit > 3){
         this.isZeroed = true;
         this.numTimesOverCurrentLimit = 0;
       }

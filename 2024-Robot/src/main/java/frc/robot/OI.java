@@ -142,4 +142,8 @@ public class OI {
     public static boolean is4PieceAmpSideAuto() {
         return autoChooser.getRawButton(5);
     }
+
+    public static boolean getDriverRightJoystickPressed(){
+        return driverController.getRightStickButton();
+    }
 }

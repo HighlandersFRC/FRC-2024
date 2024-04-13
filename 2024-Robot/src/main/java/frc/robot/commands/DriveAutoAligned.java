@@ -24,9 +24,9 @@ public class DriveAutoAligned extends CommandBase {
 
   private double set = 0;
 
-  private double kP = 0.07;
+  private double kP = 0.04;
   private double kI = 0;
-  private double kD = 0.02;
+  private double kD = 0.06;
 
   private int angleSettled = 0;
 
@@ -42,16 +42,32 @@ public class DriveAutoAligned extends CommandBase {
   @Override
   public void initialize() {
     pid = new PID(kP, kI, kD);
-    int numTurns = ((int) peripherals.getPigeonAngle())/180;
-    double setPoint = 180 * Math.copySign(numTurns, peripherals.getPigeonAngle());
-    if((Math.abs(peripherals.getPigeonAngle()) % 180) > 90) {
-      if(peripherals.getPigeonAngle() < 0) {
-        setPoint = 180 * Math.copySign(numTurns - 1, peripherals.getPigeonAngle());
-      }
-      else {
-        setPoint = 180 * Math.copySign(numTurns + 1, peripherals.getPigeonAngle());
+    int numTurns = ((int) peripherals.getPigeonAngle())/360;
+    double pigeonAngleDegrees = peripherals.getPigeonAngle();
+    double setPoint = 360 * Math.copySign(numTurns, pigeonAngleDegrees);
+    // System.out.println("PA: " + pigeonAngleDegrees);
+    // System.out.println("NT: " + numTurns);
+    // System.out.println("A: " + setPoint);
+    // System.out.println("FS: " + this.drive.getFieldSide());
+    if (this.drive.getFieldSide() == "red"){
+      // System.out.println("1");
+      setPoint += 90;
+    } else {
+      // System.out.println("2");
+      setPoint -= 90;
+    }
+    // System.out.println("B: " + setPoint);
+    if (Math.abs(pigeonAngleDegrees - setPoint) > 180){
+      // System.out.println("3");
+      if (pigeonAngleDegrees > setPoint){
+        // System.out.println("4");
+        setPoint += 360;
+      } else {
+        // System.out.println("5");
+        setPoint -= 360;
       }
     }
+    // System.out.println("C: " + setPoint);
       set = setPoint;
     pid.setSetPoint(setPoint);
     pid.setMinOutput(-3);
