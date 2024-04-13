@@ -48,9 +48,9 @@ public class LineUpWhilePathing extends Command {
   private double noteTrackingEndTime;
 
   private PID pid;
-  private double kP = 0.05;
+  private double kP = 0.04;
   private double kI = 0;
-  private double kD = 0.09;
+  private double kD = 0.06;
   public static boolean canSeeTag;
   private double speakerElevationDegrees;
   private double speakerAngleDegrees;

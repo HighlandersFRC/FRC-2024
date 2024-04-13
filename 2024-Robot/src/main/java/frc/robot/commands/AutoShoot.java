@@ -163,7 +163,7 @@ public class AutoShoot extends Command {
       this.pigeonAngles.remove(0);
     }
 
-    int lookback = (int) ((tagLatency / 10.0));
+    int lookback = (int) ((tagLatency / 20.0));
     if (lookback >= this.pigeonAngles.size()){
       // System.out.println("over: " + lookback);
       lookback = this.pigeonAngles.size() - 1;
@@ -285,10 +285,10 @@ public class AutoShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
-    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
-    // System.out.println("Angle: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
-    // System.out.println("RPM: " + Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM));
-    // System.out.println("Elev: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    System.out.println("Angle: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    System.out.println("RPM: " + Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM));
+    System.out.println("Elev: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
     // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
     // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
     // System.out.println("Targ. RPM: " + this.shooterRPM);
