@@ -126,7 +126,7 @@ public class ClimberDefault extends Command {
           this.climber.setElevatorTorque(-10, 0.6);
         }
       } else {
-        System.out.println("9");
+        // System.out.println("9");
         this.climber.setElevatorTorque(0, 0);
       }
     }

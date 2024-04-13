@@ -321,7 +321,7 @@ public final class Constants {
     public static final double ELEVATOR_AMP_POSITION_M = 0.22;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
     public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
-    public static final double CARRIAGE_AMP_ROTATION_DEG = 210.0;
+    public static final double CARRIAGE_AMP_ROTATION_DEG = 195.0;
     public static final double CARRIAGE_TRAP_ROTATION_DEG = 215;
 
     public enum ElevatorPosition {
