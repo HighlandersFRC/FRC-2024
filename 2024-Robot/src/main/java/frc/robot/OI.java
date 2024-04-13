@@ -123,7 +123,7 @@ public class OI {
         return autoChooser.getRawButton(8);
     }
 
-    public static boolean is4PieceCloseAuto(){
+    public static boolean is4PieceFarBottom231Auto(){
         return autoChooser.getRawButton(1);
     }
 
@@ -137,5 +137,9 @@ public class OI {
 
     public static boolean is1PieceAuto() {
         return autoChooser.getRawButton(4);
+    }
+
+    public static boolean is4PieceAmpSideAuto() {
+        return autoChooser.getRawButton(5);
     }
 }

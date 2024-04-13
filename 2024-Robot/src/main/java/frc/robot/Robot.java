@@ -62,7 +62,9 @@ import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.AutoNoteFollowing;
 import frc.robot.commands.autos.FivePieceAuto;
+import frc.robot.commands.autos.FourPieceAmpSideAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
+import frc.robot.commands.autos.FourPieceFarBottom231Auto;
 import frc.robot.commands.autos.FourPieceFarBottomAuto;
 import frc.robot.commands.autos.NothingAuto;
 import frc.robot.commands.autos.OnePieceExitAuto;
@@ -102,6 +104,7 @@ public class Robot extends LoggedRobot {
   private boolean checkedCAN = false;
 
   Command nothingAuto;
+  Command fourPieceFarBottom231Auto;
   
   File fourPieceCloseFile;
   JSONArray fourPieceCloseJSON;
@@ -118,6 +121,10 @@ public class Robot extends LoggedRobot {
   File onePieceFile;
   JSONArray onePieceJSON;
   Command onePieceAuto;
+
+  File fourPieceAmpSideFile;
+  JSONArray fourPieceAmpSideJSON;
+  Command fourPieceAmpSideAuto;
 
   File autoNoteFollowingFile;
   JSONArray autoNoteFollowingJSON;
@@ -176,6 +183,8 @@ public class Robot extends LoggedRobot {
 
     // System.out.println("ports forwarded");
     this.nothingAuto = new NothingAuto();
+    this.fourPieceFarBottom231Auto = new FourPieceFarBottom231Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
+
     try {
       this.fourPieceCloseFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
       FileReader scanner = new FileReader(this.fourPieceCloseFile);
@@ -212,6 +221,16 @@ public class Robot extends LoggedRobot {
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.onePieceJSON = (JSONArray) pathRead.get("sampled_points");
       this.onePieceAuto = new OnePieceExitAuto(drive, peripherals, feeder, shooter, lights, proximity);
+    } catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+
+    try {
+      this.fourPieceAmpSideFile = new File("/home/lvuser/deploy/3PieceAmpSidePart1.json");
+      FileReader scanner = new FileReader(this.fourPieceAmpSideFile);
+      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
+      this.fourPieceAmpSideJSON = (JSONArray) pathRead.get("sampled_points");
+      this.fourPieceAmpSideAuto = new FourPieceAmpSideAuto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     } catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -316,10 +335,10 @@ public class Robot extends LoggedRobot {
     if (OI.isNothingAuto()){
       System.out.println("Nothing Auto");
       this.nothingAuto.schedule();
-    } else if (OI.is4PieceCloseAuto()) {
-      System.out.println("Four Piece Close");
-      this.fourPieceCloseAuto.schedule();
-      this.drive.autoInit(this.fourPieceCloseJSON);
+    } else if (OI.is4PieceFarBottom231Auto()) {
+      System.out.println("Four Piece 231 Auto");
+      this.fourPieceFarBottom231Auto.schedule();
+      this.drive.autoInit(this.fourPieceFarBottomJSON);
     } else if (OI.is3PieceFarBottomAuto()){
       System.out.println("Four Piece Far Bottom");
       this.fourPieceFarBottomAuto.schedule();
@@ -332,6 +351,10 @@ public class Robot extends LoggedRobot {
       System.out.println("One Piece");
       this.onePieceAuto.schedule();
       this.drive.autoInit(this.onePieceJSON);
+    } else if (OI.is4PieceAmpSideAuto()){
+      System.out.println("Four Piece Amp Side");
+      this.fourPieceAmpSideAuto.schedule();
+      this.drive.autoInit(this.fourPieceAmpSideJSON);
     } else {
       System.out.println("NO AUTO SELECTED");
     }
