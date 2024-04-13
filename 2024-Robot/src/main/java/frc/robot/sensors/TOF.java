@@ -18,8 +18,10 @@ public class TOF {
     public TOF(){
         // this.feederTOF.setRangingMode(RangingMode.Short, 0);
         // this.feederTOF.setRangeOfInterest(14, 16, 16, 0);
+
+        //Probably positioned towards the inside of the intake, centered between top and bottom
         this.intakeTOF.setRangingMode(RangingMode.Short, 0);
-        this.intakeTOF.setRangeOfInterest(7, 9, 9, 7);
+        this.intakeTOF.setRangeOfInterest(6, 1, 10, 5);
         this.prevIntakeDists.add(0.0);
         this.prevIntakeDists.add(1.0);
         // this.carriageTOF.setRangingMode(RangingMode.Short, 0);
@@ -76,6 +78,9 @@ public class TOF {
         // SmartDashboard.putBoolean(" Climber TOF", climbTOF);
         // SmartDashboard.putBoolean(" Feeder TOF", feederTOF);
         SmartDashboard.putNumber(" Intake TOF", this.intakeTOF.getRange());
+        SmartDashboard.putBoolean("Intake Bool", this.intakeTOF.getRange() < Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM);
+        // System.out.println("dist: " + this.intakeTOF.getRange());
+        // System.out.println("bool: " + (this.intakeTOF.getRange() < Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM));
         // System.out.println(this.isIntakeTOFConnected());
         // SmartDashboard.putNumber("Feeder TOF Dist", getFeederDistMillimeters());
         // SmartDashboard.putNumber("Carriage TOF Dist", getCarriageDistMillimeters());

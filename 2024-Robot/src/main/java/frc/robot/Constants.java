@@ -108,13 +108,15 @@ public final class Constants {
       {7.4, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
     };
 
-    //Red
-    //Bumper: dist: 1.39m, tag elev: 6.24
-    //Farther: dist: 4.77m, tag elev: 10.44
-
-    //Blue
-    //Farther: dist: 5.16m tag elev: -11.09
-
+    public static double[] getMovingAverageWeights(int numMeasurements){
+      double n = numMeasurements;
+      double divisor = (n * (n + 1.0)) / 2.0;
+      double[] weights = new double[numMeasurements];
+      for (int i = 0; i < weights.length; i ++){
+        weights[i] = ((double) i + 1) / divisor;
+      }
+      return weights;
+    }
 
     /**
      * Interpolates a value from a lookup table based on the given xValue.
@@ -319,7 +321,7 @@ public final class Constants {
     public static final double ELEVATOR_AMP_POSITION_M = 0.22;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
     public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
-    public static final double CARRIAGE_AMP_ROTATION_DEG = 210.0;
+    public static final double CARRIAGE_AMP_ROTATION_DEG = 195.0;
     public static final double CARRIAGE_TRAP_ROTATION_DEG = 215;
 
     public enum ElevatorPosition {

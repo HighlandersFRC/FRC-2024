@@ -85,7 +85,7 @@ public class ClimberDefault extends Command {
       if (OI.getOperatorLB()){
         this.climber.setTrapRollerPercent(0);
         this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-      } else if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity()){
+      } else if (!this.proximity.getCarriageProximity() && this.proximity.getFeederProximity() && !this.proximity.getShooterProximity() && this.haveNote){
         // System.out.println("1");
         this.climber.setTrapRollerPercent(0);
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);

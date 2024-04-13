@@ -35,6 +35,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamTx = frontCam.getEntry("tx");
   private NetworkTableEntry frontCamTl = frontCam.getEntry("tl");
   private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
+  private NetworkTableEntry frontCamHB = frontCam.getEntry("hb");
   private NetworkTableEntry frontCamIDs = frontCam.getEntry("tid");
   private NetworkTableEntry frontCamIDSet = frontCam.getEntry("priorityid");
   private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
@@ -182,6 +183,10 @@ public class Peripherals extends SubsystemBase {
     // }
     // return 100;
     return frontCamTx.getDouble(100);
+  }
+
+  public double getFrontCamHB(){
+    return frontCamHB.getDouble(-1);
   }
 
   /**
