@@ -130,42 +130,39 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
-            new TurnToTarget(drive, peripherals)
+            new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity)
           ),
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
-            new TurnToTarget(drive, peripherals)
+            new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity)
           ),
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, 3, false, false),
         new ParallelCommandGroup(
           new SequentialCommandGroup(
-            new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
-            new TurnToTarget(drive, peripherals)
+            new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity)
           ),
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 1),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -183,7 +180,7 @@ public class FivePieceAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, proximity, 25, 7000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 25, 6500, 0.75),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 25, 6500, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 
