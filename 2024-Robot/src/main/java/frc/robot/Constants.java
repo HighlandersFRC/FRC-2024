@@ -56,7 +56,7 @@ public final class Constants {
     //drive
 
     //intake
-    public static final double INTAKE_DOWN_ANGLE_ROT = -0.365;
+    public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
     public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
