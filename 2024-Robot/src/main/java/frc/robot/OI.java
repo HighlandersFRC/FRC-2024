@@ -37,6 +37,12 @@ public class OI {
 
     public static JoystickButton operatorY = new JoystickButton(operatorController, 4);
     public static JoystickButton operatorA = new JoystickButton(operatorController, 1);
+
+    public static BooleanSupplier operatorRTSupplier = () -> getOperatorRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE;
+    public static BooleanSupplier operatorLTSupplier = () -> getOperatorLTPercent() > Constants.OperatorConstants.LEFT_TRIGGER_DEADZONE;
+
+    public static TriggerButton operatorRT = new TriggerButton(operatorRTSupplier);
+    public static TriggerButton operatorLT = new TriggerButton(operatorLTSupplier);
     
     public static JoystickButton operatorRB = new JoystickButton(operatorController, 6);
     public static JoystickButton operatorLB = new JoystickButton(operatorController, 5);
@@ -97,6 +103,14 @@ public class OI {
 
     public static boolean getDriverLB(){
         return driverController.getLeftBumper();
+    }
+
+    public static double getOperatorRTPercent() {
+        return operatorController.getRightTriggerAxis();
+    }
+
+    public static double getOperatorLTPercent() {
+        return operatorController.getLeftTriggerAxis();
     }
 
     public static boolean getOperatorLB(){

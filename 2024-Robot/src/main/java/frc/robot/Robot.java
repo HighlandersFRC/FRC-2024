@@ -410,7 +410,7 @@ public class Robot extends LoggedRobot {
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
     OI.operatorA.whileTrue(new RunClimber(climber, feeder, -20, 1.0));
-
+    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 45, 4300));
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
     OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
