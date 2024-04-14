@@ -42,12 +42,12 @@ public class TrapIndexNoteToCarriage extends Command {
 
   @Override
   public void execute() {
-    if (this.proximity.getCarriageProximity() && !this.haveNote){
+    if (this.proximity.getCarriageProximity() && !this.haveNote && !this.noteInPlace){
       this.haveNoteTime = Timer.getFPGATimestamp();
       this.haveNote = true;
       this.climber.setTrapRollerTorque(-20, 0.5);
-    //   System.out.println("1");
-    } else if (!this.proximity.getCarriageProximity() && this.haveNote){
+      // System.out.println("1");
+    } else if (!this.proximity.getCarriageProximity() && this.haveNote && !this.noteInPlace){
         this.noteInMiddle = true;
         this.climber.setTrapRollerTorque(-20, 0.5);
         // System.out.println("2");
@@ -56,6 +56,12 @@ public class TrapIndexNoteToCarriage extends Command {
         this.climber.setTrapRollerTorque(20, 0.5);
         this.haveNoteTime = Timer.getFPGATimestamp();
         // System.out.println("3");
+    } else if (this.noteInPlace){
+      this.climber.setTrapRollerTorque(20, 0.5);
+      // System.out.println("4");
+    } else {
+      this.climber.setTrapRollerTorque(-20, 0.5);
+      // System.out.println("5");
     }
     // System.out.println("haveNote: " + this.haveNote);
     // System.out.println("noteInPlace: " + this.noteInPlace);
@@ -82,7 +88,7 @@ public class TrapIndexNoteToCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    if (noteInPlace && Timer.getFPGATimestamp() - this.haveNoteTime > 0.1){
+    if (noteInPlace && Timer.getFPGATimestamp() - this.haveNoteTime > 0.15){
       return true;
     } else {
       return false;

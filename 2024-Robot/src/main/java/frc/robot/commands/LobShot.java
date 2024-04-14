@@ -41,7 +41,7 @@ public class LobShot extends Command {
   private double shotPauseTime = 0.0;
 
   private double shooterDegreesAllowedError = 0.75;
-  private double shooterRPMAllowedError = 200;
+  private double shooterRPMAllowedError = 100;
   private double driveAngleAllowedError = 2;
 
   private double lookAheadTime = 0.0;

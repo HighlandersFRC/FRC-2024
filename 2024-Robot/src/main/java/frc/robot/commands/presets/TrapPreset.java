@@ -28,7 +28,7 @@ public class TrapPreset extends SequentialCommandGroup {
   public TrapPreset(Climber climber, Feeder feeder, Intake intake, Proximity proximity, Shooter shooter) {
     addRequirements(climber, feeder, intake, shooter);
     addCommands(
-      new IndexNoteToCarriage(feeder, climber, intake, proximity, shooter, 0.6),
+      new TrapIndexNoteToCarriage(feeder, climber, intake, proximity, shooter),
       new ParallelDeadlineGroup(
         new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED.degrees),
         new RunFeeder(feeder, -150),
