@@ -394,7 +394,7 @@ public class Robot extends LoggedRobot {
     OI.driverMenuButton.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 175, 185, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4499, 1200, 0, 200, 145, 5));
+    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4600, 1200, 0, 200, 135, 5));
     OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
@@ -410,7 +410,7 @@ public class Robot extends LoggedRobot {
     OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
     OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
     OI.operatorA.whileTrue(new RunClimber(climber, feeder, -20, 1.0));
-    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4499));
+    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
     OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
     OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
