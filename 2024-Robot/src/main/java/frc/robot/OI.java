@@ -138,11 +138,11 @@ public class OI {
     }
 
     public static boolean is4PieceFarBottom231Auto(){
-        return autoChooser.getRawButton(1);
+        return autoChooser.getRawButton(2);
     }
 
     public static boolean is5PieceAuto() {
-        return autoChooser.getRawButton(2);
+        return autoChooser.getRawButton(1);
     }
 
     public static boolean is3PieceFarBottomAuto() {
@@ -150,11 +150,11 @@ public class OI {
     }
 
     public static boolean is1PieceAuto() {
-        return autoChooser.getRawButton(4);
+        return autoChooser.getRawButton(5);
     }
 
     public static boolean is4PieceAmpSideAuto() {
-        return autoChooser.getRawButton(5);
+        return autoChooser.getRawButton(4);
     }
 
     public static boolean getDriverRightJoystickPressed(){
