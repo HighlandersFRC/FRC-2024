@@ -20,6 +20,7 @@ public class TrapIndexNoteToCarriage extends Command {
   private boolean noteInPlace = false;
   private boolean noteInMiddle = false;
   private double timeToCenterNote = 0.7;
+  private double runbackTime;
   private double haveNoteTime;
 
   public TrapIndexNoteToCarriage(Feeder feeder, Climber climber, Intake intake, Proximity proximity, Shooter shooter) {
@@ -29,6 +30,18 @@ public class TrapIndexNoteToCarriage extends Command {
     this.proximity = proximity;
     this.shooter = shooter;
     this.timeToCenterNote = 0.7;
+    this.runbackTime = 0.15;
+    addRequirements(feeder, climber, intake, shooter);
+  }
+
+  public TrapIndexNoteToCarriage(Feeder feeder, Climber climber, Intake intake, Proximity proximity, Shooter shooter, double runbackTime) {
+    this.feeder = feeder;
+    this.climber = climber;
+    this.intake = intake;
+    this.proximity = proximity;
+    this.shooter = shooter;
+    this.timeToCenterNote = 0.7;
+    this.runbackTime = runbackTime;
     addRequirements(feeder, climber, intake, shooter);
   }
 
@@ -88,7 +101,9 @@ public class TrapIndexNoteToCarriage extends Command {
 
   @Override
   public boolean isFinished() {
-    if (noteInPlace && Timer.getFPGATimestamp() - this.haveNoteTime > 0.15){
+    if (OI.getOperatorLB()){
+      return true;
+    } else if (noteInPlace && Timer.getFPGATimestamp() - this.haveNoteTime > this.runbackTime){
       return true;
     } else {
       return false;

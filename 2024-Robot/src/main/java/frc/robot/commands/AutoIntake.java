@@ -85,6 +85,12 @@ public class AutoIntake extends Command {
     // System.out.println("Auto Intake");
     // System.out.println("Note in intake: " + this.noteInIntake);
     // System.out.println("Intake Dist: " + this.tof.getIntakeDistMillimeters());
+
+    // if (this.climber.getElevatorLimitSwitch()){
+    //   this.climber.setElevatorTorque(-30, 0.7);
+    // } else {
+    //   this.climber.setElevatorTorque(0, 0);
+    // }
     
 
     if (this.proximity.getShooterProximity()){

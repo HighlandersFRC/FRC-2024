@@ -56,6 +56,7 @@ public final class Constants {
     //drive
 
     //intake
+    // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
@@ -84,6 +85,9 @@ public final class Constants {
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
+    //bumper ty on comp field: 8.29 blue, 8.04 red
+
+    //ty at wired red practice field: 8.13
     //ty: -12.55, current offset: 2.5
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;

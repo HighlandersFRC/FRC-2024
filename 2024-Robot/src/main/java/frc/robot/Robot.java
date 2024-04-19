@@ -226,7 +226,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.fourPieceAmpSideFile = new File("/home/lvuser/deploy/3PieceAmpSidePart1.json");
+      this.fourPieceAmpSideFile = new File("/home/lvuser/deploy/3PieceAmpSidePart0.json");
       FileReader scanner = new FileReader(this.fourPieceAmpSideFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fourPieceAmpSideJSON = (JSONArray) pathRead.get("sampled_points");

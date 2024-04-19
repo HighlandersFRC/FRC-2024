@@ -81,7 +81,7 @@ public class Intake extends SubsystemBase {
   }
 
   public void autoInit(){
-    this.angleFalcon.setPosition(0);
+    this.angleFalcon.setPosition(-0.08);
   }
 
   /**

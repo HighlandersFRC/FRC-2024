@@ -34,6 +34,10 @@ import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 
 public class FourPieceAmpSideAuto extends SequentialCommandGroup {
+  private File pathingFile0;
+  private JSONArray pathJSON0;
+  private JSONObject pathRead0;
+
   private File pathingFile;
   private JSONArray pathJSON;
   private JSONObject pathRead;
@@ -47,6 +51,16 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
   private JSONObject pathRead3;
 
   public FourPieceAmpSideAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof, Proximity proximity) {
+    try {
+      pathingFile0 = new File("/home/lvuser/deploy/3PieceAmpSidePart0.json");
+      FileReader scanner0 = new FileReader(pathingFile0);
+      pathRead0 = new JSONObject(new JSONTokener(scanner0));
+      pathJSON0 = (JSONArray) pathRead0.get("sampled_points");
+    }
+    catch(Exception e) {
+      System.out.println("ERROR WITH PATH FILE " + e);
+    }
+    
     try {
       pathingFile = new File("/home/lvuser/deploy/3PieceAmpSidePart1.json");
       FileReader scanner = new FileReader(pathingFile);
@@ -78,8 +92,12 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
     }
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4500, 1200, 0),
-        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON0, 0, false, false, 0, proximity),
+        // new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
+        new AutoPrepForShot(shooter, proximity, 30, 6000)
+      ),
+      new ParallelDeadlineGroup(
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
