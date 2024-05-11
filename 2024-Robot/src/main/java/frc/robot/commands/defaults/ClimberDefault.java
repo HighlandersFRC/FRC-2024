@@ -111,7 +111,7 @@ public class ClimberDefault extends Command {
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
       } else {
         // System.out.println("7");
-        this.climber.setTrapRollerTorque(20, 0.3);
+        this.climber.setTrapRollerTorque(20, 0.2);
         this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
       }
     } else {
@@ -121,7 +121,7 @@ public class ClimberDefault extends Command {
       if (Math.abs(this.climber.getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 3){
         // System.out.println("8");
         if (this.climber.getElevatorPositionMeters() > 0.1){
-          this.climber.setElevatorTorque(-30, 0.7);
+          this.climber.setElevatorTorque(-30, 0.85);
         } else {
           this.climber.setElevatorTorque(-10, 0.6);
         }

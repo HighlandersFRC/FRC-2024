@@ -31,7 +31,7 @@ public class IntakeDefault extends Command {
     if (OI.getOperatorLB()){
       this.intake.setRollers(0);
     } else {
-      this.intake.setRollers(400);
+      this.intake.setRollers(250);
     }
     OI.driverController.setRumble(RumbleType.kBothRumble, 0);
     OI.operatorController.setRumble(RumbleType.kBothRumble, 0);

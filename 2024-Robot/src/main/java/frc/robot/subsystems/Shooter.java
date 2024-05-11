@@ -236,6 +236,8 @@ public class Shooter extends SubsystemBase {
   public void setFlywheelTorque(double current, double maxPercent) {
     this.flywheelFalconMaster
         .setControl(this.flywheelTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+     this.flywheelFalconFollower
+        .setControl(this.flywheelTorqueRequest.withOutput(-current).withMaxAbsDutyCycle(maxPercent));
   }
   /**
    * Set the shooter angle motor to a percent

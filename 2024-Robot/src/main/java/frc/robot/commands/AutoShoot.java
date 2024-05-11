@@ -246,7 +246,7 @@ public class AutoShoot extends Command {
     } else {
       // System.out.println("running");
       this.pid.setSetPoint(180);
-      this.pid.updatePID(pigeonAngleDegrees);
+      this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     }
     double turnResult = -pid.getResult();
 
