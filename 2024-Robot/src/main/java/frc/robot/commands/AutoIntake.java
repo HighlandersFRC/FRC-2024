@@ -124,8 +124,8 @@ public class AutoIntake extends Command {
 
     if (this.buzzControllers){
       if (noteInIntake){
-        OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
-        OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
+        OI.driverController.setRumble(RumbleType.kBothRumble, 1.0);
+        OI.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
       }
     }
 
