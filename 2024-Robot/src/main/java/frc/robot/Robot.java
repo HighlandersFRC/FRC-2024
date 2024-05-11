@@ -196,7 +196,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.fourPieceFarBottomFile = new File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
+      this.fourPieceFarBottomFile = new File("/home/lvuser/deploy/ChampsAutoPart1.json");
       FileReader scanner = new FileReader(this.fourPieceFarBottomFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fourPieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");

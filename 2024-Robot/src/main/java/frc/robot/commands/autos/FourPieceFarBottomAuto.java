@@ -67,7 +67,7 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
   /** Creates a new FourPieceFarBottomAuto. */
   public FourPieceFarBottomAuto(Drive drive, Peripherals peripherals, Intake intake, Feeder feeder, Shooter shooter, Climber climber, Lights lights, TOF tof, Proximity proximity) {
     try {
-      pathingFile = new File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
+      pathingFile = new File("/home/lvuser/deploy/ChampsAutoPart1.json");
       FileReader scanner = new FileReader(pathingFile);
       pathRead = new JSONObject(new JSONTokener(scanner));
       pathJSON = (JSONArray) pathRead.get("sampled_points");
@@ -76,51 +76,47 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
 
-    try {
-      pathingFile2 = new File("/home/lvuser/deploy/4PieceFarBottomPart2.json");
-      FileReader scanner2 = new FileReader(pathingFile2);
-      pathRead2 = new JSONObject(new JSONTokener(scanner2));
-      pathJSON2 = (JSONArray) pathRead2.get("sampled_points");
-    }
-    catch(Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
-    }
+    // try {
+    //   pathingFile2 = new File("/home/lvuser/deploy/4PieceFarBottomPart2.json");
+    //   FileReader scanner2 = new FileReader(pathingFile2);
+    //   pathRead2 = new JSONObject(new JSONTokener(scanner2));
+    //   pathJSON2 = (JSONArray) pathRead2.get("sampled_points");
+    // }
+    // catch(Exception e) {
+    //   System.out.println("ERROR WITH PATH FILE " + e);
+    // }
 
-    try {
-      pathingFile3 = new File("/home/lvuser/deploy/4PieceFarBottomPart3.json");
-      FileReader scanner3 = new FileReader(pathingFile3);
-      pathRead3 = new JSONObject(new JSONTokener(scanner3));
-      pathJSON3 = (JSONArray) pathRead3.get("sampled_points");
-    }
-    catch(Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
-    }
+    // try {
+    //   pathingFile3 = new File("/home/lvuser/deploy/4PieceFarBottomPart3.json");
+    //   FileReader scanner3 = new FileReader(pathingFile3);
+    //   pathRead3 = new JSONObject(new JSONTokener(scanner3));
+    //   pathJSON3 = (JSONArray) pathRead3.get("sampled_points");
+    // }
+    // catch(Exception e) {
+    //   System.out.println("ERROR WITH PATH FILE " + e);
+    // }
 
-    try {
-      pathingFile4 = new File("/home/lvuser/deploy/4PieceFarBottomPart4.json");
-      FileReader scanner4 = new FileReader(pathingFile4);
-      pathRead4 = new JSONObject(new JSONTokener(scanner4));
-      pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
-    }
-    catch(Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
-    }
+    // try {
+    //   pathingFile4 = new File("/home/lvuser/deploy/4PieceFarBottomPart4.json");
+    //   FileReader scanner4 = new FileReader(pathingFile4);
+    //   pathRead4 = new JSONObject(new JSONTokener(scanner4));
+    //   pathJSON4 = (JSONArray) pathRead4.get("sampled_points");
+    // }
+    // catch(Exception e) {
+    //   System.out.println("ERROR WITH PATH FILE " + e);
+    // }
 
     addRequirements(drive, intake, feeder, shooter, lights);
 
     addCommands(
+      new WaitCommand(1),
       new ParallelDeadlineGroup(
-        // new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 3.25, proximity),
-        new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
-        new AutoPrepForShot(shooter, proximity, 35, 5500)
-      ),
-      new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 35, 5500, 2),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000),
+        new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
-        new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 1.5, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
           new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
@@ -131,32 +127,55 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
-      new ParallelDeadlineGroup(
-        // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
-        new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
-        new SequentialCommandGroup(
-          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
-          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
-        ),
-        new AutoPrepForShot(shooter, proximity, 28, 6000)
-      ),
-      new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
-      ),
-      new ParallelDeadlineGroup(
-        // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
-        new LineUpWhilePathing(drive, lights, peripherals, pathJSON4, 0, false, false, 0, proximity),
-        new SequentialCommandGroup(
-          new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
-          new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
-        ),
-        new AutoPrepForShot(shooter, proximity, 28, 6000)
-      ),
-      new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
-        new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
-      ),
+
+      // new ParallelDeadlineGroup(
+      //   // new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 3.25, proximity),
+      //   new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
+      //   new AutoPrepForShot(shooter, proximity, 35, 5500)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 35, 5500, 2),
+      //   new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
+      //   new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
+      //   new SequentialCommandGroup(
+      //     new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
+      //     new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 10, 0.1, false)
+      //   ),
+      //   new AutoPrepForShot(shooter, proximity, 25, 6600)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2),
+      //   new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
+      //   new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
+      //   new SequentialCommandGroup(
+      //     new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
+      //     new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      //   ),
+      //   new AutoPrepForShot(shooter, proximity, 28, 6000)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
+      //   new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
+      //   new LineUpWhilePathing(drive, lights, peripherals, pathJSON4, 0, false, false, 0, proximity),
+      //   new SequentialCommandGroup(
+      //     new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
+      //     new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      //   ),
+      //   new AutoPrepForShot(shooter, proximity, 28, 6000)
+      // ),
+      // new ParallelDeadlineGroup(
+      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
+      //   new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
+      // ),
 
       //End
       new ParallelCommandGroup(

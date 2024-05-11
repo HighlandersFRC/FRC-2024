@@ -114,7 +114,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
         // new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
@@ -127,7 +127,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
-        new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
+        new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
         // new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
         new SequentialCommandGroup(
           new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, false, false),
