@@ -240,8 +240,14 @@ public class AutoShoot extends Command {
 
     // System.out.println("Good Setpoint: " + this.haveGoodSetpoint);
 
-    this.pid.setSetPoint(this.targetPigeonAngleDegrees);
-    this.pid.updatePID(pigeonAngleDegrees);
+    if (canSeeTag){
+      this.pid.setSetPoint(this.targetPigeonAngleDegrees);
+      this.pid.updatePID(pigeonAngleDegrees);
+    } else {
+      // System.out.println("running");
+      this.pid.setSetPoint(180);
+      this.pid.updatePID(pigeonAngleDegrees);
+    }
     double turnResult = -pid.getResult();
 
     if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(pigeonAngleDegrees - this.targetPigeonAngleDegrees) <= this.driveAngleAllowedError){
@@ -256,7 +262,8 @@ public class AutoShoot extends Command {
       turnResult = 0;
     }
 
-    if (canSeeTag && this.speakerAngleDegrees < 90){
+    // System.out.println("Turn result: " + turnResult);
+    if (this.speakerAngleDegrees < 90){
       // System.out.println("1");
       this.drive.driveAutoAligned(turnResult);
     } else {
