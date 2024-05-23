@@ -1070,7 +1070,8 @@ public class Drive extends SubsystemBase {
   */
   public void teleopDrive() {
     updateOdometryFusedArray();
-    double turnLimit = 0.35;
+    double turnLimit = 0.25;
+    //0.35 before
 
     if(OI.driverController.getLeftBumper()) {
         // activate speedy spin
