@@ -339,6 +339,14 @@ public class Peripherals extends SubsystemBase {
     return pigeon.getYaw().getValueAsDouble();
   }
 
+  public double getPigeonAngularVelocity() {
+    return Math.abs(pigeon.getAngularVelocityZDevice().getValueAsDouble());
+  }
+
+  public double getPigeonAngularVelocityW() {
+    return pigeon.getAngularVelocityZWorld().getValueAsDouble();
+  }
+
   /**
    * Retrieves the acceleration vector of the robot
    * @return Current acceleration vector of the robot
@@ -601,5 +609,7 @@ public class Peripherals extends SubsystemBase {
     // }
     SmartDashboard.putNumber("ty", getFrontCamTargetTy());
     SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
+    SmartDashboard.putNumber("device", getPigeonAngularVelocity());
+    SmartDashboard.putNumber("yaw", getPigeonAngle());
   }
 }

@@ -21,6 +21,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.Nat;
+import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.estimator.SwerveDrivePoseEstimator;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
@@ -37,6 +38,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.LimelightHelpers;
 import frc.robot.OI;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
@@ -179,6 +181,9 @@ public class Drive extends SubsystemBase {
   SwerveDrivePoseEstimator loggingOdometry; 
   Pose2d loggingPose;
 
+  SwerveDrivePoseEstimator mt2Odometry; 
+  Pose2d mt2Pose;
+
   double initAngle;
   double setAngle;
   double diffAngle;
@@ -226,6 +231,7 @@ public class Drive extends SubsystemBase {
 
     m_odometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d((Math.toRadians(peripherals.getPigeonAngle()))), swerveModulePositions, m_pose);
     loggingOdometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
+    mt2Odometry = new SwerveDrivePoseEstimator(m_kinematics, new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
   }
 
   /**
@@ -347,6 +353,7 @@ public class Drive extends SubsystemBase {
     swerveModulePositions[3] = new SwerveModulePosition(backRight.getModuleDistance(), new Rotation2d(backRight.getCanCoderPositionRadians()));
     m_odometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
     loggingOdometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
+    mt2Odometry.resetPosition(new Rotation2d(firstPointAngle), swerveModulePositions, new Pose2d(new Translation2d(firstPointX, firstPointY), new Rotation2d(firstPointAngle)));
         
     currentFusedOdometry[0] = firstPointX;
     currentFusedOdometry[1] = firstPointY;
@@ -411,6 +418,7 @@ public class Drive extends SubsystemBase {
         
     m_pose = m_odometry.update(new Rotation2d((navxOffset)), swerveModulePositions);
     loggingPose = loggingOdometry.update(new Rotation2d(navxOffset), swerveModulePositions);
+    mt2Pose = mt2Odometry.update(new Rotation2d(navxOffset), swerveModulePositions);
 
     currentX = getOdometryX();
     currentY = getOdometryY();
@@ -423,6 +431,20 @@ public class Drive extends SubsystemBase {
     // double cameraBasedY = frontCamCoordinates.getDouble(1);
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
+    boolean doRejectUpdate = false;
+    LimelightHelpers.SetRobotOrientation("limelight-front", peripherals.getPigeonAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
+    if(Math.abs(peripherals.getPigeonAngularVelocity()) > 720 || mt2.tagCount == 0) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
+    {
+      doRejectUpdate = true;
+    } 
+    if(!doRejectUpdate)
+    {
+      // mt2Odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
+      mt2Odometry.addVisionMeasurement(
+        mt2.pose,
+        mt2.timestampSeconds);
+    }
 
     if(useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
       cameraBasedX = cameraCoordinatesFront.getDouble(0);
@@ -935,6 +957,13 @@ public class Drive extends SubsystemBase {
     return odometry;
   }
 
+  public double[] getMT2Odometry(){
+    double[] odometry = {
+      getMT2OdometryX(), getMT2OdometryY(), getMT2OdometryAngle()
+    };
+    return odometry;
+  }
+
   /**
    * Retrieves the current X-coordinate of the robot from fused odometry.
    *
@@ -975,6 +1004,10 @@ public class Drive extends SubsystemBase {
     return loggingOdometry.getEstimatedPosition().getX();
   }
 
+  public double getMT2OdometryX() {
+    return mt2Odometry.getEstimatedPosition().getX();
+  }
+
   /**
    * Retrieves the current Y-coordinate of the robot from odometry.
    *
@@ -988,6 +1021,10 @@ public class Drive extends SubsystemBase {
     return loggingOdometry.getEstimatedPosition().getY();
   }
 
+  public double getMT2OdometryY() {
+    return mt2Odometry.getEstimatedPosition().getY();
+  }
+
   /**
    * Retrieves the current orientation angle of the robot from odometry.
    *
@@ -999,6 +1036,10 @@ public class Drive extends SubsystemBase {
 
   public double getLocalizationOdometryAngle() {
     return loggingOdometry.getEstimatedPosition().getRotation().getRadians();
+  }
+
+  public double getMT2OdometryAngle() {
+    return mt2Odometry.getEstimatedPosition().getRotation().getRadians();
   }
 
   /**

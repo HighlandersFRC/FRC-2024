@@ -288,6 +288,12 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("Problem with logging");
     }
+
+    try{
+      Logger.recordOutput("MT2 Odometry", drive.getMT2Odometry());
+    } catch(Exception e) {
+      System.out.println("Problem with logging");
+    }
     // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
     // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
 
