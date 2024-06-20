@@ -19,7 +19,7 @@ public final class Constants {
 
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
 
-    public static final double TOP_SPEED = feetToMeters(20);
+    public static final double TOP_SPEED = feetToMeters(25);
 
     public static final double ROBOT_LENGTH = inchesToMeters(25);
     public static final double ROBOT_WIDTH = inchesToMeters(28.5);

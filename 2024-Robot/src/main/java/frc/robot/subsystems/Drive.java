@@ -1111,7 +1111,7 @@ public class Drive extends SubsystemBase {
   */
   public void teleopDrive() {
     updateOdometryFusedArray();
-    double turnLimit = 0.25;
+    double turnLimit = 0.12;
     //0.35 before
 
     if(OI.driverController.getLeftBumper()) {
@@ -1130,7 +1130,13 @@ public class Drive extends SubsystemBase {
         originalY = 0;
     }
 
-    double turn = turnLimit * ((Math.copySign(OI.getDriverRightX() * OI.getDriverRightX() * OI.getDriverRightX(), OI.getDriverRightX())) * (Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+    // double turn = turnLimit * ((Math.copySign(OI.getDriverRightX() * OI.getDriverRightX() * OI.getDriverRightX(), OI.getDriverRightX())) * (Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+    double turn = turnLimit * (OI.getDriverRightX() * (Constants.Physical.TOP_SPEED)/(Constants.Physical.ROBOT_RADIUS));
+
+    if(Math.abs(turn) < 0.15) {
+      turn = 0.0;
+    }
+
     double pigeonAngle = Math.toRadians(peripherals.getPigeonAngle());
     double xPower = getAdjustedX(originalX, originalY);
     double yPower = getAdjustedY(originalX, originalY);
