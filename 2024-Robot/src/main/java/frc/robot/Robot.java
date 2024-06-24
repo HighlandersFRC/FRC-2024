@@ -294,8 +294,9 @@ public class Robot extends LoggedRobot {
     } catch(Exception e) {
       System.out.println("Problem with logging");
     }
-    // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
-    // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
+    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
+    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
+    Logger.recordOutput("IMU", peripherals.getPigeonAngle());
 
     lights.periodic();
     intake.periodic();
