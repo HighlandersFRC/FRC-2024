@@ -610,6 +610,7 @@ public class Peripherals extends SubsystemBase {
     SmartDashboard.putNumber("ty", getFrontCamTargetTy());
     SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
     SmartDashboard.putNumber("device", getPigeonAngularVelocity());
+    SmartDashboard.putNumber("world", getPigeonAngularVelocityW());
     SmartDashboard.putNumber("yaw", getPigeonAngle());
   }
 }
