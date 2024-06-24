@@ -431,15 +431,17 @@ public class Drive extends SubsystemBase {
     // double cameraBasedY = frontCamCoordinates.getDouble(1);
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
+    double robotAngle = peripherals.getPigeonAngle();
+    // if (this.fieldSide == "red"){
+    //   robotAngle += 180;
+    // }
     boolean doRejectUpdate = false;
-    LimelightHelpers.SetRobotOrientation("limelight-front", peripherals.getPigeonAngle(), 0, 0, 0, 0, 0);
+    LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
-    if(Math.abs(peripherals.getPigeonAngularVelocity()) > 720 || mt2.tagCount == 0) // if our angular velocity is greater than 720 degrees per second, ignore vision updates
-    {
+    if(Math.abs(peripherals.getPigeonAngularVelocity()) > 15 || mt2.tagCount == 0) {
       doRejectUpdate = true;
     } 
-    if(!doRejectUpdate)
-    {
+    if(!doRejectUpdate) {
       // mt2Odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
       mt2Odometry.addVisionMeasurement(
         mt2.pose,
