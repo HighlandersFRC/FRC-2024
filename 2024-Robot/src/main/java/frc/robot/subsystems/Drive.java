@@ -901,10 +901,10 @@ public class Drive extends SubsystemBase {
   */
   public double[] getModuleStates(){
     double[] states = {
-      frontRight.getCanCoderPosition() * 360.0, frontRight.getGroundSpeed(),
       frontLeft.getCanCoderPosition() * 360.0, frontLeft.getGroundSpeed(),
-      backLeft.getCanCoderPosition() * 360.0, frontRight.getGroundSpeed(),
-      backRight.getCanCoderPosition() * 360.0, frontRight.getGroundSpeed(),
+      frontRight.getCanCoderPosition() * 360.0, frontRight.getGroundSpeed(),
+      backLeft.getCanCoderPosition() * 360.0, backLeft  .getGroundSpeed(),
+      backRight.getCanCoderPosition() * 360.0, backRight.getGroundSpeed(),
     };
     return states;
   }
@@ -920,10 +920,10 @@ public class Drive extends SubsystemBase {
   */
   public double[] getModuleSetpoints(){
     double[] setpoints = {
-      frontRight.getAngleMotorSetpoint(), frontRight.getDriveMotorSetpoint(),
-      frontLeft.getAngleMotorSetpoint(), frontLeft.getDriveMotorSetpoint(),
-      backLeft.getAngleMotorSetpoint(), backLeft.getDriveMotorSetpoint(),
-      backRight.getAngleMotorSetpoint(), backRight.getDriveMotorSetpoint(),
+      frontLeft.getAngleMotorSetpoint()*360, frontLeft.getDriveMotorSetpoint(),
+      frontRight.getAngleMotorSetpoint()*360, frontRight.getDriveMotorSetpoint(),
+      backLeft.getAngleMotorSetpoint()*360, backLeft.getDriveMotorSetpoint(),
+      backRight.getAngleMotorSetpoint()*360, backRight.getDriveMotorSetpoint(),
     };
     return setpoints;
   }
