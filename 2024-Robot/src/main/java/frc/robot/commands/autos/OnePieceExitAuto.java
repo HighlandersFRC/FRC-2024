@@ -43,7 +43,7 @@ public class OnePieceExitAuto extends SequentialCommandGroup {
     addCommands(
       new WaitCommand(8),
       new AutonomousFollower(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 40, 5500, 3)
+      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 40, 5500, 3, true)
     );
   }
 }

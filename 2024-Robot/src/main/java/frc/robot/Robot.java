@@ -196,7 +196,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.fourPieceFarBottomFile = new File("/home/lvuser/deploy/ChampsAutoPart1.json");
+      this.fourPieceFarBottomFile = new File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
       FileReader scanner = new FileReader(this.fourPieceFarBottomFile);
       JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
       this.fourPieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");
@@ -401,7 +401,7 @@ public class Robot extends LoggedRobot {
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4600, 1200, 0, 200, 135, 5));
-    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3));
+    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3, false));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
 

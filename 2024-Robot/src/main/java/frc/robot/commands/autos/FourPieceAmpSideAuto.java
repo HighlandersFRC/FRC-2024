@@ -97,7 +97,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -110,7 +110,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -123,7 +123,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -136,7 +136,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2),
+        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       // new ParallelDeadlineGroup(

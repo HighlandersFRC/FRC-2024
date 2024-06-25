@@ -64,8 +64,10 @@ public class AutoShoot extends Command {
   private ArrayList<Double> pigeonAngles = new ArrayList<Double>();
 
   private boolean haveGoodSetpoint = false;
+  private boolean auto = false;
+  private int numTimesNoTrack = 0;
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -75,10 +77,11 @@ public class AutoShoot extends Command {
     this.feederRPM = feederRPM;
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
+    this.auto = auto;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout) {
+  public AutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -89,6 +92,8 @@ public class AutoShoot extends Command {
     this.defaultShooterAngle = defaultShooterAngle;
     this.defaultFlywheelRPM = defaultFlywheelRPM;
     this.timeout = timeout;
+    this.auto = auto;
+    this.numTimesNoTrack = 0;
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
@@ -244,9 +249,12 @@ public class AutoShoot extends Command {
       this.pid.setSetPoint(this.targetPigeonAngleDegrees);
       this.pid.updatePID(pigeonAngleDegrees);
     } else {
+      numTimesNoTrack++;
       // System.out.println("running");
-      this.pid.setSetPoint(180);
-      this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+      if (!this.auto && numTimesNoTrack > 20){
+        this.pid.setSetPoint(180);
+        this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+      }
     }
     double turnResult = -pid.getResult();
 
