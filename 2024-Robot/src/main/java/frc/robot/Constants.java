@@ -18,6 +18,8 @@ public final class Constants {
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
+    public static final double SPEAKER_X = 0;
+    public static final double SPEAKER_Y = inchesToMeters(220.347);
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -89,10 +91,11 @@ public final class Constants {
 
     //ty at wired red practice field: 8.13
     //ty: -12.55, current offset: 2.5
+    //flip getInterpolated value edge setpoints
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.20, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
+      {1.295, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
       {1.38, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
       {1.61, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
       {2.02, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 0.75, 2},
@@ -133,17 +136,17 @@ public final class Constants {
      */
     public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
         int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (xValue > SHOOTING_LOOKUP_TABLE[0][xIndex]) {
+        if (xValue < SHOOTING_LOOKUP_TABLE[0][xIndex]) {
             //If the xValue is closer than the first setpoint
             double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
             return returnValue;
-        } else if (xValue < SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
+        } else if (xValue > SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
             //If the xValue is farther than the last setpoint
             double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][yIndex];
             return returnValue;
         } else {
             for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (xValue < SHOOTING_LOOKUP_TABLE[i][xIndex] && xValue > SHOOTING_LOOKUP_TABLE[i + 1][xIndex]) {
+                if (xValue > SHOOTING_LOOKUP_TABLE[i][xIndex] && xValue < SHOOTING_LOOKUP_TABLE[i + 1][xIndex]) {
                     //If the xValue is in the table of setpoints
                     //Calculate where xValue is between setpoints
                     double leftDif = xValue - SHOOTING_LOOKUP_TABLE[i][xIndex];
@@ -636,6 +639,20 @@ public final class Constants {
    */
   public static double getDistance(double x1, double y1, double x2, double y2){
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
+  }
+
+  public static double getAngleToPoint(double x1, double y1, double x2, double y2){
+    double deltaX = x2 - x1;
+    double deltaY = y2 - y1;
+
+    double angleInRadians = Math.atan2(deltaY, deltaX);
+
+    double angleInDegrees = Math.toDegrees(angleInRadians);
+
+        // Ensure the angle is between 0 and 360 degrees
+        double standardizeAngleDegrees = SetPoints.standardizeAngleDegrees(angleInDegrees);
+
+        return 180 - standardizeAngleDegrees;
   }
 
   /**
