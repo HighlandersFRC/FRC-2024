@@ -1,7 +1,3 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot.commands.autos;
 
 import java.io.File;
@@ -24,14 +20,8 @@ import frc.robot.commands.IdleShooter;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.RunShooter;
 import frc.robot.commands.SetCarriage;
-import frc.robot.commands.ShootWhilePathingAndIntaking;
-import frc.robot.commands.SmartIntake;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StopDriving;
-import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
@@ -42,9 +32,6 @@ import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 
-// NOTE:  Consider using this command inline, rather than writing a subclass.  For more
-// information, see:
-// https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class FivePieceAuto extends SequentialCommandGroup {
   private File pathingFile;
   private JSONArray pathJSON;

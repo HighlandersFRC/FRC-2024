@@ -251,7 +251,7 @@ public class AutoShoot extends Command {
     } else {
       numTimesNoTrack++;
       // System.out.println("running");
-      if (!this.auto && numTimesNoTrack > 20){
+      if (!this.auto){
         this.pid.setSetPoint(180);
         this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
       }
@@ -279,7 +279,9 @@ public class AutoShoot extends Command {
       this.drive.driveAutoAligned(0);
     }
 
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    if (this.proximity.getFeederProximity()){
+      this.shooter.set(this.shooterDegrees, this.shooterRPM);
+    }    
     
     if (this.hasReachedSetPoint == true && this.haveGoodSetpoint){
       lights.clearAnimations();

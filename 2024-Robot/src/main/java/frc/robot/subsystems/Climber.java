@@ -82,7 +82,7 @@ public class Climber extends SubsystemBase {
    */
   public Climber(Lights lights, TOF tof, Proximity proximity) {
     this.lights = lights;
-    setDefaultCommand(new ClimberDefault(this, tof, proximity));
+    setDefaultCommand(new ClimberDefault(this, proximity));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
     this.rotationPID.setMaxOutput(1);

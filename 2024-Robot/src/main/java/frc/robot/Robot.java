@@ -1,64 +1,32 @@
-// Copyright (c) FIRST and other WPILib contributors.
-// Open Source Software; you can modify and/or share it under the terms of
-// the WPILib BSD license file in the root directory of this project.
-
 package frc.robot;
 
 import java.io.File;
 import java.io.FileReader;
 
-import javax.sound.sampled.SourceDataLine;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.littletonrobotics.junction.LogFileUtil;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGReader;
 import org.littletonrobotics.junction.wpilog.WPILOGWriter;
-
-import com.playingwithfusion.TimeOfFlight;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.commands.AutoIntake;
-import frc.robot.commands.AutoParser;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
-import frc.robot.commands.IndexNoteToCarriage;
 import frc.robot.commands.LobShot;
-import frc.robot.commands.MoveOnlyArm;
-import frc.robot.commands.MoveToPiece;
-// import frc.robot.commands.PrepareAmp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
-import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunFlywheel;
-import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunIntakeAndFeeder;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.RunTrap;
-import frc.robot.commands.SetClimber;
-import frc.robot.commands.SmartIntake;
 import frc.robot.commands.SmartPrepForShot;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.SpinUpShooter;
-import frc.robot.commands.Test;
-import frc.robot.commands.TestCAN;
-import frc.robot.commands.TrapIndexNoteToCarriage;
-import frc.robot.commands.TurnToTarget;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.AutoNoteFollowing;
 import frc.robot.commands.autos.FivePieceAuto;

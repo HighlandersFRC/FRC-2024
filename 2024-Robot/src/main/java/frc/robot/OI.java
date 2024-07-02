@@ -5,12 +5,9 @@ package frc.robot;
 
 import java.util.function.BooleanSupplier;
 
-import com.fasterxml.jackson.core.io.JsonEOFException;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.tools.TriggerButton;
 
 public class OI {
