@@ -1,9 +1,5 @@
 package frc.robot.commands.defaults;
 
-import javax.swing.text.StyleContext.SmallAttributeSet;
-
-import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
 import frc.robot.OI;
@@ -13,7 +9,6 @@ import frc.robot.subsystems.Climber;
 
 public class ClimberDefault extends Command {
   private Climber climber;
-  private TOF tof;
   private Proximity proximity;
 
   private boolean isZeroed = false;
@@ -23,9 +18,8 @@ public class ClimberDefault extends Command {
   private boolean haveCarriageNote;
   private boolean haveFeederNote;
 
-  public ClimberDefault(Climber climber, TOF tof, Proximity proximity) {
+  public ClimberDefault(Climber climber, Proximity proximity) {
     this.climber = climber;
-    this.tof = tof;
     this.proximity = proximity;
     addRequirements(climber);
   }

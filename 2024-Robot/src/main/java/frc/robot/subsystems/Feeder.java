@@ -46,7 +46,7 @@ public class Feeder extends SubsystemBase {
    * @param tof The Time-of-Flight (TOF) sensor used by the Feeder.
   */
   public Feeder(TOF tof, Proximity proximity) {
-    setDefaultCommand(new FeederDefault(this,tof,proximity));
+    setDefaultCommand(new FeederDefault(this, proximity));
   }
 
   /**

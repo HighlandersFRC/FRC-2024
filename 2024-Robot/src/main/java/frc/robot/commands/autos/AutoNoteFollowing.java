@@ -11,13 +11,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import edu.wpi.first.wpilibj2.command.WaitCommand;
-import frc.robot.Constants;
-import frc.robot.commands.AutoIntake;
-import frc.robot.commands.AutonomousFollower;
-import frc.robot.commands.MoveToPiece;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;

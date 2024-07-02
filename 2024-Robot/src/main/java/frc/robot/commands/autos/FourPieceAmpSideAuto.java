@@ -17,8 +17,6 @@ import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
-import frc.robot.commands.LineUpWhilePathing;
-import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.SetCarriage;
