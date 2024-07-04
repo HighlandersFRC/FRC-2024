@@ -94,21 +94,22 @@ public final class Constants {
     //flip getInterpolated value edge setpoints
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
+    public static final double DISTANCE_OFFSET = 0.0;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
       {1.295, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
-      {1.38, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
-      {1.61, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
-      {2.02, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 0.75, 2},
-      {2.31, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 0.75, 2},
-      {2.72, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 0.75, 2},
-      {3.18, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 0.5, 1.5},
-      {3.53, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.5, 5750, 0.5, 1.5},
-      {3.86, -10.34 + LIMELIGHT_ANGLE_OFFSET, 29.5, 6000, 0.5, 1.5},
-      {4.25, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.75, 6250, 0.5, 1.5},
-      {4.68, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.75, 6500, 0.5, 1.5},
-      {5.08, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 0.35, 1.5},
-      {5.28, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24.5, 6825, 0.5, 1.5},
-      {5.54, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23.5, 7000, 0.5, 1.2},
+      {1.486, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
+      {1.762, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
+      {2.172, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 0.75, 2},
+      {2.575, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 0.75, 2},
+      {2.927, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 0.75, 2},
+      {3.479, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 0.5, 1.5},
+      {3.846, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.5, 5750, 0.5, 1.5},
+      {4.247, -10.34 + LIMELIGHT_ANGLE_OFFSET, 29.5, 6000, 0.5, 1.5},
+      {4.743, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.75, 6250, 0.5, 1.5},
+      {5.293, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.75, 6500, 0.5, 1.5},
+      {5.420, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 0.35, 1.5},
+      {5.596, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24.5, 6825, 0.5, 1.5},
+      {5.755, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23.5, 7000, 0.5, 1.2},
       {6.06, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
       {6.40, -14.29 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
       {6.9, -14.47 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
@@ -649,10 +650,17 @@ public final class Constants {
 
     double angleInDegrees = Math.toDegrees(angleInRadians);
 
-        // Ensure the angle is between 0 and 360 degrees
-        double standardizeAngleDegrees = SetPoints.standardizeAngleDegrees(angleInDegrees);
+    double standardizeAngleDegrees = SetPoints.standardizeAngleDegrees(angleInDegrees);
 
-        return 180 - standardizeAngleDegrees;
+    // if (y1 > y2) {
+      System.out.println("running");
+      return 180 + standardizeAngleDegrees;
+    // }
+    //   System.out.println("2");
+    //   double temp = 180 - standardizeAngleDegrees;
+    //   double j = 180 - temp;
+    //   return 180 + j;
+    // }
   }
 
   /**

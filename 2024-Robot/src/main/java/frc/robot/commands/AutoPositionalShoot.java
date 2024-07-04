@@ -137,10 +137,10 @@ public class AutoPositionalShoot extends Command {
       if (id == 7 || id == 4){
         canSeeTag = true;
       }
-    // }
+    // }]\[]
 
     this.distToSpeakerMeters = Constants.getDistance(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y + 0.152, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
@@ -259,8 +259,8 @@ public class AutoPositionalShoot extends Command {
 
     // System.out.println("Good Setpoint: " + this.haveGoodSetpoint);
 
-    this.pid.setSetPoint(this.angleToSpeakerDegrees);
-    this.pid.updatePID(pigeonAngleDegrees);
+    this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(angleToSpeakerDegrees));
+    this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     // if (canSeeTag){
     //   this.pid.setSetPoint(this.targetPigeonAngleDegrees);
     //   this.pid.updatePID(pigeonAngleDegrees);
@@ -274,7 +274,7 @@ public class AutoPositionalShoot extends Command {
     // }
     double turnResult = -pid.getResult();
 
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(pigeonAngleDegrees - this.angleToSpeakerDegrees) <= this.driveAngleAllowedError){
+    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - Constants.SetPoints.standardizeAngleDegrees(angleToSpeakerDegrees)) <= this.driveAngleAllowedError){
       this.numTimesHitSetPoint ++;
     } else {
       this.numTimesHitSetPoint = 0;

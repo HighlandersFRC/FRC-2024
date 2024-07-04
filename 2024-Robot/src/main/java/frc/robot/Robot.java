@@ -18,6 +18,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AutoIntake;
+import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
@@ -370,7 +371,7 @@ public class Robot extends LoggedRobot {
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4600, 1200, 0, 200, 135, 5));
-    OI.driverA.whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, 3, false));
+    OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
 

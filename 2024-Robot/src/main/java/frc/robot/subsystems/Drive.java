@@ -437,16 +437,33 @@ public class Drive extends SubsystemBase {
     // }
     boolean doRejectUpdate = false;
     LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0, 0, 0);
-    LimelightHelpers.PoseEstimate mt2 = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
-    if(Math.abs(peripherals.getPigeonAngularVelocity()) > 15 || mt2.tagCount == 0) {
-      doRejectUpdate = true;
+    LimelightHelpers.PoseEstimate mt2Front = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
+    LimelightHelpers.SetRobotOrientation("limelight-left", robotAngle, 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2Left = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
+    LimelightHelpers.SetRobotOrientation("limelight-right", robotAngle, 0, 0, 0, 0, 0);
+    LimelightHelpers.PoseEstimate mt2Right = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
+    if(Math.abs(peripherals.getPigeonAngularVelocity()) < 15) {
+      if (mt2Front.tagCount != 0){
+        mt2Odometry.addVisionMeasurement(
+        mt2Front.pose,
+        mt2Front.timestampSeconds);
+      }
+      if (mt2Left.tagCount != 0){
+        mt2Odometry.addVisionMeasurement(
+        mt2Left.pose,
+        mt2Left.timestampSeconds);
+      }
+      if (mt2Right.tagCount != 0){
+        mt2Odometry.addVisionMeasurement(
+        mt2Right.pose,
+        mt2Right.timestampSeconds);
+      }
+      // doRejectUpdate = true;
     } 
-    if(!doRejectUpdate) {
+    // if(!doRejectUpdate) {
       // mt2Odometry.setVisionMeasurementStdDevs(VecBuilder.fill(.6,.6,9999999));
-      mt2Odometry.addVisionMeasurement(
-        mt2.pose,
-        mt2.timestampSeconds);
-    }
+      
+    // }
 
     if(useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
       cameraBasedX = cameraCoordinatesFront.getDouble(0);
@@ -1402,6 +1419,7 @@ public class Drive extends SubsystemBase {
   @Override
   public void periodic() {
     updateOdometryFusedArray();
+    // SmartDashboard.putNumber("dist", Constants.getDistance(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, getMT2OdometryX(), getMT2OdometryY()));
   }
 
   /**
