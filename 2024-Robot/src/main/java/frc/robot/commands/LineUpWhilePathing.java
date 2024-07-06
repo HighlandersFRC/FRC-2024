@@ -130,12 +130,12 @@ public class LineUpWhilePathing extends Command {
       lights.setStrobeGreen();
     }
     drive.updateOdometryFusedArray();
-    // odometryFusedX = drive.getFusedOdometryX();
-    // odometryFusedY = drive.getFusedOdometryY();
-    // odometryFusedTheta = drive.getFusedOdometryTheta();
-    odometryFusedX = drive.getMT2OdometryX();
-    odometryFusedY = drive.getMT2OdometryY();
+    odometryFusedX = drive.getFusedOdometryX();
+    odometryFusedY = drive.getFusedOdometryY();
     odometryFusedTheta = drive.getFusedOdometryTheta();
+    // odometryFusedX = drive.getMT2OdometryX();
+    // odometryFusedY = drive.getMT2OdometryY();
+    // odometryFusedTheta = drive.getMT2OdometryAngle();
     // System.out.println("Follower field side: " + this.drive.getFieldSide());
 
     // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);

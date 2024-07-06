@@ -395,6 +395,12 @@ public class Drive extends SubsystemBase {
     return currentTime;
   }
 
+  public void addVisionMeasurementToOdometry(Pose2d visionPose, double timestamp){
+    m_odometry.addVisionMeasurement(
+        visionPose,
+        timestamp);
+  }
+
   /**
    * Updates the fused odometry array with current robot position and orientation information.
    * Calculates the robot's position and orientation using swerve module positions and the NAVX gyro angle.
@@ -432,6 +438,7 @@ public class Drive extends SubsystemBase {
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
     double robotAngle = peripherals.getPigeonAngle();
+    // System.out.println("angle: " + robotAngle);
     // double robotAngle = getMT2OdometryAngle();
     // if (this.fieldSide == "red"){
     //   robotAngle += 180;

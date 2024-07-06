@@ -145,10 +145,10 @@ public class AutoPositionalShoot extends Command {
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
     
-    System.out.println("dist: " + distToSpeakerMeters);
-    System.out.println("angle: " + angleToSpeakerDegrees);
-    System.out.println("deg" + shooterDegrees);
-    System.out.println("rpm" + shooterRPM);
+    // System.out.println("dist: " + distToSpeakerMeters);
+    // System.out.println("angle: " + angleToSpeakerDegrees);
+    // System.out.println("deg" + shooterDegrees);
+    // System.out.println("rpm" + shooterRPM);
 
     this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(angleToSpeakerDegrees));
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
@@ -188,9 +188,9 @@ public class AutoPositionalShoot extends Command {
       this.hasReachedSetPoint = true;
     }
 
-    System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
-    System.out.println("Angle: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
-    System.out.println("RPM: " + Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM));
+    // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
+    // System.out.println("Angle: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
+    // System.out.println("RPM: " + Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM));
     // System.out.println("Elev: " + Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees));
     // System.out.println("Master RPM: " + this.shooter.getFlywheelMasterRPM());
     // System.out.println("Follower RPM: " + this.shooter.getFlywheelFollowerRPM());
@@ -201,7 +201,7 @@ public class AutoPositionalShoot extends Command {
     // System.out.println("Elev Err: " + Math.abs(this.shooter.getAngleDegrees() - shooterDegrees));
     // System.out.println("Pigeon Angle: " + pigeonAngleDegrees);
     // System.out.println("Targ. Pigeon Angle: " + this.targetPigeonAngleDegrees);
-    System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.angleToSpeakerDegrees));
+    // System.out.println("Pigeon Angle Err: " + Math.abs(pigeonAngleDegrees - this.angleToSpeakerDegrees));
     // System.out.println("Speaker Ang Deg: " + this.speakerAngleDegrees);
     // System.out.println("Speaker Elev Deg: " + this.speakerElevationDegrees);
     // System.out.println("<================>");
