@@ -140,7 +140,7 @@ public class AutoPositionalShoot extends Command {
     // }]\[]
 
     this.distToSpeakerMeters = Constants.getDistance(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y + 0.152, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X + (Constants.Physical.SPEAKER_DEPTH / 2), Constants.Physical.SPEAKER_Y + 0.07, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
@@ -150,128 +150,8 @@ public class AutoPositionalShoot extends Command {
     System.out.println("deg" + shooterDegrees);
     System.out.println("rpm" + shooterRPM);
 
-    // System.out.println("Can See Tag: " + canSeeTag);
-
-    // if (canSeeTag){
-    //   this.speakerElevationDegrees = this.peripherals.getFrontCamTargetTy();
-    //   this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-    //   if (this.speakerElevationDegrees != 0.0 && this.speakerAngleDegrees != 0.0){
-    //     this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
-    //     this.shooterDegrees = this.shooterValues[0];
-    //     this.shooterRPM = this.shooterValues[1];
-    //     // System.out.println("New RPM: " + this.shooterRPM);
-    //     // System.out.println("New Deg.: " + this.shooterDegrees);
-    //     this.shooterDegreesAllowedError = Constants.SetPoints.getAllowedAngleErrFromAngle(this.speakerElevationDegrees);
-    //     this.driveAngleAllowedError = Constants.SetPoints.getAllowedDriveAngleErrFromAngle(this.speakerElevationDegrees);
-    //   }
-    //   // double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees;
-    //   // System.out.println("Initial Degrees: " + initialTargetPigeonAngleDegrees);
-    //   // this.targetPigeonAngleDegrees = Constants.SetPoints.getAdjustedPigeonAngle(initialTargetPigeonAngleDegrees, Constants.SetPoints.getDistFromAngle(this.speakerElevationDegrees));
-    //   // this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
-    //   // System.out.println("Adjusted Degrees: " + this.targetPigeonAngleDegrees);
-    // }
-
-    //get current apriltag track
-    // double tagElevationDegrees = this.peripherals.getFrontCamTargetTy();
-    // double tagAngleDegrees = this.peripherals.getFrontCamTargetTx();
-    // double tagReadingHB = this.peripherals.getFrontCamHB();
-    // double tagLatency = this.peripherals.getFrontCameraLatency();
-
-    // this.pigeonAngles.add(pigeonAngleDegrees);
-    // if (this.pigeonAngles.size() > 10){
-    //   this.pigeonAngles.remove(0);
-    // }
-
-    // int lookback = (int) ((tagLatency / 20.0));
-    // if (lookback >= this.pigeonAngles.size()){
-    //   // System.out.println("over: " + lookback);
-    //   lookback = this.pigeonAngles.size() - 1;
-    // }
-    // System.out.println("size: " + this.pigeonAngles.size());
-    // System.out.println("lookback: " + (this.pigeonAngles.size() - lookback - 1));
-    // double pigeonAngleOffset = this.pigeonAngles.get(this.pigeonAngles.size() - lookback - 1) - pigeonAngleDegrees;
-    // System.out.println("Offset: " + pigeonAngleOffset);
-
-    // if (canSeeTag){
-    //   lights.setStrobeGreen();
-    //   double initialTargetPigeonAngleDegrees = pigeonAngleDegrees - this.speakerAngleDegrees + pigeonAngleOffset;
-    //   this.targetPigeonAngleDegrees = initialTargetPigeonAngleDegrees;
-    // } else {
-    //   lights.setStrobePurple();
-    // }
-
-    // System.out.println("Targ 1: " + (pigeonAngleDegrees - this.speakerAngleDegrees));
-    // System.out.println("Targ 2: " + (pigeonAngleDegrees - this.speakerAngleDegrees + pigeonAngleOffset));
-
-    // if (tagAngleDegrees < 90){
-    //   this.speakerAngleDegrees = tagAngleDegrees;
-    // }
-
-    // //add track to list and trim size if over 10
-    // if (this.tagReadings.size() == 0){
-    //   // System.out.println("1");
-    //   this.tagReadings.add(new double[] {tagElevationDegrees, tagAngleDegrees, tagReadingHB});
-    // } else if (this.tagReadings.get(this.tagReadings.size() - 1)[2] != tagReadingHB && tagReadingHB != -1){
-    //   // System.out.println("2");
-    //   this.tagReadings.add(new double[] {tagElevationDegrees, tagAngleDegrees, tagReadingHB});
-    // } else {
-    //   // System.out.println("3");
-    // }
-    // System.out.println("HB: " + tagReadingHB);
-    // System.out.println("-----------");
-
-    // if (this.tagReadings.size() > 10){
-    //   this.tagReadings.remove(0);
-    // }
-
-    // //add up valid tracks
-    // int numValidTags = 0;
-    // double avgElev = 0;
-    // double avgAng = 0;
-    // for (int i = 0; i < this.tagReadings.size(); i ++){
-    //   double elev = this.tagReadings.get(i)[0];
-    //   double ang = this.tagReadings.get(i)[1];
-    //   // System.out.println("A: " + ang);
-    //   // System.out.println("E: " + elev);
-    //   if (elev != 0.0 && ang != 0.0){
-    //     numValidTags ++;
-    //     avgElev += elev;
-    //     avgAng += ang;
-    //   }
-    // }
-
-    // System.out.println("Num Valid: " + numValidTags);
-
-    // //average tracks, discard if not enough tracks
-    // if (numValidTags > 0){
-    //   this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(avgElev / numValidTags);
-    //   this.shooterDegrees = this.shooterValues[0];
-    //   this.shooterRPM = this.shooterValues[1];
-    //   // System.out.println("Avg Elev: " + (avgElev / numValidTags));
-    // }
-
-    // if (numValidTags < 5){
-    //   this.haveGoodSetpoint = false;
-    // } else {
-    //   this.haveGoodSetpoint = true;
-    // }
-    // this.haveGoodSetpoint = true;
-
-    // System.out.println("Good Setpoint: " + this.haveGoodSetpoint);
-
     this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(angleToSpeakerDegrees));
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    // if (canSeeTag){
-    //   this.pid.setSetPoint(this.targetPigeonAngleDegrees);
-    //   this.pid.updatePID(pigeonAngleDegrees);
-    // } else {
-    //   numTimesNoTrack++;
-    //   // System.out.println("running");
-    //   if (!this.auto && numTimesNoTrack > 20){
-    //     this.pid.setSetPoint(180);
-    //     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    //   }
-    // }
     double turnResult = -pid.getResult();
 
     if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - Constants.SetPoints.standardizeAngleDegrees(angleToSpeakerDegrees)) <= this.driveAngleAllowedError){
@@ -286,15 +166,7 @@ public class AutoPositionalShoot extends Command {
       turnResult = 0;
     }
 
-    // System.out.println("Turn result: " + turnResult);
-    // if (this.speakerAngleDegrees < 90){
-      // System.out.println("1");
-      this.drive.driveAutoAligned(turnResult);
-    // } else {
-      // System.out.println("2");
-      // this.drive.driveAutoAligned(0);
-    // }
-
+    this.drive.driveAutoAligned(turnResult);
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
     
     if (this.hasReachedSetPoint == true){

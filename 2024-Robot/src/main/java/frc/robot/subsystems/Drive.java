@@ -432,6 +432,7 @@ public class Drive extends SubsystemBase {
     // Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY), new Rotation2d(navxOffset));
     // m_odometry.addVisionMeasurement(cameraBasedPosition, Timer.getFPGATimestamp() - frontCamLatencies.getDouble("tl") - frontCamLatencies.getDouble("cl"));
     double robotAngle = peripherals.getPigeonAngle();
+    // double robotAngle = getMT2OdometryAngle();
     // if (this.fieldSide == "red"){
     //   robotAngle += 180;
     // }
@@ -448,16 +449,16 @@ public class Drive extends SubsystemBase {
         mt2Front.pose,
         mt2Front.timestampSeconds);
       }
-      if (mt2Left.tagCount != 0){
-        mt2Odometry.addVisionMeasurement(
-        mt2Left.pose,
-        mt2Left.timestampSeconds);
-      }
-      if (mt2Right.tagCount != 0){
-        mt2Odometry.addVisionMeasurement(
-        mt2Right.pose,
-        mt2Right.timestampSeconds);
-      }
+      // if (mt2Left.tagCount != 0){
+      //   mt2Odometry.addVisionMeasurement(
+      //   mt2Left.pose,
+      //   mt2Left.timestampSeconds);
+      // }
+      // if (mt2Right.tagCount != 0){
+      //   mt2Odometry.addVisionMeasurement(
+      //   mt2Right.pose,
+      //   mt2Right.timestampSeconds);
+      // }
       // doRejectUpdate = true;
     } 
     // if(!doRejectUpdate) {
