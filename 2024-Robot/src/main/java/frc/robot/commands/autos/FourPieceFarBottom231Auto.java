@@ -16,24 +16,16 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.AddVisionMeasurement;
 import frc.robot.commands.AutoIntake;
+import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
-import frc.robot.commands.AutoShoot;
-import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
 import frc.robot.commands.LineUpWhilePathing;
-import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.RunTrap;
 import frc.robot.commands.SetCarriage;
-import frc.robot.commands.ShootWhilePathingAndIntaking;
-import frc.robot.commands.SmartIntake;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StopDriving;
-import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber;
@@ -114,10 +106,12 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
         new AutoPrepForShot(shooter, proximity, 35, 5500)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 35, 5500, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 35, 5500, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
@@ -127,10 +121,12 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 25, 6600)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
@@ -140,8 +136,9 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -153,8 +150,9 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 
