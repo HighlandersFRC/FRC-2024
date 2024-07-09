@@ -1,5 +1,6 @@
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.LimelightHelpers;
 import frc.robot.subsystems.Drive;
@@ -10,6 +11,7 @@ public class AddVisionMeasurement extends Command {
   Peripherals peripherals;
   double robotAngle;
   boolean localized;
+  double start;
   public AddVisionMeasurement(Drive drive, Peripherals peripherals) {
     this.drive = drive;
     this.peripherals = peripherals;
@@ -19,6 +21,7 @@ public class AddVisionMeasurement extends Command {
   public void initialize() {
     localized = false;
     robotAngle = 0;
+    start = Timer.getFPGATimestamp();
   }
 
   @Override
@@ -44,7 +47,11 @@ public class AddVisionMeasurement extends Command {
   public boolean isFinished() {
     if (localized){
       return true;
-    } else {
+    } 
+    // else if (Timer.getFPGATimestamp() - start > 1.5){
+    //   return true;
+    // } 
+    else {
       return false;
     }
   }

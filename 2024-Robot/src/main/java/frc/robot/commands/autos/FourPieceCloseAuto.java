@@ -16,19 +16,15 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.AddVisionMeasurement;
 import frc.robot.commands.AutoIntake;
+import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
-import frc.robot.commands.AutoShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunIntake;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.ShootWhilePathingAndIntaking;
-import frc.robot.commands.SmartIntake;
-import frc.robot.commands.SmartShoot;
-import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.StopDriving;
 import frc.robot.commands.TurnToTarget;
 import frc.robot.sensors.Proximity;
@@ -106,7 +102,8 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
+      new AddVisionMeasurement(drive, peripherals),
+      new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false, false),
         new ParallelCommandGroup(
@@ -117,7 +114,8 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
+      new AddVisionMeasurement(drive, peripherals),
+      new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
       new ParallelDeadlineGroup(
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 600, 3, false, false),
         new ParallelCommandGroup(
@@ -128,8 +126,8 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 20, 3000)
         )
       ),
-      new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
-
+      new AddVisionMeasurement(drive, peripherals),
+      new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 50, 5000, 1, true),
       //End
       new ParallelCommandGroup(
         new RunFeeder(feeder, 0),

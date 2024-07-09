@@ -16,11 +16,10 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class AutoPositionalShoot extends Command {
+public class PositionalSpinUp extends Command {
   public static boolean canSeeTag;
   private Drive drive;
   private Shooter shooter;
-  private Feeder feeder;
   private Peripherals peripherals;
   private Lights lights;
   private Proximity proximity;
@@ -69,39 +68,13 @@ public class AutoPositionalShoot extends Command {
   private boolean auto = false;
   private int numTimesNoTrack = 0;
 
-  private double x;
-  private double y;
-  private double targetAngle;
-  private double angleX;
-
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
-    this.drive = drive;
+  public PositionalSpinUp(Drive drive, Shooter shooter, Peripherals peripherals, Lights lights, Proximity proximity) {
     this.shooter = shooter;
-    this.feeder = feeder;
+    this.drive = drive;
     this.peripherals = peripherals;
     this.lights = lights;
     this.proximity = proximity;
-    this.feederRPM = feederRPM;
-    this.defaultShooterAngle = defaultShooterAngle;
-    this.defaultFlywheelRPM = defaultFlywheelRPM;
-    this.auto = auto;
-    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
-  }
-
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
-    this.drive = drive;
-    this.shooter = shooter;
-    this.feeder = feeder;
-    this.peripherals = peripherals;
-    this.lights = lights;
-    this.proximity = proximity;
-    this.feederRPM = feederRPM;
-    this.defaultShooterAngle = defaultShooterAngle;
-    this.defaultFlywheelRPM = defaultFlywheelRPM;
-    this.timeout = timeout;
-    this.auto = auto;
-    this.numTimesNoTrack = 0;
-    addRequirements(this.drive, this.shooter, this.feeder, this.lights);
+    addRequirements(this.shooter, this.lights);
   }
 
   @Override
@@ -111,9 +84,6 @@ public class AutoPositionalShoot extends Command {
     this.hasShot = false;
     this.hasReachedSetPoint = false;
     this.haveGoodSetpoint = false;
-    pid = new PID(kP, kI, kD);
-    pid.setMinOutput(-3);
-    pid.setMaxOutput(3);
     this.reachedSetPointTime = 0;
     this.numTimesHitSetPoint = 0;
     this.speakerElevationDegrees = 0;
@@ -127,85 +97,25 @@ public class AutoPositionalShoot extends Command {
     this.distToSpeakerMeters = 0;
     this.angleToSpeakerDegrees = 0;
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
-
-    if (drive.getFieldSide() == "red"){
-      x = Constants.Physical.FIELD_LENGTH;
-      angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-    } else {
-      x = Constants.Physical.SPEAKER_X;
-      angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-    }
   }
 
   @Override
   public void execute() {
-    // System.out.println("Auto Shoot");
-
-    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
-
-    double id = this.peripherals.getFrontCamID();
-
-    canSeeTag = false;
-    // for (double id : ids){
-      if (id == 7 || id == 4){
-        canSeeTag = true;
-      }
-    // }]\[]
-
-    this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.distToSpeakerMeters = Constants.getDistance(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X + (Constants.Physical.SPEAKER_DEPTH / 2), Constants.Physical.SPEAKER_Y + 0.07, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
     
-    System.out.println("dist: " + distToSpeakerMeters);
-    System.out.println("x: " + x);
-    System.out.println("angle: " + angleToSpeakerDegrees);
-    System.out.println("deg" + shooterDegrees);
-    System.out.println("rpm" + shooterRPM);
+    // System.out.println("dist: " + distToSpeakerMeters);
+    // System.out.println("angle: " + angleToSpeakerDegrees);
+    // System.out.println("deg" + shooterDegrees);
+    // System.out.println("rpm" + shooterRPM);
 
-    if (drive.getFieldSide() == "red"){
-      targetAngle = angleToSpeakerDegrees + 175;
+    if (this.proximity.getFeederProximity()){
+      this.shooter.set(this.shooterDegrees, this.shooterRPM);
     } else {
-      targetAngle = angleToSpeakerDegrees - 5;
-    }
-
-    this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
-    this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    double turnResult = -pid.getResult();
-
-    if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees) - Constants.SetPoints.standardizeAngleDegrees(targetAngle)) <= this.driveAngleAllowedError){
-      this.numTimesHitSetPoint ++;
-    } else {
-      this.numTimesHitSetPoint = 0;
-    }
-
-    if (this.numTimesHitSetPoint >= 2 && Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getFlywheelFollowerRPM() - this.shooterRPM) <= this.shooterRPMAllowedError){
-      this.hasReachedSetPoint = true;
-      this.reachedSetPointTime = Timer.getFPGATimestamp();
-      turnResult = 0;
-    }
-
-    this.drive.driveAutoAligned(turnResult);
-    this.shooter.set(this.shooterDegrees, this.shooterRPM);
-    
-    if (this.hasReachedSetPoint == true){
-      lights.clearAnimations();
-      lights.setCandleRGB(0, 255, 0);
-      // System.out.println("Shooting");
-      this.feeder.set(this.feederRPM);
-    } else {
-      this.feeder.set(0.0);
-    }
-
-    if (!this.proximity.getFeederProximity() && !this.hasShot){
-      this.hasShot = true;
-      this.shotTime = Timer.getFPGATimestamp();
-      // System.out.println("Has Shot");
-    }
-
-    if (Timer.getFPGATimestamp() - this.startTime >= this.timeout){
-      this.hasReachedSetPoint = true;
+      this.shooter.setFlywheelRPM(this.shooterRPM);
     }
 
     // System.out.println("Num Times Hit Setpoint: " + this.numTimesHitSetPoint);
@@ -231,7 +141,6 @@ public class AutoPositionalShoot extends Command {
 
   @Override
   public void end(boolean interrupted) {
-    this.feeder.set(0);
     this.shooter.setAngleTorque(-10, 0.3);
     lights.clearAnimations();
     lights.setCommandRunning(false);
@@ -245,11 +154,7 @@ public class AutoPositionalShoot extends Command {
 
     if (this.shooterDegrees > 90){
       return true;
-    } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
-      return true;
-    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
-      return true;
-    } else {
+    }else {
       return false;
     }
   }

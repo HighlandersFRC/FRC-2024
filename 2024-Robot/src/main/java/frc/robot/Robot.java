@@ -23,6 +23,7 @@ import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
+import frc.robot.commands.PositionalSpinUp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFlywheel;
@@ -30,6 +31,7 @@ import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.SmartPrepForShot;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.AutoNoteFollowing;
+import frc.robot.commands.autos.FivePiece3Auto;
 import frc.robot.commands.autos.FivePieceAuto;
 import frc.robot.commands.autos.FourPieceAmpSideAuto;
 import frc.robot.commands.autos.FourPieceCloseAuto;
@@ -73,6 +75,7 @@ public class Robot extends LoggedRobot {
   private boolean checkedCAN = false;
 
   Command nothingAuto;
+  Command fivePiece3Note;
   Command fourPieceFarBottom231Auto;
   
   File fourPieceCloseFile;
@@ -152,6 +155,7 @@ public class Robot extends LoggedRobot {
 
     // System.out.println("ports forwarded");
     this.nothingAuto = new NothingAuto();
+    this.fivePiece3Note = new FivePiece3Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     this.fourPieceFarBottom231Auto = new FourPieceFarBottom231Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
 
     try {
@@ -309,8 +313,9 @@ public class Robot extends LoggedRobot {
 
     System.out.println("Selected Auto: ");
     if (OI.isNothingAuto()){
-      System.out.println("Nothing Auto");
-      this.nothingAuto.schedule();
+      System.out.println("5 piece 3rd note Auto");
+      this.fivePiece3Note.schedule();
+      this.drive.autoInit(this.fivePieceJSON);
     } else if (OI.is4PieceFarBottom231Auto()) {
       System.out.println("Four Piece 231 Auto");
       this.fourPieceFarBottom231Auto.schedule();
@@ -350,15 +355,16 @@ public class Robot extends LoggedRobot {
       m_autonomousCommand.cancel();
     }
 
-    // if (OI.isBlueSide()) {
-    //   fieldSide = "blue";
-    // } else {
-    //   fieldSide = "red";
-    // }
+    if (OI.isBlueSide()) {
+      fieldSide = "blue";
+    } else {
+      fieldSide = "red";
+    }
 
     if (this.fieldSide == "red"){
       this.drive.setPigeonAfterAuto();
     }
+    System.out.println("field side" + fieldSide);
 
     this.peripherals.setFieldSide(fieldSide);
     this.drive.setFieldSide(fieldSide);
@@ -387,7 +393,8 @@ public class Robot extends LoggedRobot {
     OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
     OI.operatorA.whileTrue(new RunClimber(climber, feeder, -20, 1.0));
     OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
-    OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
+    // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
+    OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
     OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
 
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));

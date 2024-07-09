@@ -12,9 +12,10 @@ import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.Constants;
+import frc.robot.commands.AddVisionMeasurement;
 import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoPrepForShot;
-import frc.robot.commands.AutoShoot;
+import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutonomousFollower;
 import frc.robot.commands.IdleShooter;
 import frc.robot.commands.RunFeeder;
@@ -94,8 +95,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         // new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -107,8 +109,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -120,8 +123,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -133,8 +137,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
+      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
-        new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       // new ParallelDeadlineGroup(
@@ -147,7 +152,7 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
       //   new AutoPrepForShot(shooter, proximity, 28, 6000)
       // ),
       // new ParallelDeadlineGroup(
-      //   new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
+      //   new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2),
       //   new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       // ),
 

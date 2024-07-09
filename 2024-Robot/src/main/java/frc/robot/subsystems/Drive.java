@@ -440,9 +440,10 @@ public class Drive extends SubsystemBase {
     double robotAngle = peripherals.getPigeonAngle();
     // System.out.println("angle: " + robotAngle);
     // double robotAngle = getMT2OdometryAngle();
-    // if (this.fieldSide == "red"){
-    //   robotAngle += 180;
-    // }
+    if (this.fieldSide == "red"){
+      SmartDashboard.putString("Field side", fieldSide);
+      robotAngle += 180;
+    }
     boolean doRejectUpdate = false;
     LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Front = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
