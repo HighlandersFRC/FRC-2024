@@ -14,6 +14,7 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -21,6 +22,7 @@ import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
+import frc.robot.commands.DipShot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
 import frc.robot.commands.PositionalSpinUp;
@@ -101,6 +103,8 @@ public class Robot extends LoggedRobot {
   File autoNoteFollowingFile;
   JSONArray autoNoteFollowingJSON;
   Command autoNoteFollowingAuto;
+  
+  Command dipShot;
 
   String fieldSide = "blue";
 
@@ -157,6 +161,7 @@ public class Robot extends LoggedRobot {
     this.nothingAuto = new NothingAuto();
     this.fivePiece3Note = new FivePiece3Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
     this.fourPieceFarBottom231Auto = new FourPieceFarBottom231Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof, proximity);
+    // this.dipShot = new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 5500, 1200, 0, 185, 150, 5);
 
     try {
       this.fourPieceCloseFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
@@ -226,7 +231,10 @@ public class Robot extends LoggedRobot {
  
   @Override
   public void robotPeriodic() {
-
+    // System.out.println("is autonomous: " + DriverStation.isAutonomousEnabled());
+    if (OI.getPOVUp()){
+      new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 7600, 1200, 0, 180, 180, 5).schedule();
+    }
         // checks CAN and limelights, blinks green if good and blinks yellow if bad
     // System.out.println("checkedCan: " + checkedCAN);
     if (!checkedCAN){
@@ -373,13 +381,13 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverMenuButton.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 24.5, 7000, 1200, 0, 175, 185, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+    OI.driverB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 52, 6000, 1200, 0, 197, 138, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4600, 1200, 0, 200, 135, 5));
+    OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4400, 1200, 0, 185, 150, 5));
     OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
+    OI.driverMenuButton.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
 
     /* auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be changed in Smartdashboard */
     // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));

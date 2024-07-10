@@ -34,6 +34,7 @@ import edu.wpi.first.math.numbers.N3;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -440,7 +441,7 @@ public class Drive extends SubsystemBase {
     double robotAngle = peripherals.getPigeonAngle();
     // System.out.println("angle: " + robotAngle);
     // double robotAngle = getMT2OdometryAngle();
-    if (this.fieldSide == "red"){
+    if (this.fieldSide == "red" && !DriverStation.isAutonomousEnabled()){
       SmartDashboard.putString("Field side", fieldSide);
       robotAngle += 180;
     }

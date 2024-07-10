@@ -130,9 +130,9 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 25, 6600)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -144,9 +144,9 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new RunIntake(intake, 0, 0),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
@@ -160,9 +160,9 @@ public class FourPieceFarBottomAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 

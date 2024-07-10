@@ -28,7 +28,7 @@ public class AutoIntake extends Command {
   private double timeout = 60;
   private double initTime;
   private boolean haveCarriageNote;
-  private double timeToCenterNote = 0.1;
+  private double timeToCenterNote = 0.12;
   private double haveCarriageNoteTime = 0;
   private boolean buzzControllers;
 

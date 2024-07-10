@@ -3,6 +3,7 @@ package frc.robot.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -129,9 +130,11 @@ public class AutoPositionalShoot extends Command {
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
+      System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
     } else {
+      System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
     }
@@ -158,17 +161,24 @@ public class AutoPositionalShoot extends Command {
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
     
-    System.out.println("dist: " + distToSpeakerMeters);
-    System.out.println("x: " + x);
-    System.out.println("angle: " + angleToSpeakerDegrees);
-    System.out.println("deg" + shooterDegrees);
-    System.out.println("rpm" + shooterRPM);
+    // System.out.println("dist: " + distToSpeakerMeters);
+    // System.out.println("x: " + x);
+    // System.out.println("angle: " + angleToSpeakerDegrees);
+    // System.out.println("deg" + shooterDegrees);
+    // System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
       targetAngle = angleToSpeakerDegrees + 175;
     } else {
       targetAngle = angleToSpeakerDegrees - 5;
     }
+
+    if (DriverStation.isAutonomousEnabled() && drive.getFieldSide() == "red"){
+      System.out.println("autonoumous");
+      pigeonAngleDegrees = 180 + pigeonAngleDegrees;
+    }
+
+    System.out.println("angle: " + targetAngle);
 
     this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
