@@ -106,12 +106,11 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
         new AutoPrepForShot(shooter, proximity, 35, 5500)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 35, 5500, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON2, 0, false, false, 2.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON2, 0, false, false, 0, proximity),
@@ -121,12 +120,11 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 25, 6600)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7250, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         // new AutonomousFollower(drive, lights, peripherals, pathJSON3, 0, false, false, 3.25, proximity),
         new LineUpWhilePathing(drive, lights, peripherals, pathJSON3, 0, false, false, 0, proximity),
@@ -136,9 +134,9 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new RunIntake(intake, 0, 0),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
@@ -152,9 +150,9 @@ public class FourPieceFarBottom231Auto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 28, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 28, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
 

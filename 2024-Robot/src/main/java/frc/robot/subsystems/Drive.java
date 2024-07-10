@@ -442,7 +442,7 @@ public class Drive extends SubsystemBase {
     // System.out.println("angle: " + robotAngle);
     // double robotAngle = getMT2OdometryAngle();
     if (this.fieldSide == "red" && !DriverStation.isAutonomousEnabled()){
-      SmartDashboard.putString("Field side", fieldSide);
+      // SmartDashboard.putString("Field side", fieldSide);
       robotAngle += 180;
     }
     boolean doRejectUpdate = false;

@@ -95,9 +95,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         // new LineUpWhilePathing(drive, lights, peripherals, pathJSON, 0, false, false, 0, proximity),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -109,9 +109,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -123,9 +123,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -137,9 +137,9 @@ public class FourPieceAmpSideAuto extends SequentialCommandGroup {
         ),
         new AutoPrepForShot(shooter, proximity, 30, 6000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 30, 6000, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       // new ParallelDeadlineGroup(

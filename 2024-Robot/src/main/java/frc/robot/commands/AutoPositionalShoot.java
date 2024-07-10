@@ -130,13 +130,15 @@ public class AutoPositionalShoot extends Command {
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
-      System.out.println("-----------red------");
+      // System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
+      angleX -= 0.07;
     } else {
-      System.out.println("-----------blue------");
+      // System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
+      angleX += 0.07;
     }
   }
 
@@ -168,17 +170,17 @@ public class AutoPositionalShoot extends Command {
     // System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
-      targetAngle = angleToSpeakerDegrees + 175;
+      targetAngle = angleToSpeakerDegrees + 180;
     } else {
-      targetAngle = angleToSpeakerDegrees - 5;
+      targetAngle = angleToSpeakerDegrees;
     }
 
     if (DriverStation.isAutonomousEnabled() && drive.getFieldSide() == "red"){
-      System.out.println("autonoumous");
+      // System.out.println("autonoumous");
       pigeonAngleDegrees = 180 + pigeonAngleDegrees;
     }
 
-    System.out.println("angle: " + targetAngle);
+    // System.out.println("angle: " + targetAngle);
 
     this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));

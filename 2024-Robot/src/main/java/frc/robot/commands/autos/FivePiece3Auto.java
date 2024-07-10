@@ -113,9 +113,9 @@ public class FivePiece3Auto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -127,9 +127,9 @@ public class FivePiece3Auto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -141,9 +141,9 @@ public class FivePiece3Auto extends SequentialCommandGroup {
           new AutoPrepForShot(shooter, proximity, 38, 5500)
         )
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 38, 5500, 2, true),
+        new AddVisionMeasurement(drive, peripherals),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),
       new ParallelDeadlineGroup(
@@ -151,9 +151,9 @@ public class FivePiece3Auto extends SequentialCommandGroup {
         new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false),
         new AutoPrepForShot(shooter, proximity, 25, 7000)
       ),
-      new AddVisionMeasurement(drive, peripherals),
       new ParallelDeadlineGroup(
         new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 25, 6500, 0.75, true),
+        new AddVisionMeasurement(drive, peripherals),
         new RunIntake(intake, 0, 0),
         new SetCarriage(climber, Constants.SetPoints.CarriageRotation.kDOWN, 30, 0.1, false)
       ),

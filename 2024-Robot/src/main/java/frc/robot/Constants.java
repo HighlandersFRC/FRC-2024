@@ -653,7 +653,7 @@ public final class Constants {
     double standardizeAngleDegrees = SetPoints.standardizeAngleDegrees(angleInDegrees);
 
     // if (y1 > y2) {
-      System.out.println("running");
+      // System.out.println("running");
       return 180 + standardizeAngleDegrees;
     // }
     //   System.out.println("2");

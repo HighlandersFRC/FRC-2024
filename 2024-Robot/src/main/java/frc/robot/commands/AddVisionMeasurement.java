@@ -26,13 +26,13 @@ public class AddVisionMeasurement extends Command {
 
   @Override
   public void execute() {
-    System.out.println("localized: " + localized);
+    // System.out.println("localized: " + localized);
     robotAngle = peripherals.getPigeonAngle();
     LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Front = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-front");
     if(Math.abs(peripherals.getPigeonAngularVelocity()) < 15) {
       if (mt2Front.tagCount != 0){
-        System.out.println("adding");
+        // System.out.println("adding");
         drive.addVisionMeasurementToOdometry(mt2Front.pose, mt2Front.timestampSeconds);
         localized = true;
       }
