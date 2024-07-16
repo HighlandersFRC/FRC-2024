@@ -21,11 +21,11 @@ public class ShooterDefault extends Command {
 
   @Override
   public void execute() {
-    if (OI.operatorViewButton.getAsBoolean()){
-      this.shooter.setFlywheelRPM(1500);
-    } else {
+    // if (OI.operatorViewButton.getAsBoolean()){
+    //   this.shooter.setFlywheelRPM(1500);
+    // } else {
       this.shooter.setFlywheelPercent(0);
-    }
+    // }
 
     if (Math.abs(this.shooter.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2){
       // System.out.println("stopped");

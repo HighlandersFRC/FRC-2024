@@ -106,6 +106,9 @@ public class LobShot extends Command {
         this.targetPigeonAngleDegrees -= 360;
     }
     
+    if (drive.getFieldSide() == "blue"){
+      this.shooterRPM += 300;
+    }
   }
 
   @Override

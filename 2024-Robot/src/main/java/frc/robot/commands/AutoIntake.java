@@ -28,7 +28,7 @@ public class AutoIntake extends Command {
   private double timeout = 60;
   private double initTime;
   private boolean haveCarriageNote;
-  private double timeToCenterNote = 0.12;
+  private double timeToCenterNote = 0.1;
   private double haveCarriageNoteTime = 0;
   private boolean buzzControllers;
 
@@ -114,13 +114,13 @@ public class AutoIntake extends Command {
       this.numTimeNoteInIntake++;
     }
 
-    if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
-      // System.out.println("1");
-      this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
-    } else {
+    // if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
+    //   // System.out.println("1");
+    //   this.intake.set(Constants.SetPoints.IntakePosition.kDOWN.degrees + 50, this.intakeRPM);
+    // } else {
       // System.out.println("2");
       this.intake.set(this.intakeDegrees, this.intakeRPM);
-    }
+    // }
 
     if (this.buzzControllers){
       if (noteInIntake){

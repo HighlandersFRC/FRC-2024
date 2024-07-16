@@ -45,14 +45,14 @@ public class AddVisionMeasurement extends Command {
 
   @Override
   public boolean isFinished() {
-    if (localized){
-      return true;
-    } 
+    // if (localized){
+    //   return true;
+    // } 
     // else if (Timer.getFPGATimestamp() - start > 1.5){
     //   return true;
     // } 
-    else {
+    // else {
       return false;
-    }
+    // }
   }
 }
