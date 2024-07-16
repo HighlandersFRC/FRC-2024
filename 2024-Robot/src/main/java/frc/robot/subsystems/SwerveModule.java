@@ -108,8 +108,8 @@ public class SwerveModule extends SubsystemBase {
     angleMotorConfig.Slot1.kI = 0.0;
     angleMotorConfig.Slot1.kD = 0.0;
 
-    angleMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-    angleMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    angleMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 70;
+    angleMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -70;
 
     angleMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
@@ -125,8 +125,8 @@ public class SwerveModule extends SubsystemBase {
     driveMotorConfig.Slot0.kD = 0.0;
     driveMotorConfig.Slot0.kV = 0.0;
 
-    driveMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 60;
-    driveMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -60;
+    driveMotorConfig.TorqueCurrent.PeakForwardTorqueCurrent = 160;
+    driveMotorConfig.TorqueCurrent.PeakReverseTorqueCurrent = -160;
 
     driveMotorConfig.MotorOutput.NeutralMode = NeutralModeValue.Brake;
 
