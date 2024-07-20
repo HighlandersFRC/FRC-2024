@@ -108,6 +108,39 @@ public class Peripherals extends SubsystemBase {
     return ids;
   }
 
+    public double getAddedTheta(double targetAngleDegrees, double distanceMeters, double depthAddedMeters) {
+    targetAngleDegrees = standardizeAngleDegrees(targetAngleDegrees);
+    double targetAngleRadians = Math.toRadians(targetAngleDegrees);
+    targetAngleRadians -= (Math.PI)/2;
+    double addedAngleRadians;
+    if(targetAngleRadians >= Math.PI/2) {
+      targetAngleRadians -= Math.PI;
+      addedAngleRadians = (targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+    } else {
+      addedAngleRadians = -(targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+    }
+    return Math.toDegrees(addedAngleRadians);
+  }
+
+  public double standardizeAngleDegrees(double angleDegrees) {
+    if(angleDegrees >= 0 && angleDegrees < 360) {
+      return angleDegrees;
+    } else if(angleDegrees < 0) {
+      while(angleDegrees < 0) {
+        angleDegrees += 360;
+      }
+      return angleDegrees;
+    } else if(angleDegrees >= 360) {
+      while(angleDegrees >= 360) {
+        angleDegrees -= 360;
+      }
+      return angleDegrees;
+    } else {
+      System.out.println("Error Line 134 of Peripherals.java: Idk how this happened");
+      return angleDegrees;
+    }
+  }
+
   public JSONObject getFrontCamLatencies(){
     JSONObject latencies = new JSONObject();
     latencies.put("tl", this.frontCamTl.getDouble(0) / 1000);
