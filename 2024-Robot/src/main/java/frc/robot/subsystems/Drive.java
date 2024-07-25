@@ -410,9 +410,22 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  // public Pose2d calculatePoseFromTxTy(double tx, double ty, int aprilTagID) {
+  //   // Convert angles from degrees to radians
+  //   double txRad = Math.toRadians(tx);
+  //   double tyRad = Math.toRadians(ty);
+
+  //   // Retrieve the known AprilTag position (x, y, z) in world coordinates
+  //   double[] aprilTagCoordinates = Constants.Vision.TAG_POSES[aprilTagID];
+  //   double tagX = aprilTagCoordinates[0];
+  //   double tagY = aprilTagCoordinates[1];
+  //   double tagZ = aprilTagCoordinates[2];
+  //   double tagAngle = aprilTagCoordinates[3];
+  // }
+
   /**
    * Updates the fused odometry array with current robot position and orientation information.
-   * Calculates the robot's position and orientation using swerve module positions and the NAVX gyro angle.
+   * Calculates the robot's position and orientation using swerve module positions and the gyro angle.
    * Updates the current X, Y, and theta values, as well as previous values and time differences.
   */
   public void updateOdometryFusedArray(){
