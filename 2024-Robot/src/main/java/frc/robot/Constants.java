@@ -20,6 +20,8 @@ public final class Constants {
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
     public static final double SPEAKER_X = 0;
     public static final double SPEAKER_Y = inchesToMeters(220.347);
+    public static final double LOB_SHOT_TARGET_X = 12;
+    public static final double LOB_SHOT_TARGET_Y = 5;
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -117,6 +119,30 @@ public final class Constants {
       {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
     };
 
+    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), robot angle offset, allowed robot angle error(deg)}
+    public static final double LOB_SHOT_DISTANCE_OFFSET = 0.0;
+    public static final double [][] LOB_SHOT_LOOKUP_TABLE = {
+      {1.295 + LOB_SHOT_DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 10, 1, 2},
+      {1.486 + LOB_SHOT_DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 10, 1, 2},
+      {1.762 + LOB_SHOT_DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 10, 1, 2},
+      {2.172 + LOB_SHOT_DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 10, 0.75, 2},
+      {2.575 + LOB_SHOT_DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 10, 0.75, 2},
+      {2.927 + LOB_SHOT_DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 10, 0.75, 2},
+      {3.479 + LOB_SHOT_DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 10, 0.5, 1.5},
+      {3.846 + LOB_SHOT_DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 10, 0.5, 1.5},
+      {4.247 + LOB_SHOT_DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 10, 0.5, 1.5},
+      {4.743 + LOB_SHOT_DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 10, 0.5, 1.5},
+      {5.293 + LOB_SHOT_DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.2, 6500, 10, 0.5, 1.5},
+      {5.420 + LOB_SHOT_DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 10, 0.35, 1.5},
+      {5.596 + LOB_SHOT_DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24.5, 6825, 10, 0.5, 1.5},
+      {5.755 + LOB_SHOT_DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23.5, 7000, 10, 0.5, 1.2},
+      {6.06 + LOB_SHOT_DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 10, 0.5, 1.2},
+      {6.40 + LOB_SHOT_DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 10, 0.5, 1.2},
+      {6.9 + LOB_SHOT_DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 10, 0.5, 1.2},
+      {7.2 + LOB_SHOT_DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 10, 0.5, 1.2},
+      {7.4 + LOB_SHOT_DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 10, 0.5, 1.2}
+    };
+
     public static double[] getMovingAverageWeights(int numMeasurements){
       double n = numMeasurements;
       double divisor = (n * (n + 1.0)) / 2.0;
@@ -169,6 +195,40 @@ public final class Constants {
         }
     }
 
+    public static double getLobShotInterpolatedValue(int xIndex, int yIndex, double xValue){
+        int lastIndex = LOB_SHOT_LOOKUP_TABLE.length - 1;
+        if (xValue < LOB_SHOT_LOOKUP_TABLE[0][xIndex]) {
+            //If the xValue is closer than the first setpoint
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        } else if (xValue > LOB_SHOT_LOOKUP_TABLE[lastIndex][xIndex]) {
+            //If the xValue is farther than the last setpoint
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[lastIndex][yIndex];
+            return returnValue;
+        } else {
+            for (int i = 0; i < LOB_SHOT_LOOKUP_TABLE.length; i ++) {
+                if (xValue > LOB_SHOT_LOOKUP_TABLE[i][xIndex] && xValue < LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex]) {
+                    //If the xValue is in the table of setpoints
+                    //Calculate where xValue is between setpoints
+                    double leftDif = xValue - LOB_SHOT_LOOKUP_TABLE[i][xIndex];
+                    double percent = leftDif / (LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex] - LOB_SHOT_LOOKUP_TABLE[i][xIndex]);
+
+                    double value1 = LOB_SHOT_LOOKUP_TABLE[i][yIndex];
+                    double value2 = LOB_SHOT_LOOKUP_TABLE[i + 1][yIndex];
+
+                    //Interpolate in-between values for value xValue and shooter rpm
+                    double newValue = value1 + (percent * (value2 - value1));
+                    
+                    double returnValue = newValue;
+                    return returnValue;
+                }
+            }
+            //Should never run
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        }
+    }
+
     /**
      * Calculates shooter values (flywheel velocity and note velocity) based on the given angle.
      *
@@ -186,8 +246,12 @@ public final class Constants {
      * @param dist The distance from the shooter to the target.
      * @return An array containing the calculated flywheel velocity and note velocity.
      */
-    public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+    public static double[] getShooterValuesFromDistance(double dist, boolean lobShot) {
+      if (lobShot){
+        return new double[] {getLobShotInterpolatedValue(0, 2, dist), getLobShotInterpolatedValue(0, 3, dist), getLobShotInterpolatedValue(0, 4, dist)};
+      } else {
+        return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      }
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
