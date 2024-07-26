@@ -56,7 +56,7 @@ public final class Constants {
   //Subsystem setpoint constants
   public static final class SetPoints {
     //drive
-
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.2;
     //intake
     // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;

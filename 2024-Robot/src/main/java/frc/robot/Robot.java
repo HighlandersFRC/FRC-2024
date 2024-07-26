@@ -121,7 +121,7 @@ public class Robot extends LoggedRobot {
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
-
+    
     lights.init(fieldSide);
     peripherals.init();
     drive.init(fieldSide);

@@ -6,6 +6,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -1445,6 +1446,48 @@ public class Drive extends SubsystemBase {
 
         return velocityArray;
     }
+  }
+
+  public Number[] purePursuitController(double currentX, double currentY, double currentTheta, int currentIndex, JSONArray pathPoints) {
+    JSONObject targetPoint = pathPoints.getJSONObject(currentIndex);
+    int targetIndex = currentIndex;
+    for (int i = currentIndex; i < pathPoints.length(); i++){
+      JSONObject point = pathPoints.getJSONObject(i);
+      if (insideRadius(currentX - point.getDouble("x"), currentY - point.getDouble("y"), Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)){
+        targetPoint = pathPoints.getJSONObject(i);
+        targetIndex = i;
+        break;
+      }
+    }
+    double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"), targetTheta = targetPoint.getDouble("angle");
+
+    xPID.setSetPoint(targetX);
+    yPID.setSetPoint(targetY);
+    thetaPID.setSetPoint(targetTheta);
+    
+    xPID.updatePID(currentX);
+    yPID.updatePID(currentY);
+    thetaPID.updatePID(currentTheta);
+
+    double xVelNoFF = xPID.getResult();
+    double yVelNoFF = yPID.getResult();
+    double thetaVelNoFF = -thetaPID.getResult();
+
+    double feedForwardX = targetPoint.getDouble("x_velocity");
+    double feedForwardY = targetPoint.getDouble("y_velocity");
+    double feedForwardTheta = 0;
+
+    Number[] velocityArray = new Number[]{
+      feedForwardX + xVelNoFF,
+      -(feedForwardY + yVelNoFF),
+      feedForwardTheta + thetaVelNoFF,
+      targetIndex,
+    };
+    return velocityArray;
+  }
+
+  private boolean insideRadius(double deltaX, double deltaY, double radius){
+    return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2)) < radius;
   }
   
   @Override
