@@ -42,6 +42,9 @@ public class SwerveModule extends SubsystemBase {
   boolean can3;
   boolean can4;
 
+  boolean isDriveFlipped;
+  boolean isAngleFlipped;
+
   /**
    * Constructs a new SwerveModule instance.
    *
@@ -50,12 +53,14 @@ public class SwerveModule extends SubsystemBase {
    * @param mDriveMotor The TalonFX motor used for driving the module.
    * @param mCanCoder   The CANCoder sensor used for feedback control.
    */
-  public SwerveModule(int mModuleNum, TalonFX mAngleMotor, TalonFX mDriveMotor, CANcoder mCanCoder) {
+  public SwerveModule(int mModuleNum, TalonFX mAngleMotor, TalonFX mDriveMotor, CANcoder mCanCoder, boolean isDriveFlipped, boolean isAngleFlipped) {
     // creates values for a single module
     moduleNumber = mModuleNum;
     angleMotor = mAngleMotor;
     driveMotor = mDriveMotor;
     canCoder = mCanCoder;
+    this.isDriveFlipped = isDriveFlipped;
+    this.isAngleFlipped = isAngleFlipped;
   }
   /**
    * Calculates the torque angle for the swerve module.

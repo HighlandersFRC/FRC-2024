@@ -115,10 +115,10 @@ public class Drive extends SubsystemBase {
   }
 
   // creates all 4 modules
-  private final SwerveModule frontRight = new SwerveModule(1, frontRightAngleMotor, frontRightDriveMotor, frontRightCanCoder);
-  private final SwerveModule frontLeft = new SwerveModule(2, frontLeftAngleMotor, frontLeftDriveMotor, frontLeftCanCoder);
-  private final SwerveModule backLeft = new SwerveModule(3, backLeftAngleMotor, backLeftDriveMotor, backLeftCanCoder);
-  private final SwerveModule backRight = new SwerveModule(4, backRightAngleMotor, backRightDriveMotor, backRightCanCoder);
+  private final SwerveModule frontRight = new SwerveModule(1, frontRightAngleMotor, frontRightDriveMotor, frontRightCanCoder, Constants.Physical.isFrontRightDriveFlipped, Constants.Physical.isFrontRightAngleFlipped);
+  private final SwerveModule frontLeft = new SwerveModule(2, frontLeftAngleMotor, frontLeftDriveMotor, frontLeftCanCoder, Constants.Physical.isFrontLeftDriveFlipped, Constants.Physical.isFrontLeftAngleFlipped);
+  private final SwerveModule backLeft = new SwerveModule(3, backLeftAngleMotor, backLeftDriveMotor, backLeftCanCoder, Constants.Physical.isBackLeftDriveFlipped, Constants.Physical.isBackLeftAngleFlipped);
+  private final SwerveModule backRight = new SwerveModule(4, backRightAngleMotor, backRightDriveMotor, backRightCanCoder, Constants.Physical.isBackRightDriveFlipped, Constants.Physical.isBackRightAngleFlipped);
 
   Peripherals peripherals;
 
@@ -255,11 +255,11 @@ public class Drive extends SubsystemBase {
     frontRightAngleMotor.setInverted(true);
     frontLeftAngleMotor.setInverted(true);
     backRightAngleMotor.setInverted(true);
-    backLeftAngleMotor.setInverted(true);
+    backLeftAngleMotor.setInverted(false);
 
     frontRightDriveMotor.setInverted(false);
     frontLeftDriveMotor.setInverted(false);
-    backRightDriveMotor.setInverted(false);
+    backRightDriveMotor.setInverted(true);
     backLeftDriveMotor.setInverted(false);
 
     xPID.setMinOutput(-4.9);

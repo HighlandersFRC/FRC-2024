@@ -33,6 +33,16 @@ public final class Constants {
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
 
+    public static final boolean isFrontRightDriveFlipped = false;
+    public static final boolean isFrontRightAngleFlipped = false;
+    public static final boolean isFrontLeftDriveFlipped = false;
+    public static final boolean isFrontLeftAngleFlipped = false;
+    public static final boolean isBackLeftDriveFlipped = false;
+    public static final boolean isBackLeftAngleFlipped = false;
+    public static final boolean isBackRightDriveFlipped = false;
+    public static final boolean isBackRightAngleFlipped = false;
+
+
     /**
      * Converts flywheel RPM (Revolutions Per Minute) to linear speed in meters per second (m/s).
      *
