@@ -33,7 +33,7 @@ public class StraightLine extends SequentialCommandGroup {
   Proximity proximity;
   public StraightLine(Drive drive, Lights lights, Peripherals peripherals, Proximity proximity) {
     try {
-      pathingFile = new File(Filesystem.getDeployDirectory().getPath() + "StraightLine.polarpath");
+      pathingFile = new File(Filesystem.getDeployDirectory().getPath() + "/Square.polarpath");
       FileReader scanner = new FileReader(pathingFile);
       pathRead = new JSONObject(new JSONTokener(scanner));
       pathJSON = (JSONArray) pathRead.get("sampled_points");

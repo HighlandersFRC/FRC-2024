@@ -56,7 +56,10 @@ public final class Constants {
   //Subsystem setpoint constants
   public static final class SetPoints {
     //drive
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.2;
+    //how far forward to look when the linear radius and the angular radius equal their constants
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.08;
+    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
+    public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
     // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;

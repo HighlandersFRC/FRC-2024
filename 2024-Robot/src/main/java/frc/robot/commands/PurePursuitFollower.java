@@ -8,6 +8,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.json.JSONArray;
+import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -44,6 +45,7 @@ public class PurePursuitFollower extends Command {
   private boolean pickupNote;
 
   private int currentPathPointIndex = 0;
+  private int returnPathPointIndex = 0;
 
   public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote, Proximity proximity) {
     this.drive = drive;
@@ -63,7 +65,7 @@ public class PurePursuitFollower extends Command {
     this.path = pathPoints;
     this.record = record;
     this.pathStartTime = pathStartTime;
-    this.pathEndTime = path.getJSONArray(path.length() - 1).getDouble(0);
+    this.pathEndTime = path.getJSONObject(path.length() - 1).getDouble("time");
     this.lights = lights;
     this.peripherals = peripherals;
     this.proximity = proximity;
@@ -73,6 +75,8 @@ public class PurePursuitFollower extends Command {
   @Override
   public void initialize() {
     initTime = Timer.getFPGATimestamp();
+    currentPathPointIndex = 0;
+    returnPathPointIndex = 0;
     if(pickupNote) {
       lights.clearAnimations();
       lights.setCommandRunning(true);
@@ -102,8 +106,9 @@ public class PurePursuitFollower extends Command {
       // System.out.println("sensor timeout");
     }
     // call PIDController function
+    currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentPathPointIndex, path);
-    currentPathPointIndex = desiredVelocityArray[3].intValue();
+    returnPathPointIndex = desiredVelocityArray[3].intValue() + 1;
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0].doubleValue());
@@ -114,6 +119,7 @@ public class PurePursuitFollower extends Command {
     // desiredThetaChange = 0;
 
     drive.autoDrive(velocityVector, desiredThetaChange);
+    Logger.recordOutput("pursuing?", true);
   }
 
   @Override
@@ -132,7 +138,7 @@ public class PurePursuitFollower extends Command {
     odometryFusedY = drive.getFusedOdometryY();
     odometryFusedTheta = drive.getFusedOdometryTheta();
     currentTime = Timer.getFPGATimestamp() - initTime;
-
+    Logger.recordOutput("pursuing?", false);
     if (this.record){
       recordedOdometry.add(new double[] {currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta});
       try {
@@ -165,10 +171,9 @@ public class PurePursuitFollower extends Command {
 
   @Override
   public boolean isFinished() {
-    if(currentTime > this.pathEndTime) {
+    if (currentPathPointIndex >= path.length()-1){
       return true;
-    }
-    else {
+    } else {
       return false;
     }
   }
