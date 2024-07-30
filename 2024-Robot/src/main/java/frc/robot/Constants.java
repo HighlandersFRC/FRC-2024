@@ -23,7 +23,7 @@ public final class Constants {
 
     public static final double TOP_SPEED = feetToMeters(25);
 
-    public static final double ROBOT_LENGTH = inchesToMeters(25);
+    public static final double ROBOT_LENGTH = inchesToMeters(28.5);
     public static final double ROBOT_WIDTH = inchesToMeters(28.5);
     public static final double MODULE_OFFSET = inchesToMeters(2.5);
 
@@ -33,14 +33,14 @@ public final class Constants {
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
 
-    public static final boolean isFrontRightDriveFlipped = false;
-    public static final boolean isFrontRightAngleFlipped = false;
-    public static final boolean isFrontLeftDriveFlipped = false;
-    public static final boolean isFrontLeftAngleFlipped = false;
-    public static final boolean isBackLeftDriveFlipped = false;
+    public static final boolean isFrontRightDriveFlipped = true;
+    public static final boolean isFrontRightAngleFlipped = true;
+    public static final boolean isFrontLeftDriveFlipped = true;
+    public static final boolean isFrontLeftAngleFlipped = true;
+    public static final boolean isBackLeftDriveFlipped = true;
     public static final boolean isBackLeftAngleFlipped = false;
     public static final boolean isBackRightDriveFlipped = false;
-    public static final boolean isBackRightAngleFlipped = false;
+    public static final boolean isBackRightAngleFlipped = true;
 
 
     /**

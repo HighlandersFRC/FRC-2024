@@ -111,12 +111,12 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     // System.out.println("Starting");
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     // new PowerDistribution(1, ModuleType.kRev); // Enables power distribution logging
     // Logger.recordMetadata("Code", "Running");
     // Logger.disableDeterministicTimestamps(); // See "Deterministic Timestamps" in the "Understanding Data Flow" page
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
+    // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     // System.out.println("Started Logger");
     this.fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
@@ -258,26 +258,26 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
     // System.out.println("Running");
 
-    try{
-      Logger.recordOutput("Localization Odometry", drive.getLocalizationOdometry());
-    } catch(Exception e) {
-      System.out.println("Problem with logging");
-    }
+    // try{
+    //   Logger.recordOutput("Localization Odometry", drive.getLocalizationOdometry());
+    // } catch(Exception e) {
+    //   System.out.println("Problem with logging");
+    // }
 
-    try{
-      Logger.recordOutput("Wheel Odometry", drive.getOdometry());
-    } catch(Exception e) {
-      System.out.println("Problem with logging");
-    }
+    // try{
+    //   Logger.recordOutput("Wheel Odometry", drive.getOdometry());
+    // } catch(Exception e) {
+    //   System.out.println("Problem with logging");
+    // }
 
-    try{
-      Logger.recordOutput("MT2 Odometry", drive.getMT2Odometry());
-    } catch(Exception e) {
-      System.out.println("Problem with logging");
-    }
-    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
-    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
-    Logger.recordOutput("IMU", peripherals.getPigeonAngle());
+    // try{
+    //   Logger.recordOutput("MT2 Odometry", drive.getMT2Odometry());
+    // } catch(Exception e) {
+    //   System.out.println("Problem with logging");
+    // }
+    // Logger.recordOutput("Swerve Module States", drive.getModuleStates());
+    // Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
+    // Logger.recordOutput("IMU", peripherals.getPigeonAngle());
 
     lights.periodic();
     intake.periodic();

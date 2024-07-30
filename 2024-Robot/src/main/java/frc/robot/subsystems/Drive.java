@@ -252,15 +252,15 @@ public class Drive extends SubsystemBase {
     backRight.init();
     backLeft.init();
 
-    frontRightAngleMotor.setInverted(true);
-    frontLeftAngleMotor.setInverted(true);
-    backRightAngleMotor.setInverted(true);
-    backLeftAngleMotor.setInverted(false);
+    frontRightAngleMotor.setInverted(Constants.Physical.isFrontRightAngleFlipped);
+    frontLeftAngleMotor.setInverted(Constants.Physical.isFrontLeftAngleFlipped);
+    backRightAngleMotor.setInverted(Constants.Physical.isBackRightAngleFlipped);
+    backLeftAngleMotor.setInverted(Constants.Physical.isBackLeftAngleFlipped);
 
-    frontRightDriveMotor.setInverted(false);
-    frontLeftDriveMotor.setInverted(false);
-    backRightDriveMotor.setInverted(true);
-    backLeftDriveMotor.setInverted(false);
+    frontRightDriveMotor.setInverted(Constants.Physical.isFrontRightDriveFlipped);
+    frontLeftDriveMotor.setInverted(Constants.Physical.isFrontLeftDriveFlipped);
+    backRightDriveMotor.setInverted(Constants.Physical.isBackRightDriveFlipped);
+    backLeftDriveMotor.setInverted(Constants.Physical.isBackLeftDriveFlipped);
 
     xPID.setMinOutput(-4.9);
     xPID.setMaxOutput(4.9);
