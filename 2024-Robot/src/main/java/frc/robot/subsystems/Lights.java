@@ -15,7 +15,6 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.sensors.TOF;
-import frc.robot.commands.AutoShoot;
 import frc.robot.commands.defaults.DriveDefault;
 
 public class Lights extends SubsystemBase {
