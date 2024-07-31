@@ -8,9 +8,13 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.Constants.SetPoints.IntakePosition;
 import frc.robot.sensors.Proximity;
+import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
@@ -106,7 +110,12 @@ public class AutoPositionalShoot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  @Override
+  public AutoPositionalShoot(Intake intake, Feeder feeder2, Climber climber, Lights lights2, TOF tof,
+        Proximity proximity2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
+    //TODO Auto-generated constructor stub
+}
+
+@Override
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();

@@ -27,11 +27,7 @@ public class StraightLine extends SequentialCommandGroup {
   File pathingFile;
   JSONObject pathRead;
   JSONArray pathJSON;
-  Drive drive;
-  Lights lights;
-  Peripherals peripherals;
-  Proximity proximity;
-  public StraightLine(Drive drive, Lights lights, Peripherals peripherals, Proximity proximity) {
+  public StraightLine(Drive drive, Lights lights, Peripherals peripherals) {
     try {
       pathingFile = new File(Filesystem.getDeployDirectory().getPath() + "/Square.polarpath");
       FileReader scanner = new FileReader(pathingFile);
@@ -41,10 +37,9 @@ public class StraightLine extends SequentialCommandGroup {
     catch(Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-    this.drive = drive;
     addRequirements(drive);
     addCommands(
-      new PurePursuitFollower(drive, lights, peripherals, pathJSON, 0, isScheduled(), proximity)
+      new PurePursuitFollower(drive, lights, peripherals, pathJSON, false)
     );
   }
 }

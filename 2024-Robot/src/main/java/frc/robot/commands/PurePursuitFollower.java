@@ -13,7 +13,6 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.tools.math.Vector;
-import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
@@ -22,7 +21,6 @@ public class PurePursuitFollower extends Command {
   private Drive drive;
   private Lights lights;
   private Peripherals peripherals;
-  private Proximity proximity;
 
   private JSONArray path;
 
@@ -40,36 +38,24 @@ public class PurePursuitFollower extends Command {
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
   private double pathStartTime;
-  private double pathEndTime;
 
   private boolean pickupNote;
 
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
 
-  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, double pathEndTime, boolean record, boolean pickupNote, Proximity proximity) {
-    this.drive = drive;
-    this.lights = lights;
-    this.path = pathPoints;
-    this.record = record;
-    this.pathStartTime = pathStartTime;
-    this.pathEndTime = pathEndTime;
-    this.pickupNote = pickupNote;
-    this.peripherals = peripherals;
-    this.proximity = proximity;
-    addRequirements(drive);
+  public int getPathPointIndex(){
+    return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, double pathStartTime, boolean record, Proximity proximity) {
+  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, boolean record) {
     this.drive = drive;
+    this.lights = lights;
     this.path = pathPoints;
     this.record = record;
-    this.pathStartTime = pathStartTime;
-    this.pathEndTime = path.getJSONObject(path.length() - 1).getDouble("time");
-    this.lights = lights;
+    pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
     this.peripherals = peripherals;
-    this.proximity = proximity;
-    addRequirements(drive);
+    // addRequirements(drive);
   }
 
   @Override
@@ -100,11 +86,6 @@ public class PurePursuitFollower extends Command {
     // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
 
     currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
-    
-    if (proximity.getFeederProximity()){
-      pickupNote = false;
-      // System.out.println("sensor timeout");
-    }
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentPathPointIndex, path);
