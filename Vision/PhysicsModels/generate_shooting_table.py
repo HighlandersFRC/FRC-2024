@@ -7,8 +7,7 @@ gravity = 9.81
 max_height = 3.048  # 10 ft
 shooter_height = 0.4572  # 18 inches
 
-# Array of distances
-distances = [5.867, 6.2, 6.5, 7.8, 8.2]  # Example distances
+distances = [4.445, 5.5, 5.6, 5.7, 5.8, 5.867, 5.95, 6.05, 6.15, 6.25, 6.35, 6.43, 6.5, 6.6, 6.7, 6.8, 6.9, 7.0, 7.1, 7.2, 7.3, 7.4, 7.5, 7.6, 7.7, 7.8, 7.9, 8.0, 8.1, 8.2, 8.3, 8.4, 8.5, 8.6]  # Sample distances
 
 def calculateAngle(distance, max_height):
     topRoot = math.sqrt(2 * gravity * (max_height - shooter_height))
@@ -18,7 +17,7 @@ def calculateAngle(distance, max_height):
     )
     denominator = distance / bottomRoot
     angle = math.atan(topRoot / denominator)
-    return angle * (180 / math.pi)
+    return round((angle * (180 / math.pi)), 2)
 
 def calculateSpeed(distance):
     first = 2 * gravity * (max_height - shooter_height)
@@ -29,27 +28,23 @@ def calculateSpeed(distance):
     second = math.pow((distance / secondDenominator), 2)
     speed = math.sqrt(first + second)
     adjustedSpeed = speed * speedScaler
-    return ((60 * adjustedSpeed) / (0.1016 * math.pi)) * 2
+    rpm = (60 * adjustedSpeed) / (0.1016 * math.pi) * 2
+    return round(rpm, 2)
 
-# Prepare data for CSV
 data = []
 
-# Iterate over the array of distances
 for distance in distances:
     angle = calculateAngle(distance, max_height)
     speed = calculateSpeed(distance)
-    data.append([distance, angle, speed])  # Append the results as a list
+    data.append([distance, angle, speed])
 
-# Write data to a CSV file
 csv_filename = 'lob_shot_lookup_table.csv'
 
 with open(csv_filename, mode='w', newline='') as csv_file:
     csv_writer = csv.writer(csv_file)
     
-    # Write header
     csv_writer.writerow(['Distance (m)', 'Angle (degrees)', 'Speed (m/s)'])
     
-    # Write data rows
     for row in data:
         csv_writer.writerow(row)
 
