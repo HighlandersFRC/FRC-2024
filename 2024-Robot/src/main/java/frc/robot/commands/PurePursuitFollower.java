@@ -44,11 +44,12 @@ public class PurePursuitFollower extends Command {
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
 
-  public int getPathPointIndex(){
+  public int getPathPointIndex() {
     return currentPathPointIndex;
   }
 
-  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints, boolean record) {
+  public PurePursuitFollower(Drive drive, Lights lights, Peripherals peripherals, JSONArray pathPoints,
+      boolean record) {
     this.drive = drive;
     this.lights = lights;
     this.path = pathPoints;
@@ -63,7 +64,7 @@ public class PurePursuitFollower extends Command {
     initTime = Timer.getFPGATimestamp();
     currentPathPointIndex = 0;
     returnPathPointIndex = 0;
-    if(pickupNote) {
+    if (pickupNote) {
       lights.clearAnimations();
       lights.setCommandRunning(true);
       lights.setStrobePurple();
@@ -73,22 +74,24 @@ public class PurePursuitFollower extends Command {
   @Override
   public void execute() {
     // System.out.println("Auto Follower");
-    if(pickupNote && peripherals.getBackCamTrack()) {
+    if (pickupNote && peripherals.getBackCamTrack()) {
       lights.setStrobeGreen();
     }
     // System.out.println("auto runs");
     drive.updateOdometryFusedArray();
-    odometryFusedX = drive.getFusedOdometryX();
-    odometryFusedY = drive.getFusedOdometryY();
-    odometryFusedTheta = drive.getFusedOdometryTheta();
+    odometryFusedX = drive.getMT2OdometryX();
+    odometryFusedY = drive.getMT2OdometryY();
+    odometryFusedTheta = drive.getMT2OdometryAngle();
     // System.out.println("Follower field side: " + this.drive.getFieldSide());
 
-    // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY + " Theta: " + odometryFusedTheta);
+    // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY +
+    // " Theta: " + odometryFusedTheta);
 
     currentTime = Timer.getFPGATimestamp() - initTime + pathStartTime;
     // call PIDController function
     currentPathPointIndex = returnPathPointIndex;
-    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta, currentPathPointIndex, path);
+    desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
+        currentPathPointIndex, path);
     returnPathPointIndex = desiredVelocityArray[3].intValue() + 1;
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
@@ -101,11 +104,13 @@ public class PurePursuitFollower extends Command {
 
     drive.autoDrive(velocityVector, desiredThetaChange);
     Logger.recordOutput("pursuing?", true);
+    Logger.recordOutput("Path Time", path
+        .getJSONObject(getPathPointIndex()).getDouble("time"));
   }
 
   @Override
   public void end(boolean interrupted) {
-    if(pickupNote) {
+    if (pickupNote) {
       lights.clearAnimations();
       lights.setCommandRunning(false);
     }
@@ -120,28 +125,28 @@ public class PurePursuitFollower extends Command {
     odometryFusedTheta = drive.getFusedOdometryTheta();
     currentTime = Timer.getFPGATimestamp() - initTime;
     Logger.recordOutput("pursuing?", false);
-    if (this.record){
-      recordedOdometry.add(new double[] {currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta});
+    if (this.record) {
+      recordedOdometry.add(new double[] { currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta });
       try {
         DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd-hh-mm-ss");
         LocalDateTime now = LocalDateTime.now();
         String filename = "/home/lvuser/deploy/recordings/" + dtf.format(now) + ".csv";
         File file = new File(filename);
-        if (!file.exists()){
+        if (!file.exists()) {
           file.createNewFile();
         }
         FileWriter fw = new FileWriter(file);
         BufferedWriter bw = new BufferedWriter(fw);
-        for (int i = 0; i <recordedOdometry.size(); i ++){
+        for (int i = 0; i < recordedOdometry.size(); i++) {
           String line = "";
-          for (double val : recordedOdometry.get(i)){
+          for (double val : recordedOdometry.get(i)) {
             line += val + ",";
           }
           line = line.substring(0, line.length() - 1);
           line += "\n";
           bw.write(line);
         }
-        
+
         bw.close();
       } catch (Exception e) {
         System.out.println(e);
@@ -152,7 +157,7 @@ public class PurePursuitFollower extends Command {
 
   @Override
   public boolean isFinished() {
-    if (currentPathPointIndex >= path.length()-1){
+    if (returnPathPointIndex >= path.length() - 1) {
       return true;
     } else {
       return false;

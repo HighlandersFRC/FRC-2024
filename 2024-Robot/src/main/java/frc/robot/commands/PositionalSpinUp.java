@@ -74,7 +74,7 @@ public class PositionalSpinUp extends Command {
     this.peripherals = peripherals;
     this.lights = lights;
     this.proximity = proximity;
-    addRequirements(this.shooter, this.lights);
+    addRequirements();
   }
 
   @Override

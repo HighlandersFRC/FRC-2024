@@ -1643,12 +1643,19 @@ public class Drive extends SubsystemBase {
     for (int i = currentIndex; i < pathPoints.length(); i++) {
       JSONObject point = pathPoints.getJSONObject(i);
       double velocityMag = Math
-          .sqrt(Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS
-              * (Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-              + Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS
-                  * Math.pow(point.getDouble("angular_velocity"), 2));
-      if (!insideRadius(currentX - point.getDouble("x"), currentY - point.getDouble("y"),
-          currentTheta - point.getDouble("angle"),
+          .sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
+              + Math.pow(point.getDouble("angular_velocity"), 2));
+      double targetTheta = point.getDouble("angle");
+      while (Math.abs(targetTheta - currentTheta) > Math.PI) {
+        if (targetTheta - currentTheta > Math.PI) {
+          targetTheta -= 2 * Math.PI;
+        } else if (targetTheta - currentTheta < -Math.PI) {
+          targetTheta += 2 * Math.PI;
+        }
+      }
+      if (!insideRadius(currentX - point.getDouble("x") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          currentY - point.getDouble("y") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
           Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
@@ -1657,7 +1664,13 @@ public class Drive extends SubsystemBase {
     }
     double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
         targetTheta = targetPoint.getDouble("angle");
-
+    while (Math.abs(targetTheta - currentTheta) > Math.PI) {
+      if (targetTheta - currentTheta > Math.PI) {
+        targetTheta -= 2 * Math.PI;
+      } else if (targetTheta - currentTheta < -Math.PI) {
+        targetTheta += 2 * Math.PI;
+      }
+    }
     xPID.setSetPoint(targetX);
     yPID.setSetPoint(targetY);
     thetaPID.setSetPoint(targetTheta);
@@ -1670,9 +1683,9 @@ public class Drive extends SubsystemBase {
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
 
-    double feedForwardX = targetPoint.getDouble("x_velocity");
-    double feedForwardY = targetPoint.getDouble("y_velocity");
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/3;
+    double feedForwardX = targetPoint.getDouble("x_velocity") / 3;
+    double feedForwardY = targetPoint.getDouble("y_velocity") / 3;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 3;
 
     Number[] velocityArray = new Number[] {
         feedForwardX + xVelNoFF,

@@ -3,6 +3,8 @@ package frc.robot;
 import java.io.File;
 import java.io.FileReader;
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -19,6 +21,7 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.AutoIntake;
 import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
@@ -27,7 +30,6 @@ import frc.robot.commands.DipShot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
 import frc.robot.commands.PolarAutoFollower;
-import frc.robot.commands.PolarPathFollower;
 import frc.robot.commands.PositionalSpinUp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
@@ -72,11 +74,19 @@ public class Robot extends LoggedRobot {
   private double shooterRPMTuning = 0;
   private double startTime = Timer.getFPGATimestamp();
   private boolean checkedCAN = false;
-
-  HashMap<String, Command> commandMap = new HashMap<String, Command>() {
+  HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
-      put("Intake", new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false));
-      put("Shoot", new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
+      put("Instant", () -> new InstantCommand());
+      put("Intake", () -> new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false));
+      put("Outtake", () -> new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
+      put("Shoot", () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
+      put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
+    }
+  };
+
+  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>(){
+    {
+      put("Note In Intake", () -> OI.getDriverA());
     }
   };
 
@@ -267,7 +277,7 @@ public class Robot extends LoggedRobot {
       FileReader scanner = new FileReader(this.commandsTestFile);
       this.commandsTestJSON = new JSONObject(new JSONTokener(scanner));
       this.commandsTestArray = (JSONArray) commandsTestJSON.getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
-      this.commandsTestCommand = new PolarAutoFollower(commandsTestJSON, drive, lights, peripherals, commandMap);
+      this.commandsTestCommand = new PolarAutoFollower(commandsTestJSON, drive, lights, peripherals, commandMap, conditionMap);
     } catch (Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
@@ -439,18 +449,6 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverB
         .whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 52, 4900, 1200, 0, 213, 136, 5)); // tests
-                                                                                                                         // CAN
-                                                                                                                         // and
-                                                                                                                         // Limelights,
-                                                                                                                         // blinks
-                                                                                                                         // green
-                                                                                                                         // if
-                                                                                                                         // good
-                                                                                                                         // and
-                                                                                                                         // blinks
-                                                                                                                         // yellow
-                                                                                                                         // if
-                                                                                                                         // bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
         Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(

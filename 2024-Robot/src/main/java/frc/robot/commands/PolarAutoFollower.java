@@ -7,6 +7,8 @@ package frc.robot.commands;
 import org.json.JSONObject;
 
 import java.util.HashMap;
+import java.util.function.BooleanSupplier;
+import java.util.function.Supplier;
 
 import org.json.JSONArray;
 
@@ -21,14 +23,14 @@ import frc.robot.subsystems.Peripherals;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class PolarAutoFollower extends SequentialCommandGroup {
   /** Creates a new PolarAutoFollower. */
-  public PolarAutoFollower(JSONObject polarAutoJSON, Drive drive, Lights lights, Peripherals peripherals, HashMap<String, Command> commandMap) {
+  public PolarAutoFollower(JSONObject polarAutoJSON, Drive drive, Lights lights, Peripherals peripherals, HashMap<String, Supplier<Command>> commandMap, HashMap<String, BooleanSupplier> conditionMap) {
     JSONArray schedule = polarAutoJSON.getJSONArray("schedule");
     JSONArray paths = polarAutoJSON.getJSONArray("paths");
     for (int i = 0; i < schedule.length(); i++) {
       JSONObject scheduleEntry = schedule.getJSONObject(i);
       if (!scheduleEntry.getBoolean("branched")){
         addCommands(
-          new PolarPathFollower(drive, lights, peripherals, paths.getJSONObject(scheduleEntry.getInt("path")), commandMap)
+          new PolarPathFollower(drive, lights, peripherals, paths.getJSONObject(scheduleEntry.getInt("path")), commandMap, conditionMap)
         );
       }
     }
