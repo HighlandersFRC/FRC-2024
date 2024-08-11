@@ -93,7 +93,6 @@ public class OI {
     }
 
     public static boolean getDriverA() {
-        System.out.println("Trigger Condition:" + driverController.getAButton());
         return driverController.getAButton();
     }
 

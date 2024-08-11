@@ -79,9 +79,9 @@ public class PurePursuitFollower extends Command {
     }
     // System.out.println("auto runs");
     drive.updateOdometryFusedArray();
-    odometryFusedX = drive.getMT2OdometryX();
-    odometryFusedY = drive.getMT2OdometryY();
-    odometryFusedTheta = drive.getMT2OdometryAngle();
+    odometryFusedX = drive.getFusedOdometryX();
+    odometryFusedY = drive.getFusedOdometryY();
+    odometryFusedTheta = drive.getFusedOdometryTheta();
     // System.out.println("Follower field side: " + this.drive.getFieldSide());
 
     // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY +

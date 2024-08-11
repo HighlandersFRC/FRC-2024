@@ -526,8 +526,8 @@ public class Drive extends SubsystemBase {
     LimelightHelpers.PoseEstimate mt2Left = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-left");
     LimelightHelpers.SetRobotOrientation("limelight-right", robotAngle, 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Right = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
-    if (Math.abs(peripherals.getPigeonAngularVelocity()) < 40) {
-      if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose)) {
+    if (Math.abs(peripherals.getPigeonAngularVelocity()) < 25) {
+      if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose) && mt2Front.avgTagDist < 5) {
         mt2Odometry.addVisionMeasurement(
             mt2Front.pose,
             mt2Front.timestampSeconds);
@@ -537,7 +537,7 @@ public class Drive extends SubsystemBase {
       // mt2Left.pose,
       // mt2Left.timestampSeconds);
       // }
-      if (mt2Right.tagCount != 0 && isPoseInField(mt2Right.pose)) {
+      if (mt2Right.tagCount != 0 && isPoseInField(mt2Right.pose) && mt2Right.avgTagDist < 5) {
         mt2Odometry.addVisionMeasurement(
             mt2Right.pose,
             mt2Right.timestampSeconds);

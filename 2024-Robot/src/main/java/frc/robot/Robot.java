@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.util.HashMap;
 import java.util.function.BooleanSupplier;
@@ -84,9 +85,13 @@ public class Robot extends LoggedRobot {
     }
   };
 
+  boolean getNoteInRobot(){
+    boolean retval = proximity.getFeederProximity() || proximity.getCarriageProximity() || proximity.getShooterProximity() || tof.getIntakeDistMillimeters()<500;
+    return retval;
+  }
   HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>(){
     {
-      put("Note In Intake", () -> OI.getDriverA());
+      put("Note In Intake", () -> getNoteInRobot());
     }
   };
 
@@ -273,7 +278,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/Commands Test.polarauto");
+      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/Branching Test.polarauto");
       FileReader scanner = new FileReader(this.commandsTestFile);
       this.commandsTestJSON = new JSONObject(new JSONTokener(scanner));
       this.commandsTestArray = (JSONArray) commandsTestJSON.getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
@@ -338,7 +343,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Swerve Module States", drive.getModuleStates());
     Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
-
+    Logger.recordOutput("Not in Robot", getNoteInRobot());
     lights.periodic();
     intake.periodic();
     shooter.periodic();

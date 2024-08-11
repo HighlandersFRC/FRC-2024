@@ -16,6 +16,9 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
+import edu.wpi.first.wpilibj2.command.ParallelDeadlineGroup;
+import edu.wpi.first.wpilibj2.command.ParallelRaceGroup;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
@@ -38,34 +41,87 @@ public class PolarPathFollower extends ParallelCommandGroup {
     commands.add(follower);
     for (int i = 0; i < pathJSON.getJSONArray("commands").length(); i++) {
       JSONObject command = pathJSON.getJSONArray("commands").getJSONObject(i);
-      if (command.has("command")) {
-        BooleanSupplier startSupplier = () -> command.getDouble("start") < getPathTime();
-        BooleanSupplier endSupplier = () -> command.getDouble("end") <= getPathTime();
-        commands.add(
-            new TriggerCommand(startSupplier, commandMap.get(command.getJSONObject("command").getString("name")).get(),
-                endSupplier));
-      } else if (command.has("branched_command")) {
-        BooleanSupplier startSupplier = () -> command.getDouble("start") < getPathTime();
-        BooleanSupplier endSupplier = () -> command.getDouble("end") <= getPathTime();
-        JSONObject onTrue = command.getJSONObject("branched_command").getJSONObject("on_true");
-        JSONObject onFalse = command.getJSONObject("branched_command").getJSONObject("on_true");
-        BooleanSupplier condition = conditionMap.get(command.getJSONObject("branched_command").getString("condition"));
-        commands.add(new TriggerCommand(
-            startSupplier,
-            new ConditionalCommand(
-                new TriggerCommand(() -> onTrue.getDouble("start") <= getPathTime(),
-                    commandMap.get(onTrue.getJSONObject("command").getString("name")).get(),
-                    () -> onTrue.getDouble("start") <= getPathTime()),
-                new TriggerCommand(() -> onFalse.getDouble("start") <= getPathTime(),
-                    commandMap.get(onFalse.getJSONObject("command").getString("name")).get(),
-                    () -> onFalse.getDouble("start") <= getPathTime()),
-                condition
-                ),
-            endSupplier));
-      }
+      commands.add(addCommandsFromJSON(command, commandMap, conditionMap));
     }
     for (Command command : commands) {
       addCommands(command);
+    }
+  }
+
+  private Command addCommandsFromJSON(JSONObject command, HashMap<String, Supplier<Command>> commandMap,
+      HashMap<String, BooleanSupplier> conditionMap) {
+    if (command.has("command")) {
+      BooleanSupplier startSupplier = () -> command.getDouble("start") < getPathTime();
+      BooleanSupplier endSupplier = () -> command.getDouble("end") <= getPathTime();
+      return new TriggerCommand(startSupplier, commandMap.get(command.getJSONObject("command").getString("name")).get(),
+          endSupplier);
+    } else if (command.has("branched_command")) {
+      BooleanSupplier startSupplier = () -> command.getDouble("start") < getPathTime();
+      BooleanSupplier endSupplier = () -> command.getDouble("end") <= getPathTime();
+      JSONObject onTrue = command.getJSONObject("branched_command").getJSONObject("on_true");
+      JSONObject onFalse = command.getJSONObject("branched_command").getJSONObject("on_true");
+      BooleanSupplier condition = conditionMap.get(command.getJSONObject("branched_command").getString("condition"));
+      return new TriggerCommand(
+          startSupplier,
+          new ConditionalCommand(
+              new TriggerCommand(() -> onTrue.getDouble("start") <= getPathTime(),
+                  commandMap.get(onTrue.getJSONObject("command").getString("name")).get(),
+                  () -> onTrue.getDouble("end") <= getPathTime()),
+              new TriggerCommand(() -> onFalse.getDouble("start") <= getPathTime(),
+                  commandMap.get(onFalse.getJSONObject("command").getString("name")).get(),
+                  () -> onFalse.getDouble("end") <= getPathTime()),
+              condition),
+          endSupplier);
+    } else if (command.has("parallel_command_group")) {
+      ArrayList<Command> commands = new ArrayList<Command>();
+      for (int i = 0; i < command.getJSONObject("parallel_command_group").getJSONArray("commands").length(); i++) {
+        commands.add(addCommandsFromJSON(
+            command.getJSONObject("parallel_command_group").getJSONArray("commands").getJSONObject(i), commandMap,
+            conditionMap));
+      }
+      return new TriggerCommand(() -> command.getDouble("start") < getPathTime(),
+          new ParallelCommandGroup(
+              commands.toArray(new Command[0])),
+          () -> command.getDouble("end") <= getPathTime());
+    } else if (command.has("parallel_deadline_group")) {
+      Command deadlineCommand = addCommandsFromJSON(
+          command.getJSONObject("parallel_deadline_group").getJSONArray("commands").getJSONObject(0), commandMap,
+          conditionMap);
+      ArrayList<Command> commands = new ArrayList<Command>();
+      for (int i = 1; i < command.getJSONObject("parallel_deadline_group").getJSONArray("commands").length(); i++) {
+        commands.add(addCommandsFromJSON(
+            command.getJSONObject("parallel_deadline_group").getJSONArray("commands").getJSONObject(i), commandMap,
+            conditionMap));
+      }
+      return new TriggerCommand(() -> command.getDouble("start") < getPathTime(),
+          new ParallelDeadlineGroup(
+              deadlineCommand,
+              commands.toArray(new Command[0])),
+          () -> command.getDouble("end") <= getPathTime());
+    } else if (command.has("parallel_command_group")) {
+      ArrayList<Command> commands = new ArrayList<Command>();
+      for (int i = 0; i < command.getJSONObject("parallel_race_group").getJSONArray("commands").length(); i++) {
+        commands.add(addCommandsFromJSON(
+            command.getJSONObject("parallel_race_group").getJSONArray("commands").getJSONObject(i), commandMap,
+            conditionMap));
+      }
+      return new TriggerCommand(() -> command.getDouble("start") < getPathTime(),
+          new ParallelRaceGroup(
+              commands.toArray(new Command[0])),
+          () -> command.getDouble("end") <= getPathTime());
+    } else if (command.has("sequential_command_group")) {
+      ArrayList<Command> commands = new ArrayList<Command>();
+      for (int i = 0; i < command.getJSONObject("sequential_command_group").getJSONArray("commands").length(); i++) {
+        commands.add(addCommandsFromJSON(
+            command.getJSONObject("sequential_command_group").getJSONArray("commands").getJSONObject(i), commandMap,
+            conditionMap));
+      }
+      return new TriggerCommand(() -> command.getDouble("start") < getPathTime(),
+          new SequentialCommandGroup(
+              commands.toArray(new Command[0])),
+          () -> command.getDouble("end") <= getPathTime());
+    } else {
+      throw new IllegalArgumentException("Invalid command JSON: " + command.toString());
     }
   }
 
