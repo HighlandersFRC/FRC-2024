@@ -9,8 +9,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final TalonFX centeringIntake = new TalonFX(10, "Canivore");
-  private final TalonFX intake = new TalonFX(11, "Canivore");
+  private final TalonFX centeringIntake = new TalonFX(18, "Canivore");
+  private final TalonFX intake = new TalonFX(19, "Canivore");
 
   /** Creates a new Intake. */
   public Intake() {
@@ -19,7 +19,7 @@ public class Intake extends SubsystemBase {
 
   public void setPercent(double percent){
     centeringIntake.set(percent);
-    intake.set(-percent);
+    intake.set(percent);
   }
 
   @Override

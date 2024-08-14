@@ -7,18 +7,21 @@ package frc.robot.commands;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
 public class RunShooter extends Command {
   Shooter shooter;
   Feeder feeder;
+  Intake intake;
   double left;
   double right;
   double startTime;
   /** Creates a new RunShooter. */
-  public RunShooter(Shooter shooter, Feeder feeder, double left, double right) {
+  public RunShooter(Shooter shooter, Feeder feeder, Intake intake, double left, double right) {
     this.shooter = shooter;
     this.feeder = feeder;
+    this.intake = intake;
     this.left = left;
     this.right = right;
     addRequirements(shooter);
@@ -34,9 +37,10 @@ public class RunShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterPercent(0.3, 0.5);
+    shooter.setShooterPercent(left, right);
     if (Timer.getFPGATimestamp() - startTime > 3){
-      feeder.setPercent(0.5);
+      feeder.setPercent(0.9);
+      intake.setPercent(0.8);
     }
   }
 
@@ -44,6 +48,7 @@ public class RunShooter extends Command {
   @Override
   public void end(boolean interrupted) {
     shooter.setShooterPercent(0.0, 0.0);
+    feeder.setPercent(0.0);
   }
 
   // Returns true when the command should end.
