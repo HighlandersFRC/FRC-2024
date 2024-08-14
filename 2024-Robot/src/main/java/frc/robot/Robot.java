@@ -19,12 +19,17 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.RunIntake;
+import frc.robot.commands.RunShooter;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Feeder;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
+import frc.robot.subsystems.Shooter;
 
 public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
@@ -37,6 +42,9 @@ public class Robot extends LoggedRobot {
   private Lights lights = new Lights(tof);
   private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
+  private Intake intake = new Intake();
+  private Feeder feeder = new Feeder();
+  private Shooter shooter = new Shooter();
   // private Logger logger = Logger.getInstance();
 
   private double shooterAngleDegreesTuning = 0;
@@ -190,6 +198,8 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.5));
+    OI.driverA.whileTrue(new RunShooter(shooter, feeder, -0.4, 0.5));
   }
 
   @Override
