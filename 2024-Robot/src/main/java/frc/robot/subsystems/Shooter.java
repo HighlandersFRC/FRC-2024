@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import com.ctre.phoenix6.hardware.TalonFX;
 
+import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Shooter extends SubsystemBase {
-  private final TalonFX leftShooter = new TalonFX(22, "Canivore");
-  private final TalonFX rightShooter = new TalonFX(21, "Canivore");
+  private final TalonFX leftShooter = new TalonFX(14, "Canivore");
+  private final TalonFX rightShooter = new TalonFX(13, "Canivore");
+  private final TalonFX shooterAngle = new TalonFX(12, "Canivore");
 
   /** Creates a new Shooter. */
   public Shooter() {}

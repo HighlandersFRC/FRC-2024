@@ -9,7 +9,7 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Feeder extends SubsystemBase {
-    private final TalonFX feeder = new TalonFX(20, "Canivore");
+    private final TalonFX feeder = new TalonFX(11, "Canivore");
   /** Creates a new Feeder. */
   public Feeder() {}
 

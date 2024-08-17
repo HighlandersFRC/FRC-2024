@@ -9,8 +9,8 @@ import com.ctre.phoenix6.hardware.TalonFX;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class Intake extends SubsystemBase {
-  private final TalonFX centeringIntake = new TalonFX(18, "Canivore");
-  private final TalonFX intake = new TalonFX(19, "Canivore");
+  private final TalonFX centeringIntake = new TalonFX(9, "Canivore");
+  private final TalonFX intake = new TalonFX(10, "Canivore");
 
   /** Creates a new Intake. */
   public Intake() {
