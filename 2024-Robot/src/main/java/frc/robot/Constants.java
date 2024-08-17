@@ -580,17 +580,16 @@ public final class Constants {
     public static final int BACK_RIGHT_MODULE_CANCODER_ID = 4;
 
     //intake
-    public static final int INTAKE_ANGLE_MOTOR_ID = 10;
-    public static final int INTAKE_ROLLER_MOTOR_ID = 11;
+    public static final int INTAKE_CENTER_MOTOR_ID = 9;
+    public static final int INTAKE_ROLLER_MOTOR_ID = 10;
 
     //shooter
     public static final int SHOOTER_ANGLE_MOTOR_ID = 12;
-    public static final int SHOOTER_FLYWHEEL_MASTER_MOTOR_ID = 13;
-    public static final int SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID = 14;
-    public static final int SHOOTER_ANGLE_CANCODER_ID = 5;
+    public static final int SHOOTER_LEFT_MOTOR_ID = 14;
+    public static final int SHOOTER_RIGHT_MOTOR_ID = 13;
 
     //feeder
-    public static final int FEEDER_ROLLER_MOTOR_ID = 15;
+    public static final int FEEDER_ROLLER_MOTOR_ID = 11;
 
     //TOF
     public static final int FEEDER_TOF_ID = 0;

@@ -7,10 +7,11 @@ package frc.robot.subsystems;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Intake extends SubsystemBase {
-  private final TalonFX centeringIntake = new TalonFX(9, "Canivore");
-  private final TalonFX intake = new TalonFX(10, "Canivore");
+  private final TalonFX centeringIntake = new TalonFX(Constants.CANInfo.INTAKE_CENTER_MOTOR_ID, "Canivore");
+  private final TalonFX intake = new TalonFX(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, "Canivore");
 
   /** Creates a new Intake. */
   public Intake() {

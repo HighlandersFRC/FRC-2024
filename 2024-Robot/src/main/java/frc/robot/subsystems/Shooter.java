@@ -8,11 +8,12 @@ import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj.motorcontrol.Talon;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants;
 
 public class Shooter extends SubsystemBase {
-  private final TalonFX leftShooter = new TalonFX(14, "Canivore");
-  private final TalonFX rightShooter = new TalonFX(13, "Canivore");
-  private final TalonFX shooterAngle = new TalonFX(12, "Canivore");
+  private final TalonFX leftShooter = new TalonFX(Constants.CANInfo.SHOOTER_LEFT_MOTOR_ID, "Canivore");
+  private final TalonFX rightShooter = new TalonFX(Constants.CANInfo.SHOOTER_RIGHT_MOTOR_ID, "Canivore");
+  private final TalonFX shooterAngle = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, "Canivore");
 
   /** Creates a new Shooter. */
   public Shooter() {}
