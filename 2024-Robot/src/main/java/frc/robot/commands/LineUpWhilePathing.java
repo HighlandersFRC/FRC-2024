@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
-import frc.robot.Constants;
 import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;

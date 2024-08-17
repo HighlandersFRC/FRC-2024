@@ -5,16 +5,12 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.OI;
+import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.tools.controlloops.PID;
-import frc.robot.tools.math.Vector;
 
-public class DriveAutoAligned extends CommandBase {
+public class DriveAutoAligned extends Command {
   /** Creates a new DriveAutoAligned. */
   private Drive drive;
   private Peripherals peripherals;

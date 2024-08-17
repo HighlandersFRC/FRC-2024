@@ -10,12 +10,10 @@ import com.ctre.phoenix.led.RgbFadeAnimation;
 import com.ctre.phoenix.led.StrobeAnimation;
 
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
 import frc.robot.sensors.TOF;
-import frc.robot.commands.defaults.DriveDefault;
 
 public class Lights extends SubsystemBase {
   /** Creates a new Lights. */
