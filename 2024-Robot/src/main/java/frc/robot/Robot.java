@@ -78,18 +78,37 @@ public class Robot extends LoggedRobot {
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
       put("Instant", () -> new InstantCommand());
-      put("Intake", () -> new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false));
-      put("Outtake", () -> new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-      put("Shoot", () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
+      put("Intake", () -> new AutoIntake(intake, feeder, climber, lights, tof, proximity,
+          Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false));
+      put("Outtake", () -> new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800,
+          -800, -0.4));
+      put("Shoot",
+          () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
       put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
     }
   };
+  int timesNoteSeen = 0;
+  int TOFfilterThreshold = 2;
 
-  boolean getNoteInRobot(){
-    boolean retval = proximity.getFeederProximity() || proximity.getCarriageProximity() || proximity.getShooterProximity() || tof.getIntakeDistMillimeters()<500;
+  boolean getNoteInIntake() {
+    if (tof.getIntakeDistMillimeters() > 500) {
+      timesNoteSeen = 0;
+      return false;
+    } else
+      timesNoteSeen += 1;
+    if (TOFfilterThreshold < timesNoteSeen) {
+      return true;
+    }
+    return false;
+  }
+
+  boolean getNoteInRobot() {
+    boolean retval = proximity.getFeederProximity() || proximity.getCarriageProximity()
+        || proximity.getShooterProximity() || getNoteInIntake();
     return retval;
   }
-  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>(){
+
+  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
     {
       put("Note In Intake", () -> getNoteInRobot());
     }
@@ -286,7 +305,6 @@ public class Robot extends LoggedRobot {
     } catch (Exception e) {
       System.out.println("ERROR WITH PATH FILE " + e);
     }
-
 
     lights.clearAnimations();
     lights.setCommandRunning(true);
