@@ -4,6 +4,7 @@
 
 package frc.robot.subsystems;
 
+import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -14,8 +15,17 @@ public class Shooter extends SubsystemBase {
   private final TalonFX rightShooter = new TalonFX(Constants.CANInfo.SHOOTER_RIGHT_MOTOR_ID, "Canivore");
   private final TalonFX shooterAngle = new TalonFX(Constants.CANInfo.SHOOTER_ANGLE_MOTOR_ID, "Canivore");
 
+  private final TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
+  private final TalonFXConfiguration angleConfiguration = new TalonFXConfiguration();
+
   /** Creates a new Shooter. */
   public Shooter() {}
+
+  public void init() {
+    leftShooter.getConfigurator().apply(flywheelConfiguration);
+    rightShooter.getConfigurator().apply(flywheelConfiguration);
+    shooterAngle.getConfigurator().apply(angleConfiguration);
+  }
 
   public void setShooterPercent(double left, double right){
     leftShooter.set(-left);
