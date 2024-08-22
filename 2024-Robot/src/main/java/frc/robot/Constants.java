@@ -33,13 +33,13 @@ public final class Constants {
 
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
 
-    public static final boolean isFrontRightDriveFlipped = true;
+    public static final boolean isFrontRightDriveFlipped = false;
     public static final boolean isFrontRightAngleFlipped = true;
-    public static final boolean isFrontLeftDriveFlipped = true;
+    public static final boolean isFrontLeftDriveFlipped = false;
     public static final boolean isFrontLeftAngleFlipped = true;
-    public static final boolean isBackLeftDriveFlipped = true;
+    public static final boolean isBackLeftDriveFlipped = false;
     public static final boolean isBackLeftAngleFlipped = false;
-    public static final boolean isBackRightDriveFlipped = false;
+    public static final boolean isBackRightDriveFlipped = true;
     public static final boolean isBackRightAngleFlipped = true;
 
 

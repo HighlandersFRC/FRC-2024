@@ -38,9 +38,9 @@ public class RunShooter extends Command {
   @Override
   public void execute() {
     shooter.setShooterPercent(left, right);
-    if (Timer.getFPGATimestamp() - startTime > 3){
-      feeder.setPercent(0.9);
-      intake.setPercent(0.8);
+    if (Timer.getFPGATimestamp() - startTime > 2){
+      feeder.setPercent(0.5);
+      intake.setPercent(0.4);
     }
   }
 
@@ -49,6 +49,7 @@ public class RunShooter extends Command {
   public void end(boolean interrupted) {
     shooter.setShooterPercent(0.0, 0.0);
     feeder.setPercent(0.0);
+    intake.setPercent(0.0);
   }
 
   // Returns true when the command should end.

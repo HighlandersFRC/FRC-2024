@@ -19,7 +19,7 @@ public class Shooter extends SubsystemBase {
 
   public void setShooterPercent(double left, double right){
     leftShooter.set(-left);
-    rightShooter.set(right);
+    rightShooter.set(-right);
   }
 
   @Override
