@@ -27,11 +27,11 @@ public class Shooter extends SubsystemBase {
   public Shooter() {}
 
   public void init() {
-    this.flywheelConfiguration.Slot0.kP = 12;
+    this.flywheelConfiguration.Slot0.kP = 5;
     this.flywheelConfiguration.Slot0.kI = 0;
     this.flywheelConfiguration.Slot0.kD = 0;
-    this.flywheelConfiguration.Slot0.kS = 1;
-    this.flywheelConfiguration.Slot0.kV = 0.2;
+    this.flywheelConfiguration.Slot0.kS = 0;
+    this.flywheelConfiguration.Slot0.kV = 0.0;
 
     leftShooter.getConfigurator().apply(flywheelConfiguration);
     rightShooter.getConfigurator().apply(flywheelConfiguration);
@@ -48,6 +48,14 @@ public class Shooter extends SubsystemBase {
         .withVelocity(Constants.RPMToRPS(left) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
     this.rightShooter.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(-right) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+  }
+
+  public double getLeftShooterRPM() {
+    return (Constants.RPSToRPM(leftShooter.getRotorVelocity().getValueAsDouble())) / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
+  }
+
+  public double getRightShooterRPM() {
+    return (Constants.RPSToRPM(rightShooter.getRotorVelocity().getValueAsDouble())) / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO;
   }
 
   @Override
