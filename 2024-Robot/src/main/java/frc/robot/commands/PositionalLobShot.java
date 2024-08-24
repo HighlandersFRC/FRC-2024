@@ -77,7 +77,7 @@ public class PositionalLobShot extends Command {
   private double angleX;
   private double angleY;
 
-  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -91,7 +91,7 @@ public class PositionalLobShot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -121,10 +121,9 @@ public class PositionalLobShot extends Command {
     this.numTimesHitSetPoint = 0;
     this.speakerElevationDegrees = 0;
     this.speakerAngleDegrees = 0;
-    this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.speakerElevationDegrees, true);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    this.tagReadings = new ArrayList<double[]>();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
     this.distToSpeakerMeters = 0;
@@ -133,15 +132,11 @@ public class PositionalLobShot extends Command {
     this.angleOffset = 0;
 
     if (drive.getFieldSide() == "red"){
-      // System.out.println("-----------red------");
-      x = Constants.Physical.FIELD_LENGTH;
-      angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y - 0.07;
+      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.LOB_SHOT_TARGET_X;
+      y = Constants.Physical.LOB_SHOT_TARGET_Y;
     } else {
-      // System.out.println("-----------blue------");
-      x = Constants.Physical.SPEAKER_X;
-      angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y + 0.07;
+      x = Constants.Physical.LOB_SHOT_TARGET_X;
+      y = Constants.Physical.LOB_SHOT_TARGET_Y;
     }
   }
 
@@ -151,24 +146,27 @@ public class PositionalLobShot extends Command {
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, angleY, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, false);
+    this.distToSpeakerMeters = Constants.getDistance(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.angleToSpeakerDegrees = Constants.getAngleToPoint(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, true);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    this.angleOffset = this.shooterValues[2];
+    this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
     
-    // System.out.println("dist: " + distToSpeakerMeters);
+    System.out.println("dist: " + distToSpeakerMeters);
     // System.out.println("x: " + x);
-    // System.out.println("angle: " + angleToSpeakerDegrees);
-    // System.out.println("deg" + shooterDegrees);
-    // System.out.println("rpm" + shooterRPM);
+    System.out.println("angle: " + angleToSpeakerDegrees);
+    System.out.println("angle offset" + angleOffset);
+    System.out.println("deg" + shooterDegrees);
+    System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
       targetAngle = angleToSpeakerDegrees + 180 - angleOffset;
     } else {
-      targetAngle = angleToSpeakerDegrees + angleOffset;
+      targetAngle = angleToSpeakerDegrees - angleOffset;
     }
+
+    System.out.println("target angle" + targetAngle);
 
     if (DriverStation.isAutonomousEnabled() && drive.getFieldSide() == "red"){
       // System.out.println("autonoumous");

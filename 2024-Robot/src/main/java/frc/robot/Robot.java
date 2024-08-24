@@ -25,6 +25,7 @@ import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DipShot;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
+import frc.robot.commands.PositionalLobShot;
 import frc.robot.commands.PositionalSpinUp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
@@ -381,7 +382,7 @@ public class Robot extends LoggedRobot {
 
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 52, 4900, 1200, 0, 213, 136, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));

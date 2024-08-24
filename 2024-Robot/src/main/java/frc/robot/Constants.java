@@ -18,10 +18,12 @@ public final class Constants {
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
+
+    //measured on blue side only
     public static final double SPEAKER_X = 0;
     public static final double SPEAKER_Y = inchesToMeters(220.347);
-    public static final double LOB_SHOT_TARGET_X = 12;
-    public static final double LOB_SHOT_TARGET_Y = 5;
+    public static final double LOB_SHOT_TARGET_X = inchesToMeters(90);
+    public static final double LOB_SHOT_TARGET_Y = inchesToMeters((FIELD_WIDTH - 77.5));
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -119,7 +121,7 @@ public final class Constants {
       {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
     };
 
-    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), robot angle offset, allowed robot angle error(deg)}
+    // {distance(meters), hood angle(deg), RPM}
     public static final double LOB_SHOT_DISTANCE_OFFSET = 0.0;
     public static final double [][] LOB_SHOT_LOOKUP_TABLE = {
       {4.445,67.63,4241.55},
@@ -167,6 +169,10 @@ public final class Constants {
       {8.5,51.8,4991.23},
       {8.6,51.47,5013.77},
     };
+
+    public static double getRobotAngleOffset(double rpm){
+      return ((0.0000000060444444 * (Math.pow(rpm, 3))) + (-0.00007889524 * (Math.pow(rpm, 2))) + (0.3288126984 * rpm) + (-414.3333333));
+    }
 
     public static double[] getMovingAverageWeights(int numMeasurements){
       double n = numMeasurements;
@@ -273,7 +279,7 @@ public final class Constants {
      */
     public static double[] getShooterValuesFromDistance(double dist, boolean lobShot) {
       if (lobShot){
-        return new double[] {getLobShotInterpolatedValue(0, 2, dist), getLobShotInterpolatedValue(0, 3, dist), getLobShotInterpolatedValue(0, 4, dist)};
+        return new double[] {getLobShotInterpolatedValue(0, 1, dist), getLobShotInterpolatedValue(0, 2, dist)};
       } else {
         return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
       }
@@ -732,6 +738,7 @@ public final class Constants {
   }
 
   public static double getAngleToPoint(double x1, double y1, double x2, double y2){
+    System.out.println("x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2);
     double deltaX = x2 - x1;
     double deltaY = y2 - y1;
 
