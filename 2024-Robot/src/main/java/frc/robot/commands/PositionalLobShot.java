@@ -153,12 +153,12 @@ public class PositionalLobShot extends Command {
     this.shooterRPM = this.shooterValues[1];
     this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
     
-    System.out.println("dist: " + distToSpeakerMeters);
-    // System.out.println("x: " + x);
-    System.out.println("angle: " + angleToSpeakerDegrees);
-    System.out.println("angle offset" + angleOffset);
-    System.out.println("deg" + shooterDegrees);
-    System.out.println("rpm" + shooterRPM);
+    // System.out.println("dist: " + distToSpeakerMeters);
+    // System.out.println("y: " + y);
+    // System.out.println("angle: " + angleToSpeakerDegrees);
+    // System.out.println("angle offset" + angleOffset);
+    // System.out.println("deg" + shooterDegrees);
+    // System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
       targetAngle = angleToSpeakerDegrees + 180 - angleOffset;

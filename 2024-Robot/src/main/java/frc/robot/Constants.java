@@ -23,7 +23,7 @@ public final class Constants {
     public static final double SPEAKER_X = 0;
     public static final double SPEAKER_Y = inchesToMeters(220.347);
     public static final double LOB_SHOT_TARGET_X = inchesToMeters(90);
-    public static final double LOB_SHOT_TARGET_Y = inchesToMeters((FIELD_WIDTH - 77.5));
+    public static final double LOB_SHOT_TARGET_Y = inchesToMeters((metersToInches(FIELD_WIDTH) - 77.5));
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -712,6 +712,10 @@ public final class Constants {
    */
   public static double inchesToMeters(double inches){
     return inches / 39.37;
+  }
+
+  public static double metersToInches(double meters){
+    return meters * 39.37;
   }
 
   /**

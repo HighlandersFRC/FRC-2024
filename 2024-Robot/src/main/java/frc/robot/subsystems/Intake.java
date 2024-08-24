@@ -60,6 +60,8 @@ public class Intake extends SubsystemBase {
     this.angleFalconConfiguration.MotorOutput.Inverted = InvertedValue.Clockwise_Positive;
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimit = 60;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
+    this.angleFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+    this.angleFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -80;
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
