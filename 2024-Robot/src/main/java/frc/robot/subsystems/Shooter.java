@@ -5,6 +5,8 @@
 package frc.robot.subsystems;
 
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
+import com.ctre.phoenix6.controls.TorqueCurrentFOC;
+import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -18,10 +20,19 @@ public class Shooter extends SubsystemBase {
   private final TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
   private final TalonFXConfiguration angleConfiguration = new TalonFXConfiguration();
 
+  private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
+      false, false);
+
   /** Creates a new Shooter. */
   public Shooter() {}
 
   public void init() {
+    this.flywheelConfiguration.Slot0.kP = 12;
+    this.flywheelConfiguration.Slot0.kI = 0;
+    this.flywheelConfiguration.Slot0.kD = 0;
+    this.flywheelConfiguration.Slot0.kS = 1;
+    this.flywheelConfiguration.Slot0.kV = 0.2;
+
     leftShooter.getConfigurator().apply(flywheelConfiguration);
     rightShooter.getConfigurator().apply(flywheelConfiguration);
     shooterAngle.getConfigurator().apply(angleConfiguration);
@@ -30,6 +41,13 @@ public class Shooter extends SubsystemBase {
   public void setShooterPercent(double left, double right){
     leftShooter.set(-left);
     rightShooter.set(-right);
+  }
+
+  public void setShooterRPM(double left, double right){
+    this.leftShooter.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(left) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+    this.rightShooter.setControl(this.flywheelVelocityRequest
+        .withVelocity(Constants.RPMToRPS(-right) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
   @Override

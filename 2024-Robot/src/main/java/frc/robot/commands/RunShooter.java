@@ -37,11 +37,11 @@ public class RunShooter extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterPercent(left, right);
-    if (Timer.getFPGATimestamp() - startTime > 2){
-      feeder.setPercent(0.5);
-      intake.setPercent(0.4);
-    }
+    shooter.setShooterRPM(left, right);
+    // if (Timer.getFPGATimestamp() - startTime > 2){
+    //   feeder.setPercent(0.5);
+    //   intake.setPercent(0.4);
+    // }
   }
 
   // Called once the command ends or is interrupted.

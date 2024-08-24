@@ -61,6 +61,8 @@ public class Robot extends LoggedRobot {
     lights.init(fieldSide);
     peripherals.init();
     drive.init(fieldSide);
+    feeder.init();
+    shooter.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -189,7 +191,7 @@ public class Robot extends LoggedRobot {
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.8));
-    OI.driverA.whileTrue(new RunShooter(shooter, feeder, intake, -0.5, 1.0));
+    OI.driverA.whileTrue(new RunShooter(shooter, feeder, intake, 2000, 4000));
   }
 
   @Override
