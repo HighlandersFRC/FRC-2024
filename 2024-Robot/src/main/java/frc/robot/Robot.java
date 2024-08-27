@@ -297,7 +297,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/Branching Test.polarauto");
+      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/5 piece.polarauto");
       FileReader scanner = new FileReader(this.commandsTestFile);
       this.commandsTestJSON = new JSONObject(new JSONTokener(scanner));
       this.commandsTestArray = (JSONArray) commandsTestJSON.getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");

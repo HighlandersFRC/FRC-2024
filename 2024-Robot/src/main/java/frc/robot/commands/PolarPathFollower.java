@@ -32,13 +32,18 @@ public class PolarPathFollower extends ParallelCommandGroup {
   double endTime = 0;
   boolean timerStarted = false;
   JSONObject pathJSON;
+  TriggerCommand followerCommand;
 
   public PolarPathFollower(Drive drive, Lights lights, Peripherals peripherals, JSONObject pathJSON,
       HashMap<String, Supplier<Command>> commandMap, HashMap<String, BooleanSupplier> conditionMap) {
     follower = new PurePursuitFollower(drive, lights, peripherals, pathJSON.getJSONArray("sampled_points"), false);
+    followerCommand = new TriggerCommand(
+        () -> follower.pathStartTime <= getPathTime(),
+        follower,
+        () -> false);
     this.pathJSON = pathJSON;
     ArrayList<Command> commands = new ArrayList<>();
-    commands.add(follower);
+    commands.add(followerCommand);
     for (int i = 0; i < pathJSON.getJSONArray("commands").length(); i++) {
       JSONObject command = pathJSON.getJSONArray("commands").getJSONObject(i);
       commands.add(addCommandsFromJSON(command, commandMap, conditionMap));
@@ -127,20 +132,23 @@ public class PolarPathFollower extends ParallelCommandGroup {
 
   double getPathTime() {
     double retval;
-    if (follower.isFinished()) {
+    if (follower.isFinished() || !follower.isScheduled()) {
       if (!timerStarted) {
         endTime = Timer.getFPGATimestamp();
         timerStarted = true;
       }
-      System.out.println("Polar Path Follower Finished, using Real Time");
-      retval = Timer.getFPGATimestamp() - endTime + pathJSON.getJSONArray("sampled_points")
-          .getJSONObject(pathJSON.getJSONArray("sampled_points").length() - 1).getDouble("time");
+      retval = Timer.getFPGATimestamp() - endTime;
+      if (follower.isFinished()) {
+        retval += pathJSON.getJSONArray("sampled_points")
+            .getJSONObject(pathJSON.getJSONArray("sampled_points").length() - 1).getDouble("time");
+      }
     } else {
       timerStarted = false;
       retval = pathJSON.getJSONArray("sampled_points")
           .getJSONObject(follower.getPathPointIndex()).getDouble("time");
     }
     Logger.recordOutput("Path Time", retval);
+    Logger.recordOutput("Path Start Time", follower.pathStartTime);
     return retval;
   }
 }

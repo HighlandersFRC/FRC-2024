@@ -37,12 +37,14 @@ public class PurePursuitFollower extends Command {
   private boolean record;
 
   private ArrayList<double[]> recordedOdometry = new ArrayList<double[]>();
-  private double pathStartTime;
+  public double pathStartTime;
 
   private boolean pickupNote;
 
   private int currentPathPointIndex = 0;
   private int returnPathPointIndex = 0;
+  private int timesStagnated = 0;
+  private final int STAGNATE_THRESHOLD = 3;
 
   public int getPathPointIndex() {
     return currentPathPointIndex;
@@ -56,7 +58,7 @@ public class PurePursuitFollower extends Command {
     this.record = record;
     pathStartTime = pathPoints.getJSONObject(0).getDouble("time");
     this.peripherals = peripherals;
-    // addRequirements(drive);
+    addRequirements(drive);
   }
 
   @Override
@@ -64,6 +66,7 @@ public class PurePursuitFollower extends Command {
     initTime = Timer.getFPGATimestamp();
     currentPathPointIndex = 0;
     returnPathPointIndex = 0;
+    timesStagnated = 0;
     if (pickupNote) {
       lights.clearAnimations();
       lights.setCommandRunning(true);
@@ -79,9 +82,9 @@ public class PurePursuitFollower extends Command {
     }
     // System.out.println("auto runs");
     drive.updateOdometryFusedArray();
-    odometryFusedX = drive.getFusedOdometryX();
-    odometryFusedY = drive.getFusedOdometryY();
-    odometryFusedTheta = drive.getFusedOdometryTheta();
+    odometryFusedX = drive.getMT2OdometryX();
+    odometryFusedY = drive.getMT2OdometryY();
+    odometryFusedTheta = drive.getMT2OdometryAngle();
     // System.out.println("Follower field side: " + this.drive.getFieldSide());
 
     // System.out.println("Odom - X: " + odometryFusedX + " Y: " + odometryFusedY +
@@ -92,7 +95,18 @@ public class PurePursuitFollower extends Command {
     currentPathPointIndex = returnPathPointIndex;
     desiredVelocityArray = drive.purePursuitController(odometryFusedX, odometryFusedY, odometryFusedTheta,
         currentPathPointIndex, path);
-    returnPathPointIndex = desiredVelocityArray[3].intValue() + 1;
+
+    returnPathPointIndex = desiredVelocityArray[3].intValue();
+    if (returnPathPointIndex == currentPathPointIndex) {
+      timesStagnated++;
+      if (timesStagnated > STAGNATE_THRESHOLD) {
+        returnPathPointIndex++;
+        timesStagnated = 0;
+      }
+    } else {
+      timesStagnated = 0;
+    }
+
     // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
     velocityVector.setI(desiredVelocityArray[0].doubleValue());

@@ -21,7 +21,7 @@ public class TriggerCommand extends SequentialCommandGroup {
     addCommands(
       new WaitForCondition(startCondition),
       new ParallelRaceGroup(
-        command,
+        new NoRequirements(command),
         new WaitForCondition(endCondition)
       )
     );
