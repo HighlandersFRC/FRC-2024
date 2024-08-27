@@ -1656,7 +1656,8 @@ public class Drive extends SubsystemBase {
       if (!insideRadius(currentX - point.getDouble("x") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           currentY - point.getDouble("y") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01)) {
+          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
+          )) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;
@@ -1683,9 +1684,9 @@ public class Drive extends SubsystemBase {
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
 
-    double feedForwardX = targetPoint.getDouble("x_velocity") / 3;
-    double feedForwardY = targetPoint.getDouble("y_velocity") / 3;
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 3;
+    double feedForwardX = targetPoint.getDouble("x_velocity")/2;
+    double feedForwardY = targetPoint.getDouble("y_velocity")/2;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
 
     Number[] velocityArray = new Number[] {
         feedForwardX + xVelNoFF,
