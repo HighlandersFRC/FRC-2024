@@ -65,6 +65,7 @@ public class PositionalDipShot extends Command {
   private double x;
   private double y;
   private double targetAngle;
+  private double angleOffset;
 
   public PositionalDipShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
     this.drive = drive;
@@ -94,8 +95,7 @@ public class PositionalDipShot extends Command {
     pid = new PID(kP, kI, kD);
     pid.setMinOutput(-3);
     pid.setMaxOutput(3);
-
-
+    this.angleOffset = 0;
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
@@ -118,14 +118,15 @@ public class PositionalDipShot extends Command {
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
     this.targetAngle = Constants.getAngleToPoint(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
     if (drive.getFieldSide() == "red"){
-      targetAngle = targetAngle + 180;
+      targetAngle = targetAngle + 180 - angleOffset;
     } else {
-      // targetAngle = targetAngle - angleOffset;
+      targetAngle = targetAngle - angleOffset;
     }
-    this.pid.setSetPoint(this.targetAngle);
+    this.pid.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
     this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    // System.out.println("Target: " + this.targetPigeonAngleDegrees);
+    // System.out.println("Target: " + Constants.SetPoints.standardizeAngleDegrees(targetAngle));
     // System.out.println("Current: " + Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     double turnResult = -pid.getResult();    
 

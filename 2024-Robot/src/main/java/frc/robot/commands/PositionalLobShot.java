@@ -146,7 +146,8 @@ public class PositionalLobShot extends Command {
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    this.distToSpeakerMeters = Constants.getDistance(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    //-0.5 to counter the note sliding after landing
+    this.distToSpeakerMeters = Constants.getDistance(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY()) - 0.5;
     this.angleToSpeakerDegrees = Constants.getAngleToPoint(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, true);
     this.shooterDegrees = this.shooterValues[0];
