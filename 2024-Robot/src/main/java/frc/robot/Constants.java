@@ -18,8 +18,12 @@ public final class Constants {
     public static final double WHEEL_ROTATION_PER_METER = 1 / WHEEL_CIRCUMFERENCE;
 
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
+
+    //measured on blue side only
     public static final double SPEAKER_X = 0;
     public static final double SPEAKER_Y = inchesToMeters(220.347);
+    public static final double LOB_SHOT_TARGET_X = inchesToMeters(90);
+    public static final double LOB_SHOT_TARGET_Y = inchesToMeters((metersToInches(FIELD_WIDTH) - 77.5));
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -117,6 +121,59 @@ public final class Constants {
       {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
     };
 
+    // {distance(meters), hood angle(deg), RPM}
+    public static final double LOB_SHOT_DISTANCE_OFFSET = 0.0;
+    public static final double [][] LOB_SHOT_LOOKUP_TABLE = {
+      {4.445,67.63,4241.55},
+      {4.55,67.16,4256.21},
+      {4.65,66.71,4270.43},
+      {4.75,66.26,4284.92},
+      {4.85,65.82,4299.67},
+      {4.95,65.38,4314.67},
+      {5.05,64.94,4329.92},
+      {5.15,64.51,4345.43},
+      {5.25,64.08,4361.18},
+      {5.3,63.86,4369.14},
+      {5.4,63.44,4385.26},
+      {5.5,63.02,4401.62},
+      {5.6,62.6,4418.21},
+      {5.7,62.18,4435.04},
+      {5.8,61.77,4452.11},
+      {5.867,61.49,4463.67},
+      {5.95,61.15,4478.13},
+      {6.05,60.75,4495.76},
+      {6.15,60.35,4513.62},
+      {6.25,59.95,4531.7},
+      {6.35,59.55,4549.99},
+      {6.43,59.24,4564.78},
+      {6.5,58.96,4577.83},
+      {6.6,58.57,4596.66},
+      {6.7,58.19,4615.7},
+      {6.8,57.81,4634.94},
+      {6.9,57.43,4654.39},
+      {7.0,57.06,4674.04},
+      {7.1,56.68,4693.88},
+      {7.2,56.31,4713.93},
+      {7.3,55.95,4734.16},
+      {7.4,55.59,4754.59},
+      {7.5,55.23,4775.21},
+      {7.6,54.87,4796.01},
+      {7.7,54.52,4817.0},
+      {7.8,54.17,4838.17},
+      {7.9,53.82,4859.51},
+      {8.0,53.48,4881.04},
+      {8.1,53.13,4902.74},
+      {8.2,52.8,4924.61},
+      {8.3,52.46,4946.65},
+      {8.4,52.13,4968.86},
+      {8.5,51.8,4991.23},
+      {8.6,51.47,5013.77},
+    };
+
+    public static double getRobotAngleOffset(double rpm){
+      return ((0.0000000060444444 * (Math.pow(rpm, 3))) + (-0.00007889524 * (Math.pow(rpm, 2))) + (0.3288126984 * rpm) + (-414.3333333));
+    }
+
     public static double[] getMovingAverageWeights(int numMeasurements){
       double n = numMeasurements;
       double divisor = (n * (n + 1.0)) / 2.0;
@@ -169,6 +226,40 @@ public final class Constants {
         }
     }
 
+    public static double getLobShotInterpolatedValue(int xIndex, int yIndex, double xValue){
+        int lastIndex = LOB_SHOT_LOOKUP_TABLE.length - 1;
+        if (xValue < LOB_SHOT_LOOKUP_TABLE[0][xIndex]) {
+            //If the xValue is closer than the first setpoint
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        } else if (xValue > LOB_SHOT_LOOKUP_TABLE[lastIndex][xIndex]) {
+            //If the xValue is farther than the last setpoint
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[lastIndex][yIndex];
+            return returnValue;
+        } else {
+            for (int i = 0; i < LOB_SHOT_LOOKUP_TABLE.length; i ++) {
+                if (xValue > LOB_SHOT_LOOKUP_TABLE[i][xIndex] && xValue < LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex]) {
+                    //If the xValue is in the table of setpoints
+                    //Calculate where xValue is between setpoints
+                    double leftDif = xValue - LOB_SHOT_LOOKUP_TABLE[i][xIndex];
+                    double percent = leftDif / (LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex] - LOB_SHOT_LOOKUP_TABLE[i][xIndex]);
+
+                    double value1 = LOB_SHOT_LOOKUP_TABLE[i][yIndex];
+                    double value2 = LOB_SHOT_LOOKUP_TABLE[i + 1][yIndex];
+
+                    //Interpolate in-between values for value xValue and shooter rpm
+                    double newValue = value1 + (percent * (value2 - value1));
+                    
+                    double returnValue = newValue;
+                    return returnValue;
+                }
+            }
+            //Should never run
+            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+            return returnValue;
+        }
+    }
+
     /**
      * Calculates shooter values (flywheel velocity and note velocity) based on the given angle.
      *
@@ -186,8 +277,12 @@ public final class Constants {
      * @param dist The distance from the shooter to the target.
      * @return An array containing the calculated flywheel velocity and note velocity.
      */
-    public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+    public static double[] getShooterValuesFromDistance(double dist, boolean lobShot) {
+      if (lobShot){
+        return new double[] {getLobShotInterpolatedValue(0, 1, dist), getLobShotInterpolatedValue(0, 2, dist)};
+      } else {
+        return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      }
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
@@ -619,6 +714,10 @@ public final class Constants {
     return inches / 39.37;
   }
 
+  public static double metersToInches(double meters){
+    return meters * 39.37;
+  }
+
   /**
    * Converts feet to meters.
    *
@@ -643,6 +742,7 @@ public final class Constants {
   }
 
   public static double getAngleToPoint(double x1, double y1, double x2, double y2){
+    // System.out.println("x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2);
     double deltaX = x2 - x1;
     double deltaY = y2 - y1;
 
