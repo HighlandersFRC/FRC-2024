@@ -8,6 +8,7 @@ import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 
+import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
@@ -15,8 +16,14 @@ public class Intake extends SubsystemBase {
   private final TalonFX centeringIntake = new TalonFX(Constants.CANInfo.INTAKE_CENTER_MOTOR_ID, "Canivore");
   private final TalonFX intake = new TalonFX(Constants.CANInfo.INTAKE_ROLLER_MOTOR_ID, "Canivore");
 
+  private final DigitalInput beamBreak = new DigitalInput(9);
+
   private final TalonFXConfiguration centeringConfiguration = new TalonFXConfiguration();
   private final TalonFXConfiguration rollerConfiguration = new TalonFXConfiguration();
+
+public boolean getBeamBreak() {
+  return beamBreak.get();
+}
 
   /** Creates a new Intake. */
   public Intake() {}

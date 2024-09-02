@@ -4,56 +4,43 @@
 
 package frc.robot.commands;
 
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Shooter;
 
-public class RunIntake extends Command {
-  Intake intake;
-  Feeder feeder;
+public class AngleShooter extends Command {
   Shooter shooter;
-  double percent;
-  private boolean noteIn;
-  /** Creates a new RunIntake. */
-  public RunIntake(Intake intake, Feeder feeder, Shooter shooter, double percent) {
-    this.intake = intake;
-    this.feeder = feeder;
+  Double angle;
+  Double startTime;
+  /** Creates a new RunShooter. */
+  public AngleShooter(Shooter shooter, double angle /* input in degrees from resting position*/ ) {
     this.shooter = shooter;
-    this.percent = percent;
-    addRequirements(intake, feeder, shooter);
+    this.angle = angle;
+    addRequirements(shooter);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
   public void initialize() {
-    noteIn = false;
+    startTime = Timer.getFPGATimestamp();
   }
+
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    shooter.setShooterAngle(20);
-    if(!intake.getBeamBreak()) {
-      noteIn = true;
-    }
-    intake.setPercent(percent);
-    feeder.setPercent(percent);
+    shooter.setShooterAngle(angle);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intake.setPercent(0.0);
-    feeder.setPercent(0.0);
+    // shooter.setShooterAngle(0.0);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    if(intake.getBeamBreak() && noteIn) {
-      return true;
-    }
     return false;
   }
 }

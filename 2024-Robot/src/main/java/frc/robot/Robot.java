@@ -11,7 +11,9 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AngleShooter;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.ZeroAngleMidMatch;
@@ -101,6 +103,8 @@ public class Robot extends LoggedRobot {
  
   @Override
   public void robotPeriodic() {
+    SmartDashboard.putBoolean("Beam Break", intake.getBeamBreak());
+    SmartDashboard.putNumber("Shooter Angle", shooter.getShooterAngle());
     shooterAngleDegreesTuning = SmartDashboard.getNumber("Shooter Angle Degrees (tuning)", 0);
     shooterRPMTuning = SmartDashboard.getNumber("Shooter RPM (input)", 0);
     CommandScheduler.getInstance().run();
@@ -195,12 +199,16 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverRT.whileTrue(new RunIntake(intake, feeder, 0.8));
-    OI.driverA.whileTrue(new RunShooter(shooter, feeder, intake, 2000, 4000));
+    OI.driverRT.whileTrue(new RunIntake(intake, feeder, shooter, 0.8));
+    OI.driverA.whileTrue(new RunShooter(shooter, feeder, 3000, 6000));
+    OI.driverB.whileTrue(new AngleShooter(shooter, 145.0));
+    OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
   }
 
   @Override
   public void teleopPeriodic() {
+    SmartDashboard.putNumber("Left RPM", shooter.getLeftShooterRPM());
+    SmartDashboard.putNumber("Right RPM", shooter.getRightShooterRPM());
   }
 
   @Override
