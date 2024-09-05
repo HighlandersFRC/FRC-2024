@@ -11,8 +11,10 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
@@ -199,9 +201,10 @@ public class Robot extends LoggedRobot {
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverRT.whileTrue(new RunIntake(intake, feeder, shooter, 0.8));
-    OI.driverA.whileTrue(new RunShooter(shooter, feeder, 3000, 6000));
-    OI.driverB.whileTrue(new AngleShooter(shooter, 145.0));
+    OI.driverRT.whileTrue(new RunIntake(intake, feeder, shooter, 0.6));
+    OI.driverA.whileTrue(new PresetShoot(shooter, feeder, Constants.SetPoints.SHOOTER_PODIUM_PRESET[0], Constants.SetPoints.SHOOTER_PODIUM_PRESET[1], Constants.SetPoints.SHOOTER_PODIUM_PRESET[2]));
+    // OI.driverB.whileTrue(new AngleShooter(shooter, 145.0));
+    OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
   }
 

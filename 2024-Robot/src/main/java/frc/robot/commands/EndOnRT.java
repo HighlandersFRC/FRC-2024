@@ -5,41 +5,33 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.Shooter;
+import frc.robot.Constants;
+import frc.robot.OI;
 
-public class RunShooter extends Command {
-  Shooter shooter;
-  Double left;
-  Double right;
-  /** Creates a new RunShooter. */
-  public RunShooter(Shooter shooter, double left, double right /* RPM */) {
-    this.shooter = shooter;
-    this.left = left;
-    this.right = right;
-    addRequirements(this.shooter);
+public class EndOnRT extends Command {
+  /** Creates a new EndOnRT. */
+  public EndOnRT() {
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {
-  }
+  public void initialize() {}
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    shooter.setShooterRPM(left, right);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    this.shooter.setShooterRPM(0.0, 0.0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
+    if(OI.getDriverRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE) {
+      return true;
+    }
     return false;
   }
 }

@@ -28,12 +28,10 @@ public class Shooter extends SubsystemBase {
   private final PositionTorqueCurrentFOC anglePositionMotionProfileRequest = new PositionTorqueCurrentFOC(0.0);
   // private final DynamicMotionMagicTorqueCurrentFOC anglePositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0, 0, 0, false, false, false);
   private final VelocityTorqueCurrentFOC flywheelVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
-
   /** Creates a new Shooter. */
   public Shooter() {}
 
   public void init() {
-    
     this.flywheelConfiguration.Slot0.kP = 7;
     this.flywheelConfiguration.Slot0.kI = 0;
     this.flywheelConfiguration.Slot0.kD = 0;

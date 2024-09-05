@@ -89,6 +89,9 @@ public final class Constants {
     }
 
     //shooter
+    public static final double SHOOTER_MAX_DEG = 270.0;
+    public static final double SHOOTER_MIN_DEG = 20.0;
+    public static final double SHOOTER_AMP_ANGLE_PRESET_DEG = 145.0;
     public static final double SHOOTER_CENTER_OFFSET_DEG = 0.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
@@ -96,6 +99,9 @@ public final class Constants {
     // public static final double SHOOTER_MAX_ANGLE_ROT = 0.07;
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
+
+    public static final double[] SHOOTER_SUBWOOFER_PRESET = {1750, 3500, 65};
+    public static final double[] SHOOTER_PODIUM_PRESET = {2500, 5000, 40};
 
     //bumper ty on comp field: 8.29 blue, 8.04 red
 
