@@ -46,24 +46,16 @@ public class MoveToPiece extends Command {
     tx = peripherals.getBackCamTargetTx();
     ty = peripherals.getBackCamTargetTy();
     
-        // Constants for Limelight configuration
-        double limelightHeight = 0.622; // Example: Limelight is 1 meter off the ground
-        double limelightAngle = 14.7; // Example: Limelight is tilted 25 degrees downward
+    double limelightHeight = 0.622;
+    double limelightAngle = 14.7;
     
-        // Calculate the distance to the note using the vertical angle ty
-        double targetDistance = (limelightHeight) / Math.tan(Math.toRadians(ty - limelightAngle));
-        System.out.println("target distance: " + targetDistance);
+    double targetDistance = (limelightHeight) / Math.tan(Math.toRadians(ty - limelightAngle));
+    System.out.println("target distance: " + targetDistance);
     
-        // Calculate the position of the note (relative to the robot's position)
-        noteX = targetDistance * Math.sin(Math.toRadians(tx)); // Horizontal offset (sideways)
-        noteY = targetDistance * Math.cos(Math.toRadians(tx)); // Forward distance
+    noteX = targetDistance * Math.sin(Math.toRadians(tx));
+    noteY = targetDistance * Math.cos(Math.toRadians(tx));
     
-        // Now you can use noteX and noteY for further logic
-        // Example: print or use in control logic
-        System.out.println("Note position - X: " + noteX + " Y: " + noteY);
-    
-        // Use this calculated position to move the robot towards the note if needed
-        // You can add PID control here if necessary
+    System.out.println("Note position - X: " + noteX + " Y: " + noteY);
     
     // double angleToPiece = peripherals.getBackCamTargetTx();
     // pid.updatePID(angleToPiece);
