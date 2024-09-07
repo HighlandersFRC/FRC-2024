@@ -109,9 +109,16 @@ public class AutoIntake extends Command {
       this.haveCarriageNote = true;
     }
 
-    if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
-      this.noteInIntake = true;
+    // if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
+    //   this.noteInIntake = true;
+    //   this.numTimeNoteInIntake++;
+    // }
+
+    if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD){
       this.numTimeNoteInIntake++;
+    }
+    if (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD){
+      this.noteInIntake = true;
     }
 
     // if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){

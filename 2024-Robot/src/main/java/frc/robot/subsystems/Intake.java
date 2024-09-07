@@ -245,6 +245,10 @@ public class Intake extends SubsystemBase {
     return this.angleFalcon.getVelocity().getValueAsDouble();
   }
 
+  public double getRollerCurrent(){
+    return this.rollerFalcon.getStatorCurrent().getValueAsDouble();
+  }
+
   // //Get value of intake rotation limit switch
   // public boolean getAngleLimitSwitch(){
   //   if (angleFalcon.getReverseLimit().getValue().value == 1){

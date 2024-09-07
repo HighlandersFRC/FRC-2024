@@ -419,6 +419,10 @@ public final class Constants {
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
     public static final double INTAKE_TOF_THRESHOLD_MM = 420;
 
+    //Intake motor current thresholds to detect note
+    public static final double INTAKE_CURRENT_THRESHOLD = 50;
+    public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 23;
+
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.43;
