@@ -13,7 +13,9 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
+import frc.robot.commands.AutomaticallyIntake;
 import frc.robot.commands.DriveAutoAligned;
+import frc.robot.commands.MoveToPiece;
 import frc.robot.commands.PresetShoot;
 import frc.robot.commands.ReverseFeeder;
 import frc.robot.commands.RunIntake;
@@ -86,17 +88,17 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "limelight-right.local", 5800);
     PortForwarder.add(5801, "limelight-right.local", 5801);
 
-    PortForwarder.add(5800, "10.44.99.41", 5800);
-    PortForwarder.add(5801, "10.44.99.41", 5801);
+    PortForwarder.add(5800, "10.99.99.41", 5800);
+    PortForwarder.add(5801, "10.99.99.41", 5801);
 
-    PortForwarder.add(5800, "10.44.99.42", 5800);
-    PortForwarder.add(5801, "10.44.99.42", 5801);
+    PortForwarder.add(5800, "10.99.99.42", 5800);
+    PortForwarder.add(5801, "10.99.99.42", 5801);
 
-    PortForwarder.add(5800, "10.44.99.43", 5800);
-    PortForwarder.add(5801, "10.44.99.43", 5801);
+    PortForwarder.add(5800, "10.99.99.43", 5800);
+    PortForwarder.add(5801, "10.99.99.43", 5801);
 
-    PortForwarder.add(5800, "10.44.99.44", 5800);
-    PortForwarder.add(5801, "10.44.99.44", 5801);
+    PortForwarder.add(5800, "10.99.99.44", 5800);
+    PortForwarder.add(5801, "10.99.99.44", 5801);
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setRGBFade();
@@ -206,6 +208,7 @@ public class Robot extends LoggedRobot {
     // OI.driverB.whileTrue(new AngleShooter(shooter, 145.0));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
+    OI.driverY.whileTrue(new AutomaticallyIntake(drive, peripherals, intake, feeder, shooter));
   }
 
   @Override

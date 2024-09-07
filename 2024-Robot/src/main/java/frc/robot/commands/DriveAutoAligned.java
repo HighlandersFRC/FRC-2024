@@ -47,10 +47,10 @@ public class DriveAutoAligned extends Command {
     // System.out.println("FS: " + this.drive.getFieldSide());
     if (this.drive.getFieldSide() == "red"){
       // System.out.println("1");
-      setPoint += 90;
+      setPoint -= 90;
     } else {
       // System.out.println("2");
-      setPoint -= 90;
+      setPoint += 90;
     }
     // System.out.println("B: " + setPoint);
     if (Math.abs(pigeonAngleDegrees - setPoint) > 180){

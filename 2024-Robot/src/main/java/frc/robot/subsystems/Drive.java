@@ -1288,6 +1288,32 @@ public class Drive extends SubsystemBase {
     }
   }
 
+  public double[] driveToPoint(double currentX, double currentY, double currentTheta, double time, double targetX, double targetY) {
+    xPID.setSetPoint(targetX);
+        yPID.setSetPoint(targetY);
+        thetaPID.setSetPoint(currentTheta);
+        
+        xPID.updatePID(currentX);
+        yPID.updatePID(currentY);
+        thetaPID.updatePID(currentTheta);
+
+        double xVelNoFF = xPID.getResult();
+        double yVelNoFF = yPID.getResult();
+        double thetaVelNoFF = -thetaPID.getResult();
+
+        double[] velocityArray = new double[3];
+
+        velocityArray[0] = xVelNoFF;
+        velocityArray[1] = -yVelNoFF;
+        velocityArray[2] = thetaVelNoFF;
+
+        // System.out.println("Targ - X: " + targetX + " Y: " + targetY + " Theta: " + targetTheta);
+        // System.out.println("PID side: " + this.fieldSide);
+
+        return velocityArray;
+  }
+
+
   /**
    * Performs autonomous control using PID controllers to navigate the robot along a predefined path.
    * Adjusts robot velocity based on positional error and lookahead points.
