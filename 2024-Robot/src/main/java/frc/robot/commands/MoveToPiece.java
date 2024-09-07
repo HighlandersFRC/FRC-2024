@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
@@ -15,6 +16,7 @@ import frc.robot.tools.math.Vector;
 public class MoveToPiece extends Command {
   private Drive drive;
   private Peripherals peripherals;
+  private Intake intake;
 
   private PID pid;
   private double kP = 3;
@@ -27,9 +29,10 @@ public class MoveToPiece extends Command {
   private double noteX, noteY;
 
   /** Creates a new MoveToPiece. */
-  public MoveToPiece(Drive drive, Peripherals peripherals) {
+  public MoveToPiece(Drive drive, Peripherals peripherals, Intake intake) {
     this.drive = drive;
     this.peripherals = peripherals;
+    this.intake = intake;
     addRequirements(drive, peripherals);
     // Use addRequirements() here to declare subsystem dependencies.
   }
@@ -55,21 +58,16 @@ public class MoveToPiece extends Command {
     
     double robotX = drive.getFusedOdometryX();
     double robotY = drive.getFusedOdometryY();
-    double robotAngle = drive.getFusedOdometryTheta();
+    double robotAngle = Constants.SetPoints.standardizeAngleDegrees(peripherals.getPigeonAngle());
     
     double targetDistance = (limelightHeight) / Math.tan(Math.toRadians(ty - limelightAngle));
-    System.out.println("target distance: " + targetDistance);
+    System.out.println("robot angle: " + robotAngle);
+    System.out.println("tx: " + tx);
     
     noteY = robotY + (-targetDistance * Math.sin(Math.toRadians(tx) + robotAngle));
     noteX = robotX + ((targetDistance * Math.cos(Math.toRadians(tx) + robotAngle)) - limelightXOffset);
     
     System.out.println("Note position - X: " + noteX + " Y: " + noteY);
-
-
-    // double fieldNoteY = robotY + (targetDistance / Math.sin(robotAngle + Math.toRadians(tx)));
-    // double fieldNoteX = robotX + (targetDistance / Math.cos(robotAngle + Math.toRadians(tx)));
-
-    // System.out.println("Field Note Position - X: " + fieldNoteX + " Y: " + fieldNoteY);
 
     desiredVelocityArray = drive.driveToPoint(drive.getFusedOdometryX(), drive.getFusedOdometryY(), 0.0, 0.1, noteX, noteY);
 
@@ -81,7 +79,7 @@ public class MoveToPiece extends Command {
     // velocityVector.setJ(0);
     // desiredThetaChange = 0;
 
-    drive.autoDrive(velocityVector, desiredThetaChange);
+    // drive.autoDrive(velocityVector, desiredThetaChange);
     
     // double angleToPiece = peripherals.getBackCamTargetTx();
     // pid.updatePID(angleToPiece);
@@ -93,12 +91,20 @@ public class MoveToPiece extends Command {
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    // drive.autoRobotCentricDrive(new Vector(0, 0), 0);
+    Vector velocityVector = new Vector();
+    velocityVector.setI(0);
+    velocityVector.setJ(0);
+    double desiredThetaChange = 0.0;
+    drive.autoDrive(velocityVector, desiredThetaChange);
   }
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    if (!intake.getBeamBreak()){
+      return true;
+    } else {
+      return false;
+    }
   }
 }

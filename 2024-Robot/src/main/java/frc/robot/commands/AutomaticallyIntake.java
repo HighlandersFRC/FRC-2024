@@ -31,7 +31,7 @@ public class AutomaticallyIntake extends ParallelDeadlineGroup {
     // this.peripherals = peripherals;
     // this.intake = intake;
     // this.feeder = feeder;
-    addCommands(new MoveToPiece(drive, peripherals));
+    addCommands(new MoveToPiece(drive, peripherals, intake));
     // addCommands(new FooCommand(), new BarCommand());
   }
 }

@@ -208,7 +208,7 @@ public class Robot extends LoggedRobot {
     // OI.driverB.whileTrue(new AngleShooter(shooter, 145.0));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
-    OI.driverY.whileTrue(new AutomaticallyIntake(drive, peripherals, intake, feeder, shooter));
+    OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));
   }
 
   @Override
