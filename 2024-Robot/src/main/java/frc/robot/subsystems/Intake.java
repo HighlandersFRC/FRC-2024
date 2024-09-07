@@ -45,7 +45,7 @@ public boolean getBeamBreak() {
 
   public void setPercent(double percent){
     centeringIntake.set(percent);
-    intake.set(percent);
+    intake.set(-percent);
   }
 
   @Override
