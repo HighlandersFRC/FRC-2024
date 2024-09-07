@@ -20,6 +20,9 @@ public class MoveToPiece extends Command {
   private double kI = 0;
   private double kD = 0;
 
+  private double ty, tx;
+  private double noteX, noteY;
+
   /** Creates a new MoveToPiece. */
   public MoveToPiece(Drive drive, Peripherals peripherals) {
     this.drive = drive;
@@ -40,17 +43,39 @@ public class MoveToPiece extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    double angleToPiece = peripherals.getBackCamTargetTx();
-    pid.updatePID(angleToPiece);
-    double result = -pid.getResult();
+    tx = peripherals.getBackCamTargetTx();
+    ty = peripherals.getBackCamTargetTy();
+    
+        // Constants for Limelight configuration
+        double limelightHeight = 0.622; // Example: Limelight is 1 meter off the ground
+        double limelightAngle = 14.7; // Example: Limelight is tilted 25 degrees downward
+    
+        // Calculate the distance to the note using the vertical angle ty
+        double targetDistance = (limelightHeight) / Math.tan(Math.toRadians(ty - limelightAngle));
+        System.out.println("target distance: " + targetDistance);
+    
+        // Calculate the position of the note (relative to the robot's position)
+        noteX = targetDistance * Math.sin(Math.toRadians(tx)); // Horizontal offset (sideways)
+        noteY = targetDistance * Math.cos(Math.toRadians(tx)); // Forward distance
+    
+        // Now you can use noteX and noteY for further logic
+        // Example: print or use in control logic
+        System.out.println("Note position - X: " + noteX + " Y: " + noteY);
+    
+        // Use this calculated position to move the robot towards the note if needed
+        // You can add PID control here if necessary
+    
+    // double angleToPiece = peripherals.getBackCamTargetTx();
+    // pid.updatePID(angleToPiece);
+    // double result = -pid.getResult();
 
-    drive.autoRobotCentricDrive(new Vector(-3, 0), result);
+    // drive.autoRobotCentricDrive(new Vector(-3, 0), result);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    drive.autoRobotCentricDrive(new Vector(0, 0), 0);
+    // drive.autoRobotCentricDrive(new Vector(0, 0), 0);
   }
 
   // Returns true when the command should end.
