@@ -101,7 +101,7 @@ public final class Constants {
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
     public static final double[] SHOOTER_SUBWOOFER_PRESET = {1750, 3500, 65};
-    public static final double[] SHOOTER_PODIUM_PRESET = {2500, 5000, 40, 210};
+    public static final double[] SHOOTER_PODIUM_PRESET = {2500, 5000, 40, 150};
 
     //bumper ty on comp field: 8.29 blue, 8.04 red
 
