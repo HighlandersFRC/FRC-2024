@@ -1640,12 +1640,14 @@ public class Drive extends SubsystemBase {
       JSONArray pathPoints) {
     JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
     int targetIndex = pathPoints.length() - 1;
+    if (this.fieldSide == "blue") {
+      currentX = Constants.Physical.FIELD_LENGTH - currentX;
+      currentTheta = Math.PI - currentTheta;
+    }
     for (int i = currentIndex; i < pathPoints.length(); i++) {
       JSONObject point = pathPoints.getJSONObject(i);
-      double velocityMag = Math
-          .sqrt((Math.pow(point.getDouble("x_velocity"), 2) + Math.pow(point.getDouble("y_velocity"), 2))
-              + Math.pow(point.getDouble("angular_velocity"), 2));
-      double targetTheta = point.getDouble("angle");
+      double targetX = point.getDouble("x"), targetY = point.getDouble("y"),
+        targetTheta = point.getDouble("angle");
       while (Math.abs(targetTheta - currentTheta) > Math.PI) {
         if (targetTheta - currentTheta > Math.PI) {
           targetTheta -= 2 * Math.PI;
@@ -1653,8 +1655,8 @@ public class Drive extends SubsystemBase {
           targetTheta += 2 * Math.PI;
         }
       }
-      if (!insideRadius(currentX - point.getDouble("x") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          currentY - point.getDouble("y") / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+      if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
           Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
           )) {
@@ -1665,6 +1667,8 @@ public class Drive extends SubsystemBase {
     }
     double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
         targetTheta = targetPoint.getDouble("angle");
+        
+    
     while (Math.abs(targetTheta - currentTheta) > Math.PI) {
       if (targetTheta - currentTheta > Math.PI) {
         targetTheta -= 2 * Math.PI;
@@ -1672,6 +1676,10 @@ public class Drive extends SubsystemBase {
         targetTheta += 2 * Math.PI;
       }
     }
+    // if (this.fieldSide == "blue") {
+    //   currentX = Constants.Physical.FIELD_LENGTH - currentX;
+    //   currentTheta = Math.PI - currentTheta;
+    // }
     xPID.setSetPoint(targetX);
     yPID.setSetPoint(targetY);
     thetaPID.setSetPoint(targetTheta);
@@ -1688,10 +1696,17 @@ public class Drive extends SubsystemBase {
     double feedForwardY = targetPoint.getDouble("y_velocity")/2;
     double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
 
+    double finalX = xVelNoFF + feedForwardX;
+    double finalY = yVelNoFF + feedForwardY;
+    double finalTheta = thetaVelNoFF + feedForwardTheta;
+    if (fieldSide == "blue"){
+      finalX = -finalX;
+      finalTheta = -finalTheta;
+    }
     Number[] velocityArray = new Number[] {
-        feedForwardX + xVelNoFF,
-        -(feedForwardY + yVelNoFF),
-        feedForwardTheta + thetaVelNoFF,
+        finalX,
+        -finalY,
+        finalTheta,
         targetIndex,
     };
 
@@ -1710,6 +1725,9 @@ public class Drive extends SubsystemBase {
   }
 
   private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+    Logger.recordOutput("deltax", deltaX);
+    Logger.recordOutput("deltay", deltaY);
+    Logger.recordOutput("deltaTheta", deltaTheta);
     return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
   }
 
