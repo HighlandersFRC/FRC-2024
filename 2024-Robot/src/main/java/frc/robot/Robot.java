@@ -36,6 +36,8 @@ import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
 import frc.robot.commands.RunFlywheel;
 import frc.robot.commands.RunIntakeAndFeeder;
+import frc.robot.commands.RunShooter;
+import frc.robot.commands.SpinUpShooter;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.autos.FivePiece3Auto;
 import frc.robot.commands.autos.FourPieceFarBottom231Auto;
@@ -85,21 +87,22 @@ public class Robot extends LoggedRobot {
       put("Shoot",
           () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
       put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
+      put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG+4, 5000));
     }
   };
   int timesNoteSeen = 0;
   int TOFfilterThreshold = 2;
 
+  private int numTimeNoteInIntake;
+
+
   boolean getNoteInIntake() {
-    if (tof.getIntakeDistMillimeters() > 500) {
-      timesNoteSeen = 0;
-      return false;
-    } else
-      timesNoteSeen += 1;
-    if (TOFfilterThreshold < timesNoteSeen) {
-      return true;
+    if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD){
+      this.numTimeNoteInIntake++;
+    } else {
+      this.numTimeNoteInIntake = 0;
     }
-    return false;
+    return (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD);
   }
 
   boolean getNoteInRobot() {

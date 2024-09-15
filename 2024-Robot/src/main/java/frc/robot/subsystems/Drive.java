@@ -527,17 +527,17 @@ public class Drive extends SubsystemBase {
     LimelightHelpers.SetRobotOrientation("limelight-right", robotAngle, 0, 0, 0, 0, 0);
     LimelightHelpers.PoseEstimate mt2Right = LimelightHelpers.getBotPoseEstimate_wpiBlue_MegaTag2("limelight-right");
     if (Math.abs(peripherals.getPigeonAngularVelocity()) < 25) {
-      if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose) && mt2Front.avgTagDist < 5) {
+      if (mt2Front.tagCount != 0 && isPoseInField(mt2Front.pose) && mt2Front.avgTagDist < 6) {
         mt2Odometry.addVisionMeasurement(
             mt2Front.pose,
             mt2Front.timestampSeconds);
       }
-      // if (mt2Left.tagCount != 0){
-      // mt2Odometry.addVisionMeasurement(
-      // mt2Left.pose,
-      // mt2Left.timestampSeconds);
-      // }
-      if (mt2Right.tagCount != 0 && isPoseInField(mt2Right.pose) && mt2Right.avgTagDist < 5) {
+      if (mt2Left.tagCount != 0 && isPoseInField(mt2Left.pose) && mt2Left.avgTagDist < 6) {
+        mt2Odometry.addVisionMeasurement(
+            mt2Left.pose,
+            mt2Left.timestampSeconds);
+      }
+      if (mt2Right.tagCount != 0 && isPoseInField(mt2Right.pose) && mt2Right.avgTagDist < 6) {
         mt2Odometry.addVisionMeasurement(
             mt2Right.pose,
             mt2Right.timestampSeconds);
@@ -1647,7 +1647,7 @@ public class Drive extends SubsystemBase {
     for (int i = currentIndex; i < pathPoints.length(); i++) {
       JSONObject point = pathPoints.getJSONObject(i);
       double targetX = point.getDouble("x"), targetY = point.getDouble("y"),
-        targetTheta = point.getDouble("angle");
+          targetTheta = point.getDouble("angle");
       while (Math.abs(targetTheta - currentTheta) > Math.PI) {
         if (targetTheta - currentTheta > Math.PI) {
           targetTheta -= 2 * Math.PI;
@@ -1658,8 +1658,7 @@ public class Drive extends SubsystemBase {
       if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
           (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE /* * velocityMag */ + 0.01
-          )) {
+          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;
@@ -1667,8 +1666,7 @@ public class Drive extends SubsystemBase {
     }
     double targetX = targetPoint.getDouble("x"), targetY = targetPoint.getDouble("y"),
         targetTheta = targetPoint.getDouble("angle");
-        
-    
+
     while (Math.abs(targetTheta - currentTheta) > Math.PI) {
       if (targetTheta - currentTheta > Math.PI) {
         targetTheta -= 2 * Math.PI;
@@ -1677,8 +1675,8 @@ public class Drive extends SubsystemBase {
       }
     }
     // if (this.fieldSide == "blue") {
-    //   currentX = Constants.Physical.FIELD_LENGTH - currentX;
-    //   currentTheta = Math.PI - currentTheta;
+    // currentX = Constants.Physical.FIELD_LENGTH - currentX;
+    // currentTheta = Math.PI - currentTheta;
     // }
     xPID.setSetPoint(targetX);
     yPID.setSetPoint(targetY);
@@ -1692,14 +1690,14 @@ public class Drive extends SubsystemBase {
     double yVelNoFF = yPID.getResult();
     double thetaVelNoFF = -thetaPID.getResult();
 
-    double feedForwardX = targetPoint.getDouble("x_velocity")/2;
-    double feedForwardY = targetPoint.getDouble("y_velocity")/2;
-    double feedForwardTheta = -targetPoint.getDouble("angular_velocity")/2;
+    double feedForwardX = targetPoint.getDouble("x_velocity") / 2;
+    double feedForwardY = targetPoint.getDouble("y_velocity") / 2;
+    double feedForwardTheta = -targetPoint.getDouble("angular_velocity") / 2;
 
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;
     double finalTheta = thetaVelNoFF + feedForwardTheta;
-    if (fieldSide == "blue"){
+    if (fieldSide == "blue") {
       finalX = -finalX;
       finalTheta = -finalTheta;
     }

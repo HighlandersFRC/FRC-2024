@@ -57,7 +57,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.16;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.35;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
@@ -327,6 +327,10 @@ public final class Constants {
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
     public static final double INTAKE_TOF_THRESHOLD_MM = 420;
 
+    //Intake motor current thresholds to detect note
+    public static final double INTAKE_CURRENT_THRESHOLD = 50;
+    public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 23;
+    
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.43;
