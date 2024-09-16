@@ -14,11 +14,12 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.tools.math.Vector;
 import frc.robot.tools.wrappers.PolarTakeDrive;
+import frc.robot.Constants;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 
-public class PurePursuitFollower extends PolarTakeDrive{
+public class PurePursuitFollower extends PolarTakeDrive {
   private Drive drive;
   private Lights lights;
   private Peripherals peripherals;
@@ -68,7 +69,7 @@ public class PurePursuitFollower extends PolarTakeDrive{
     initTime = Timer.getFPGATimestamp();
     if (reset) {
       currentPathPointIndex = 0;
-    }else {
+    } else {
       reset = true;
     }
     returnPathPointIndex = currentPathPointIndex;
@@ -96,7 +97,7 @@ public class PurePursuitFollower extends PolarTakeDrive{
         currentPathPointIndex, path);
 
     returnPathPointIndex = desiredVelocityArray[3].intValue();
-    if (returnPathPointIndex == currentPathPointIndex) {
+    if (returnPathPointIndex == currentPathPointIndex && returnPathPointIndex != path.length()-1) {
       timesStagnated++;
       if (timesStagnated > STAGNATE_THRESHOLD) {
         returnPathPointIndex++;
@@ -174,10 +175,29 @@ public class PurePursuitFollower extends PolarTakeDrive{
 
   @Override
   public boolean isFinished() {
-    if (returnPathPointIndex >= path.length() - 1) {
+    if (returnPathPointIndex >= path.length() - 1 && readyToEnd(path.getJSONObject(returnPathPointIndex))) {
       return true;
     } else {
       return false;
     }
+  }
+
+  private boolean readyToEnd(JSONObject point) {
+    double odometryFusedX = drive.getMT2OdometryX();
+    double odometryFusedY = drive.getMT2OdometryY();
+    double odometryFusedTheta = drive.getMT2OdometryAngle();
+    if (drive.getFieldSide() == "blue") {
+      odometryFusedX = Constants.Physical.FIELD_LENGTH - odometryFusedX;
+      odometryFusedTheta = Math.PI - odometryFusedTheta;
+    }
+    while (Math.abs(odometryFusedTheta - point.getDouble("angle")) > Math.PI) {
+      if (odometryFusedTheta - point.getDouble("angle") > Math.PI) {
+        odometryFusedTheta -= 2 * Math.PI;
+      } else if (odometryFusedTheta - point.getDouble("angle") < -Math.PI) {
+        odometryFusedTheta += 2 * Math.PI;
+      }
+    }
+    return drive.insideRadius((point.getDouble("x") - odometryFusedX)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS, (point.getDouble("y") - odometryFusedY)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+        (point.getDouble("angle") - odometryFusedTheta)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS, Constants.SetPoints.AUTONOMOUS_END_ACCURACY);
   }
 }

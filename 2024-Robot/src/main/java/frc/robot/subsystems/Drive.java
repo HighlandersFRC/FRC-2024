@@ -1722,7 +1722,7 @@ public class Drive extends SubsystemBase {
     return velocityArray;
   }
 
-  private boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
+  public boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
     Logger.recordOutput("deltax", deltaX);
     Logger.recordOutput("deltay", deltaY);
     Logger.recordOutput("deltaTheta", deltaTheta);

@@ -220,7 +220,7 @@ public class AutoPositionalShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (!this.proximity.getFeederProximity() && !this.hasShot){
+    if (!this.feeder.noteInRobot.getAsBoolean() && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
       // System.out.println("Has Shot");

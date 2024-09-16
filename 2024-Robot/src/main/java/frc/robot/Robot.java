@@ -68,7 +68,7 @@ public class Robot extends LoggedRobot {
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();
   private Shooter shooter = new Shooter();
-  private Feeder feeder = new Feeder(tof, proximity);
+  private Feeder feeder = new Feeder(tof, proximity, () -> getNoteInRobot());
   private Climber climber = new Climber(lights, tof, proximity);
 
   // private Logger logger = Logger.getInstance();
@@ -87,27 +87,33 @@ public class Robot extends LoggedRobot {
       put("Shoot",
           () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
       put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
-      put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG+4, 5000));
+      put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG, 5000));
     }
   };
   int timesNoteSeen = 0;
   int TOFfilterThreshold = 2;
 
-  private int numTimeNoteInIntake;
+  private int numTimeNoteInIntake = 0;
 
 
   boolean getNoteInIntake() {
+    boolean retval = (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD);
+    Logger.recordOutput("Note in Intake", retval);
+    return retval;
+  }
+
+  void updateNoteInIntake() {
     if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD){
       this.numTimeNoteInIntake++;
     } else {
       this.numTimeNoteInIntake = 0;
     }
-    return (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD);
   }
 
   boolean getNoteInRobot() {
-    boolean retval = proximity.getFeederProximity() || proximity.getCarriageProximity()
+    boolean retval = proximity.getFeederProximity()
         || proximity.getShooterProximity() || getNoteInIntake();
+    Logger.recordOutput("Note in Robot", retval);
     return retval;
   }
 
@@ -317,6 +323,7 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotPeriodic() {
+    updateNoteInIntake();
     // System.out.println("is autonomous: " + DriverStation.isAutonomousEnabled());
     if (OI.getPOVUp()) {
       new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 5500, 1200, 0, 180, 180, 5).schedule();

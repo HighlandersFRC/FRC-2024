@@ -57,7 +57,8 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.35;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.4;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.25;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
