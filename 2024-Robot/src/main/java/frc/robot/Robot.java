@@ -207,7 +207,11 @@ public class Robot extends LoggedRobot {
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, shooter, 0.4));
     // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, Constants.SetPoints.SHOOTER_PODIUM_PRESET[0], Constants.SetPoints.SHOOTER_PODIUM_PRESET[1], Constants.SetPoints.SHOOTER_PODIUM_PRESET[2]));
-    OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals, Constants.SetPoints.SHOOTER_PODIUM_PRESET[0], Constants.SetPoints.SHOOTER_PODIUM_PRESET[1], Constants.SetPoints.SHOOTER_PODIUM_PRESET[2], Constants.SetPoints.SHOOTER_PODIUM_PRESET[3]));
+    OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
+    Constants.SetPoints.SHOOTER_PODIUM_PRESET[0],
+    Constants.SetPoints.SHOOTER_PODIUM_PRESET[1],
+    Constants.SetPoints.SHOOTER_PODIUM_PRESET[2],
+    Constants.SetPoints.SHOOTER_PODIUM_PRESET[3]));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
     OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));
