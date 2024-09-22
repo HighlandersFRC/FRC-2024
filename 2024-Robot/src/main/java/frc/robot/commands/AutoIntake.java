@@ -154,7 +154,7 @@ public class AutoIntake extends Command {
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else if (this.haveNote){
       // System.out.println("3");
-      this.feeder.set(110);
+      this.feeder.set(90);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
       // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);

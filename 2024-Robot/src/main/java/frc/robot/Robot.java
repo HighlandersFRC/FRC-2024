@@ -81,7 +81,7 @@ public class Robot extends LoggedRobot {
     {
       put("Instant", () -> new InstantCommand());
       put("Intake", () -> new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-          Constants.SetPoints.IntakePosition.kDOWN, 1200, 500, false, false));
+          Constants.SetPoints.IntakePosition.kDOWN, 1200, 400, false, false));
       put("Outtake", () -> new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800,
           -800, -0.4));
       put("Shoot",
@@ -94,14 +94,15 @@ public class Robot extends LoggedRobot {
   int TOFfilterThreshold = 2;
 
   private int numTimeNoteInIntake = 0;
-
+  private double intakeTime = 0;
 
   boolean getNoteInIntake() {
     boolean retval = (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD);
+    if (retval) intakeTime = Timer.getFPGATimestamp();
+    if (Timer.getFPGATimestamp()-intakeTime<Constants.SetPoints.TIME_EXTENSION_INTAKE_THRESHOLD) retval = true;
     Logger.recordOutput("Note in Intake", retval);
     return retval;
   }
-
   void updateNoteInIntake() {
     if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD){
       this.numTimeNoteInIntake++;
@@ -111,9 +112,8 @@ public class Robot extends LoggedRobot {
   }
 
   boolean getNoteInRobot() {
-    boolean retval = proximity.getFeederProximity()
-        || proximity.getShooterProximity() || getNoteInIntake();
-    Logger.recordOutput("Note in Robot", retval);
+    boolean retval = getNoteInIntake() || proximity.getFeederProximity()
+        || proximity.getShooterProximity() ;
     return retval;
   }
 
@@ -306,7 +306,7 @@ public class Robot extends LoggedRobot {
     }
 
     try {
-      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/5 piece.polarauto");
+      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/4 Far.polarauto");
       FileReader scanner = new FileReader(this.commandsTestFile);
       this.commandsTestJSON = new JSONObject(new JSONTokener(scanner));
       this.commandsTestArray = (JSONArray) commandsTestJSON.getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
@@ -371,7 +371,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Swerve Module States", drive.getModuleStates());
     Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
-    Logger.recordOutput("Not in Robot", getNoteInRobot());
+    Logger.recordOutput("Note in Robot", getNoteInRobot());
     lights.periodic();
     intake.periodic();
     shooter.periodic();
