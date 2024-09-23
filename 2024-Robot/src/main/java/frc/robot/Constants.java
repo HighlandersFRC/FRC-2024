@@ -57,7 +57,7 @@ public final class Constants {
   public static final class SetPoints {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.4;
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
     public static final double AUTONOMOUS_END_ACCURACY = 0.25;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
@@ -98,7 +98,7 @@ public final class Constants {
     //flip getInterpolated value edge setpoints
     // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
-    public static final double DISTANCE_OFFSET = 0.1;
+    public static final double DISTANCE_OFFSET = 0.0;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
       {1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
       {1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
@@ -111,14 +111,14 @@ public final class Constants {
       {4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.5, 1.5},
       {4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.5, 1.5},
       {5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.2, 6500, 0.5, 1.5},
-      {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 0.35, 1.5},
-      {5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24.5, 6825, 0.5, 1.5},
-      {5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23.5, 7000, 0.5, 1.2},
+      {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.25, 6750, 0.35, 1.5},
+      {5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24, 6825, 0.5, 1.5},
+      {5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23, 7000, 0.5, 1.2},
       {6.06 + DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      {6.40 + DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      {6.9 + DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      {7.2 + DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2},
-      {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
+      {6.40 + DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2},
+      {6.9 + DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7750, 0.5, 1.2},
+      {7.2 + DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 20.5, 8000, 0.5, 1.2},
+      {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 20.65, 8000, 0.5, 1.2}
     };
 
     public static double[] getMovingAverageWeights(int numMeasurements){
@@ -191,7 +191,7 @@ public final class Constants {
      * @return An array containing the calculated flywheel velocity and note velocity.
      */
     public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist), getInterpolatedValue(0, 4, dist)};
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
@@ -330,7 +330,7 @@ public final class Constants {
 
     //Intake motor current thresholds to detect note
     public static final double INTAKE_CURRENT_THRESHOLD = 38;
-    public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 10;
+    public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 7;
     public static final double TIME_EXTENSION_INTAKE_THRESHOLD = 0.5;
     //climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;

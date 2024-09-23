@@ -143,12 +143,16 @@ public class AutoPositionalShoot extends Command {
       // System.out.println("-----------red------");
       x = Constants.Physical.FIELD_LENGTH;
       angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y - 0.07;
+      angleY = Constants.Physical.SPEAKER_Y - 0.2;
     } else {
       // System.out.println("-----------blue------");
       x = Constants.Physical.SPEAKER_X;
       angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y + 0.07;
+      angleY = Constants.Physical.SPEAKER_Y + 0.2;
+    }
+
+    if (drive.getMT2OdometryY() < 2.0){
+      angleY -= 0.06;
     }
   }
 
@@ -166,13 +170,14 @@ public class AutoPositionalShoot extends Command {
         canSeeTag = true;
       }
     // }]\[]
+    
 
     this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, angleY, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    
+    this.shooterDegreesAllowedError = this.shooterValues[2];
     // System.out.println("dist: " + distToSpeakerMeters);
     // System.out.println("x: " + x);
     // System.out.println("angle: " + angleToSpeakerDegrees);
