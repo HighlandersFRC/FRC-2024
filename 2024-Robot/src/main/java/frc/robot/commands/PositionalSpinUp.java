@@ -3,6 +3,8 @@ package frc.robot.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -74,7 +76,7 @@ public class PositionalSpinUp extends Command {
     this.peripherals = peripherals;
     this.lights = lights;
     this.proximity = proximity;
-    addRequirements(this.shooter, this.lights);
+    addRequirements(shooter);
   }
 
   @Override
@@ -111,7 +113,8 @@ public class PositionalSpinUp extends Command {
     // System.out.println("angle: " + angleToSpeakerDegrees);
     // System.out.println("deg" + shooterDegrees);
     // System.out.println("rpm" + shooterRPM);
-
+    Logger.recordOutput("spinupshooterangle", shooterDegrees);
+    Logger.recordOutput("spinupshooterrpm", shooterRPM);
     if (this.proximity.getFeederProximity()){
       this.shooter.set(this.shooterDegrees, this.shooterRPM);
     } else {

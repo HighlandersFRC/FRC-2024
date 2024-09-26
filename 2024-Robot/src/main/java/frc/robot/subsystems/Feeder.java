@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANSparkBase.IdleMode;
 
 import java.lang.annotation.Documented;
+import java.util.function.BooleanSupplier;
 
 import javax.swing.text.StyleContext.SmallAttributeSet;
 
@@ -39,14 +40,15 @@ public class Feeder extends SubsystemBase {
   private final TalonFXConfiguration rollerFalconConfiguration = new TalonFXConfiguration();
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false, false, false);
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
-
+  public BooleanSupplier noteInRobot;
   /**
    * Constructs a new instance of the Feeder class.
    *
    * @param tof The Time-of-Flight (TOF) sensor used by the Feeder.
   */
-  public Feeder(TOF tof, Proximity proximity) {
+  public Feeder(TOF tof, Proximity proximity, BooleanSupplier noteInRobot) {
     setDefaultCommand(new FeederDefault(this, proximity));
+    this.noteInRobot = noteInRobot;
   }
 
   /**

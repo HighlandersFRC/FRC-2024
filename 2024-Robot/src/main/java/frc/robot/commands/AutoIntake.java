@@ -1,5 +1,8 @@
 package frc.robot.commands;
 
+import org.littletonrobotics.junction.Logger;
+
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -77,6 +80,7 @@ public class AutoIntake extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
+    Logger.recordOutput("Intaking: ", true);
     // climber.intakeRunning = true;
   }
 
@@ -109,17 +113,13 @@ public class AutoIntake extends Command {
       this.haveCarriageNote = true;
     }
 
-    // if (this.tof.getIntakeDistMillimeters() <= Constants.SetPoints.INTAKE_TOF_THRESHOLD_MM){
-    //   this.noteInIntake = true;
-    //   this.numTimeNoteInIntake++;
-    // }
-
     if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD){
       this.numTimeNoteInIntake++;
     }
     if (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD){
       this.noteInIntake = true;
     }
+    Logger.recordOutput("numTimeNoteInIntake", numTimeNoteInIntake);
 
     // if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
     //   // System.out.println("1");
@@ -155,7 +155,7 @@ public class AutoIntake extends Command {
       this.climber.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
     } else if (this.haveNote){
       // System.out.println("3");
-      this.feeder.set(110);
+      this.feeder.set(90);
       this.climber.setTrapRollerTorque(15, 0.1);
       this.climber.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
       // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
@@ -176,6 +176,7 @@ public class AutoIntake extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(false);
     // climber.intakeRunning = false;
+    Logger.recordOutput("Intaking: ", false);
   }
 
   @Override

@@ -64,10 +64,11 @@ public class Intake extends SubsystemBase {
     this.angleFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -80;
     this.angleFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.angleFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
+    this.angleFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+    this.angleFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -80;
     this.angleFalcon.getConfigurator().apply(this.angleFalconConfiguration);
     this.angleFalcon.setNeutralMode(NeutralModeValue.Brake);
     this.angleFalcon.setPosition(0);
-
     this.rollerFalconConfiguration.Slot0.kP = 10;    
     this.rollerFalconConfiguration.Slot0.kI = 0;
     this.rollerFalconConfiguration.Slot0.kD = 0.1;
@@ -76,8 +77,8 @@ public class Intake extends SubsystemBase {
     this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
     this.rollerFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.rollerFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
-    // this.rollerFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 50;
-    // this.rollerFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -50;
+    this.rollerFalconConfiguration.TorqueCurrent.PeakForwardTorqueCurrent = 80;
+    this.rollerFalconConfiguration.TorqueCurrent.PeakReverseTorqueCurrent = -80;
     this.rollerFalcon.getConfigurator().apply(this.rollerFalconConfiguration);
     this.rollerFalcon.setNeutralMode(NeutralModeValue.Coast);
   }
@@ -283,5 +284,6 @@ public class Intake extends SubsystemBase {
     // Logger.recordOutput("Intake Angle", getAngleDegrees());
     // Logger.recordOutput("Intake Angle Setpoint", Constants.degreesToRotations(angleFalcon.getClosedLoopReference().getValueAsDouble()/Constants.Ratios.INTAKE_ANGLE_GEAR_RATIO));
     // Logger.recordOutput("Intake Roller Velocity", rollerFalcon.getRotorVelocity().getValueAsDouble()/Constants.Ratios.INTAKE_ROLLER_GEAR_RATIO);
+    Logger.recordOutput("intakeRollerStator", this.rollerFalcon.getStatorCurrent().getValueAsDouble());
   }
 }
