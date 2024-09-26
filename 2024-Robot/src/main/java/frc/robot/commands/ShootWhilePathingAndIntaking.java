@@ -144,7 +144,7 @@ public class ShootWhilePathingAndIntaking extends Command {
     }
 
     double futureSpeakerDist = Constants.getDistance(speakerX, speakerY, futurePathPointX, futurePathPointY);
-    double[] futureSetpoints = Constants.SetPoints.getShooterValuesFromDistance(futureSpeakerDist);
+    double[] futureSetpoints = Constants.SetPoints.getShooterValuesFromDistance(futureSpeakerDist, false);
     Vector futureVelocityVector = new Vector();
     futureVelocityVector.setI(futurePathPoint.getDouble(4));
     futureVelocityVector.setJ(futurePathPoint.getDouble(5));

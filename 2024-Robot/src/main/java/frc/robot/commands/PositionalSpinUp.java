@@ -105,7 +105,7 @@ public class PositionalSpinUp extends Command {
   public void execute() {
     this.distToSpeakerMeters = Constants.getDistance(Constants.Physical.SPEAKER_X, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.angleToSpeakerDegrees = Constants.getAngleToPoint(Constants.Physical.SPEAKER_X + (Constants.Physical.SPEAKER_DEPTH / 2), Constants.Physical.SPEAKER_Y + 0.07, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, false);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
     

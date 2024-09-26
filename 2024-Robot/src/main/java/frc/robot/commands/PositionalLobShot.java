@@ -3,27 +3,21 @@ package frc.robot.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.littletonrobotics.junction.Logger;
-
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
-import frc.robot.Constants.SetPoints.IntakePosition;
 import frc.robot.sensors.Proximity;
-import frc.robot.sensors.TOF;
-import frc.robot.subsystems.Climber;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class AutoPositionalShoot extends Command {
+public class PositionalLobShot extends Command {
   public static boolean canSeeTag;
   private Drive drive;
   private Shooter shooter;
@@ -65,6 +59,7 @@ public class AutoPositionalShoot extends Command {
   private double targetPigeonAngleDegrees;
   private double distToSpeakerMeters;
   private double angleToSpeakerDegrees;
+  private double angleOffset;
 
   private double defaultShooterAngle = 0;
   private double defaultFlywheelRPM = 0;
@@ -82,7 +77,7 @@ public class AutoPositionalShoot extends Command {
   private double angleX;
   private double angleY;
 
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, boolean auto) {
+  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -96,7 +91,7 @@ public class AutoPositionalShoot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoPositionalShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double defaultShooterAngle, double defaultFlywheelRPM, double timeout, boolean auto) {
+  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -112,12 +107,7 @@ public class AutoPositionalShoot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public AutoPositionalShoot(Intake intake, Feeder feeder2, Climber climber, Lights lights2, TOF tof,
-        Proximity proximity2, IntakePosition kdown, int i, int j, boolean b, boolean c) {
-    //TODO Auto-generated constructor stub
-}
-
-@Override
+  @Override
   public void initialize() {
     this.startTime = Timer.getFPGATimestamp();
     this.pigeonAngles = new ArrayList<Double>();
@@ -131,30 +121,22 @@ public class AutoPositionalShoot extends Command {
     this.numTimesHitSetPoint = 0;
     this.speakerElevationDegrees = 0;
     this.speakerAngleDegrees = 0;
-    this.shooterValues = Constants.SetPoints.getShooterValuesFromAngle(this.speakerElevationDegrees);
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.speakerElevationDegrees, true);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    this.tagReadings = new ArrayList<double[]>();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
     this.distToSpeakerMeters = 0;
     this.angleToSpeakerDegrees = 0;
     this.targetPigeonAngleDegrees = this.peripherals.getPigeonAngle() - this.peripherals.getFrontCamTargetTx();
+    this.angleOffset = 0;
 
     if (drive.getFieldSide() == "red"){
-      // System.out.println("-----------red------");
-      x = Constants.Physical.FIELD_LENGTH;
-      angleX = x - (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y - 0.2;
+      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.LOB_SHOT_TARGET_X;
+      y = Constants.Physical.LOB_SHOT_TARGET_Y;
     } else {
-      // System.out.println("-----------blue------");
-      x = Constants.Physical.SPEAKER_X;
-      angleX = x + (Constants.Physical.SPEAKER_DEPTH / 2);
-      angleY = Constants.Physical.SPEAKER_Y + 0.2;
-    }
-
-    if (drive.getMT2OdometryY() < 2.0){
-      angleY -= 0.06;
+      x = Constants.Physical.LOB_SHOT_TARGET_X;
+      y = Constants.Physical.LOB_SHOT_TARGET_Y;
     }
   }
 
@@ -164,34 +146,28 @@ public class AutoPositionalShoot extends Command {
 
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
-    double id = this.peripherals.getFrontCamID();
-
-    canSeeTag = false;
-    // for (double id : ids){
-      if (id == 7 || id == 4){
-        canSeeTag = true;
-      }
-    // }]\[]
-    
-
-    this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    Logger.recordOutput("DistToSpeakerMeters", distToSpeakerMeters);
-    this.angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, angleY, drive.getMT2OdometryX(), drive.getMT2OdometryY());
-    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, false);
+    //-0.5 to counter the note sliding after landing
+    this.distToSpeakerMeters = Constants.getDistance(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY()) - 0.5;
+    this.angleToSpeakerDegrees = Constants.getAngleToPoint(x, y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters, true);
     this.shooterDegrees = this.shooterValues[0];
     this.shooterRPM = this.shooterValues[1];
-    this.shooterDegreesAllowedError = this.shooterValues[2];
+    this.angleOffset = Constants.SetPoints.getRobotAngleOffset(shooterRPM);
+    
     // System.out.println("dist: " + distToSpeakerMeters);
-    // System.out.println("x: " + x);
+    // System.out.println("y: " + y);
     // System.out.println("angle: " + angleToSpeakerDegrees);
+    // System.out.println("angle offset" + angleOffset);
     // System.out.println("deg" + shooterDegrees);
     // System.out.println("rpm" + shooterRPM);
 
     if (drive.getFieldSide() == "red"){
-      targetAngle = angleToSpeakerDegrees + 180;
+      targetAngle = angleToSpeakerDegrees + 180 - angleOffset;
     } else {
-      targetAngle = angleToSpeakerDegrees;
+      targetAngle = angleToSpeakerDegrees - angleOffset;
     }
+
+    System.out.println("target angle" + targetAngle);
 
     if (DriverStation.isAutonomousEnabled() && drive.getFieldSide() == "red"){
       // System.out.println("autonoumous");
@@ -228,7 +204,7 @@ public class AutoPositionalShoot extends Command {
       this.feeder.set(0.0);
     }
 
-    if (!this.feeder.noteInRobot.getAsBoolean() && !this.hasShot){
+    if (!this.proximity.getFeederProximity() && !this.hasShot){
       this.hasShot = true;
       this.shotTime = Timer.getFPGATimestamp();
       // System.out.println("Has Shot");
