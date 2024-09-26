@@ -16,7 +16,7 @@ public final class Constants {
     "5 piece.polarauto",
     "3 amp.polarauto",
     "3 amp 231.polarauto",
-    "1 Exit",
+    "1 Exit.polarauto",
   };
 
   public static int getSelectedPathIndex(){
