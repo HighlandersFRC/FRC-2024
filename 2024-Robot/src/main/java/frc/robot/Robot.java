@@ -28,6 +28,7 @@ import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutoPrepForShot;
 import frc.robot.commands.AutoShoot;
 import frc.robot.commands.DipShot;
+import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
 import frc.robot.commands.PolarAutoFollower;
@@ -88,6 +89,7 @@ public class Robot extends LoggedRobot {
           () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
       put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
       put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG, 5000));
+      put("Wait", () -> new DoNothing());
     }
   };
   int timesNoteSeen = 0;
@@ -127,39 +129,11 @@ public class Robot extends LoggedRobot {
   Command fivePiece3Note;
   Command fourPieceFarBottom231Auto;
 
-  File fourPieceCloseFile;
-  JSONArray fourPieceCloseJSON;
-  Command fourPieceCloseAuto;
-
-  File fourPieceFarBottomFile;
-  JSONArray fourPieceFarBottomJSON;
-  Command fourPieceFarBottomAuto;
-
-  File fivePieceFile;
-  JSONArray fivePieceJSON;
-  Command fivePieceAuto;
-
-  File onePieceFile;
-  JSONArray onePieceJSON;
-  Command onePieceAuto;
-
-  File fourPieceAmpSideFile;
-  JSONArray fourPieceAmpSideJSON;
-  Command fourPieceAmpSideAuto;
-
-  File autoNoteFollowingFile;
-  JSONArray autoNoteFollowingJSON;
-  Command autoNoteFollowingAuto;
-
-  File goStraightFile;
-  JSONArray goStraightArray;
-  Command goStraightAuto;
-
-  File commandsTestFile;
-  JSONObject commandsTestJSON;
-  JSONArray commandsTestArray;
-  Command commandsTestCommand;
-
+  
+  File[] autoFiles = new File[Constants.paths.length];
+  Command[] autos = new Command[Constants.paths.length];
+  JSONObject[] autoJSONs = new JSONObject[Constants.paths.length];
+  JSONArray[] autoPoints = new JSONArray[Constants.paths.length];
   Command dipShot;
 
   String fieldSide = "blue";
@@ -219,100 +193,19 @@ public class Robot extends LoggedRobot {
 
     // System.out.println("ports forwarded");
     this.nothingAuto = new NothingAuto();
-    this.fivePiece3Note = new FivePiece3Auto(drive, peripherals, intake, feeder, shooter, climber, lights, tof,
-        proximity);
-    this.fourPieceFarBottom231Auto = new FourPieceFarBottom231Auto(drive, peripherals, intake, feeder, shooter, climber,
-        lights, tof, proximity);
     // this.dipShot = new DipShot(drive, shooter, feeder, peripherals, lights,
     // proximity, 55, 5500, 1200, 0, 185, 150, 5);
 
-    // try {
-    // this.fourPieceCloseFile = new
-    // File("/home/lvuser/deploy/4PieceClosePart1.json");
-    // FileReader scanner = new FileReader(this.fourPieceCloseFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.fourPieceCloseJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.fourPieceCloseAuto = new FourPieceCloseAuto(drive, peripherals, intake,
-    // feeder, shooter, climber, lights, tof, proximity);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-
-    // try {
-    // this.fourPieceFarBottomFile = new
-    // File("/home/lvuser/deploy/4PieceFarBottomPart1.json");
-    // FileReader scanner = new FileReader(this.fourPieceFarBottomFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.fourPieceFarBottomJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.fourPieceFarBottomAuto = new FourPieceFarBottomAuto(drive, peripherals,
-    // intake, feeder, shooter, climber, lights, tof, proximity);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-
-    // try {
-    // this.fivePieceFile = new File("/home/lvuser/deploy/4PieceClosePart1.json");
-    // FileReader scanner = new FileReader(this.fivePieceFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.fivePieceJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.fivePieceAuto = new FivePieceAuto(drive, peripherals, intake, feeder,
-    // shooter, climber, lights, tof, proximity);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-
-    // try {
-    // this.onePieceFile = new File("/home/lvuser/deploy/1PieceExit.json");
-    // FileReader scanner = new FileReader(this.onePieceFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.onePieceJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.onePieceAuto = new OnePieceExitAuto(drive, peripherals, feeder, shooter,
-    // lights, proximity);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-
-    // try {
-    // this.fourPieceAmpSideFile = new
-    // File("/home/lvuser/deploy/3PieceAmpSidePart0.json");
-    // FileReader scanner = new FileReader(this.fourPieceAmpSideFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.fourPieceAmpSideJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.fourPieceAmpSideAuto = new FourPieceAmpSideAuto(drive, peripherals,
-    // intake, feeder, shooter, climber, lights, tof, proximity);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-
-    // try {
-    // this.autoNoteFollowingFile = new
-    // File("/home/lvuser/deploy/AutoNoteFollowingTest.json");
-    // FileReader scanner = new FileReader(this.autoNoteFollowingFile);
-    // JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-    // this.autoNoteFollowingJSON = (JSONArray) pathRead.get("sampled_points");
-    // this.autoNoteFollowingAuto = new AutoNoteFollowing(drive, peripherals,
-    // intake, feeder, climber, lights, tof);
-    // } catch(Exception e) {
-    // System.out.println("ERROR WITH PATH FILE " + e);
-    // }
-    try {
-      this.goStraightFile = new File(Filesystem.getDeployDirectory().getPath() + "/Square.polarpath");
-      FileReader scanner = new FileReader(this.goStraightFile);
-      JSONObject pathRead = new JSONObject(new JSONTokener(scanner));
-      this.goStraightArray = (JSONArray) pathRead.get("sampled_points");
-      this.goStraightAuto = new StraightLine(drive, lights, peripherals);
-    } catch (Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
-    }
-
-    try {
-      this.commandsTestFile = new File(Filesystem.getDeployDirectory().getPath() + "/4 Far 123.polarauto");
-      FileReader scanner = new FileReader(this.commandsTestFile);
-      this.commandsTestJSON = new JSONObject(new JSONTokener(scanner));
-      this.commandsTestArray = (JSONArray) commandsTestJSON.getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
-      this.commandsTestCommand = new PolarAutoFollower(commandsTestJSON, drive, lights, peripherals, commandMap, conditionMap);
-    } catch (Exception e) {
-      System.out.println("ERROR WITH PATH FILE " + e);
+    for (int i = 0; i < Constants.paths.length; i++){
+      try {
+        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths[i]);
+        FileReader scanner = new FileReader(autoFiles[i]);
+        autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
+        autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
+        autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
+      } catch (Exception e) {
+        System.out.println("ERROR LOADING PATH "+Constants.paths[i]+":" + e);
+      }
     }
 
     lights.clearAnimations();
@@ -372,6 +265,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
     Logger.recordOutput("IMU", peripherals.getPigeonAngle());
     Logger.recordOutput("Note in Robot", getNoteInRobot());
+    Constants.periodic();
     lights.periodic();
     intake.periodic();
     shooter.periodic();
@@ -415,37 +309,15 @@ public class Robot extends LoggedRobot {
     this.peripherals.setFieldSide(fieldSide);
 
     System.out.println("Selected Auto: ");
-    // if (OI.isNothingAuto()){
-    // System.out.println("5 piece 3rd note Auto");
-    // this.fivePiece3Note.schedule();
-    // this.drive.autoInit(this.fivePieceJSON);
-    // } else if (OI.is4PieceFarBottom231Auto()) {
-    // System.out.println("Four Piece 231 Auto");
-    // this.fourPieceFarBottom231Auto.schedule();
-    // this.drive.autoInit(this.fourPieceFarBottomJSON);
-    // } else if (OI.is3PieceFarBottomAuto()){
-    // System.out.println("Four Piece Far Bottom");
-    // this.fourPieceFarBottomAuto.schedule();
-    // this.drive.autoInit(this.fourPieceFarBottomJSON);
-    // } else if (OI.is5PieceAuto()){
-    // System.out.println("Five Piece");
-    // this.fivePieceAuto.schedule();
-    // this.drive.autoInit(this.fivePieceJSON);
-    // } else if (OI.is1PieceAuto()){
-    // System.out.println("One Piece");
-    // this.onePieceAuto.schedule();
-    // this.drive.autoInit(this.onePieceJSON);
-    // } else if (OI.is4PieceAmpSideAuto()){
-    // System.out.println("Four Piece Amp Side");
-    // this.fourPieceAmpSideAuto.schedule();
-    // this.drive.autoInit(this.fourPieceAmpSideJSON);
-    // } else {
-    // System.out.println("NO AUTO SELECTED");
-    // }
-
+    final int selectedPath = Constants.getSelectedPathIndex();
+    if (selectedPath == -1) {
+      System.out.println("Do Nothing");
+    } else {
+      System.out.println("Selected Path: " + Constants.paths[selectedPath]);
+    }
     System.out.println("Commands Test");
-    this.commandsTestCommand.schedule();
-    this.drive.autoInit(this.commandsTestArray);
+    this.autos[selectedPath].schedule();
+    this.drive.autoInit(autoPoints[selectedPath]);
     this.intake.autoInit();
   }
 

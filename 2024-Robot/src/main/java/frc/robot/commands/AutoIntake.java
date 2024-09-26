@@ -119,6 +119,7 @@ public class AutoIntake extends Command {
     if (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD){
       this.noteInIntake = true;
     }
+    Logger.recordOutput("numTimeNoteInIntake", numTimeNoteInIntake);
 
     // if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
     //   // System.out.println("1");

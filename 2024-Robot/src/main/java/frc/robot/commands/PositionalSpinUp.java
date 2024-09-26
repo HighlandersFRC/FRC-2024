@@ -116,10 +116,8 @@ public class PositionalSpinUp extends Command {
     Logger.recordOutput("spinupshooterangle", shooterDegrees);
     Logger.recordOutput("spinupshooterrpm", shooterRPM);
     if (this.proximity.getFeederProximity()){
-      System.out.println("hi");
       this.shooter.set(this.shooterDegrees, this.shooterRPM);
     } else {
-      System.out.println("hi2");
       this.shooter.setFlywheelRPM(this.shooterRPM);
     }
 

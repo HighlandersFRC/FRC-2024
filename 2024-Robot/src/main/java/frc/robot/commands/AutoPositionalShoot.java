@@ -3,6 +3,8 @@ package frc.robot.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -173,6 +175,7 @@ public class AutoPositionalShoot extends Command {
     
 
     this.distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(), drive.getMT2OdometryY());
+    Logger.recordOutput("DistToSpeakerMeters", distToSpeakerMeters);
     this.angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, angleY, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     this.shooterValues = Constants.SetPoints.getShooterValuesFromDistance(this.distToSpeakerMeters);
     this.shooterDegrees = this.shooterValues[0];
