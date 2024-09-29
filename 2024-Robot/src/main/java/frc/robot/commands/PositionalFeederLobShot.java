@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
@@ -17,7 +18,7 @@ import frc.robot.subsystems.Shooter;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
-public class PositionalLobShot extends Command {
+public class PositionalFeederLobShot extends Command {
   public static boolean canSeeTag;
   private Drive drive;
   private Shooter shooter;
@@ -77,7 +78,7 @@ public class PositionalLobShot extends Command {
   private double angleX;
   private double angleY;
 
-  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
+  public PositionalFeederLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -91,7 +92,7 @@ public class PositionalLobShot extends Command {
     addRequirements(this.drive, this.shooter, this.feeder, this.lights);
   }
 
-  public PositionalLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
+  public PositionalFeederLobShot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double feederRPM, double timeout) {
     this.drive = drive;
     this.shooter = shooter;
     this.feeder = feeder;
@@ -132,11 +133,11 @@ public class PositionalLobShot extends Command {
     this.angleOffset = 0;
 
     if (drive.getFieldSide() == "red"){
-      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.LOB_SHOT_TARGET_X;
-      y = Constants.Physical.LOB_SHOT_TARGET_Y;
+      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.FEEDER_LOB_SHOT_TARGET_X;
+      y = Constants.Physical.FEEDER_LOB_SHOT_TARGET_Y;
     } else {
-      x = Constants.Physical.LOB_SHOT_TARGET_X;
-      y = Constants.Physical.LOB_SHOT_TARGET_Y;
+      x = Constants.Physical.FEEDER_LOB_SHOT_TARGET_X;
+      y = Constants.Physical.FEEDER_LOB_SHOT_TARGET_Y;
     }
   }
 
@@ -252,6 +253,8 @@ public class PositionalLobShot extends Command {
     if (this.shooterDegrees > 90){
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
+      return true;
+    } else if (OI.getPOV() == -1){
       return true;
     } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
       return true;

@@ -71,6 +71,10 @@ public final class Constants {
     public static final double SPEAKER_Y = inchesToMeters(220.347);
     public static final double LOB_SHOT_TARGET_X = inchesToMeters(90);
     public static final double LOB_SHOT_TARGET_Y = inchesToMeters((metersToInches(FIELD_WIDTH) - 77.5));
+    public static final double FEEDER_LOB_SHOT_TARGET_X = 7.5;
+    public static final double FEEDER_LOB_SHOT_TARGET_Y = 6.9;
+    public static final double DIP_SHOT_TARGET_X = 5.2;
+    public static final double DIP_SHOT_TARGET_Y = 7.1;
 
     public static final double TOP_SPEED = feetToMeters(25);
 
@@ -109,7 +113,7 @@ public final class Constants {
     //drive
     //how far forward to look when the linear radius and the angular radius equal their constants
     public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
-    public static final double AUTONOMOUS_END_ACCURACY = 0.20;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.25;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
     //intake
@@ -151,18 +155,18 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.0;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
-      {1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
-      {1.762 + DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
-      {2.172 + DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 0.75, 2},
-      {2.575 + DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 0.75, 2},
-      {2.927 + DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 0.75, 2},
-      {3.479 + DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 0.5, 1.5},
-      {3.846 + DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 0.5, 1.5},
-      {4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.5, 1.5},
-      {4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.5, 1.5},
-      {5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.2, 6500, 0.5, 1.5},
-      {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.25, 6750, 0.35, 1.5},
+      {1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 5, 2},
+      {1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 4, 2},
+      {1.762 + DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 2, 2},
+      {2.172 + DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 1.5, 2},
+      {2.575 + DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 1, 2},
+      {2.927 + DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 1, 2},
+      {3.479 + DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 1, 1.5},
+      {3.846 + DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 0.75, 1.5},
+      {4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.75, 1.5},
+      {4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.75, 1.5},
+      {5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.0, 6500, 0.5, 1.5},
+      {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.0, 6750, 0.5, 1.5},
       {5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24, 6825, 0.5, 1.5},
       {5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23, 7000, 0.5, 1.2},
       {6.06 + DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
@@ -474,12 +478,12 @@ public final class Constants {
     public static final double INTAKE_CURRENT_THRESHOLD = 38;
     public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 7;
     public static final double TIME_EXTENSION_INTAKE_THRESHOLD = 0.5;
-    //climber
+    //climber 
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.43;
     public static final double ELEVATOR_AMP_POSITION_M = 0.22;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
-    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -16.0;
+    public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -13.0;
     //public static final double CARRIAGE_AMP_ROTATION_DEG = 210.0;
     public static final double CARRIAGE_AMP_ROTATION_DEG = 199.0;
     public static final double CARRIAGE_TRAP_ROTATION_DEG = 215;
@@ -501,7 +505,7 @@ public final class Constants {
 
     public enum CarriageRotation {
       kDOWN(CARRIAGE_BOTTOM_ROTATION_DEG),
-      kFEED(1),
+      kFEED(5),
       kAMP(CARRIAGE_AMP_ROTATION_DEG),
       kTRAP(CARRIAGE_TRAP_ROTATION_DEG);
 

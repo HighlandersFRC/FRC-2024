@@ -125,8 +125,8 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconConfiguration.Slot0.kD = 0;
     this.flywheelFalconConfiguration.Slot0.kS = 1;
     this.flywheelFalconConfiguration.Slot0.kV = 0.2;
-    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 160;
-    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 160;
+    this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 140;
+    this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 140;
     this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimitEnable = true;
     this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimitEnable = true;
     this.flywheelFalconMaster.getConfigurator().apply(this.flywheelFalconConfiguration);
