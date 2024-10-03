@@ -24,8 +24,8 @@ public class Proximity {
     }
 
     public void periodic(){
-        SmartDashboard.putBoolean("Shooter Proximity", getShooterProximity());
-        SmartDashboard.putBoolean("Carriage Proximity", getCarriageProximity());
-        SmartDashboard.putBoolean("Feeder Proximity", getFeederProximity());
+        // SmartDashboard.putBoolean("Shooter Proximity", getShooterProximity());
+        // SmartDashboard.putBoolean("Carriage Proximity", getCarriageProximity());
+        // SmartDashboard.putBoolean("Feeder Proximity", getFeederProximity());
     }
 }

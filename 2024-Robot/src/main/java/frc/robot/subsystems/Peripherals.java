@@ -158,6 +158,17 @@ public class Peripherals extends SubsystemBase {
     return frontCamTy.getDouble(100);
   }
 
+  public double getZeroedPigeonAngleDegrees() {
+    double angle1 = getPigeonAngle();
+    while(angle1 > 360) {
+      angle1 -= 360;
+    }
+    while(angle1 < 0) {
+      angle1 += 360;
+    }
+    return angle1;
+  }
+
   /**
    * Retrieves the X-Axis Rotation of the robot based on the front camera
    * @return X-Axis rotation in radians
@@ -601,9 +612,10 @@ public class Peripherals extends SubsystemBase {
     // System.out.println(i.remote_id);
     // }
     SmartDashboard.putNumber("ty", getFrontCamTargetTy());
-    SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
-    SmartDashboard.putNumber("device", getPigeonAngularVelocity());
-    SmartDashboard.putNumber("world", getPigeonAngularVelocityW());
-    SmartDashboard.putNumber("yaw", getPigeonAngle());
+    SmartDashboard.putNumber("tx", getFrontCamTargetTx());
+    // SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
+    // SmartDashboard.putNumber("device", getPigeonAngularVelocity());
+    // SmartDashboard.putNumber("world", getPigeonAngularVelocityW());
+    // SmartDashboard.putNumber("yaw", getPigeonAngle());
   }
 }

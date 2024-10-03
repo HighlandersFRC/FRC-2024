@@ -24,6 +24,7 @@ public class Shooter extends SubsystemBase {
 
   private final TalonFXConfiguration flywheelConfiguration = new TalonFXConfiguration();
   private final TalonFXConfiguration angleConfiguration = new TalonFXConfiguration();
+  private double armZero;
   
   private final PositionTorqueCurrentFOC anglePositionMotionProfileRequest = new PositionTorqueCurrentFOC(0.0);
   // private final DynamicMotionMagicTorqueCurrentFOC anglePositionMotionProfileRequest = new DynamicMotionMagicTorqueCurrentFOC(0, 0, 0, 0, 0, 0, false, false, false);
@@ -39,10 +40,9 @@ public class Shooter extends SubsystemBase {
     this.flywheelConfiguration.Slot0.kV = 0.5;
     
     // this.angleConfiguration.Feedback.SensorToMechanismRatio = Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO;
-    this.angleConfiguration.Slot0.kP = 3;
-    this.angleConfiguration.Slot0.kI = 0.0;
-    this.angleConfiguration.Slot0.kD = 0.5;
-    this.angleConfiguration.Slot0.kS = 5;
+    this.angleConfiguration.Slot0.kP = 3.3;
+    this.angleConfiguration.Slot0.kI = 0.08;
+    this.angleConfiguration.Slot0.kD = 0.6;
     this.angleConfiguration.Slot0.GravityType = GravityTypeValue.Elevator_Static;
 
     leftShooter.getConfigurator().apply(flywheelConfiguration);
@@ -50,21 +50,25 @@ public class Shooter extends SubsystemBase {
     shooterAngle.getConfigurator().apply(angleConfiguration);
   }
 
+  public boolean alignedPreset = true;
+
   public void setShooterPercent(double left, double right){
     leftShooter.set(-left);
     rightShooter.set(-right);
   }
 
+
+
   public void setShooterAngle(double angle /* degrees */) {
-    this.angleConfiguration.Slot0.kG = 15*Math.sin(getShooterAngle()*Math.PI/180);
+    this.angleConfiguration.Slot0.kG = 14*Math.sin(getShooterAngle()*Math.PI/180);
     shooterAngle.getConfigurator().apply(angleConfiguration);
     this.shooterAngle.setControl(this.anglePositionMotionProfileRequest.withPosition(((angle-20)/360)*Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO));
     
   }
 
   public double getShooterAngle() {
-    SmartDashboard.putString("Angle Request", this.shooterAngle.getAppliedControl().getControlInfo().toString());
-    SmartDashboard.putNumber("otherValue ", shooterAngle.getRotorPosition().getValueAsDouble());
+    // SmartDashboard.putString("Angle Request", this.shooterAngle.getAppliedControl().getControlInfo().toString());
+    // SmartDashboard.putNumber("zero ", (shooterAngle.getRotorPosition().getValueAsDouble()*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO);
     return (((shooterAngle.getRotorPosition().getValueAsDouble())*360)/Constants.Ratios.SHOOTER_ANGLE_GEAR_RATIO+20);
   }
 
@@ -85,5 +89,6 @@ public class Shooter extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    // SmartDashboard.putNumber("Angle Motor Current", shooterAngle.getTorqueCurrent().getValue());
   }
 }

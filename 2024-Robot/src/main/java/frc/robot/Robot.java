@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.commands.AlignedPresetShoot;
 import frc.robot.commands.Amp;
 import frc.robot.commands.AngleShooter;
+import frc.robot.commands.AutoPositionalShoot;
 import frc.robot.commands.AutomaticallyIntake;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.DriveThetaAligned;
@@ -24,7 +25,7 @@ import frc.robot.commands.RunIntake;
 import frc.robot.commands.RunShooter;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.sensors.Proximity;
-import frc.robot.sensors.TOF;
+// import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Feeder;
 import frc.robot.subsystems.Intake;
@@ -36,11 +37,11 @@ public class Robot extends LoggedRobot {
   private Command m_autonomousCommand;
 
   //Sensors
-  private TOF tof = new TOF();
+  // private TOF tof = new TOF();
   private Proximity proximity = new Proximity();
 
   //Subsystems
-  private Lights lights = new Lights(tof);
+  private Lights lights = new Lights();
   private Peripherals peripherals = new Peripherals();
   private Drive drive = new Drive(peripherals);
   private Intake intake = new Intake();
@@ -57,6 +58,8 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void robotInit() {
+    SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
+    SmartDashboard.putNumber("Shooter RPM (input)", 0);
     // System.out.println("Starting");
     Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
@@ -66,8 +69,7 @@ public class Robot extends LoggedRobot {
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may be added.
     // System.out.println("Started Logger");
     this.fieldSide = "blue";
-    SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
-    SmartDashboard.putNumber("Shooter RPM (input)", 0);
+
 
     lights.init(fieldSide);
     peripherals.init();
@@ -104,7 +106,6 @@ public class Robot extends LoggedRobot {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setRGBFade();
-
   }
  
   @Override
@@ -139,7 +140,7 @@ public class Robot extends LoggedRobot {
     Logger.recordOutput("Right Shooter Speed", shooter.getRightShooterRPM());
 
     lights.periodic();
-    tof.periodic();
+    // tof.periodic();
     proximity.periodic();
 
     // drive.periodic(); // remove for competition
@@ -201,17 +202,15 @@ public class Robot extends LoggedRobot {
     this.drive.setFieldSide(fieldSide);
 
     //CONTROLS
-
+    double[] lookupTable = {shooterRPMTuning, shooterRPMTuning/2, shooterAngleDegreesTuning};
     //Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverRT.whileTrue(new RunIntake(intake, feeder, shooter, 0.4));
-    // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, Constants.SetPoints.SHOOTER_PODIUM_PRESET[0], Constants.SetPoints.SHOOTER_PODIUM_PRESET[1], Constants.SetPoints.SHOOTER_PODIUM_PRESET[2]));
-    OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
-    Constants.SetPoints.SHOOTER_PODIUM_PRESET[0],
-    Constants.SetPoints.SHOOTER_PODIUM_PRESET[1],
-    Constants.SetPoints.SHOOTER_PODIUM_PRESET[2],
-    Constants.SetPoints.SHOOTER_PODIUM_PRESET[3]));
+    // OI.driverA.whileTrue(new PresetShoot(shooter, feeder, lookupTable));
+    // OI.driverA.whileTrue(new AlignedPresetShoot(shooter, feeder, drive, peripherals,
+    // Constants.SetPoints.SHOOTER_PODIUM_PRESET));
+    OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, 1200, 26, 7000, false));
     OI.driverB.onTrue(new Amp(shooter, drive, peripherals));
     OI.driverLT.whileTrue(new ReverseFeeder(intake, feeder, shooter));
     OI.driverY.whileTrue(new MoveToPiece(drive, peripherals, intake));

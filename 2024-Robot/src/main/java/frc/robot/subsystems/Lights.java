@@ -13,7 +13,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.OI;
-import frc.robot.sensors.TOF;
+// import frc.robot.sensors.TOF;
 
 public class Lights extends SubsystemBase {
   /** Creates a new Lights. */
@@ -29,7 +29,7 @@ public class Lights extends SubsystemBase {
   StrobeAnimation flashGreen = new StrobeAnimation(0, 255, 0, 0, 0.7, 308, 0);
   StrobeAnimation flashPurple = new StrobeAnimation(255, 0, 255, 0, 0.7, 308, 0);
   StrobeAnimation flashYellow = new StrobeAnimation(255, 255, 0, 0, 0.5, 308, 0);
-  private TOF tof;
+  // private TOF tof;
 
   /*
    * Lights codes are as follows:
@@ -55,8 +55,8 @@ public class Lights extends SubsystemBase {
    * 
    * @param tof Time of Flight sensor.
   */
-  public Lights(TOF tof) {
-    this.tof = tof;
+  public Lights() {
+    // this.tof = tof;
   }
 
   public void setCommandRunning(boolean commandRunning) { // used to bypass the default light colors (red/blue)

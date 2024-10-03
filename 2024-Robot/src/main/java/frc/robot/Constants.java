@@ -102,7 +102,40 @@ public final class Constants {
 
     public static final double[] SHOOTER_SUBWOOFER_PRESET = {1750, 3500, 65};
     // public static final double[] SHOOTER_PODIUM_PRESET = {2500, 5000, 40, 150};
-    public static final double[] SHOOTER_PODIUM_PRESET = {3000, 6000, 145, 25};
+    public static final double[] SHOOTER_PODIUM_PRESET = {3000, 6000, 157, -27};
+
+    public static double[] getLookupTable() {
+      double[] table = {0, 0, 0.0};
+      return table;
+    }
+
+    // public static final double[][] lookupTable = {
+    //   /*Limelight angle (Degrees) Distance (Inches) Left (RPM) Right (RPM) Shooter Angle (Degrees) */
+    //   {20.51,  45.6,  3500, 1750, 75   },
+    //   {14.71,  55,    3600, 1800, 71   },
+    //   {10.85,  62,    3700, 1850, 67   },
+    //   {8.70,   67.75, 3800, 1900, 63   },
+    //   {7.63,   70,    3900, 1950, 61   },
+    //   {6.56,   73,    3940, 1970, 59   },
+    //   {4.15,   79,    4000, 2000, 57   },
+    //   {1.75,   85,    4143, 2050, 55   },
+    //   {0.21,   91,    4270, 2072, 53   },
+    //   {-1.58,  97,    4499, 2100, 51   },
+    //   {-2.60,  103,   4550, 2135, 48   },
+    //   {-4.34,  113,   4635, 2318, 45   },
+    //   {-5.08,  119,   4800, 2400, 42   },
+    //   {-6.01,  125,   5100, 2550, 40   },
+    //   {-7.49,  135,   5300, 2650, 38   },
+    //   {-8.54,  145,   5500, 2750, 36   },
+    //   {-9.45,  155,   5940, 2970, 34   },
+    //   {-10.33, 165,   6200, 3100, 33   },
+    //   {-10.87, 175,   6400, 3200, 31.6 },
+    //   {-11.21, 185,   6500, 3250, 31.3 },
+    //   {-11.84, 195,   6600, 3300, 29.45},
+    //   {-12.83, 205,   6800, 3400, 27   },
+
+
+    // };
 
 
     //bumper ty on comp field: 8.29 blue, 8.04 red
@@ -114,26 +147,28 @@ public final class Constants {
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.1;
     public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      // {1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 1, 2},
-      // {1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 1, 2},
-      // {1.762 + DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 1, 2},
-      // {2.172 + DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 0.75, 2},
-      // {2.575 + DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 0.75, 2},
-      // {2.927 + DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 0.75, 2},
-      // {3.479 + DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 0.5, 1.5},
-      // {3.846 + DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 0.5, 1.5},
-      // {4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.5, 1.5},
-      // {4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.5, 1.5},
-      // {5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.2, 6500, 0.5, 1.5},
-      // {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.5, 6750, 0.35, 1.5},
-      // {5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24.5, 6825, 0.5, 1.5},
-      // {5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23.5, 7000, 0.5, 1.2},
-      // {6.06 + DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      // {6.40 + DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      // {6.9 + DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      // {7.2 + DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2},
-      // {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7500, 0.5, 1.2}
-      {0.0 + DISTANCE_OFFSET, 0.0 + LIMELIGHT_ANGLE_OFFSET, 0.0, 0.0, 0.5, 1.2}
+      { 1.16064, 20.51,  75    ,3500 , 5, 2},
+      { 1.397  , 14.71,  71    ,3600 , 4.5, 2},
+      { 1.5748 , 10.85,  67    ,3700 , 4, 2},
+      { 1.72045, 8.70,   63    ,3800 , 3.5, 2},
+      { 1.778  , 7.63,   61    ,3900 , 3, 2},
+      { 1.8542 , 6.56,   59    ,3940 , 2.5, 2},
+      { 2.0066 , 4.15,   57    ,4000 , 2.5, 2},
+      { 2.159  , 1.75,   55    ,4143 , 2.5, 2},
+      { 2.314  , 0.21,   53    ,4270 , 2.25, 2},
+      { 2.464  , -1.58,  51    ,4499 , 2.25, 2},
+      { 2.6132 , -2.60,  48    ,4550 , 2.25, 2},
+      { 2.8702 , -4.34,  45    ,4635 , 2, 2},
+      { 3.0226 , -5.08,  42    ,4800 , 2, 2},
+      { 3.175  , -6.01,  40    ,5100 , 2, 2},
+      { 3.429  , -7.49,  38    ,5300 , 1.75, 2},
+      { 3.688  , -8.54,  36    ,5500 , 1.75, 2},
+      { 3.937  , -9.45,  34    ,5940 , 1.75, 2},
+      { 4.191  , -10.33, 33    ,6200 , 1.75, 2},
+      { 4.445  , -10.87, 31.6  ,6400 , 1.5, 2},
+      { 4.699  , -11.21, 31.3  ,6500 , 1.5, 2},
+      { 4.953  , -11.84, 29.45 ,6600 , 1.5, 2},
+      { 5.206  , -12.83, 27    ,6800 , 1.5, 2}
     };
 
     public static double[] getMovingAverageWeights(int numMeasurements){
@@ -206,7 +241,7 @@ public final class Constants {
      * @return An array containing the calculated flywheel velocity and note velocity.
      */
     public static double[] getShooterValuesFromDistance(double dist) {
-      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist)};
+      return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist), getInterpolatedValue(0, 4, dist), };
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
 
