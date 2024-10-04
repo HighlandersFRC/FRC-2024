@@ -45,6 +45,8 @@ public class OI {
     
     public static JoystickButton operatorRB = new JoystickButton(operatorController, 6);
     public static JoystickButton operatorLB = new JoystickButton(operatorController, 5);
+    
+    public static JoystickButton operatorLJ = new JoystickButton(operatorController, 9);
 
     public static JoystickButton driverViewButton = new JoystickButton(driverController, 7);
 

@@ -21,7 +21,7 @@ public class AmpPreset extends SequentialCommandGroup {
     addCommands(
       new TrapIndexNoteToCarriage(feeder, climber, intake, proximity, shooter, 0.25),
       new ParallelDeadlineGroup(
-        new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED.degrees - 15),
+        new SetClimberWithoutIntake(climber, Constants.SetPoints.ElevatorPosition.kAMP, Constants.SetPoints.CarriageRotation.kFEED.degrees),
         new RunFeeder(feeder, -150),
         new RunIntakeTorque(intake, 40, 0.5, 60)
       ),

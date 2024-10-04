@@ -32,6 +32,7 @@ import frc.robot.commands.DoNothing;
 import frc.robot.commands.DriveAutoAligned;
 import frc.robot.commands.LobShot;
 import frc.robot.commands.PositionalDipShot;
+import frc.robot.commands.PositionalFeederLobShot;
 import frc.robot.commands.PositionalLobShot;
 import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.PositionalSpinUp;
@@ -92,6 +93,7 @@ public class Robot extends LoggedRobot {
       put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
       put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG, 5000));
       put("Wait", () -> new DoNothing());
+      put("Subwoofer Preset", () -> new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 58, 4900, 1200, 0));
     }
   };
   int timesNoteSeen = 0;
@@ -222,7 +224,7 @@ public class Robot extends LoggedRobot {
     // System.out.println("is autonomous: " + DriverStation.isAutonomousEnabled());
     if (OI.getPOVUp()){
       // new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 5500, 1200, 0, 180, 180, 5).schedule();
-      new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 5500, 1200, 0, 5).schedule();
+      new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5).schedule();
     }
     // checks CAN and limelights, blinks green if good and blinks yellow if bad
     // System.out.println("checkedCan: " + checkedCAN);
@@ -358,12 +360,12 @@ public class Robot extends LoggedRobot {
     OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    // OI.driverY.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
+    // OI.operatorLB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
     OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverMenuButton
         .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-
+    OI.driverY.whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
     /*
      * auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be
      * changed in Smartdashboard
@@ -386,7 +388,9 @@ public class Robot extends LoggedRobot {
     OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
     OI.operatorViewButton
         .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
-
+    // OI.operatorLB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
+    OI.operatorLT.whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
+    OI.operatorLJ.whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
     // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
 

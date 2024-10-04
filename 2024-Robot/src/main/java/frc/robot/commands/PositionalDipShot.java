@@ -99,11 +99,11 @@ public class PositionalDipShot extends Command {
     this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
 
     if (drive.getFieldSide() == "red"){
-      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.LOB_SHOT_TARGET_X;
-      y = Constants.Physical.LOB_SHOT_TARGET_Y;
+      x = Constants.Physical.FIELD_LENGTH - Constants.Physical.DIP_SHOT_TARGET_X;
+      y = Constants.Physical.DIP_SHOT_TARGET_Y;
     } else {
-      x = Constants.Physical.LOB_SHOT_TARGET_X;
-      y = Constants.Physical.LOB_SHOT_TARGET_Y;
+      x = Constants.Physical.DIP_SHOT_TARGET_X;
+      y = Constants.Physical.DIP_SHOT_TARGET_Y;
     }
     double standardizedPigeonAngleDegrees = Constants.SetPoints.standardizeAngleDegrees(this.peripherals.getPigeonAngle());
     double dif = standardizedPigeonAngleDegrees - this.targetPigeonAngleDegrees;
@@ -177,9 +177,11 @@ public class PositionalDipShot extends Command {
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime){
       return true;
-    } else if (OI.getPOV() == -1){
-      return true;
-    } else {
+    } 
+    // else if (OI.getPOV() == -1){
+    //   return true;
+    // } 
+    else {
       return false;
     }
   }

@@ -1332,7 +1332,7 @@ public class Drive extends SubsystemBase {
    */
   public void teleopDrive() {
     updateOdometryFusedArray();
-    double turnLimit = 0.12;
+    double turnLimit = 0.17;
     // 0.35 before
 
     if (OI.driverController.getLeftBumper()) {
