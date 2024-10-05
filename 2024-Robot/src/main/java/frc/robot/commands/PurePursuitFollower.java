@@ -107,11 +107,20 @@ public class PurePursuitFollower extends PolarTakeDrive {
       timesStagnated = 0;
     }
 
-    // create velocity vector and set desired theta change
     Vector velocityVector = new Vector();
-    velocityVector.setI(desiredVelocityArray[0].doubleValue());
-    velocityVector.setJ(desiredVelocityArray[1].doubleValue());
-    desiredThetaChange = desiredVelocityArray[2].doubleValue();
+
+    if (currentPathPointIndex == path.length()-1){
+      velocityVector.setI(desiredVelocityArray[0].doubleValue() * 2);
+      velocityVector.setJ(desiredVelocityArray[1].doubleValue() * 2);
+      desiredThetaChange = desiredVelocityArray[2].doubleValue() * 2;
+    } else {
+      velocityVector.setI(desiredVelocityArray[0].doubleValue());
+      velocityVector.setJ(desiredVelocityArray[1].doubleValue());
+      desiredThetaChange = desiredVelocityArray[2].doubleValue();
+    }
+
+    // create velocity vector and set desired theta change
+    
 
     drive.autoDrive(velocityVector, desiredThetaChange);
     Logger.recordOutput("pursuing?", true);

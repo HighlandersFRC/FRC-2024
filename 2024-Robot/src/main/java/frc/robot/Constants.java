@@ -17,6 +17,7 @@ public final class Constants {
     "3 amp.polarauto",
     "3 amp 231.polarauto",
     "1 Exit.polarauto",
+    "Middle Note.polarauto"
   };
 
   public static int getSelectedPathIndex(){
@@ -42,6 +43,9 @@ public final class Constants {
       }
       if (OI.autoChooser.getRawButton(2)){
         return 6;
+      }
+      if (OI.autoChooser.getRawButton(3)){
+        return 7;
       }
     }
     return -1;
