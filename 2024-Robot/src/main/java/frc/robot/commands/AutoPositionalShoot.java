@@ -160,8 +160,6 @@ public class AutoPositionalShoot extends Command {
 
   @Override
   public void execute() {
-    // System.out.println("Auto Shoot");
-
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
 
     double id = this.peripherals.getFrontCamID();
@@ -194,7 +192,6 @@ public class AutoPositionalShoot extends Command {
     }
 
     if (DriverStation.isAutonomousEnabled() && drive.getFieldSide() == "red"){
-      // System.out.println("autonoumous");
       pigeonAngleDegrees = 180 + pigeonAngleDegrees;
     }
 
