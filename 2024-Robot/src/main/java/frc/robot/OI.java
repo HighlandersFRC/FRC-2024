@@ -17,6 +17,16 @@ public class OI {
     public static BooleanSupplier driveRTSupplier = () -> getDriverRTPercent() > Constants.OperatorConstants.RIGHT_TRIGGER_DEADZONE;
     public static BooleanSupplier driverLTSupplier = () -> getDriverLTPercent() > Constants.OperatorConstants.LEFT_TRIGGER_DEADZONE;
 
+    public static BooleanSupplier povUp = () -> getPOV() == 0;
+    public static BooleanSupplier povRight = () -> getPOV() == 90;
+    public static BooleanSupplier povDown = () -> getPOV() == 180;
+    public static BooleanSupplier povLeft = () -> getPOV() == 270;
+
+    public static TriggerButton driverPOVUp = new TriggerButton(povUp);
+    public static TriggerButton driverPOVRight = new TriggerButton(povRight);
+    public static TriggerButton driverPOVDown = new TriggerButton(povDown);
+    public static TriggerButton driverPOVLeft = new TriggerButton(povLeft);
+    
     public static TriggerButton driverRT = new TriggerButton(driveRTSupplier);
     public static TriggerButton driverLT = new TriggerButton(driverLTSupplier);
 
