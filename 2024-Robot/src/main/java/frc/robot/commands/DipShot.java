@@ -114,11 +114,11 @@ public class DipShot extends Command {
 
     
 
-    this.pid.setSetPoint(this.targetPigeonAngleDegrees);
-    this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+    // this.pid.setSetPoint(this.targetPigeonAngleDegrees);
+    // this.pid.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
     // System.out.println("Target: " + this.targetPigeonAngleDegrees);
     // System.out.println("Current: " + Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
-    double turnResult = -pid.getResult();    
+    // double turnResult = -pid.getResult();    
 
     // this.drive.driveAutoAligned(turnResult);
 
@@ -166,8 +166,6 @@ public class DipShot extends Command {
     if (this.shooterDegrees > 90){
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime > this.shotPauseTime){
-      return true;
-    } else if (OI.getPOV() == -1){
       return true;
     } else {
       return false;

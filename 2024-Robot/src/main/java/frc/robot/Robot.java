@@ -365,7 +365,7 @@ public class Robot extends LoggedRobot {
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverMenuButton
         .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-    OI.driverY.whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
+    OI.driverY.whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
     /*
      * auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be
      * changed in Smartdashboard
