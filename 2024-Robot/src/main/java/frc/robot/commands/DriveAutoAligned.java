@@ -57,7 +57,7 @@ public class DriveAutoAligned extends CommandBase {
       setPoint -= 90;
     }
     // System.out.println("B: " + setPoint);
-    if (Math.abs(pigeonAngleDegrees - setPoint) > 180){
+    while (Math.abs(pigeonAngleDegrees - setPoint) > 180){
       // System.out.println("3");
       if (pigeonAngleDegrees > setPoint){
         // System.out.println("4");

@@ -253,7 +253,7 @@ public class PositionalLobShot extends Command {
       return true;
     } else if (this.hasShot && Timer.getFPGATimestamp() - this.shotTime >= this.shotPauseTime){
       return true;
-    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout + 1.0){
+    } else if (Timer.getFPGATimestamp() - this.startTime > this.timeout){
       return true;
     } else {
       return false;

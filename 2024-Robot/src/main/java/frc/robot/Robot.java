@@ -38,6 +38,7 @@ import frc.robot.commands.PolarAutoFollower;
 import frc.robot.commands.PositionalSpinUp;
 import frc.robot.commands.PresetAutoShoot;
 import frc.robot.commands.RunClimber;
+import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunFlywheel;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
@@ -357,14 +358,15 @@ public class Robot extends LoggedRobot {
 
     // Driver
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
+    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2)); // tests CAN and Limelights, blinks green if good and blinks yellow if bad
     OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
     OI.driverLT.whileTrue(new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     // OI.operatorLB.whileTrue(new LobShot(drive, shooter, feeder, peripherals, lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
     OI.driverA.whileTrue(new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
     OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     OI.driverPOVDown.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-    OI.driverPOVUp.whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
+    OI.driverPOVLeft.whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
+    
     /*
      * auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be
      * changed in Smartdashboard
@@ -385,14 +387,15 @@ public class Robot extends LoggedRobot {
     // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
     OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
     OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
-    OI.operatorViewButton
-        .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
+    // OI.operatorViewButton
+    //     .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
     // OI.operatorLB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
-    OI.operatorLT.whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
-    OI.operatorLJ.whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
+    OI.operatorLJ.whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
+    OI.operatorRJ.whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
     // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
     // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
-
+    OI.operatorLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity, Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
+    OI.operatorViewButton.whileTrue(new RunFeeder(feeder, -300));
   }
 
   @Override

@@ -111,7 +111,7 @@ public class DipShot extends Command {
   @Override
   public void execute() {
     double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
-
+    System.out.println("Running Dip Shot");
     
 
     // this.pid.setSetPoint(this.targetPigeonAngleDegrees);
