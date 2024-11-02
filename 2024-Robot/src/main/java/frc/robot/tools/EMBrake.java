@@ -5,10 +5,10 @@ import edu.wpi.first.wpilibj.Solenoid;
 
 /** Add your docs here. */
 public class EMBrake {
-    Solenoid solenoid;
+    Solenoid m_solenoid;
 
     public EMBrake(int portidx) {
-        solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, portidx);
+        m_solenoid = new Solenoid(PneumaticsModuleType.CTREPCM, portidx);
     }
 
     /**
@@ -18,7 +18,7 @@ public class EMBrake {
      * @return void
      */
     public void lock() {
-        solenoid.set(true);
+        m_solenoid.set(true);
     }
 
     /**
@@ -28,7 +28,7 @@ public class EMBrake {
      * @return void
      */
     public void unlock() {
-        solenoid.set(false);
+        m_solenoid.set(false);
     }
 
     /**
@@ -53,6 +53,6 @@ public class EMBrake {
      * @return true if the embrake is locked, false otherwise
      */
     public boolean isLocked() {
-        return solenoid.get();
+        return m_solenoid.get();
     }
 }

@@ -22,7 +22,7 @@ public class Feeder extends SubsystemBase {
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
       false, false);
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
-  public BooleanSupplier noteInRobot;
+  public BooleanSupplier m_noteInRobot;
 
   /**
    * Constructs a new instance of the Feeder class.
@@ -31,7 +31,7 @@ public class Feeder extends SubsystemBase {
    */
   public Feeder(TOF tof, Proximity proximity, BooleanSupplier noteInRobot) {
     setDefaultCommand(new FeederDefault(this, proximity));
-    this.noteInRobot = noteInRobot;
+    this.m_noteInRobot = noteInRobot;
   }
 
   /**

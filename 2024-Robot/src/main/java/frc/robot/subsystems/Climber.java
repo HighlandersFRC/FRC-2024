@@ -42,7 +42,7 @@ public class Climber extends SubsystemBase {
   private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
   DigitalInput elevatorLimitSwitch = new DigitalInput(0);
 
-  private double carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
+  private double m_carriageRotationSetpoint = Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG;
   private final PID rotationPID;
   private final double kP = 0.012;
   private final double kI = 0.0;
@@ -177,13 +177,6 @@ public class Climber extends SubsystemBase {
    * @param positionRotations The desired position of the elevator in rotations.
   */
   public void setElevatorPositionRotations(double positionRotations){
-    // if (positionRotations > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_TOP_POSITION_M));
-    // } else if (positionRotations < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M));
-    // } else {
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(positionRotations));
-    // }
     if (positionRotations == getElevatorPositionRotations()){
       setElevatorTorque(0.0, 0.0);
     } else {
@@ -251,7 +244,7 @@ public class Climber extends SubsystemBase {
    * @param degrees The desired angle for the carriage rotation in degrees.
   */
   public void setCarriageRotationDegrees(double degrees){
-    this.carriageRotationSetpoint = degrees;
+    this.m_carriageRotationSetpoint = degrees;
   }
 
   /**
@@ -261,7 +254,7 @@ public class Climber extends SubsystemBase {
   */
   public void setCarriageRotation(Constants.SetPoints.CarriageRotation carriageRotation){
     double degrees = carriageRotation.degrees;
-    this.carriageRotationSetpoint = degrees;
+    this.m_carriageRotationSetpoint = degrees;
   }
 
   /**
@@ -394,7 +387,7 @@ public class Climber extends SubsystemBase {
     // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
 
     //DO NOT REMOVE FOR COMP
-    this.rotationPID.setSetPoint(this.carriageRotationSetpoint);
+    this.rotationPID.setSetPoint(this.m_carriageRotationSetpoint);
     this.rotationPID.updatePID(getCarriageRotationDegrees());
     double result = this.rotationPID.getResult() + Math.sin(Math.toRadians(getCarriageRotationDegrees())) * this.kG;
     setCarriageRotationPercent(result);

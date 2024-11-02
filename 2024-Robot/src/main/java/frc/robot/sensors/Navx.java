@@ -4,25 +4,25 @@ import com.kauailabs.navx.frc.AHRS;
 
 
 public class Navx {
-  private double originalAngle;
-  private double originalYaw;
+  private double m_originalAngle;
+  private double m_originalYaw;
   private AHRS imu;
   /** Creates a new Navx. */
  
     public Navx(AHRS navx) {
       imu = navx;
-      originalAngle = imu.getAngle();
-      originalYaw = imu.getYaw();
+      m_originalAngle = imu.getAngle();
+      m_originalYaw = imu.getYaw();
   }
 
   public Navx(AHRS navx, Double startAngle) {
       imu = navx;
-      originalAngle = startAngle;
-      originalYaw = imu.getYaw();
+      m_originalAngle = startAngle;
+      m_originalYaw = imu.getYaw();
   }
 
   public double currentAngle() {
-        return -(imu.getAngle() - originalAngle);
+        return -(imu.getAngle() - m_originalAngle);
   }
 
   public double getRawAngle() {
@@ -50,7 +50,7 @@ public class Navx {
   }
 
   public double currentYaw() {
-      return -((imu.getYaw()) - originalYaw);
+      return -((imu.getYaw()) - m_originalYaw);
   }
 
   public boolean isMoving() {
@@ -86,15 +86,15 @@ public class Navx {
   }
 
   public void softResetAngle() {
-      originalAngle = imu.getAngle();
+      m_originalAngle = imu.getAngle();
   }
 
   public void setNavxAngle(double angle) {
-      originalAngle = originalAngle + angle;
+      m_originalAngle = m_originalAngle + angle;
   }
 
   public void softResetYaw() {
-      originalYaw = imu.getYaw();
+      m_originalYaw = imu.getYaw();
   }
 
   public double getAngleRate() {
