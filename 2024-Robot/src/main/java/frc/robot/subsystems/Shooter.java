@@ -1,19 +1,10 @@
 package frc.robot.subsystems;
 
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.CANcoderConfiguration;
 import com.ctre.phoenix6.configs.CurrentLimitsConfigs;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.DynamicMotionMagicDutyCycle;
-import com.ctre.phoenix6.controls.DynamicMotionMagicTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.DynamicMotionMagicVoltage;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicExpoTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionVoltage;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -62,7 +53,8 @@ public class Shooter extends SubsystemBase {
   private final double angleFalconProfileScalarFactor = 1;
 
   /**
-   * Constructs a new Shooter object and sets its default command to ShooterDefault.
+   * Constructs a new Shooter object and sets its default command to
+   * ShooterDefault.
    */
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
@@ -71,7 +63,8 @@ public class Shooter extends SubsystemBase {
   /**
    * Checks the status of shooter components connected via CAN.
    * 
-   * @return true if all components have their sticky faults cleared, false otherwise.
+   * @return true if all components have their sticky faults cleared, false
+   *         otherwise.
    */
   public boolean getShooterCAN() {
     if (angleEncoder.clearStickyFault_BadMagnet() == StatusCode.OK
@@ -83,7 +76,7 @@ public class Shooter extends SubsystemBase {
       return false;
   }
 
-  public void teleopInit(){
+  public void teleopInit() {
     this.flywheelFalconConfiguration.CurrentLimits.SupplyCurrentLimit = 60;
     this.flywheelFalconConfiguration.CurrentLimits.StatorCurrentLimit = 80;
   }
@@ -134,14 +127,15 @@ public class Shooter extends SubsystemBase {
     this.flywheelFalconFollower.getConfigurator().apply(this.flywheelFalconConfiguration);
     this.flywheelFalconFollower.setNeutralMode(NeutralModeValue.Coast);
 
-    // this.flywheelFalconFollower.setControl(new Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
+    // this.flywheelFalconFollower.setControl(new
+    // Follower(Constants.CANInfo.SHOOTER_FLYWHEEL_MASTER_MOTOR_ID, true));
 
-    if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1){
+    if (this.angleEncoder.getPosition().getValueAsDouble() < -0.1) {
       this.angleEncoder.setPosition(this.angleEncoder.getPosition().getValueAsDouble() + 1.0);
     }
   }
 
-  public void setCurrentLimitInAuto(double supply, double stator){
+  public void setCurrentLimitInAuto(double supply, double stator) {
     this.currentLimitsConfigs.StatorCurrentLimit = stator;
     this.currentLimitsConfigs.SupplyCurrentLimit = supply;
     this.currentLimitsConfigs.StatorCurrentLimitEnable = true;
@@ -151,7 +145,8 @@ public class Shooter extends SubsystemBase {
   }
 
   /**
-   * Set the state of the shooter, including elevation angle and flywheel velocity.
+   * Set the state of the shooter, including elevation angle and flywheel
+   * velocity.
    *
    * @param degrees The desired elevation angle of the shooter in degrees.
    * @param RPM     The desired flywheel velocity in revolutions per minute (RPM).
@@ -210,6 +205,7 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Set the shooter flywheel speed
+   * 
    * @param RPM - speed in rpm of the shooter
    */
   public void setFlywheelRPM(double RPM) {
@@ -221,6 +217,7 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Set the flywheel percent
+   * 
    * @param percent - percent output to the motor [-1, 1]
    */
   public void setFlywheelPercent(double percent) {
@@ -230,17 +227,20 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Set the flywheel to torque control
-   * @param current - Current to set the motor to (amps)
+   * 
+   * @param current    - Current to set the motor to (amps)
    * @param maxPercent - Maximum motor power [-1, 1]
    */
   public void setFlywheelTorque(double current, double maxPercent) {
     this.flywheelFalconMaster
         .setControl(this.flywheelTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
-     this.flywheelFalconFollower
+    this.flywheelFalconFollower
         .setControl(this.flywheelTorqueRequest.withOutput(-current).withMaxAbsDutyCycle(maxPercent));
   }
+
   /**
    * Set the shooter angle motor to a percent
+   * 
    * @param percent - Percent output [-1, 1]
    */
   public void setAnglePercent(double percent) {
@@ -249,7 +249,8 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Set the shooter angle to torque control
-   * @param current - Current to set the motor to (amps)
+   * 
+   * @param current    - Current to set the motor to (amps)
    * @param maxPercent - Maximum motor power [-1, 1]
    */
   public void setAngleTorque(double current, double maxPercent) {
@@ -258,6 +259,7 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Get the velocity of the Flywheel
+   * 
    * @return Flywheel Velocity (RPMs)
    */
   public double getFlywheelRPM() {
@@ -265,13 +267,14 @@ public class Shooter extends SubsystemBase {
         this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
-  public double getFlywheelMasterRPM(){
+  public double getFlywheelMasterRPM() {
     return Constants.RPSToRPM(
         this.flywheelFalconMaster.getVelocity().getValueAsDouble() / Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO);
   }
 
   /**
    * Get the velocity of the Flywheel Follower
+   * 
    * @return Flywheel Follower Velocity (RPMs)
    */
   public double getFlywheelFollowerRPM() {
@@ -281,13 +284,16 @@ public class Shooter extends SubsystemBase {
 
   /**
    * Get the shooter angle in rotations
+   * 
    * @return Shooter angle in rotations
    */
   public double getAngleRotations() {
     return this.angleFalcon.getPosition().getValueAsDouble() - Constants.SetPoints.SHOOTER_CENTER_OFFSET_ROT;
   }
+
   /**
    * Get the shooter angle in degrees
+   * 
    * @return Shooter angle in degrees
    */
   public double getAngleDegrees() {
@@ -310,48 +316,10 @@ public class Shooter extends SubsystemBase {
   public void teleopPeriodic() {
     SmartDashboard.putNumber("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Shooter angle", getAngleDegrees());
-    // Logger.recordOutput("Flywheel RPM", getFlywheelRPM());
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
-    // Logger.recordOutput("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
-    // SmartDashboard.putNumber("Flywheel %Out Master",
-    // this.flywheelVortexMaster.getAppliedOutput());
-    // SmartDashboard.putNumber("Flywheel %Out Follower",
-    // this.flywheelVortexFollower.getAppliedOutput());
-    // SmartDashboard.putNumber("Shooter Angle %",
-    // this.angleFalcon.getClosedLoopOutput().getValueAsDouble());
   }
 
   @Override
   public void periodic() {
-    // boolean shooterEncoder = false;
-    // boolean shooterAngle = false;
-
-    // double newPIDP = SmartDashboard.getNumber("Flywheel P value", getP());
-    // this.flywheelFalconConfiguration.Slot0.kP = newPIDP;
-
-    // double newPIDI = SmartDashboard.getNumber("Flywheel I value", getI());
-    // this.flywheelFalconConfiguration.Slot0.kI = newPIDI;
-
-    // double newPIDD = SmartDashboard.getNumber("Flywheel D value", getD());
-    // this.flywheelFalconConfiguration.Slot0.kD = newPIDD;
-
-    // if (angleEncoder.getSupplyVoltage().getValue() != 0) {
-    //   shooterEncoder = true;
-    // }
-    // if (angleFalcon.getSupplyVoltage().getValue() != 0) {
-    //   shooterAngle = true;
-    // }
-
-    // SmartDashboard.putNumber("Shooter Angle Deg", getAngleDegrees());
-    // SmartDashboard.getNumber("Flywheel P value", getP());
-    // SmartDashboard.getNumber("Flywheel I value", getI());
-    // SmartDashboard.getNumber("Flywheel D value", getD());
-    // SmartDashboard.putBoolean(" Shooter Encoder", shooterEncoder);
-    // Logger.recordOutput("Shooter Angle", getAngleDegrees());
-    // Logger.recordOutput("Shooter Encoder Online?", shooterEncoder);
-    // SmartDashboard.putBoolean(" Shooter Angle Motor", shooterAngle);
-    // Logger.recordOutput("Shooter Angle Motor Online?", shooterEncoder);
-    // Logger.recordOutput("Shooter Angle Setpoint", angleFalcon.getClosedLoopReference().getValueAsDouble());
-    // Logger.recordOutput("Shooter Velocity Setpoint", flywheelFalconMaster.getClosedLoopReference().getValueAsDouble());
   }
 }

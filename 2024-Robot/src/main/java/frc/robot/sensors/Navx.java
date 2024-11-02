@@ -2,7 +2,6 @@ package frc.robot.sensors;
 
 import com.kauailabs.navx.frc.AHRS;
 
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 
 public class Navx {
   private double originalAngle;

@@ -4,17 +4,9 @@
 
 package frc.robot.subsystems;
 
-import java.lang.annotation.Documented;
-
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
-import com.ctre.phoenix6.controls.Follower;
-import com.ctre.phoenix6.controls.MotionMagicTorqueCurrentFOC;
-import com.ctre.phoenix6.controls.PositionTorqueCurrentFOC;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
-import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.CANcoder;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
@@ -22,7 +14,6 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.REVLibError;
 import com.revrobotics.CANSparkBase.IdleMode;
-import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
@@ -30,21 +21,17 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
-import frc.robot.commands.defaults.IntakeDefault;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
-import frc.robot.tools.EMBrake;
 import frc.robot.tools.controlloops.PID;
 
 public class Climber extends SubsystemBase {
-  private Lights lights;
 
   private final TalonFX elevatorFalconFollower = new TalonFX(Constants.CANInfo.ELEVATOR_FOLLOWER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconFollowerConfiguration = new TalonFXConfiguration();
   
   private final TalonFX elevatorFalconMaster = new TalonFX(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconMasterConfiguration = new TalonFXConfiguration();
-  private final MotionMagicTorqueCurrentFOC elevatorFalconPositionRequest = new MotionMagicTorqueCurrentFOC(0, 0, 0, false, false, false);
   private final TorqueCurrentFOC elevatorFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final TalonFX trapRollerFalcon = new TalonFX(Constants.CANInfo.TRAP_ROLLER_MOTOR_ID);
@@ -52,7 +39,6 @@ public class Climber extends SubsystemBase {
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
   private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
-  private final RelativeEncoder carriageEncoder;
   private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
   DigitalInput elevatorLimitSwitch = new DigitalInput(0);
 
@@ -81,7 +67,6 @@ public class Climber extends SubsystemBase {
    * @param tof The Time-of-Flight (TOF) sensor used by the Climber.
    */
   public Climber(Lights lights, TOF tof, Proximity proximity) {
-    this.lights = lights;
     setDefaultCommand(new ClimberDefault(this, proximity));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
@@ -89,7 +74,6 @@ public class Climber extends SubsystemBase {
     this.rotationPID.setMinOutput(-1);
     this.rotationPID.setSetPoint(Constants.SetPoints.CARRIAGE_BOTTOM_ROTATION_DEG);
     this.rotationPID.updatePID(getCarriageRotations());
-    carriageEncoder = carriageRotationNeo.getEncoder();
   }
 
   public void init(){

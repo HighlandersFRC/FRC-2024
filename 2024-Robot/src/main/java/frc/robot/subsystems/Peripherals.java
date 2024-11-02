@@ -5,30 +5,21 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.littletonrobotics.junction.Logger;
-
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
-import com.kauailabs.navx.frc.AHRS;
-
-import edu.wpi.first.networktables.ConnectionInfo;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.networktables.NetworkTableInstance;
-import edu.wpi.first.wpilibj.PowerDistribution;
-import edu.wpi.first.wpilibj.PowerDistribution.ModuleType;
-import edu.wpi.first.wpilibj.SPI.Port;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
-import frc.robot.OI;
 import frc.robot.commands.defaults.PeripheralsDefault;
 import frc.robot.tools.math.Vector;
 
 public class Peripherals extends SubsystemBase {
   private NetworkTable backCam = NetworkTableInstance.getDefault().getTable("limelight-back");
   private NetworkTableEntry backCamJSON = backCam.getEntry("json");
-  private NetworkTableEntry backCamTrack = backCam.getEntry("tv");
+  // private NetworkTableEntry backCamTrack = backCam.getEntry("tv");
   private NetworkTable frontCam = NetworkTableInstance.getDefault().getTable("limelight-front");
   private NetworkTableEntry frontCamJSON = frontCam.getEntry("json");
   private NetworkTableEntry frontCamTy = frontCam.getEntry("ty");
@@ -36,11 +27,10 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry frontCamTl = frontCam.getEntry("tl");
   private NetworkTableEntry frontCamCl = frontCam.getEntry("cl");
   private NetworkTableEntry frontCamHB = frontCam.getEntry("hb");
-  private NetworkTableEntry frontCamIDs = frontCam.getEntry("tid");
-  private NetworkTableEntry frontCamIDSet = frontCam.getEntry("priorityid");
+  // private NetworkTableEntry frontCamIDSet = frontCam.getEntry("priorityid");
   private NetworkTableEntry frontCamRobotTagPose = frontCam.getEntry("botpose_targetspace");
   private NetworkTableEntry frontCamRobotFieldPose = frontCam.getEntry("botpose_wpiblue");
-  private NetworkTableEntry backCamTx = backCam.getEntry("tx");  
+  private NetworkTableEntry backCamTx = backCam.getEntry("tx");
   private NetworkTableEntry backCamTy = backCam.getEntry("ty");
   private NetworkTableEntry backCamConfidence = backCam.getEntry("conf");
   private NetworkTable leftCam = NetworkTableInstance.getDefault().getTable("limelight-left");
@@ -55,7 +45,6 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
   private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
-  private String fieldSide = "none";
 
   private double[] noTrackLimelightArray = new double[6];
 
@@ -65,18 +54,6 @@ public class Peripherals extends SubsystemBase {
   public Peripherals() {
   }
 
-  // public void setLimelightLights(String limelight, int ledMode) {
-  //   if (limelight == "left") {
-  //     leftCam.getEntry("ledMode").setNumber(ledMode);
-  //   } else if (limelight == "right") {
-  //     rightCam.getEntry("ledMode").setNumber(ledMode);
-  //   } else if (limelight == "back") {
-  //     backCam.getEntry("ledMode").setNumber(ledMode);
-  //   } else if (limelight == "front") {
-  //     frontCam.getEntry("ledMode").setNumber(ledMode);
-  //   }
-  // }
-
   /**
    * Checks the connectivity of Limelight devices.
    * 
@@ -84,17 +61,9 @@ public class Peripherals extends SubsystemBase {
    */
   public boolean limelightsConnected() {
     boolean reachable = true;
-    // try {
-    //   InetAddress address3 = InetAddress.getByName("10.44.99.43"); // back limelight ip address
-    //   if(!address3.isReachable(100)) {
-    //     reachable = false;
-    //   }
-    // } catch (Exception e) {
-    //   System.out.println("What an absolute L piece of code: " + e);
-    // }
     try {
       InetAddress address4 = InetAddress.getByName("10.44.99.44"); // front limelight ip address
-      if(!address4.isReachable(100)) {
+      if (!address4.isReachable(100)) {
         reachable = false;
       }
     } catch (Exception e) {
@@ -106,37 +75,40 @@ public class Peripherals extends SubsystemBase {
   }
 
   /**
-   * Initializes the peripherals.
+   * Initializes the Peripherals subsystem.
+   * 
+   * This method sets up the IMU configuration, mount pose, and zeroes the IMU.
+   * It also applies the default command to the Peripherals subsystem.
    */
-  public void setFieldSide(String fieldSide){
-    this.fieldSide = fieldSide;
-    // if (fieldSide == "blue"){
-    //   // System.out.println("blue side");
-    //   frontCamIDSet.setInteger(7);
-    // } else {
-    //   // System.out.println("red side");
-    //   frontCamIDSet.setInteger(4);
-    // }
-  }
   public void init() {
+    // Set the mount pose configuration for the IMU
     pigeonConfig.MountPose.MountPosePitch = -85.28813934326172;
     pigeonConfig.MountPose.MountPoseRoll = 32.49883270263672;
     pigeonConfig.MountPose.MountPoseYaw = 0.1901332437992096;
+
+    // Apply the IMU configuration
     pigeon.getConfigurator().apply(pigeonConfig);
+
+    // Zero the IMU angle
     zeroPigeon();
+
+    // Initialize the array for no track data
     noTrackLimelightArray[0] = 0;
     noTrackLimelightArray[1] = 0;
     noTrackLimelightArray[2] = 0;
     noTrackLimelightArray[3] = 0;
     noTrackLimelightArray[4] = 0;
     noTrackLimelightArray[5] = 0;
+
+    // Set the default command for the Peripherals subsystem
     setDefaultCommand(new PeripheralsDefault(this));
   }
 
   /**
    * Checks if the back camera is tracking a target.
    *
-   * @return {@code true} if the back camera is tracking a target, {@code false} otherwise.
+   * @return {@code true} if the back camera is tracking a target, {@code false}
+   *         otherwise.
    */
   public boolean getBackCamTrack() {
     if (backCam.getEntry("tv").getInteger(0) == 1) {
@@ -147,50 +119,37 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the Y-Axis Rotation of the robot based on the front camera
+   * 
    * @return Y-Axis rotation in radians
    */
   public double getFrontCamTargetTy() {
-    // JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
-    // if (results.isNull("Fiducial")) {
-    //   return 100;
-    // }
-    // JSONArray fiducials = results.getJSONArray("Fiducial");
-    // for (int i = 0; i < fiducials.length(); i++) {
-    //   int id = ((JSONObject) fiducials.get(i)).getInt("fID");
-    //   if (id == 7 || id == 4) {
-    //     return ((JSONObject) fiducials.get(i)).getDouble("ty");
-    //   }
-    // }
-    // return 100;
     return frontCamTy.getDouble(100);
   }
 
   /**
    * Retrieves the X-Axis Rotation of the robot based on the front camera
+   * 
    * @return X-Axis rotation in radians
    */
   public double getFrontCamTargetTx() {
-    // JSONObject results = new JSONObject(this.frontCamJSON.getString("{Results: {}}")).getJSONObject("Results");
-    // if (results.isNull("Fiducial")) {
-    //   return 100;
-    // }
-    // JSONArray fiducials = results.getJSONArray("Fiducial");
-    // for (int i = 0; i < fiducials.length(); i++) {
-    //   int id = ((JSONObject) fiducials.get(i)).getInt("fID");
-    //   if (id == 7 || id == 4) {
-    //     return ((JSONObject) fiducials.get(i)).getDouble("tx");
-    //   }
-    // }
-    // return 100;
     return frontCamTx.getDouble(100);
   }
 
-  public double getFrontCamHB(){
+  /**
+   * Retrieves the horizontal distance from an april tag based on the front
+   * camera.
+   *
+   * @return The horizontal distance to the april tag in meters.
+   *         If no target is detected or the distance is not available, the
+   *         function returns -1.
+   */
+  public double getFrontCamHB() {
     return frontCamHB.getDouble(-1);
   }
 
   /**
    * Retrieves all fiducial IDs of the front camera
+   * 
    * @return ArrayList of fiducial IDs
    */
   public ArrayList<Integer> getFrontCamIDs() {
@@ -206,12 +165,20 @@ public class Peripherals extends SubsystemBase {
     return ids;
   }
 
+  /**
+   * Retrieves the ID of the target detected by the front camera.
+   * 
+   * @return The ID of the target detected by the front camera.
+   *         The ID is a double value. If no target is detected, the function
+   *         returns 0.
+   */
   public double getFrontCamID() {
     return NetworkTableInstance.getDefault().getTable("limelight-front").getEntry("tid").getDouble(0);
   }
 
   /**
    * Retrieves the latencies of the front camera
+   * 
    * @return JSONObject {"tl": target latency, "cl": camera latency}
    */
   public JSONObject getFrontCamLatencies() {
@@ -221,16 +188,40 @@ public class Peripherals extends SubsystemBase {
     return latencies;
   }
 
+  /**
+   * Retrieves the latency of the front camera.
+   * 
+   * @return The latency of the front camera in milliseconds.
+   *         The latency is calculated as the sum of the target latency (tl) and
+   *         the camera latency (cl).
+   *         If either of these values is not available, the function returns -1.
+   */
   public double getFrontCameraLatency() {
     double latency = frontCamTl.getDouble(-1) + frontCamCl.getDouble(-1);
     return latency;
   }
 
+  /**
+   * Retrieves the latency of the left camera.
+   * 
+   * @return The latency of the left camera in milliseconds.
+   *         The latency is calculated as the sum of the target latency (tl) and
+   *         the camera latency (cl).
+   *         If either of these values is not available, the function returns -1.
+   */
   public double getLeftCameraLatency() {
     double latency = leftCamTl.getDouble(-1) + leftCamCl.getDouble(-1);
     return latency;
   }
 
+  /**
+   * Retrieves the latency of the right camera.
+   * 
+   * @return The latency of the right camera in milliseconds.
+   *         The latency is calculated as the sum of the target latency (tl) and
+   *         the camera latency (cl).
+   *         If either of these values is not available, the function returns -1.
+   */
   public double getRightCameraLatency() {
     double latency = rightCamTl.getDouble(-1) + rightCamCl.getDouble(-1);
     return latency;
@@ -238,23 +229,40 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the X-Axis Rotation of the robot based on the back camera
+   * 
    * @return X-Axis rotation in radians
    */
   public double getBackCamTargetTx() {
     return backCamTx.getDouble(0.0);
   }
 
-  public double getBackCamTargetTy(){
+  /**
+   * Retrieves the vertical distance from an april tag based on the back camera.
+   * 
+   * @return The vertical distance to the april tag in meters.
+   *         If no target is detected, the function returns 100 meters.
+   */
+  public double getBackCamTargetTy() {
     return backCamTy.getDouble(100);
   }
 
-  public double getBackCamTargetConfidence(){
+  /**
+   * Retrieves the confidence of the target detected by the back camera.
+   * 
+   * @return The confidence of the target detected by the back camera.
+   *         The confidence value is a double between 0.0 and 1.0, inclusive.
+   *         A value of 1.0 indicates a high confidence in the detection, while a
+   *         value of 0.0 indicates a low confidence.
+   *         If no target is detected, the function returns 0.0.
+   */
+  public double getBackCamTargetConfidence() {
     return backCamConfidence.getDouble(0.0);
   }
 
   /**
    * Sets the pipeline of the front camera
-   * @param pipeline - index to set the pipeline to 
+   * 
+   * @param pipeline - index to set the pipeline to
    */
   public void setFrontCamPipeline(int pipeline) {
     frontCam.getEntry("pipeline").setNumber(pipeline);
@@ -262,7 +270,8 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Sets the pipeline of the back camera
-   * @param pipeline - index to set the pipeline to 
+   * 
+   * @param pipeline - index to set the pipeline to
    */
   public void setBackCamPipeline(int pipeline) {
     backCam.getEntry("pipeline").setNumber(pipeline);
@@ -270,7 +279,8 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Sets the pipeline of the left camera
-   * @param pipeline - index to set the pipeline to 
+   * 
+   * @param pipeline - index to set the pipeline to
    */
   public void setLeftCamPipeline(int pipeline) {
     leftCam.getEntry("pipeline").setNumber(pipeline);
@@ -278,7 +288,8 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Sets the pipeline of the right camera
-   * @param pipeline - index to set the pipeline to 
+   * 
+   * @param pipeline - index to set the pipeline to
    */
   public void setRightCamPipeline(int pipeline) {
     rightCam.getEntry("pipeline").setNumber(pipeline);
@@ -286,6 +297,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Gets pipeline index from the front camera
+   * 
    * @return index of current pipeline
    */
   public int getFrontCamPipeline() {
@@ -294,6 +306,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Gets pipeline index from the back camera
+   * 
    * @return index of current pipeline
    */
   public int getBackCamPipeline() {
@@ -302,6 +315,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Gets pipeline index from the left camera
+   * 
    * @return index of current pipeline
    */
   public int getLeftCamPipeline() {
@@ -310,6 +324,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Gets pipeline index from the right camera
+   * 
    * @return index of current pipeline
    */
   public int getRightCamPipeline() {
@@ -325,6 +340,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Sets the angle of the IMU
+   * 
    * @param degrees - Angle to be set to the IMU
    */
   public void setPigeonAngle(double degrees) {
@@ -333,22 +349,40 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the yaw of the robot
+   * 
    * @return Yaw in degrees
    */
   public double getPigeonAngle() {
     return pigeon.getYaw().getValueAsDouble();
   }
 
+  /**
+   * Retrieves the absolute angular velocity of the IMU's Z-axis in device
+   * coordinates.
+   *
+   * @return The absolute angular velocity of the IMU's Z-axis in device
+   *         coordinates.
+   *         The value is in radians per second.
+   */
   public double getPigeonAngularVelocity() {
     return Math.abs(pigeon.getAngularVelocityZDevice().getValueAsDouble());
   }
 
+  /**
+   * Retrieves the absolute angular velocity of the IMU's Z-axis in world
+   * coordinates.
+   *
+   * @return The absolute angular velocity of the IMU's Z-axis in world
+   *         coordinates.
+   *         The value is in radians per second.
+   */
   public double getPigeonAngularVelocityW() {
     return pigeon.getAngularVelocityZWorld().getValueAsDouble();
   }
 
   /**
    * Retrieves the acceleration vector of the robot
+   * 
    * @return Current acceleration vector of the robot
    */
   public Vector getPigeonLinAccel() {
@@ -360,6 +394,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the horizontal distance from an april tag based on the front camera
+   * 
    * @return Horizontal distance to april tag
    */
   public double getFrontHorizontalDistToTag() {
@@ -369,6 +404,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the horizontal distance from an april tag based on the left camera
+   * 
    * @return Horizontal distance to april tag
    */
   public double getLeftHorizontalDistToTag() {
@@ -378,6 +414,7 @@ public class Peripherals extends SubsystemBase {
 
   /**
    * Retrieves the horizontal distance from an april tag based on the right camera
+   * 
    * @return Horizontal distance to april tag
    */
   public double getRightHorizontalDistToTag() {
@@ -388,7 +425,8 @@ public class Peripherals extends SubsystemBase {
   /**
    * Retrieves the robot's position based on the front camera image.
    *
-   * @return A JSONArray containing the robot's position data (X and Y coordinates), 
+   * @return A JSONArray containing the robot's position data (X and Y
+   *         coordinates),
    *         or null if the data is unavailable.
    */
   public JSONArray getFrontCamBasedPosition() {
@@ -422,7 +460,8 @@ public class Peripherals extends SubsystemBase {
   /**
    * Retrieves the robot's position based on the raw front camera image.
    *
-   * @return A JSONArray containing the robot's position data (X and Y coordinates), 
+   * @return A JSONArray containing the robot's position data (X and Y
+   *         coordinates),
    *         or null if the data is unavailable.
    */
   public JSONArray getRawFrontCamBasedPosition() {
@@ -448,7 +487,7 @@ public class Peripherals extends SubsystemBase {
     return fieldPosArray;
   }
 
-  public JSONArray getLeftCamBasedPosition(){
+  public JSONArray getLeftCamBasedPosition() {
     JSONArray fieldPosArray = new JSONArray();
     double[] result = new double[7];
     double tagDist = 99999;
@@ -461,24 +500,26 @@ public class Peripherals extends SubsystemBase {
     } catch (Exception e) {
       return noTrack;
     }
-    if (tagDist > 2.25 || tagDist == 0){
+    if (tagDist > 2.25 || tagDist == 0) {
       return noTrack;
     }
-    if (result[0] == 0 || result[1] == 0){
+    if (result[0] == 0 || result[1] == 0) {
       return noTrack;
     }
     double fieldX = result[0];
     double fieldY = result[1];
     fieldPosArray.put(0, fieldX);
     fieldPosArray.put(1, fieldY);
-    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " +
+    // tagDist);
     return fieldPosArray;
   }
 
   /**
    * Retrieves the robot's position based on the raw left camera image.
    *
-   * @return A JSONArray containing the robot's position data (X and Y coordinates), 
+   * @return A JSONArray containing the robot's position data (X and Y
+   *         coordinates),
    *         or null if the data is unavailable.
    */
   public JSONArray getRawLeftCamBasedPosition() {
@@ -504,7 +545,16 @@ public class Peripherals extends SubsystemBase {
     return fieldPosArray;
   }
 
-  public JSONArray getRightCamBasedPosition(){
+  /**
+   * Retrieves the robot's position based on the raw right camera image.
+   *
+   * @return A JSONArray containing the robot's position data (X and Y
+   *         coordinates),
+   *         or null if the data is unavailable.
+   *         The X and Y coordinates represent the position of the robot in the
+   *         field.
+   */
+  public JSONArray getRightCamBasedPosition() {
     JSONArray fieldPosArray = new JSONArray();
     double[] result = new double[7];
     double tagDist = 99999;
@@ -517,25 +567,26 @@ public class Peripherals extends SubsystemBase {
     } catch (Exception e) {
       return noTrack;
     }
-    if (tagDist > 2.25 || tagDist == 0){
+    if (tagDist > 2.25 || tagDist == 0) {
       return noTrack;
     }
-    if (result[0] == 0 || result[1] == 0){
+    if (result[0] == 0 || result[1] == 0) {
       return noTrack;
     }
     double fieldX = result[0];
     double fieldY = result[1];
     fieldPosArray.put(0, fieldX);
     fieldPosArray.put(1, fieldY);
-    // System.out.println("Back X: " + fieldX + " Y: " + fieldY + " Dist: " + tagDist);
+    // System.out.println("Right X: " + fieldX + " Y: " + fieldY + " Dist: " +
+    // tagDist);
     return fieldPosArray;
   }
-
 
   /**
    * Retrieves the robot's position based on the raw right camera image.
    *
-   * @return A JSONArray containing the robot's position data (X and Y coordinates), 
+   * @return A JSONArray containing the robot's position data (X and Y
+   *         coordinates),
    *         or null if the data is unavailable.
    */
   public JSONArray getRawRightCamBasedPosition() {
@@ -591,22 +642,6 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    // if (OI.isBlueSide()) {
-    //   setFieldSide("blue");
-    // } else {
-    //   setFieldSide("red");
-    // }
-    // Logger.recordOutput("Camera Measurements", getCameraMeasurements().toString());
-    // Logger.recordOutput("Pigeon Angle", getPigeonAngle());
-    // Vector accelVector = getPigeonLinAccel();
-    // Logger.recordOutput("Pigeon Acceleration Vector Magnitude", accelVector.magnitude());
-    // Logger.recordOutput("Pigeon Acceleration Vector Magnitude", Math.atan2(accelVector.getI(), accelVector.getJ()));
-
-    // ConnectionInfo[] info = NetworkTableInstance.getDefault().getConnections();
-    // for (ConnectionInfo i : info){
-    // System.out.println(i.remote_ip);
-    // System.out.println(i.remote_id);
-    // }
     SmartDashboard.putNumber("ty", getFrontCamTargetTy());
     SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
     SmartDashboard.putNumber("device", getPigeonAngularVelocity());

@@ -9,61 +9,62 @@ import org.littletonrobotics.junction.Logger;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
-  public static final String[] paths = new String[]{
-    "4 Far.polarauto",
-    "4 Far 123.polarauto",
-    "4 Far 231.polarauto",
-    "5 piece.polarauto",
-    "3 amp.polarauto",
-    "3 amp 231.polarauto",
-    "1 Exit.polarauto",
-    "Middle Note.polarauto",
-    "Far 321.polarauto"
+  public static final String[] paths = new String[] {
+      "4 Far.polarauto",
+      "4 Far 123.polarauto",
+      "4 Far 231.polarauto",
+      "5 piece.polarauto",
+      "3 amp.polarauto",
+      "3 amp 231.polarauto",
+      "1 Exit.polarauto",
+      "Middle Note.polarauto",
+      "Far 321.polarauto"
   };
 
-  public static int getSelectedPathIndex(){
-    if (!OI.autoChooser.getRawButton(7)){
-      if (OI.autoChooser.getRawButton(1)){
+  public static int getSelectedPathIndex() {
+    if (!OI.autoChooser.getRawButton(7)) {
+      if (OI.autoChooser.getRawButton(1)) {
         return 3;
       }
-      if (OI.autoChooser.getRawButton(2)){
+      if (OI.autoChooser.getRawButton(2)) {
         return 2;
       }
-      if (OI.autoChooser.getRawButton(3)){
+      if (OI.autoChooser.getRawButton(3)) {
         return 0;
       }
-      if (OI.autoChooser.getRawButton(4)){
+      if (OI.autoChooser.getRawButton(4)) {
         return 1;
       }
-      if (OI.autoChooser.getRawButton(5)){
+      if (OI.autoChooser.getRawButton(5)) {
         return 4;
       }
     } else {
-      if (OI.autoChooser.getRawButton(1)){
+      if (OI.autoChooser.getRawButton(1)) {
         return 5;
       }
-      if (OI.autoChooser.getRawButton(2)){
+      if (OI.autoChooser.getRawButton(2)) {
         return 6;
       }
-      if (OI.autoChooser.getRawButton(3)){
+      if (OI.autoChooser.getRawButton(3)) {
         return 7;
       }
-      if (OI.autoChooser.getRawButton(4)){
+      if (OI.autoChooser.getRawButton(4)) {
         return 8;
       }
     }
     return -1;
   }
 
-  public static void periodic(){
+  public static void periodic() {
     int index = getSelectedPathIndex();
-    if (index == -1){
+    if (index == -1) {
       Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
       Logger.recordOutput("Selected Auto", paths[index]);
     }
   }
-  //Physical constants (e.g. field and robot dimensions)
+
+  // Physical constants (e.g. field and robot dimensions)
   public static final class Physical {
     public static final double FIELD_WIDTH = 8.2;
     public static final double FIELD_LENGTH = 16.63;
@@ -74,7 +75,7 @@ public final class Constants {
 
     public static final double SPEAKER_DEPTH = inchesToMeters(18.11);
 
-    //measured on blue side only
+    // measured on blue side only
     public static final double SPEAKER_X = 0;
     public static final double SPEAKER_Y = inchesToMeters(220.347);
     public static final double LOB_SHOT_TARGET_X = inchesToMeters(90);
@@ -97,41 +98,45 @@ public final class Constants {
     public static final double GRAVITY_ACCEL_MS2 = 9.806;
 
     /**
-     * Converts flywheel RPM (Revolutions Per Minute) to linear speed in meters per second (m/s).
+     * Converts flywheel RPM (Revolutions Per Minute) to linear speed in meters per
+     * second (m/s).
      *
      * @param rpm The flywheel speed in RPM.
      * @return The equivalent linear speed in meters per second (m/s).
      */
-    public static double flywheelRPMToNoteMPS(double rpm){
+    public static double flywheelRPMToNoteMPS(double rpm) {
       return rpm * (1.0 / 60.0) * FLYWHEEL_CIRCUMFERENCE_METERS;
     }
+
     /**
-     * Converts linear speed in meters per second (m/s) to flywheel RPM (Revolutions Per Minute).
+     * Converts linear speed in meters per second (m/s) to flywheel RPM (Revolutions
+     * Per Minute).
      *
      * @param mps The linear speed in meters per second (m/s).
      * @return The equivalent flywheel speed in RPM.
      */
-    public static double noteMPSToFlywheelRPM(double mps){
+    public static double noteMPSToFlywheelRPM(double mps) {
       return (mps / FLYWHEEL_CIRCUMFERENCE_METERS) * 60.0;
     }
   }
 
-  //Subsystem setpoint constants
+  // Subsystem setpoint constants
   public static final class SetPoints {
-    //drive
-    //how far forward to look when the linear radius and the angular radius equal their constants
+    // drive
+    // how far forward to look when the linear radius and the angular radius equal
+    // their constants
     public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
     public static final double AUTONOMOUS_END_ACCURACY = 0.25;
     public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
     public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
-    //intake
+    // intake
     // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_UP_ANGLE_ROT = 0;
     public static final double INTAKE_DOWN_ANGLE_DEG = rotationsToDegrees(INTAKE_DOWN_ANGLE_ROT);
     public static final double INTAKE_UP_ANGLE_DEG = rotationsToDegrees(INTAKE_UP_ANGLE_ROT);
 
-    //Intake up and down positions
+    // Intake up and down positions
     public enum IntakePosition {
       kDOWN(INTAKE_DOWN_ANGLE_DEG, INTAKE_DOWN_ANGLE_ROT),
       kUP(INTAKE_UP_ANGLE_DEG, INTAKE_UP_ANGLE_ROT);
@@ -139,13 +144,13 @@ public final class Constants {
       public final double degrees;
       public final double rotations;
 
-      private IntakePosition(double degrees, double rotations){
+      private IntakePosition(double degrees, double rotations) {
         this.degrees = degrees;
         this.rotations = rotations;
       }
     }
 
-    //shooter
+    // shooter
     public static final double SHOOTER_CENTER_OFFSET_DEG = 0.0;
     public static final double SHOOTER_CENTER_OFFSET_ROT = degreesToRotations(SHOOTER_CENTER_OFFSET_DEG);
     public static final double SHOOTER_DOWN_ANGLE_ROT = 0.0;
@@ -154,94 +159,96 @@ public final class Constants {
     public static final double SHOOTER_DOWN_ANGLE_DEG = rotationsToDegrees(SHOOTER_DOWN_ANGLE_ROT);
     public static final double SHOOTER_MAX_ANGLE_DEG = rotationsToDegrees(SHOOTER_MAX_ANGLE_ROT);
 
-    //bumper ty on comp field: 8.29 blue, 8.04 red
+    // bumper ty on comp field: 8.29 blue, 8.04 red
 
-    //ty at wired red practice field: 8.13
-    //ty: -12.55, current offset: 2.5
-    //flip getInterpolated value edge setpoints
-    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood angle error (deg), allowed robot angle error(deg)}
+    // ty at wired red practice field: 8.13
+    // ty: -12.55, current offset: 2.5
+    // flip getInterpolated value edge setpoints
+    // {distance(meters), target angle(deg), hood angle(deg), RPM, allowed hood
+    // angle error (deg), allowed robot angle error(deg)}
     public static final double LIMELIGHT_ANGLE_OFFSET = 2.5;
     public static final double DISTANCE_OFFSET = 0.0;
-    public static final double [][] SHOOTING_LOOKUP_TABLE = {
-      {1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 5, 2},
-      {1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 4, 2},
-      {1.762 + DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 2, 2},
-      {2.172 + DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 1.5, 2},
-      {2.575 + DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 1, 2},
-      {2.927 + DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 1, 2},
-      {3.479 + DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 1, 1.5},
-      {3.846 + DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 0.75, 1.5},
-      {4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.75, 1.5},
-      {4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.75, 1.5},
-      {5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.0, 6500, 0.5, 1.5},
-      {5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.0, 6750, 0.5, 1.5},
-      {5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24, 6825, 0.5, 1.5},
-      {5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23, 7000, 0.5, 1.2},
-      {6.06 + DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2},
-      {6.40 + DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2},
-      {6.9 + DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7750, 0.5, 1.2},
-      {7.2 + DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 20.5, 8000, 0.5, 1.2},
-      {7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 20.65, 8000, 0.5, 1.2}
+    public static final double[][] SHOOTING_LOOKUP_TABLE = {
+        { 1.295 + DISTANCE_OFFSET, 7.83 + LIMELIGHT_ANGLE_OFFSET, 60, 4500, 5, 2 },
+        { 1.486 + DISTANCE_OFFSET, 4.78 + LIMELIGHT_ANGLE_OFFSET, 56, 4500, 4, 2 },
+        { 1.762 + DISTANCE_OFFSET, 1.98 + LIMELIGHT_ANGLE_OFFSET, 53, 4750, 2, 2 },
+        { 2.172 + DISTANCE_OFFSET, -2.05 + LIMELIGHT_ANGLE_OFFSET, 47, 5000, 1.5, 2 },
+        { 2.575 + DISTANCE_OFFSET, -4.39 + LIMELIGHT_ANGLE_OFFSET, 43, 5125, 1, 2 },
+        { 2.927 + DISTANCE_OFFSET, -6.57 + LIMELIGHT_ANGLE_OFFSET, 37.5, 5250, 1, 2 },
+        { 3.479 + DISTANCE_OFFSET, -8.40 + LIMELIGHT_ANGLE_OFFSET, 34.5, 5500, 1, 1.5 },
+        { 3.846 + DISTANCE_OFFSET, -9.49 + LIMELIGHT_ANGLE_OFFSET, 31.9, 5750, 0.75, 1.5 },
+        { 4.247 + DISTANCE_OFFSET, -10.34 + LIMELIGHT_ANGLE_OFFSET, 28.7, 6000, 0.75, 1.5 },
+        { 4.743 + DISTANCE_OFFSET, -11.08 + LIMELIGHT_ANGLE_OFFSET, 27.3, 6250, 0.75, 1.5 },
+        { 5.293 + DISTANCE_OFFSET, -11.75 + LIMELIGHT_ANGLE_OFFSET, 26.0, 6500, 0.5, 1.5 },
+        { 5.420 + DISTANCE_OFFSET, -12.22 + LIMELIGHT_ANGLE_OFFSET, 25.0, 6750, 0.5, 1.5 },
+        { 5.596 + DISTANCE_OFFSET, -12.70 + LIMELIGHT_ANGLE_OFFSET, 24, 6825, 0.5, 1.5 },
+        { 5.755 + DISTANCE_OFFSET, -13.48 + LIMELIGHT_ANGLE_OFFSET, 23, 7000, 0.5, 1.2 },
+        { 6.06 + DISTANCE_OFFSET, -14.02 + LIMELIGHT_ANGLE_OFFSET, 22, 7500, 0.5, 1.2 },
+        { 6.40 + DISTANCE_OFFSET, -14.29 + LIMELIGHT_ANGLE_OFFSET, 21, 7500, 0.5, 1.2 },
+        { 6.9 + DISTANCE_OFFSET, -14.47 + LIMELIGHT_ANGLE_OFFSET, 21.25, 7750, 0.5, 1.2 },
+        { 7.2 + DISTANCE_OFFSET, -14.56 + LIMELIGHT_ANGLE_OFFSET, 20.5, 8000, 0.5, 1.2 },
+        { 7.4 + DISTANCE_OFFSET, -14.68 + LIMELIGHT_ANGLE_OFFSET, 20.65, 8000, 0.5, 1.2 }
     };
 
     // {distance(meters), hood angle(deg), RPM}
     public static final double LOB_SHOT_DISTANCE_OFFSET = 0.0;
-    public static final double [][] LOB_SHOT_LOOKUP_TABLE = {
-      {4.445,67.63,4241.55},
-      {4.55,67.16,4256.21},
-      {4.65,66.71,4270.43},
-      {4.75,66.26,4284.92},
-      {4.85,65.82,4299.67},
-      {4.95,65.38,4314.67},
-      {5.05,64.94,4329.92},
-      {5.15,64.51,4345.43},
-      {5.25,64.08,4361.18},
-      {5.3,63.86,4369.14},
-      {5.4,63.44,4385.26},
-      {5.5,63.02,4401.62},
-      {5.6,62.6,4418.21},
-      {5.7,62.18,4435.04},
-      {5.8,61.77,4452.11},
-      {5.867,61.49,4463.67},
-      {5.95,61.15,4478.13},
-      {6.05,60.75,4495.76},
-      {6.15,60.35,4513.62},
-      {6.25,59.95,4531.7},
-      {6.35,59.55,4549.99},
-      {6.43,59.24,4564.78},
-      {6.5,58.96,4577.83},
-      {6.6,58.57,4596.66},
-      {6.7,58.19,4615.7},
-      {6.8,57.81,4634.94},
-      {6.9,57.43,4654.39},
-      {7.0,57.06,4674.04},
-      {7.1,56.68,4693.88},
-      {7.2,56.31,4713.93},
-      {7.3,55.95,4734.16},
-      {7.4,55.59,4754.59},
-      {7.5,55.23,4775.21},
-      {7.6,54.87,4796.01},
-      {7.7,54.52,4817.0},
-      {7.8,54.17,4838.17},
-      {7.9,53.82,4859.51},
-      {8.0,53.48,4881.04},
-      {8.1,53.13,4902.74},
-      {8.2,52.8,4924.61},
-      {8.3,52.46,4946.65},
-      {8.4,52.13,4968.86},
-      {8.5,51.8,4991.23},
-      {8.6,51.47,5013.77},
+    public static final double[][] LOB_SHOT_LOOKUP_TABLE = {
+        { 4.445, 67.63, 4241.55 },
+        { 4.55, 67.16, 4256.21 },
+        { 4.65, 66.71, 4270.43 },
+        { 4.75, 66.26, 4284.92 },
+        { 4.85, 65.82, 4299.67 },
+        { 4.95, 65.38, 4314.67 },
+        { 5.05, 64.94, 4329.92 },
+        { 5.15, 64.51, 4345.43 },
+        { 5.25, 64.08, 4361.18 },
+        { 5.3, 63.86, 4369.14 },
+        { 5.4, 63.44, 4385.26 },
+        { 5.5, 63.02, 4401.62 },
+        { 5.6, 62.6, 4418.21 },
+        { 5.7, 62.18, 4435.04 },
+        { 5.8, 61.77, 4452.11 },
+        { 5.867, 61.49, 4463.67 },
+        { 5.95, 61.15, 4478.13 },
+        { 6.05, 60.75, 4495.76 },
+        { 6.15, 60.35, 4513.62 },
+        { 6.25, 59.95, 4531.7 },
+        { 6.35, 59.55, 4549.99 },
+        { 6.43, 59.24, 4564.78 },
+        { 6.5, 58.96, 4577.83 },
+        { 6.6, 58.57, 4596.66 },
+        { 6.7, 58.19, 4615.7 },
+        { 6.8, 57.81, 4634.94 },
+        { 6.9, 57.43, 4654.39 },
+        { 7.0, 57.06, 4674.04 },
+        { 7.1, 56.68, 4693.88 },
+        { 7.2, 56.31, 4713.93 },
+        { 7.3, 55.95, 4734.16 },
+        { 7.4, 55.59, 4754.59 },
+        { 7.5, 55.23, 4775.21 },
+        { 7.6, 54.87, 4796.01 },
+        { 7.7, 54.52, 4817.0 },
+        { 7.8, 54.17, 4838.17 },
+        { 7.9, 53.82, 4859.51 },
+        { 8.0, 53.48, 4881.04 },
+        { 8.1, 53.13, 4902.74 },
+        { 8.2, 52.8, 4924.61 },
+        { 8.3, 52.46, 4946.65 },
+        { 8.4, 52.13, 4968.86 },
+        { 8.5, 51.8, 4991.23 },
+        { 8.6, 51.47, 5013.77 },
     };
 
-    public static double getRobotAngleOffset(double rpm){
-      return ((0.0000000060444444 * (Math.pow(rpm, 3))) + (-0.00007889524 * (Math.pow(rpm, 2))) + (0.3288126984 * rpm) + (-414.3333333));
+    public static double getRobotAngleOffset(double rpm) {
+      return ((0.0000000060444444 * (Math.pow(rpm, 3))) + (-0.00007889524 * (Math.pow(rpm, 2))) + (0.3288126984 * rpm)
+          + (-414.3333333));
     }
 
-    public static double[] getMovingAverageWeights(int numMeasurements){
+    public static double[] getMovingAverageWeights(int numMeasurements) {
       double n = numMeasurements;
       double divisor = (n * (n + 1.0)) / 2.0;
       double[] weights = new double[numMeasurements];
-      for (int i = 0; i < weights.length; i ++){
+      for (int i = 0; i < weights.length; i++) {
         weights[i] = ((double) i + 1) / divisor;
       }
       return weights;
@@ -250,101 +257,106 @@ public final class Constants {
     /**
      * Interpolates a value from a lookup table based on the given xValue.
      * 
-     * @param xIndex  The index of the x-values in the lookup table.
-     * @param yIndex  The index of the y-values in the lookup table.
-     * @param xValue  The x-value for which to interpolate a y-value.
-     * @return        The interpolated y-value corresponding to the given x-value.
+     * @param xIndex The index of the x-values in the lookup table.
+     * @param yIndex The index of the y-values in the lookup table.
+     * @param xValue The x-value for which to interpolate a y-value.
+     * @return The interpolated y-value corresponding to the given x-value.
      */
-    public static double getInterpolatedValue(int xIndex, int yIndex, double xValue){
-        int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
-        if (xValue < SHOOTING_LOOKUP_TABLE[0][xIndex]) {
-            //If the xValue is closer than the first setpoint
-            double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
-            return returnValue;
-        } else if (xValue > SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
-            //If the xValue is farther than the last setpoint
-            double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][yIndex];
-            return returnValue;
-        } else {
-            for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i ++) {
-                if (xValue > SHOOTING_LOOKUP_TABLE[i][xIndex] && xValue < SHOOTING_LOOKUP_TABLE[i + 1][xIndex]) {
-                    //If the xValue is in the table of setpoints
-                    //Calculate where xValue is between setpoints
-                    double leftDif = xValue - SHOOTING_LOOKUP_TABLE[i][xIndex];
-                    double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][xIndex] - SHOOTING_LOOKUP_TABLE[i][xIndex]);
+    public static double getInterpolatedValue(int xIndex, int yIndex, double xValue) {
+      int lastIndex = SHOOTING_LOOKUP_TABLE.length - 1;
+      if (xValue < SHOOTING_LOOKUP_TABLE[0][xIndex]) {
+        // If the xValue is closer than the first setpoint
+        double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
+        return returnValue;
+      } else if (xValue > SHOOTING_LOOKUP_TABLE[lastIndex][xIndex]) {
+        // If the xValue is farther than the last setpoint
+        double returnValue = SHOOTING_LOOKUP_TABLE[lastIndex][yIndex];
+        return returnValue;
+      } else {
+        for (int i = 0; i < SHOOTING_LOOKUP_TABLE.length; i++) {
+          if (xValue > SHOOTING_LOOKUP_TABLE[i][xIndex] && xValue < SHOOTING_LOOKUP_TABLE[i + 1][xIndex]) {
+            // If the xValue is in the table of setpoints
+            // Calculate where xValue is between setpoints
+            double leftDif = xValue - SHOOTING_LOOKUP_TABLE[i][xIndex];
+            double percent = leftDif / (SHOOTING_LOOKUP_TABLE[i + 1][xIndex] - SHOOTING_LOOKUP_TABLE[i][xIndex]);
 
-                    double value1 = SHOOTING_LOOKUP_TABLE[i][yIndex];
-                    double value2 = SHOOTING_LOOKUP_TABLE[i + 1][yIndex];
+            double value1 = SHOOTING_LOOKUP_TABLE[i][yIndex];
+            double value2 = SHOOTING_LOOKUP_TABLE[i + 1][yIndex];
 
-                    //Interpolate in-between values for value xValue and shooter rpm
-                    double newValue = value1 + (percent * (value2 - value1));
-                    
-                    double returnValue = newValue;
-                    return returnValue;
-                }
-            }
-            //Should never run
-            double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
+            // Interpolate in-between values for value xValue and shooter rpm
+            double newValue = value1 + (percent * (value2 - value1));
+
+            double returnValue = newValue;
             return returnValue;
+          }
         }
+        // Should never run
+        double returnValue = SHOOTING_LOOKUP_TABLE[0][yIndex];
+        return returnValue;
+      }
     }
 
-    public static double getLobShotInterpolatedValue(int xIndex, int yIndex, double xValue){
-        int lastIndex = LOB_SHOT_LOOKUP_TABLE.length - 1;
-        if (xValue < LOB_SHOT_LOOKUP_TABLE[0][xIndex]) {
-            //If the xValue is closer than the first setpoint
-            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
-            return returnValue;
-        } else if (xValue > LOB_SHOT_LOOKUP_TABLE[lastIndex][xIndex]) {
-            //If the xValue is farther than the last setpoint
-            double returnValue = LOB_SHOT_LOOKUP_TABLE[lastIndex][yIndex];
-            return returnValue;
-        } else {
-            for (int i = 0; i < LOB_SHOT_LOOKUP_TABLE.length; i ++) {
-                if (xValue > LOB_SHOT_LOOKUP_TABLE[i][xIndex] && xValue < LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex]) {
-                    //If the xValue is in the table of setpoints
-                    //Calculate where xValue is between setpoints
-                    double leftDif = xValue - LOB_SHOT_LOOKUP_TABLE[i][xIndex];
-                    double percent = leftDif / (LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex] - LOB_SHOT_LOOKUP_TABLE[i][xIndex]);
+    public static double getLobShotInterpolatedValue(int xIndex, int yIndex, double xValue) {
+      int lastIndex = LOB_SHOT_LOOKUP_TABLE.length - 1;
+      if (xValue < LOB_SHOT_LOOKUP_TABLE[0][xIndex]) {
+        // If the xValue is closer than the first setpoint
+        double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+        return returnValue;
+      } else if (xValue > LOB_SHOT_LOOKUP_TABLE[lastIndex][xIndex]) {
+        // If the xValue is farther than the last setpoint
+        double returnValue = LOB_SHOT_LOOKUP_TABLE[lastIndex][yIndex];
+        return returnValue;
+      } else {
+        for (int i = 0; i < LOB_SHOT_LOOKUP_TABLE.length; i++) {
+          if (xValue > LOB_SHOT_LOOKUP_TABLE[i][xIndex] && xValue < LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex]) {
+            // If the xValue is in the table of setpoints
+            // Calculate where xValue is between setpoints
+            double leftDif = xValue - LOB_SHOT_LOOKUP_TABLE[i][xIndex];
+            double percent = leftDif / (LOB_SHOT_LOOKUP_TABLE[i + 1][xIndex] - LOB_SHOT_LOOKUP_TABLE[i][xIndex]);
 
-                    double value1 = LOB_SHOT_LOOKUP_TABLE[i][yIndex];
-                    double value2 = LOB_SHOT_LOOKUP_TABLE[i + 1][yIndex];
+            double value1 = LOB_SHOT_LOOKUP_TABLE[i][yIndex];
+            double value2 = LOB_SHOT_LOOKUP_TABLE[i + 1][yIndex];
 
-                    //Interpolate in-between values for value xValue and shooter rpm
-                    double newValue = value1 + (percent * (value2 - value1));
-                    
-                    double returnValue = newValue;
-                    return returnValue;
-                }
-            }
-            //Should never run
-            double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+            // Interpolate in-between values for value xValue and shooter rpm
+            double newValue = value1 + (percent * (value2 - value1));
+
+            double returnValue = newValue;
             return returnValue;
+          }
         }
+        // Should never run
+        double returnValue = LOB_SHOT_LOOKUP_TABLE[0][yIndex];
+        return returnValue;
+      }
     }
 
     /**
-     * Calculates shooter values (flywheel velocity and note velocity) based on the given angle.
+     * Calculates shooter values (flywheel velocity and note velocity) based on the
+     * given angle.
      *
      * @param angle The angle of the shooter.
-     * @return An array containing the calculated flywheel velocity and note velocity.
+     * @return An array containing the calculated flywheel velocity and note
+     *         velocity.
      */
     public static double[] getShooterValuesFromAngle(double angle) {
-      return new double[] {getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle)};
-      // return new double[] {25, getInterpolatedValue(1, 3, angle)}; 
+      return new double[] { getInterpolatedValue(1, 2, angle), getInterpolatedValue(1, 3, angle) };
+      // return new double[] {25, getInterpolatedValue(1, 3, angle)};
     }
 
     /**
-     * Calculates shooter values (flywheel velocity and note velocity) based on the given distance.
+     * Calculates shooter values (flywheel velocity and note velocity) based on the
+     * given distance.
      *
      * @param dist The distance from the shooter to the target.
-     * @return An array containing the calculated flywheel velocity and note velocity.
+     * @return An array containing the calculated flywheel velocity and note
+     *         velocity.
      */
     public static double[] getShooterValuesFromDistance(double dist, boolean lobShot) {
-      if (lobShot){
-        return new double[] {getLobShotInterpolatedValue(0, 1, dist), getLobShotInterpolatedValue(0, 2, dist)};
+      if (lobShot) {
+        return new double[] { getLobShotInterpolatedValue(0, 1, dist), getLobShotInterpolatedValue(0, 2, dist) };
       } else {
-        return new double[] {getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist), getInterpolatedValue(0, 4, dist)};
+        return new double[] { getInterpolatedValue(0, 2, dist), getInterpolatedValue(0, 3, dist),
+            getInterpolatedValue(0, 4, dist) };
       }
       // return new double[] {25, getInterpolatedValue(0, 3, dist)};
     }
@@ -355,11 +367,11 @@ public final class Constants {
      * @param angle The angle of the shooter.
      * @return The allowed angle error.
      */
-    public static double getAllowedAngleErrFromAngle(double angle){
+    public static double getAllowedAngleErrFromAngle(double angle) {
       return getInterpolatedValue(1, 4, angle);
     }
 
-    public static double getAllowedDriveAngleErrFromAngle(double angle){
+    public static double getAllowedDriveAngleErrFromAngle(double angle) {
       return getInterpolatedValue(1, 5, angle);
     }
 
@@ -374,16 +386,20 @@ public final class Constants {
     }
 
     /**
-     * Calculates the velocity-adjusted setpoint for the shooter and pigeon angles based on various parameters.
+     * Calculates the velocity-adjusted setpoint for the shooter and pigeon angles
+     * based on various parameters.
      *
      * @param pigeonAngleDegrees  The current angle of the pigeon in degrees.
      * @param speakerAngleDegrees The angle of the speaker in degrees.
      * @param shooterAngleDegrees The current angle of the shooter in degrees.
      * @param shooterRPM          The current RPM of the shooter.
-     * @param robotVelocityMPS    The velocity vector of the robot in meters per second.
-     * @return An array containing the adjusted setpoints for the pigeon angle, shooter angle, and shooter RPM.
+     * @param robotVelocityMPS    The velocity vector of the robot in meters per
+     *                            second.
+     * @return An array containing the adjusted setpoints for the pigeon angle,
+     *         shooter angle, and shooter RPM.
      */
-    public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees, double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS){
+    public static double[] getVelocityAdjustedSetpoint(double pigeonAngleDegrees, double speakerAngleDegrees,
+        double shooterAngleDegrees, double shooterRPM, Vector robotVelocityMPS) {
       double thetaI = Math.toRadians(pigeonAngleDegrees - speakerAngleDegrees);
       double phiI = Math.toRadians(shooterAngleDegrees);
       double rhoI = Constants.Physical.flywheelRPMToNoteMPS(shooterRPM);
@@ -400,7 +416,7 @@ public final class Constants {
       double zF = zI;
 
       double thetaF = Math.atan2(yF, xF);
-      if (thetaF < 0){
+      if (thetaF < 0) {
         thetaF += 2 * Math.PI;
       }
       double phiF = Math.atan2(zF, Math.sqrt(Math.pow(xF, 2) + Math.pow(yF, 2)));
@@ -412,11 +428,12 @@ public final class Constants {
       double extraPigeonRotations = Math.floor((pigeonAngleDegrees / 360.0));
       double targetPigeonAngleDegrees = extraPigeonRotations * 360.0 + Math.toDegrees(thetaF);
 
-      return new double[] {targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM};
+      return new double[] { targetPigeonAngleDegrees, targetShooterDegrees, targetShooterRPM };
     }
 
     /**
-     * Calculates the additional angle (addedTheta) required to adjust for depth added to the target angle.
+     * Calculates the additional angle (addedTheta) required to adjust for depth
+     * added to the target angle.
      *
      * @param targetAngleDegrees The target angle in degrees.
      * @param distanceMeters     The distance to the target in meters.
@@ -426,13 +443,15 @@ public final class Constants {
     public static double getAddedTheta(double targetAngleDegrees, double distanceMeters, double depthAddedMeters) {
       targetAngleDegrees = standardizeAngleDegrees(targetAngleDegrees);
       double targetAngleRadians = Math.toRadians(targetAngleDegrees);
-      targetAngleRadians -= (Math.PI)/2;
+      targetAngleRadians -= (Math.PI) / 2;
       double addedAngleRadians;
-      if(targetAngleRadians >= Math.PI/2) {
+      if (targetAngleRadians >= Math.PI / 2) {
         targetAngleRadians -= Math.PI;
-        addedAngleRadians = (targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+        addedAngleRadians = (targetAngleRadians - Math
+            .atan(Math.tan(targetAngleRadians) - depthAddedMeters / (distanceMeters * Math.cos(targetAngleRadians))));
       } else {
-        addedAngleRadians = -(targetAngleRadians - Math.atan(Math.tan(targetAngleRadians) - depthAddedMeters/(distanceMeters*Math.cos(targetAngleRadians))));
+        addedAngleRadians = -(targetAngleRadians - Math
+            .atan(Math.tan(targetAngleRadians) - depthAddedMeters / (distanceMeters * Math.cos(targetAngleRadians))));
       }
       return Math.toDegrees(addedAngleRadians);
     }
@@ -444,15 +463,15 @@ public final class Constants {
      * @return The standardized angle within the range [0, 360) degrees.
      */
     public static double standardizeAngleDegrees(double angleDegrees) {
-      if(angleDegrees >= 0 && angleDegrees < 360) {
+      if (angleDegrees >= 0 && angleDegrees < 360) {
         return angleDegrees;
-      } else if(angleDegrees < 0) {
-        while(angleDegrees < 0) {
+      } else if (angleDegrees < 0) {
+        while (angleDegrees < 0) {
           angleDegrees += 360;
         }
         return angleDegrees;
-      } else if(angleDegrees >= 360) {
-        while(angleDegrees >= 360) {
+      } else if (angleDegrees >= 360) {
+        while (angleDegrees >= 360) {
           angleDegrees -= 360;
         }
         return angleDegrees;
@@ -463,36 +482,38 @@ public final class Constants {
     }
 
     /**
-     * Calculates the adjusted pigeon angle based on the target angle and distance to the speaker.
+     * Calculates the adjusted pigeon angle based on the target angle and distance
+     * to the speaker.
      *
      * @param targetPigeonAngleDegrees The target angle for the pigeon in degrees.
      * @param distToSpeakerMeters      The distance to the speaker in meters.
      * @return The adjusted pigeon angle in degrees.
      */
-    public static double getAdjustedPigeonAngle(double targetPigeonAngleDegrees, double distToSpeakerMeters){
-      double adjustment = getAddedTheta(targetPigeonAngleDegrees, distToSpeakerMeters, (Constants.Physical.SPEAKER_DEPTH / 2));
+    public static double getAdjustedPigeonAngle(double targetPigeonAngleDegrees, double distToSpeakerMeters) {
+      double adjustment = getAddedTheta(targetPigeonAngleDegrees, distToSpeakerMeters,
+          (Constants.Physical.SPEAKER_DEPTH / 2));
       // System.out.println("Angle Adjustment: " + adjustment);
       return targetPigeonAngleDegrees + adjustment;
     }
 
-    //feeder
+    // feeder
 
-    //TOF
-    public static final double FEEDER_TOF_THRESHOLD_MM = 75;    
+    // TOF
+    public static final double FEEDER_TOF_THRESHOLD_MM = 75;
     public static final double CARRIAGE_TOF_THRESHOLD_MM = 95;
     public static final double INTAKE_TOF_THRESHOLD_MM = 420;
 
-    //Intake motor current thresholds to detect note
+    // Intake motor current thresholds to detect note
     public static final double INTAKE_CURRENT_THRESHOLD = 38;
     public static final double INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD = 7;
     public static final double TIME_EXTENSION_INTAKE_THRESHOLD = 0.5;
-    //climber 
+    // climber
     public static final double ELEVATOR_BOTTOM_POSITION_M = 0.0;
     public static final double ELEVATOR_TOP_POSITION_M = 0.43;
     public static final double ELEVATOR_AMP_POSITION_M = 0.22;
     public static final double CARRIAGE_CLEARANCE_ELEVATOR_HEIGH_M = 0.5;
     public static final double CARRIAGE_BOTTOM_ROTATION_DEG = -13.0;
-    //public static final double CARRIAGE_AMP_ROTATION_DEG = 210.0;
+    // public static final double CARRIAGE_AMP_ROTATION_DEG = 210.0;
     public static final double CARRIAGE_AMP_ROTATION_DEG = 199.0;
     public static final double CARRIAGE_TRAP_ROTATION_DEG = 215;
 
@@ -505,7 +526,7 @@ public final class Constants {
       public final double meters;
       public final double rotations;
 
-      private ElevatorPosition(double meters, double rotations){
+      private ElevatorPosition(double meters, double rotations) {
         this.meters = meters;
         this.rotations = rotations;
       }
@@ -517,107 +538,118 @@ public final class Constants {
       kAMP(CARRIAGE_AMP_ROTATION_DEG),
       kTRAP(CARRIAGE_TRAP_ROTATION_DEG);
 
-      
       public final double degrees;
 
-      private CarriageRotation(double degrees){
+      private CarriageRotation(double degrees) {
         this.degrees = degrees;
       }
     }
   }
 
-  //Vision constants (e.g. camera offsets)
+  // Vision constants (e.g. camera offsets)
   public static final class Vision {
-    //Poses of all 16 AprilTags, {x, y, z, theta}, in meters and radians
+    // Poses of all 16 AprilTags, {x, y, z, theta}, in meters and radians
     public static final double[][] TAG_POSES = {
-      {15.079502159004317, 0.2458724917449835, 1.3558547117094235, 2.0943951023931953},
-      {16.18516637033274, 0.8836677673355348, 1.3558547117094235, 2.0943951023931953},  
-      {16.57937515875032, 4.982727965455931, 1.4511049022098046, 3.141592653589793},    
-      {16.57937515875032, 5.547879095758192, 1.4511049022098046, 3.141592653589793},    
-      {14.700787401574804, 8.204216408432817, 1.3558547117094235, 4.71238898038469},    
-      {1.841503683007366, 8.204216408432817, 1.3558547117094235, 4.71238898038469},     
-      {-0.038100076200152405, 5.547879095758192, 1.4511049022098046, 0.0},
-      {-0.038100076200152405, 4.982727965455931, 1.4511049022098046, 0.0},
-      {0.35610871221742446, 0.8836677673355348, 1.3558547117094235, 1.0471975511965976},
-      {1.4615189230378463, 0.2458724917449835, 1.3558547117094235, 1.0471975511965976}, 
-      {11.90474980949962, 3.713233426466853, 1.3208026416052834, 5.235987755982989},    
-      {11.90474980949962, 4.4983489966979935, 1.3208026416052834, 1.0471975511965976},  
-      {11.220218440436883, 4.105156210312421, 1.3208026416052834, 3.141592653589793},   
-      {5.320802641605283, 4.105156210312421, 1.3208026416052834, 0.0},
-      {4.641351282702566, 4.4983489966979935, 1.3208026416052834, 2.0943951023931953},  
-      {4.641351282702566, 3.713233426466853, 1.3208026416052834, 4.1887902047863905}
+        { 15.079502159004317, 0.2458724917449835, 1.3558547117094235, 2.0943951023931953 },
+        { 16.18516637033274, 0.8836677673355348, 1.3558547117094235, 2.0943951023931953 },
+        { 16.57937515875032, 4.982727965455931, 1.4511049022098046, 3.141592653589793 },
+        { 16.57937515875032, 5.547879095758192, 1.4511049022098046, 3.141592653589793 },
+        { 14.700787401574804, 8.204216408432817, 1.3558547117094235, 4.71238898038469 },
+        { 1.841503683007366, 8.204216408432817, 1.3558547117094235, 4.71238898038469 },
+        { -0.038100076200152405, 5.547879095758192, 1.4511049022098046, 0.0 },
+        { -0.038100076200152405, 4.982727965455931, 1.4511049022098046, 0.0 },
+        { 0.35610871221742446, 0.8836677673355348, 1.3558547117094235, 1.0471975511965976 },
+        { 1.4615189230378463, 0.2458724917449835, 1.3558547117094235, 1.0471975511965976 },
+        { 11.90474980949962, 3.713233426466853, 1.3208026416052834, 5.235987755982989 },
+        { 11.90474980949962, 4.4983489966979935, 1.3208026416052834, 1.0471975511965976 },
+        { 11.220218440436883, 4.105156210312421, 1.3208026416052834, 3.141592653589793 },
+        { 5.320802641605283, 4.105156210312421, 1.3208026416052834, 0.0 },
+        { 4.641351282702566, 4.4983489966979935, 1.3208026416052834, 2.0943951023931953 },
+        { 4.641351282702566, 3.713233426466853, 1.3208026416052834, 4.1887902047863905 }
     };
 
-    //Field of view angles
+    // Field of view angles
     public static final double LIMELIGHT_HFOV_DEG = 63.3;
     public static final double LIMELIGHT_VFOV_DEG = 49.7;
     public static final double LIMELIGHT_HFOV_RAD = LIMELIGHT_HFOV_DEG * Math.PI / 180;
     public static final double LIMELIGHT_VFOV_RAD = LIMELIGHT_VFOV_DEG * Math.PI / 180;
 
-    //Camera IDs
+    // Camera IDs
     public static final int FRONT_CAMERA_ID = 4;
     public static final int BACK_CAMERA_ID = 3;
     public static final int LEFT_CAMERA_ID = 1;
     public static final int RIGHT_CAMERA_ID = 2;
 
-    //Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and radians
-    public static final double[] FRONT_CAMERA_POSE = {0.3683, -0.01905, 0.23495, 0, degreesToRadians(33), 0};
-    public static final double[] LEFT_CAMERA_POSE = {0.0172, 0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(90)};
-    public static final double[] RIGHT_CAMERA_POSE = {0.073025, -0.3429, 0.23495, 0, degreesToRadians(33), degreesToRadians(270)};
-    public static final double[] BACK_CAMERA_POSE = {0, 0, 0, 0, 0, degreesToRadians(180)};
-    public static final double[] FRONT_CAMERA_POSITION_POLAR = {getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]), Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0])};
-    public static final double[] LEFT_CAMERA_POSITION_POLAR = {getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]), Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0])};
-    public static final double[] RIGHT_CAMERA_POSITION_POLAR = {getDistance(0, 0, RIGHT_CAMERA_POSE[0], RIGHT_CAMERA_POSE[1]), Math.atan2(RIGHT_CAMERA_POSE[1], RIGHT_CAMERA_POSE[0])};
-    public static final double[] BACK_CAMERA_POSITION_POLAR = {getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]), Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0])};
+    // Poses of cameras relative to robot, {x, y, z, rx, ry, rz}, in meters and
+    // radians
+    public static final double[] FRONT_CAMERA_POSE = { 0.3683, -0.01905, 0.23495, 0, degreesToRadians(33), 0 };
+    public static final double[] LEFT_CAMERA_POSE = { 0.0172, 0.3429, 0.23495, 0, degreesToRadians(33),
+        degreesToRadians(90) };
+    public static final double[] RIGHT_CAMERA_POSE = { 0.073025, -0.3429, 0.23495, 0, degreesToRadians(33),
+        degreesToRadians(270) };
+    public static final double[] BACK_CAMERA_POSE = { 0, 0, 0, 0, 0, degreesToRadians(180) };
+    public static final double[] FRONT_CAMERA_POSITION_POLAR = {
+        getDistance(0, 0, FRONT_CAMERA_POSE[0], FRONT_CAMERA_POSE[1]),
+        Math.atan2(FRONT_CAMERA_POSE[1], FRONT_CAMERA_POSE[0]) };
+    public static final double[] LEFT_CAMERA_POSITION_POLAR = {
+        getDistance(0, 0, LEFT_CAMERA_POSE[0], LEFT_CAMERA_POSE[1]),
+        Math.atan2(LEFT_CAMERA_POSE[1], LEFT_CAMERA_POSE[0]) };
+    public static final double[] RIGHT_CAMERA_POSITION_POLAR = {
+        getDistance(0, 0, RIGHT_CAMERA_POSE[0], RIGHT_CAMERA_POSE[1]),
+        Math.atan2(RIGHT_CAMERA_POSE[1], RIGHT_CAMERA_POSE[0]) };
+    public static final double[] BACK_CAMERA_POSITION_POLAR = {
+        getDistance(0, 0, BACK_CAMERA_POSE[0], BACK_CAMERA_POSE[1]),
+        Math.atan2(BACK_CAMERA_POSE[1], BACK_CAMERA_POSE[0]) };
 
-    //Standard deviation adjustments
+    // Standard deviation adjustments
     public static final double STANDARD_DEVIATION_SCALAR = 1;
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_SCALAR = 1;
     public static final double ODOMETRY_JUMP_STANDARD_DEVIATION_DEGREE = 3;
-    public static final double TAG_STANDARD_DEVIATION_DISTANCE = 2; //meters
+    public static final double TAG_STANDARD_DEVIATION_DISTANCE = 2; // meters
     public static final double TAG_STANDARD_DEVIATION_FLATNESS = 5;
 
-    //Limelight settings
+    // Limelight settings
     /*
-    
-    Resolution: 960x720 40fps
-    Exposure: 3000
-    Black Level Offset: 8
-    Sensor Gain: 10.5
-    Red Balance: 1380
-    Blue Balance: 1410
-    AprilTag Family: 16h11
-    AprilTag Size: 165
-    Detector Downscale: 1.5
-    Quality Threshold: 2
-    Crosshair X: 0.23
-    */
+     * 
+     * Resolution: 960x720 40fps
+     * Exposure: 3000
+     * Black Level Offset: 8
+     * Sensor Gain: 10.5
+     * Red Balance: 1380
+     * Blue Balance: 1410
+     * AprilTag Family: 16h11
+     * AprilTag Size: 165
+     * Detector Downscale: 1.5
+     * Quality Threshold: 2
+     * Crosshair X: 0.23
+     */
 
-    //Standard deviation regressions
+    // Standard deviation regressions
     /**
      * Calculates the standard deviation scalar based on the distance from the tag.
      *
      * @param dist The distance from the tag.
      * @return The standard deviation scalar.
      */
-    public static double getTagDistStdDevScalar(double dist){
+    public static double getTagDistStdDevScalar(double dist) {
       double a = TAG_STANDARD_DEVIATION_FLATNESS;
       double b = 1 - a * Math.pow(TAG_STANDARD_DEVIATION_DISTANCE, 2);
       return Math.max(1, a * Math.pow(dist, 2) + b);
     }
 
     /**
-     * Calculates the standard deviation scalar based on the number of detected tags.
+     * Calculates the standard deviation scalar based on the number of detected
+     * tags.
      *
      * @param numTags The number of detected tags.
      * @return The standard deviation scalar.
      */
-    public static double getNumTagStdDevScalar(int numTags){
-      if (numTags == 0){
+    public static double getNumTagStdDevScalar(int numTags) {
+      if (numTags == 0) {
         return 99999;
-      } else if (numTags == 1){
+      } else if (numTags == 1) {
         return 2;
-      } else if (numTags == 2){
+      } else if (numTags == 2) {
         return 1;
       } else {
         return 0.75;
@@ -625,68 +657,76 @@ public final class Constants {
     }
 
     /**
-     * Calculates the standard deviation of the x-coordinate based on the given offsets.
+     * Calculates the standard deviation of the x-coordinate based on the given
+     * offsets.
      *
      * @param xOffset The x-coordinate offset.
      * @param yOffset The y-coordinate offset.
      * @return The standard deviation of the x-coordinate.
      */
-    public static double getTagStdDevX(double xOffset, double yOffset){
-      return Math.max(0, 0.005533021491867763 * (xOffset * xOffset + yOffset * yOffset) - 0.010807566510145635) * STANDARD_DEVIATION_SCALAR;
+    public static double getTagStdDevX(double xOffset, double yOffset) {
+      return Math.max(0, 0.005533021491867763 * (xOffset * xOffset + yOffset * yOffset) - 0.010807566510145635)
+          * STANDARD_DEVIATION_SCALAR;
     }
 
     /**
-     * Calculates the standard deviation of the y-coordinate based on the given offsets.
+     * Calculates the standard deviation of the y-coordinate based on the given
+     * offsets.
      *
      * @param xOffset The x-coordinate offset.
      * @param yOffset The y-coordinate offset.
      * @return The standard deviation of the y-coordinate.
      */
-    public static double getTagStdDevY(double xOffset, double yOffset){
-      return Math.max(0, 0.0055 * (xOffset * xOffset + yOffset * yOffset) - 0.01941597810542626) * STANDARD_DEVIATION_SCALAR;
+    public static double getTagStdDevY(double xOffset, double yOffset) {
+      return Math.max(0, 0.0055 * (xOffset * xOffset + yOffset * yOffset) - 0.01941597810542626)
+          * STANDARD_DEVIATION_SCALAR;
     }
 
     /**
-     * Calculates the standard deviation in the x-coordinate for triangulation measurements.
+     * Calculates the standard deviation in the x-coordinate for triangulation
+     * measurements.
      *
      * @param xOffset The x-coordinate offset.
      * @param yOffset The y-coordinate offset.
      * @return The standard deviation in the x-coordinate.
      */
-    public static double getTriStdDevX(double xOffset, double yOffset){
-      return Math.max(0, 0.004544133588821881 * (xOffset * xOffset + yOffset * yOffset) - 0.01955724864971872) * STANDARD_DEVIATION_SCALAR;
+    public static double getTriStdDevX(double xOffset, double yOffset) {
+      return Math.max(0, 0.004544133588821881 * (xOffset * xOffset + yOffset * yOffset) - 0.01955724864971872)
+          * STANDARD_DEVIATION_SCALAR;
     }
 
     /**
-     * Calculates the standard deviation in the y-coordinate for triangulation measurements.
+     * Calculates the standard deviation in the y-coordinate for triangulation
+     * measurements.
      *
      * @param xOffset The x-coordinate offset.
      * @param yOffset The y-coordinate offset.
      * @return The standard deviation in the y-coordinate.
      */
-    public static double getTriStdDevY(double xOffset, double yOffset){
-      return Math.max(0, 0.002615358015002413 * (xOffset * xOffset + yOffset * yOffset) - 0.008955462032388808) * STANDARD_DEVIATION_SCALAR;
+    public static double getTriStdDevY(double xOffset, double yOffset) {
+      return Math.max(0, 0.002615358015002413 * (xOffset * xOffset + yOffset * yOffset) - 0.008955462032388808)
+          * STANDARD_DEVIATION_SCALAR;
     }
   }
 
-  //Gear ratios and conversions
+  // Gear ratios and conversions
   public static final class Ratios {
-    //drive
+    // drive
     public static final double DRIVE_GEAR_RATIO = 5.9;
     public static final double STEER_GEAR_RATIO = 21.43;
 
-    //intake
+    // intake
     public static final double INTAKE_ANGLE_GEAR_RATIO = 30.0;
     public static final double INTAKE_ROLLER_GEAR_RATIO = 24.0 / 11.0;
 
-    //shooter
+    // shooter
     public static final double SHOOTER_ANGLE_GEAR_RATIO = 225.0;
     public static final double SHOOTER_FLYWHEEL_GEAR_RATIO = 30.0 / 56.0;
 
-    //feeder
+    // feeder
     public static final double FEEDER_ROLLER_GEAR_RATIO = 3.0;
 
-    //climber
+    // climber
     public static final double ELEVATOR_GEAR_RATIO = 23.52;
     public static final double TRAP_ROLLER_GEAR_RATIO = 3.0;
     public static final double CARRIAGE_ROTATION_GEAR_RATIO = 100.0;
@@ -698,7 +738,7 @@ public final class Constants {
      * @param rotations The number of rotations of the elevator motor.
      * @return The equivalent distance in meters.
      */
-    public static double elevatorRotationsToMeters(double rotations){
+    public static double elevatorRotationsToMeters(double rotations) {
       return rotations / ELEVATOR_MOTOR_ROTATIONS_PER_METER;
     }
 
@@ -708,16 +748,16 @@ public final class Constants {
      * @param meters The distance in meters to be converted.
      * @return The equivalent number of rotations of the elevator motor.
      */
-    public static double elevatorMetersToRotations(double meters){
+    public static double elevatorMetersToRotations(double meters) {
       return meters * ELEVATOR_MOTOR_ROTATIONS_PER_METER;
     }
   }
 
-  //Can info such as IDs
+  // Can info such as IDs
   public static final class CANInfo {
     public static final String CANBUS_NAME = "Canivore";
 
-    //drive
+    // drive
     public static final int FRONT_RIGHT_DRIVE_MOTOR_ID = 1;
     public static final int FRONT_RIGHT_ANGLE_MOTOR_ID = 2;
     public static final int FRONT_LEFT_DRIVE_MOTOR_ID = 3;
@@ -731,41 +771,41 @@ public final class Constants {
     public static final int BACK_LEFT_MODULE_CANCODER_ID = 3;
     public static final int BACK_RIGHT_MODULE_CANCODER_ID = 4;
 
-    //intake
+    // intake
     public static final int INTAKE_ANGLE_MOTOR_ID = 10;
     public static final int INTAKE_ROLLER_MOTOR_ID = 11;
 
-    //shooter
+    // shooter
     public static final int SHOOTER_ANGLE_MOTOR_ID = 12;
     public static final int SHOOTER_FLYWHEEL_MASTER_MOTOR_ID = 13;
     public static final int SHOOTER_FLYWHEEL_FOLLOWER_MOTOR_ID = 14;
     public static final int SHOOTER_ANGLE_CANCODER_ID = 5;
 
-    //feeder
+    // feeder
     public static final int FEEDER_ROLLER_MOTOR_ID = 15;
 
-    //TOF
+    // TOF
     public static final int FEEDER_TOF_ID = 0;
     public static final int CARRIAGE_TOF_ID = 1;
     public static final int INTAKE_TOF_ID = 2;
 
-    //proximity
+    // proximity
     public static final int SHOOTER_PROXIMITY_PORT = 3;
     public static final int CARRIAGE_PROXIMITY_PORT = 2;
     public static final int FEEDER_PROXIMITY_PORT = 1;
 
-    //Climber
+    // Climber
     public static final int ELEVATOR_FOLLOWER_MOTOR_ID = 16;
     public static final int ELEVATOR_MASTER_MOTOR_ID = 17;
     public static final int TRAP_ROLLER_MOTOR_ID = 18;
     public static final int CARRIAGE_ROTATION_MOTOR_ID = 19;
     public static final int CARRIAGE_ROTATION_CANCODER_ID = 6;
 
-    //Lights
+    // Lights
     public static final int CANDLE_ID = 0;
   }
 
-  //Misc. controller values
+  // Misc. controller values
   public static final class OperatorConstants {
     public static final double RIGHT_TRIGGER_DEADZONE = 0.1;
     public static final double LEFT_TRIGGER_DEADZONE = 0.1;
@@ -777,11 +817,11 @@ public final class Constants {
    * @param inches The length in inches to be converted.
    * @return The equivalent length in meters.
    */
-  public static double inchesToMeters(double inches){
+  public static double inchesToMeters(double inches) {
     return inches / 39.37;
   }
 
-  public static double metersToInches(double meters){
+  public static double metersToInches(double meters) {
     return meters * 39.37;
   }
 
@@ -791,7 +831,7 @@ public final class Constants {
    * @param inches The length in feet to be converted.
    * @return The equivalent length in meters.
    */
-  public static double feetToMeters(double feet){
+  public static double feetToMeters(double feet) {
     return feet / 3.281;
   }
 
@@ -804,12 +844,13 @@ public final class Constants {
    * @param y2 The y-coordinate of the second point.
    * @return The Euclidean distance between the two points.
    */
-  public static double getDistance(double x1, double y1, double x2, double y2){
+  public static double getDistance(double x1, double y1, double x2, double y2) {
     return Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
   }
 
-  public static double getAngleToPoint(double x1, double y1, double x2, double y2){
-    // System.out.println("x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " + y2);
+  public static double getAngleToPoint(double x1, double y1, double x2, double y2) {
+    // System.out.println("x1: " + x1 + ", y1: " + y1 + ", x2: " + x2 + ", y2: " +
+    // y2);
     double deltaX = x2 - x1;
     double deltaY = y2 - y1;
 
@@ -820,13 +861,13 @@ public final class Constants {
     double standardizeAngleDegrees = SetPoints.standardizeAngleDegrees(angleInDegrees);
 
     // if (y1 > y2) {
-      // System.out.println("running");
-      return 180 + standardizeAngleDegrees;
+    // System.out.println("running");
+    return 180 + standardizeAngleDegrees;
     // }
-    //   System.out.println("2");
-    //   double temp = 180 - standardizeAngleDegrees;
-    //   double j = 180 - temp;
-    //   return 180 + j;
+    // System.out.println("2");
+    // double temp = 180 - standardizeAngleDegrees;
+    // double j = 180 - temp;
+    // return 180 + j;
     // }
   }
 
@@ -836,7 +877,7 @@ public final class Constants {
    * @param rotations The quantity in rotations to be converted.
    * @return The equivalent quantity in radians.
    */
-  public static double rotationsToRadians(double rotations){
+  public static double rotationsToRadians(double rotations) {
     return rotations * 2 * Math.PI;
   }
 
@@ -846,7 +887,7 @@ public final class Constants {
    * @param rotations The quantity in degrees to be converted.
    * @return The equivalent quantity in rotations.
    */
-  public static double degreesToRotations(double degrees){
+  public static double degreesToRotations(double degrees) {
     return degrees / 360;
   }
 
@@ -856,7 +897,7 @@ public final class Constants {
    * @param rotations The quantity in rotations to be converted.
    * @return The equivalent quantity in degrees.
    */
-  public static double rotationsToDegrees(double rotations){
+  public static double rotationsToDegrees(double rotations) {
     return rotations * 360;
   }
 
@@ -866,7 +907,7 @@ public final class Constants {
    * @param rotations The quantity in degrees to be converted.
    * @return The equivalent quantity in radians.
    */
-  public static double degreesToRadians(double degrees){
+  public static double degreesToRadians(double degrees) {
     return degrees * Math.PI / 180;
   }
 
@@ -876,7 +917,7 @@ public final class Constants {
    * @param angle The angle in radians.
    * @return The x-component of the unit vector.
    */
-  public static double angleToUnitVectorI(double angle){
+  public static double angleToUnitVectorI(double angle) {
     return (Math.cos(angle));
   }
 
@@ -886,7 +927,7 @@ public final class Constants {
    * @param angle The angle in radians.
    * @return The y-component of the unit vector.
    */
-  public static double angleToUnitVectorJ(double angle){
+  public static double angleToUnitVectorJ(double angle) {
     return (Math.sin(angle));
   }
 
@@ -896,7 +937,7 @@ public final class Constants {
    * @param RPM The value in revolutions per minute (RPM) to be converted.
    * @return The equivalent value in revolutions per second (RPS).
    */
-  public static double RPMToRPS(double RPM){
+  public static double RPMToRPS(double RPM) {
     return RPM / 60;
   }
 
@@ -906,7 +947,7 @@ public final class Constants {
    * @param RPM The value in revolutions per second (RPS) to be converted.
    * @return The equivalent value in revolutions per minute (RPM).
    */
-  public static double RPSToRPM(double RPS){
+  public static double RPSToRPM(double RPS) {
     return RPS * 60;
   }
 }
