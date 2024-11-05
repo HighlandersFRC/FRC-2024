@@ -1,14 +1,5 @@
 package frc.robot;
 
-import java.io.File;
-import java.io.FileReader;
-import java.util.HashMap;
-import java.util.function.BooleanSupplier;
-import java.util.function.Supplier;
-
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 import org.littletonrobotics.junction.LoggedRobot;
 import org.littletonrobotics.junction.Logger;
 import org.littletonrobotics.junction.networktables.NT4Publisher;
@@ -17,162 +8,22 @@ import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.InstantCommand;
-import frc.robot.commands.AutoIntake;
-import frc.robot.commands.AutoPositionalShoot;
-import frc.robot.commands.AutoPrepForShot;
-import frc.robot.commands.DipShot;
-import frc.robot.commands.DoNothing;
-import frc.robot.commands.DriveAutoAligned;
-import frc.robot.commands.PositionalDipShot;
-import frc.robot.commands.PositionalFeederLobShot;
-import frc.robot.commands.PositionalLobShot;
-import frc.robot.commands.PolarAutoFollower;
-import frc.robot.commands.PositionalSpinUp;
-import frc.robot.commands.PresetAutoShoot;
-import frc.robot.commands.RunClimber;
-import frc.robot.commands.RunFeeder;
-import frc.robot.commands.RunFlywheel;
-import frc.robot.commands.RunIntakeAndFeeder;
-import frc.robot.commands.RunShooter;
-import frc.robot.commands.ZeroAngleMidMatch;
-import frc.robot.commands.autos.NothingAuto;
-import frc.robot.commands.presets.AmpPreset;
-import frc.robot.commands.presets.TrapPreset;
-import frc.robot.sensors.Proximity;
-import frc.robot.sensors.TOF;
-import frc.robot.subsystems.Climber;
-import frc.robot.subsystems.Drive;
-import frc.robot.subsystems.Feeder;
-import frc.robot.subsystems.Intake;
-import frc.robot.subsystems.Lights;
-import frc.robot.subsystems.Peripherals;
-import frc.robot.subsystems.Shooter;
 
 public class Robot extends LoggedRobot {
+  private RobotContainer m_robotContainer = new RobotContainer();
   private Command m_autonomousCommand;
-
-  // Sensors
-  private TOF tof = new TOF();
-  private Proximity proximity = new Proximity();
-
-  // Subsystems
-  private Lights lights = new Lights(tof);
-  private Peripherals peripherals = new Peripherals();
-  private Drive drive = new Drive(peripherals);
-  private Intake intake = new Intake();
-  private Shooter shooter = new Shooter();
-  private Feeder feeder = new Feeder(tof, proximity, () -> getNoteInRobot());
-  private Climber climber = new Climber(lights, tof, proximity);
 
   // private Logger logger = Logger.getInstance();
 
   // private double shooterAngleDegreesTuning = 0;
   // private double shooterRPMTuning = 0;
-  private double startTime = Timer.getFPGATimestamp();
-  private boolean checkedCAN = false;
-  HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
-    {
-      put("Instant", () -> new InstantCommand());
-      put("Intake", () -> new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-          Constants.SetPoints.IntakePosition.kDOWN, 1200, 400, false, false));
-      put("Outtake", () -> new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800,
-          -800, -0.4));
-      put("Shoot",
-          () -> new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, true));
-      put("Auto Spin Up", () -> new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
-      put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG, 5000));
-      put("Wait", () -> new DoNothing());
-      put("Subwoofer Preset",
-          () -> new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 58, 4900, 1200, 0));
-    }
-  };
-  int timesNoteSeen = 0;
-  int TOFfilterThreshold = 2;
+  private double m_startTime = Timer.getFPGATimestamp();
+  private boolean m_checkedCAN = false;
 
-  private int numTimeNoteInIntake = 0;
-  private double intakeTime = 0;
-
-  /**
-   * This function checks if a note is currently detected in the intake.
-   * 
-   * The function compares the current count of times a note is detected in the
-   * intake
-   * with a predefined threshold. If the count exceeds the threshold, the function
-   * returns true. Additionally, the function checks if the time elapsed since the
-   * last
-   * note was detected in the intake is within a predefined threshold. If the time
-   * elapsed is within the threshold, the function returns true. Otherwise, the
-   * function returns false.
-   * 
-   * @return A boolean value indicating whether a note is currently detected in
-   *         the intake.
-   *         The function returns true if a note is detected, and false otherwise.
-   */
-  boolean getNoteInIntake() {
-    boolean retval = (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD);
-    if (retval)
-      intakeTime = Timer.getFPGATimestamp();
-    if (Timer.getFPGATimestamp() - intakeTime < Constants.SetPoints.TIME_EXTENSION_INTAKE_THRESHOLD)
-      retval = true;
-    Logger.recordOutput("Note in Intake", retval);
-    return retval;
-  }
-
-  /**
-   * This function updates the count of times a note is detected in the intake.
-   * 
-   * The function checks the current of the intake roller. If the current exceeds
-   * a
-   * predefined threshold, it increments the count of times a note is detected. If
-   * the
-   * current is below the threshold, it resets the count to zero.
-   * 
-   * @return void
-   */
-  void updateNoteInIntake() {
-    if (this.intake.getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD) {
-      this.numTimeNoteInIntake++;
-    } else {
-      this.numTimeNoteInIntake = 0;
-    }
-  }
-
-  /**
-   * This function checks if there is a note in the robot.
-   * 
-   * @return A boolean value indicating whether there is a note in the robot.
-   *         The function returns true if there is a note in the robot (either in
-   *         the intake,
-   *         feeder proximity, or shooter proximity), and false otherwise.
-   */
-  boolean getNoteInRobot() {
-    boolean retval = getNoteInIntake() || proximity.getFeederProximity()
-        || proximity.getShooterProximity();
-    return retval;
-  }
-
-  HashMap<String, BooleanSupplier> conditionMap = new HashMap<String, BooleanSupplier>() {
-    {
-      put("Note In Intake", () -> getNoteInRobot());
-    }
-  };
-
-  Command nothingAuto;
-  Command fivePiece3Note;
-  Command fourPieceFarBottom231Auto;
-
-  File[] autoFiles = new File[Constants.paths.length];
-  Command[] autos = new Command[Constants.paths.length];
-  JSONObject[] autoJSONs = new JSONObject[Constants.paths.length];
-  JSONArray[] autoPoints = new JSONArray[Constants.paths.length];
-  Command dipShot;
-
-  String fieldSide = "blue";
+  String m_fieldSide = "blue";
 
   @Override
   public void robotInit() {
@@ -181,17 +32,17 @@ public class Robot extends LoggedRobot {
     Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
     Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
-    this.fieldSide = "blue";
+    this.m_fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
     SmartDashboard.putNumber("Shooter RPM (input)", 0);
 
-    lights.init(fieldSide);
-    peripherals.init();
-    drive.init(fieldSide);
-    intake.init();
-    shooter.init();
-    feeder.init();
-    climber.init();
+    m_robotContainer.lights.init(m_fieldSide);
+    m_robotContainer.peripherals.init();
+    m_robotContainer.drive.init(m_fieldSide);
+    m_robotContainer.intake.init();
+    m_robotContainer.shooter.init();
+    m_robotContainer.feeder.init();
+    m_robotContainer.climber.init();
 
     PortForwarder.add(5800, "limelight.local", 5800);
     PortForwarder.add(5801, "limelight.local", 5801);
@@ -220,45 +71,29 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "10.44.99.44", 5800);
     PortForwarder.add(5801, "10.44.99.44", 5801);
 
-    this.nothingAuto = new NothingAuto();
-
-    for (int i = 0; i < Constants.paths.length; i++) {
-      try {
-        autoFiles[i] = new File(Filesystem.getDeployDirectory().getPath() + "/" + Constants.paths[i]);
-        FileReader scanner = new FileReader(autoFiles[i]);
-        autoJSONs[i] = new JSONObject(new JSONTokener(scanner));
-        autoPoints[i] = (JSONArray) autoJSONs[i].getJSONArray("paths").getJSONObject(0).getJSONArray("sampled_points");
-        autos[i] = new PolarAutoFollower(autoJSONs[i], drive, lights, peripherals, commandMap, conditionMap);
-      } catch (Exception e) {
-        System.out.println("ERROR LOADING PATH " + Constants.paths[i] + ":" + e);
-      }
-    }
-
-    lights.clearAnimations();
-    lights.setCommandRunning(true);
-    lights.setRGBFade();
+    m_robotContainer.lights.clearAnimations();
+    m_robotContainer.lights.setCommandRunning(true);
+    m_robotContainer.lights.setRGBFade();
     System.out.println("end robot init");
   }
 
   @Override
   public void robotPeriodic() {
-    updateNoteInIntake();
-    if (OI.getPOVUp()) {
-      new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5).schedule();
-    }
+    m_robotContainer.updateNoteInIntake();
     // checks CAN and limelights, blinks green if good and blinks yellow if bad
-    if (!checkedCAN) {
-      if (Timer.getFPGATimestamp() - startTime > 30 || peripherals.limelightsConnected()) {
-        checkedCAN = true;
-        lights.clearAnimations();
-        lights.setCommandRunning(false);
-        if (drive.getSwerveCAN() && shooter.getShooterCAN() && intake.getIntakeCAN() && feeder.getFeederCAN()
-            && climber.getClimberCAN() && peripherals.limelightsConnected()) {
-          lights.blinkGreen(3);
+    if (!m_checkedCAN) {
+      if (Timer.getFPGATimestamp() - m_startTime > 30 || m_robotContainer.peripherals.limelightsConnected()) {
+        m_checkedCAN = true;
+        m_robotContainer.lights.clearAnimations();
+        m_robotContainer.lights.setCommandRunning(false);
+        if (m_robotContainer.drive.getSwerveCAN() && m_robotContainer.shooter.getShooterCAN()
+            && m_robotContainer.intake.getIntakeCAN() && m_robotContainer.feeder.getFeederCAN()
+            && m_robotContainer.climber.getClimberCAN() && m_robotContainer.peripherals.limelightsConnected()) {
+          m_robotContainer.lights.blinkGreen(3);
         } else {
-          lights.clearAnimations();
-          lights.setCommandRunning(true);
-          lights.setStrobeYellow();
+          m_robotContainer.lights.clearAnimations();
+          m_robotContainer.lights.setCommandRunning(true);
+          m_robotContainer.lights.setStrobeYellow();
         }
       }
     }
@@ -269,45 +104,45 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     try {
-      Logger.recordOutput("Localization Odometry", drive.getLocalizationOdometry());
+      Logger.recordOutput("Localization Odometry", m_robotContainer.drive.getLocalizationOdometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
 
     try {
-      Logger.recordOutput("Wheel Odometry", drive.getOdometry());
+      Logger.recordOutput("Wheel Odometry", m_robotContainer.drive.getOdometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
 
     try {
-      Logger.recordOutput("MT2 Odometry", drive.getMT2Odometry());
+      Logger.recordOutput("MT2 Odometry", m_robotContainer.drive.getMT2Odometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
-    Logger.recordOutput("Swerve Module States", drive.getModuleStates());
-    Logger.recordOutput("Swerve Module Setpoints", drive.getModuleSetpoints());
-    Logger.recordOutput("IMU", peripherals.getPigeonAngle());
-    Logger.recordOutput("Note in Robot", getNoteInRobot());
+    Logger.recordOutput("Swerve Module States", m_robotContainer.drive.getModuleStates());
+    Logger.recordOutput("Swerve Module Setpoints", m_robotContainer.drive.getModuleSetpoints());
+    Logger.recordOutput("IMU", m_robotContainer.peripherals.getPigeonAngle());
+    Logger.recordOutput("Note in Robot", m_robotContainer.getNoteInRobot());
     Constants.periodic();
-    lights.periodic();
-    intake.periodic();
-    shooter.periodic();
-    feeder.periodic();
-    tof.periodic();
-    proximity.periodic();
+    m_robotContainer.lights.periodic();
+    m_robotContainer.intake.periodic();
+    m_robotContainer.shooter.periodic();
+    m_robotContainer.feeder.periodic();
+    m_robotContainer.tof.periodic();
+    m_robotContainer.proximity.periodic();
 
-    peripherals.periodic();
-    climber.periodic();
+    m_robotContainer.peripherals.periodic();
+    m_robotContainer.climber.periodic();
   }
 
   @Override
   public void disabledInit() {
     OI.driverController.setRumble(RumbleType.kBothRumble, 0);
     OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
-    lights.clearAnimations();
-    lights.setCommandRunning(true);
-    lights.setRainbow();
+    m_robotContainer.lights.clearAnimations();
+    m_robotContainer.lights.setCommandRunning(true);
+    m_robotContainer.lights.setRainbow();
   }
 
   @Override
@@ -318,24 +153,16 @@ public class Robot extends LoggedRobot {
   public void autonomousInit() {
     if (OI.isBlueSide()) {
       System.out.println("ON BLUE SIDE");
-      fieldSide = "blue";
+      m_fieldSide = "blue";
     } else {
       System.out.println("ON RED SIDE");
-      fieldSide = "red";
+      m_fieldSide = "red";
     }
-    this.drive.setFieldSide(fieldSide);
+    this.m_robotContainer.drive.setFieldSide(m_fieldSide);
 
     System.out.print("Selected Auto: ");
-    final int selectedPath = Constants.getSelectedPathIndex();
-    if (selectedPath == -1) {
-      System.out.println("Do Nothing");
-      new DoNothing().schedule();
-    } else {
-      this.autos[selectedPath].schedule();
-      this.drive.autoInit(autoPoints[selectedPath]);
-      System.out.println("Selected Path: " + Constants.paths[selectedPath]);
-    }
-    this.intake.autoInit();
+
+    this.m_robotContainer.intake.autoInit();
   }
 
   @Override
@@ -344,79 +171,24 @@ public class Robot extends LoggedRobot {
 
   @Override
   public void teleopInit() {
-    shooter.teleopInit();
-    lights.setCommandRunning(false);
-    lights.clearAnimations();
+    m_robotContainer.shooter.teleopInit();
+    m_robotContainer.lights.setCommandRunning(false);
+    m_robotContainer.lights.clearAnimations();
     if (m_autonomousCommand != null) {
       m_autonomousCommand.cancel();
     }
-
     if (OI.isBlueSide()) {
-      fieldSide = "blue";
+      m_fieldSide = "blue";
     } else {
-      fieldSide = "red";
+      m_fieldSide = "red";
     }
 
-    if (this.fieldSide == "red") {
-      this.drive.setPigeonAfterAuto();
+    if (this.m_fieldSide == "red") {
+      this.m_robotContainer.drive.setPigeonAfterAuto();
     }
-    System.out.println("field side" + fieldSide);
+    System.out.println("field side" + m_fieldSide);
 
-    this.drive.setFieldSide(fieldSide);
-
-    // CONTROLS
-
-    // Driver
-    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2)); // tests
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.driverLT.whileTrue(
-        new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    // OI.operatorLB.whileTrue(new LobShot(drive, shooter, feeder, peripherals,
-    // lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
-    OI.driverA.whileTrue(
-        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverPOVDown
-        .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-    OI.driverPOVLeft
-        .whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
-
-    /*
-     * auto align shot that is tunable, defaults to 0 degrees and 0 rpm but can be
-     * changed in Smartdashboard
-     */
-    // OI.driverB.whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals,
-    // lights, proximity, shooterAngleDegreesTuning, shooterRPMTuning, 1200, 0, 2));
-
-    // OI.driverRB.whileTrue(new MoveToPiece(drive, peripherals));
-
-    // Operator
-    // OI.operatorMenuButton.whileTrue(new PrepareAmp(climber, intake, feeder,
-    // lights, peripherals, tof));
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
-    OI.operatorA.whileTrue(new RunClimber(climber, feeder, -50, 1.0));
-    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
-    // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
-    OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
-    OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
-    // OI.operatorViewButton
-    // .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights,
-    // proximity, 1200, 22, 7000, false));
-    // OI.operatorLB.whileTrue(new PositionalLobShot(drive, shooter, feeder,
-    // peripherals, lights, proximity, 1200, 5));
-    OI.operatorLJ
-        .whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
-    OI.operatorRJ
-        .whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
-    // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
-    // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
-    OI.operatorLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.operatorViewButton.whileTrue(new RunFeeder(feeder, -300));
+    this.m_robotContainer.drive.setFieldSide(m_fieldSide);
   }
 
   @Override
@@ -425,10 +197,10 @@ public class Robot extends LoggedRobot {
     // Constants.SetPoints.FEEDER_TOF_THRESHOLD_MM);
     // SmartDashboard.putNumber("Feeder TOF Dist",
     // this.tof.getFeederDistMillimeters());
-    intake.teleopPeriodic();
-    shooter.teleopPeriodic();
-    feeder.teleopPeriodic();
-    climber.teleopPeriodic();
+    m_robotContainer.intake.teleopPeriodic();
+    m_robotContainer.shooter.teleopPeriodic();
+    m_robotContainer.feeder.teleopPeriodic();
+    m_robotContainer.climber.teleopPeriodic();
   }
 
   @Override

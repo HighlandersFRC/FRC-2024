@@ -206,7 +206,7 @@ public class PurePursuitFollower extends PolarTakeDrive {
         odometryFusedTheta += 2 * Math.PI;
       }
     }
-    return drive.insideRadius((point.getDouble("x") - odometryFusedX)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS, (point.getDouble("y") - odometryFusedY)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-        (point.getDouble("angle") - odometryFusedTheta)/Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS, Constants.SetPoints.AUTONOMOUS_END_ACCURACY);
+    return drive.insideRadius((point.getDouble("x") - odometryFusedX)/Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS, (point.getDouble("y") - odometryFusedY)/Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+        (point.getDouble("angle") - odometryFusedTheta)/Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS, Constants.Autonomous.AUTONOMOUS_END_ACCURACY);
   }
 }

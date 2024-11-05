@@ -1073,10 +1073,10 @@ public class Drive extends SubsystemBase {
           targetTheta += 2 * Math.PI;
         }
       }
-      if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
+      if (!insideRadius((currentX - targetX) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentY - targetY) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentTheta - targetTheta) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
+          Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;
@@ -1136,7 +1136,7 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("FF-theta-vel", feedForwardTheta);
     Logger.recordOutput("current point idx", currentIndex);
     Logger.recordOutput("point idx", velocityArray[3].intValue());
-    Logger.recordOutput("look-ahead", Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
+    Logger.recordOutput("look-ahead", Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
     return velocityArray;
   }
 
