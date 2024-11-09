@@ -133,16 +133,16 @@ public class Drive extends SubsystemBase {
 
 
   // odometry
-  private double currentX = 0;
-  private double currentY = 0;
-  private double currentTheta = 0;
+  private double m_currentX = 0;
+  private double m_currentY = 0;
+  private double m_currentTheta = 0;
 
-  private double averagedX = 0.0;
-  private double averagedY = 0.0;
-  private double averagedTheta = 0.0;
+  private double m_averagedX = 0.0;
+  private double m_averagedY = 0.0;
+  private double m_averagedTheta = 0.0;
 
-  private double initTime;
-  private double currentTime;
+  private double m_initTime;
+  private double m_currentTime;
 
   // array for fused odometry
   private double[] currentFusedOdometry = new double[3];
@@ -165,27 +165,27 @@ public class Drive extends SubsystemBase {
   double diffAngle;
 
   // path following PID values
-  private double xP = 4.0;
-  private double xI = 0.0;
-  private double xD = 1.2;
+  private double kXP = 4.0;
+  private double kXI = 0.0;
+  private double kXD = 1.2;
 
-  private double yP = 4.0;
-  private double yI = 0.0;
-  private double yD = 1.2;
+  private double kYP = 4.0;
+  private double kYI = 0.0;
+  private double kYD = 1.2;
 
-  private double thetaP = 2.7;
-  private double thetaI = 0.0;
-  private double thetaD = 2.0;
+  private double kThetaP = 2.7;
+  private double kThetaI = 0.0;
+  private double kThetaD = 2.0;
 
-  private PID xPID = new PID(xP, xI, xD);
-  private PID yPID = new PID(yP, yI, yD);
-  private PID thetaPID = new PID(thetaP, thetaI, thetaD);
+  private PID xPID = new PID(kXP, kXI, kXD);
+  private PID yPID = new PID(kYP, kYI, kYD);
+  private PID thetaPID = new PID(kThetaP, kThetaI, kThetaD);
 
-  private String fieldSide = "blue";
+  private String m_fieldSide = "blue";
 
-  private int lookAheadDistance = 5;
+  private int kLookAheadDistance = 5;
 
-  private Boolean useCameraInOdometry = true;
+  private Boolean m_useCameraInOdometry = true;
 
   public enum DriveState { 
     SHOOT,
@@ -238,7 +238,7 @@ public class Drive extends SubsystemBase {
    */
   public void init(String fieldSide) {
     // sets configurations when run on robot initalization
-    this.fieldSide = fieldSide;
+    this.m_fieldSide = fieldSide;
 
     frontRight.init();
     frontLeft.init();
@@ -268,7 +268,7 @@ public class Drive extends SubsystemBase {
   }
 
   public void useCameraInOdometry() {
-    useCameraInOdometry = true;
+    m_useCameraInOdometry = true;
   }
 
   /**
@@ -345,7 +345,7 @@ public class Drive extends SubsystemBase {
 
     // changing odometry if on red side, don't need to change y because it will be
     // the same for autos on either side
-    if (this.fieldSide == "blue") {
+    if (this.m_fieldSide == "blue") {
       firstPointX = Constants.Physical.FIELD_LENGTH - firstPointX;
       firstPointAngle = Math.PI - firstPointAngle;
     }
@@ -371,11 +371,11 @@ public class Drive extends SubsystemBase {
     currentFusedOdometry[1] = firstPointY;
     currentFusedOdometry[2] = firstPointAngle;
 
-    currentX = currentFusedOdometry[0];
-    currentY = currentFusedOdometry[1];
-    currentTheta = currentFusedOdometry[2];
+    m_currentX = currentFusedOdometry[0];
+    m_currentY = currentFusedOdometry[1];
+    m_currentTheta = currentFusedOdometry[2];
 
-    initTime = Timer.getFPGATimestamp();
+    m_initTime = Timer.getFPGATimestamp();
 
     updateOdometryFusedArray();
   }
@@ -387,7 +387,7 @@ public class Drive extends SubsystemBase {
    *             is positioned on the "blue" or "red" side of the field.
    */
   public void setFieldSide(String side) {
-    fieldSide = side;
+    m_fieldSide = side;
   }
 
   /**
@@ -397,7 +397,7 @@ public class Drive extends SubsystemBase {
    *         positioned on the "blue" or "red" side of the field.
    */
   public String getFieldSide() {
-    return fieldSide;
+    return m_fieldSide;
   }
 
   /**
@@ -407,7 +407,7 @@ public class Drive extends SubsystemBase {
    *         operation.
    */
   public double getCurrentTime() {
-    return currentTime;
+    return m_currentTime;
   }
 
   public void addVisionMeasurementToOdometry(Pose2d visionPose, double timestamp) {
@@ -457,11 +457,11 @@ public class Drive extends SubsystemBase {
     loggingPose = loggingOdometry.update(new Rotation2d(navxOffset), swerveModulePositions);
     mt2Pose = mt2Odometry.update(new Rotation2d(navxOffset), swerveModulePositions);
 
-    currentX = getOdometryX();
-    currentY = getOdometryY();
-    currentTheta = navxOffset;
+    m_currentX = getOdometryX();
+    m_currentY = getOdometryY();
+    m_currentTheta = navxOffset;
     double robotAngle = peripherals.getPigeonAngle();
-    if (this.fieldSide == "red" && !DriverStation.isAutonomousEnabled()) {
+    if (this.m_fieldSide == "red" && !DriverStation.isAutonomousEnabled()) {
       robotAngle += 180;
     }
     LimelightHelpers.SetRobotOrientation("limelight-front", robotAngle, 0, 0, 0, 0, 0);
@@ -488,7 +488,7 @@ public class Drive extends SubsystemBase {
       }
     }
 
-    if (useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
+    if (m_useCameraInOdometry && cameraCoordinatesFront.getDouble(0) != 0) {
       cameraBasedX = cameraCoordinatesFront.getDouble(0);
       cameraBasedY = cameraCoordinatesFront.getDouble(1);
       Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
@@ -497,7 +497,7 @@ public class Drive extends SubsystemBase {
           Timer.getFPGATimestamp() - (peripherals.getFrontCameraLatency() / 1000));
     }
 
-    if (useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
+    if (m_useCameraInOdometry && cameraCoordinatesLeft.getDouble(0) != 0) {
       cameraBasedX = cameraCoordinatesLeft.getDouble(0);
       cameraBasedY = cameraCoordinatesLeft.getDouble(1);
       Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
@@ -506,7 +506,7 @@ public class Drive extends SubsystemBase {
           Timer.getFPGATimestamp() - (peripherals.getLeftCameraLatency() / 1000));
     }
 
-    if (useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
+    if (m_useCameraInOdometry && cameraCoordinatesRight.getDouble(0) != 0) {
       cameraBasedX = cameraCoordinatesRight.getDouble(0);
       cameraBasedY = cameraCoordinatesRight.getDouble(1);
       Pose2d cameraBasedPosition = new Pose2d(new Translation2d(cameraBasedX, cameraBasedY),
@@ -515,15 +515,15 @@ public class Drive extends SubsystemBase {
           Timer.getFPGATimestamp() - (peripherals.getRightCameraLatency() / 1000));
     }
 
-    currentTime = Timer.getFPGATimestamp() - initTime;
+    m_currentTime = Timer.getFPGATimestamp() - m_initTime;
 
-    averagedX = (currentX + averagedX) / 2;
-    averagedY = (currentY + averagedY) / 2;
-    averagedTheta = (currentTheta + averagedTheta) / 2;
+    m_averagedX = (m_currentX + m_averagedX) / 2;
+    m_averagedY = (m_currentY + m_averagedY) / 2;
+    m_averagedTheta = (m_currentTheta + m_averagedTheta) / 2;
 
-    currentFusedOdometry[0] = averagedX;
-    currentFusedOdometry[1] = averagedY;
-    currentFusedOdometry[2] = currentTheta;
+    currentFusedOdometry[0] = m_averagedX;
+    currentFusedOdometry[1] = m_averagedY;
+    currentFusedOdometry[2] = m_currentTheta;
   }
 
   /**
@@ -942,9 +942,9 @@ public class Drive extends SubsystemBase {
       JSONArray currentPoint = pathPoints.getJSONArray(0);
       JSONArray targetPoint = pathPoints.getJSONArray(0);
       for (int i = 0; i < pathPoints.length(); i++) {
-        if (i == pathPoints.length() - lookAheadDistance) {
+        if (i == pathPoints.length() - kLookAheadDistance) {
           currentPoint = pathPoints.getJSONArray(i + 1);
-          targetPoint = pathPoints.getJSONArray((i + (lookAheadDistance - 1)));
+          targetPoint = pathPoints.getJSONArray((i + (kLookAheadDistance - 1)));
           break;
         }
 
@@ -955,7 +955,7 @@ public class Drive extends SubsystemBase {
         double previousPointTime = previousPoint.getDouble(0);
 
         if (time >= previousPointTime && time < currentPointTime) {
-          targetPoint = pathPoints.getJSONArray(i + (lookAheadDistance - 1));
+          targetPoint = pathPoints.getJSONArray(i + (kLookAheadDistance - 1));
           break;
         }
       }
@@ -965,7 +965,7 @@ public class Drive extends SubsystemBase {
       double targetY = targetPoint.getDouble(2);
       double targetTheta = targetPoint.getDouble(3);
 
-      if (this.fieldSide == "blue") {
+      if (this.m_fieldSide == "blue") {
         targetX = Constants.Physical.FIELD_LENGTH - targetX;
         targetTheta = Math.PI - targetTheta;
       }
@@ -981,7 +981,7 @@ public class Drive extends SubsystemBase {
       double currentPointY = currentPoint.getDouble(2);
       double currentPointTheta = currentPoint.getDouble(3);
 
-      if (this.fieldSide == "blue") {
+      if (this.m_fieldSide == "blue") {
         currentPointX = Constants.Physical.FIELD_LENGTH - currentPointX;
         currentPointTheta = Math.PI - currentPointTheta;
       }
@@ -1073,7 +1073,7 @@ public class Drive extends SubsystemBase {
       JSONArray pathPoints) {
     JSONObject targetPoint = pathPoints.getJSONObject(pathPoints.length() - 1);
     int targetIndex = pathPoints.length() - 1;
-    if (this.fieldSide == "blue") {
+    if (this.m_fieldSide == "blue") {
       currentX = Constants.Physical.FIELD_LENGTH - currentX;
       currentTheta = Math.PI - currentTheta;
     }
@@ -1088,10 +1088,10 @@ public class Drive extends SubsystemBase {
           targetTheta += 2 * Math.PI;
         }
       }
-      if (!insideRadius((currentX - targetX) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentY - targetY) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
-          (currentTheta - targetTheta) / Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
-          Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
+      if (!insideRadius((currentX - targetX) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentY - targetY) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS,
+          (currentTheta - targetTheta) / Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS,
+          Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE)) {
         targetIndex = i;
         targetPoint = pathPoints.getJSONObject(i);
         break;
@@ -1130,7 +1130,7 @@ public class Drive extends SubsystemBase {
     double finalX = xVelNoFF + feedForwardX;
     double finalY = yVelNoFF + feedForwardY;
     double finalTheta = thetaVelNoFF + feedForwardTheta;
-    if (fieldSide == "blue") {
+    if (m_fieldSide == "blue") {
       finalX = -finalX;
       finalTheta = -finalTheta;
     }
@@ -1151,7 +1151,7 @@ public class Drive extends SubsystemBase {
     Logger.recordOutput("FF-theta-vel", feedForwardTheta);
     Logger.recordOutput("current point idx", currentIndex);
     Logger.recordOutput("point idx", velocityArray[3].intValue());
-    Logger.recordOutput("look-ahead", Constants.SetPoints.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
+    Logger.recordOutput("look-ahead", Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
     return velocityArray;
   }
 

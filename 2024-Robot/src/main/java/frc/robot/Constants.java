@@ -9,58 +9,67 @@ import org.littletonrobotics.junction.Logger;
 import frc.robot.tools.math.Vector;
 
 public final class Constants {
-  public static final String[] paths = new String[] {
-      "4 Far.polarauto",
-      "4 Far 123.polarauto",
-      "4 Far 231.polarauto",
-      "5 piece.polarauto",
-      "3 amp.polarauto",
-      "3 amp 231.polarauto",
-      "1 Exit.polarauto",
-      "Middle Note.polarauto",
-      "Far 321.polarauto"
-  };
+  public static final class Autonomous {
+    // how far forward to look when the linear radius and the angular radius equal
+    // their constants
+    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
+    public static final double AUTONOMOUS_END_ACCURACY = 0.25;
+    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
+    public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
+    public static final String[] paths = new String[] {
+        "4 Far.polarauto",
+        "4 Far 123.polarauto",
+        "4 Far 231.polarauto",
+        "5 piece.polarauto",
+        "3 amp.polarauto",
+        "3 amp 231.polarauto",
+        "1 Exit.polarauto",
+        "Middle Note.polarauto",
+        "Far 321.polarauto"
+    };
 
-  public static int getSelectedPathIndex() {
-    if (!OI.autoChooser.getRawButton(7)) {
-      if (OI.autoChooser.getRawButton(1)) {
-        return 3;
+    public static int getSelectedPathIndex() {
+      if (!OI.autoChooser.getRawButton(7)) {
+        if (OI.autoChooser.getRawButton(1)) {
+          return 3;
+        }
+        if (OI.autoChooser.getRawButton(2)) {
+          return 2;
+        }
+        if (OI.autoChooser.getRawButton(3)) {
+          return 0;
+        }
+        if (OI.autoChooser.getRawButton(4)) {
+          return 1;
+        }
+        if (OI.autoChooser.getRawButton(5)) {
+          return 4;
+        }
+      } else {
+        if (OI.autoChooser.getRawButton(1)) {
+          return 5;
+        }
+        if (OI.autoChooser.getRawButton(2)) {
+          return 6;
+        }
+        if (OI.autoChooser.getRawButton(3)) {
+          return 7;
+        }
+        if (OI.autoChooser.getRawButton(4)) {
+          return 8;
+        }
       }
-      if (OI.autoChooser.getRawButton(2)) {
-        return 2;
-      }
-      if (OI.autoChooser.getRawButton(3)) {
-        return 0;
-      }
-      if (OI.autoChooser.getRawButton(4)) {
-        return 1;
-      }
-      if (OI.autoChooser.getRawButton(5)) {
-        return 4;
-      }
-    } else {
-      if (OI.autoChooser.getRawButton(1)) {
-        return 5;
-      }
-      if (OI.autoChooser.getRawButton(2)) {
-        return 6;
-      }
-      if (OI.autoChooser.getRawButton(3)) {
-        return 7;
-      }
-      if (OI.autoChooser.getRawButton(4)) {
-        return 8;
-      }
+      return -1;
     }
-    return -1;
+
   }
 
   public static void periodic() {
-    int index = getSelectedPathIndex();
+    int index = Autonomous.getSelectedPathIndex();
     if (index == -1) {
       Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
-      Logger.recordOutput("Selected Auto", paths[index]);
+      Logger.recordOutput("Selected Auto", Autonomous.paths[index]);
     }
   }
 
@@ -123,12 +132,7 @@ public final class Constants {
   // Subsystem setpoint constants
   public static final class SetPoints {
     // drive
-    // how far forward to look when the linear radius and the angular radius equal
-    // their constants
-    public static final double AUTONOMOUS_LOOKAHEAD_DISTANCE = 0.48;
-    public static final double AUTONOMOUS_END_ACCURACY = 0.25;
-    public static final double AUTONOMOUS_LOOKAHEAD_LINEAR_RADIUS = 1.0;
-    public static final double AUTONOMOUS_LOOKAHEAD_ANGULAR_RADIUS = Math.PI;
+
     // intake
     // public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
     public static final double INTAKE_DOWN_ANGLE_ROT = -0.32;
