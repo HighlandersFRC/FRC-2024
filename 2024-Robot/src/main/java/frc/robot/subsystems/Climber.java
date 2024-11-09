@@ -23,6 +23,7 @@ import frc.robot.Constants;
 import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.tools.controlloops.PID;
 
 public class Climber extends SubsystemBase {
@@ -48,6 +49,22 @@ public class Climber extends SubsystemBase {
   private final double kI = 0.0;
   private final double kD = 0.0;
   private final double kG = 0.015;
+
+  public enum ClimberState { 
+    COLLECT,
+    REJECT,
+    EJECT,
+    AMP,
+    TRAP,
+    DEFAULT,
+  }
+
+  
+  private ClimberState wantedState = ClimberState.DEFAULT;
+  private ClimberState systemState = ClimberState.DEFAULT;
+  public void setWantedState(ClimberState wantedState) {
+    this.wantedState = wantedState;
+  }
 
   /**
    * Checks the status of various components related to the climber mechanism.

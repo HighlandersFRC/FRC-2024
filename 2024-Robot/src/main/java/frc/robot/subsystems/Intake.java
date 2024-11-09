@@ -13,6 +13,7 @@ import com.ctre.phoenix6.signals.NeutralModeValue;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.subsystems.Feeder.FeederState;
 
 public class Intake extends SubsystemBase {
 
@@ -29,11 +30,25 @@ public class Intake extends SubsystemBase {
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
       false, false);
 
+  public enum IntakeState { 
+    COLLECT,
+    REJECT,
+    EJECT,
+    OFF
+  }
+
+  private IntakeState wantedState = IntakeState.OFF;
+  private IntakeState systemState = IntakeState.OFF;
+  
   /**
    * Constructs a new instance of the Intake class.
    */
   public Intake() {
     setDefaultCommand(new IntakeDefault(this));
+  }
+
+  public void setWantedState(IntakeState wantedState) {
+    this.wantedState = wantedState;
   }
 
   /**

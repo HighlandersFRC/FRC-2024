@@ -19,6 +19,8 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 import frc.robot.commands.defaults.ShooterDefault;
+import frc.robot.subsystems.Feeder.FeederState;
+import frc.robot.subsystems.Intake.IntakeState;
 
 public class Shooter extends SubsystemBase {
 
@@ -52,12 +54,25 @@ public class Shooter extends SubsystemBase {
 
   private final double angleFalconProfileScalarFactor = 1;
 
+  public enum ShooterState { 
+    SHOOT,
+    FEED,
+    OFF,
+  }
+
+  private ShooterState wantedState = ShooterState.OFF;
+  private ShooterState systemState = ShooterState.OFF;
+
   /**
    * Constructs a new Shooter object and sets its default command to
    * ShooterDefault.
    */
   public Shooter() {
     setDefaultCommand(new ShooterDefault(this));
+  }
+
+  public void setWantedState(ShooterState wantedState) {
+    this.wantedState = wantedState;
   }
 
   /**
@@ -175,6 +190,10 @@ public class Shooter extends SubsystemBase {
         .withVelocity(Constants.RPMToRPS(RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
     this.flywheelFalconFollower.setControl(this.flywheelVelocityRequest
         .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
+  }
+
+  public void feedState(){
+
   }
 
   /**

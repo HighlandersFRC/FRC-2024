@@ -13,6 +13,7 @@ import frc.robot.Constants;
 import frc.robot.commands.defaults.FeederDefault;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Climber.ClimberState;
 
 public class Feeder extends SubsystemBase {
   double startTime;
@@ -24,6 +25,17 @@ public class Feeder extends SubsystemBase {
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
   public BooleanSupplier noteInRobot;
 
+  public enum FeederState { 
+    COLLECT,
+    REJECT,
+    EJECT,
+    IDLE
+  }
+
+  
+  private FeederState wantedState = FeederState.IDLE;
+  private FeederState systemState = FeederState.IDLE;
+
   /**
    * Constructs a new instance of the Feeder class.
    *
@@ -32,6 +44,10 @@ public class Feeder extends SubsystemBase {
   public Feeder(TOF tof, Proximity proximity, BooleanSupplier noteInRobot) {
     setDefaultCommand(new FeederDefault(this, proximity));
     this.noteInRobot = noteInRobot;
+  }
+
+  public void setWantedState(FeederState wantedState) {
+    this.wantedState = wantedState;
   }
 
   /**

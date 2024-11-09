@@ -26,6 +26,7 @@ import frc.robot.OI;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 import frc.robot.commands.defaults.DriveDefault;
+import frc.robot.subsystems.Climber.ClimberState;
 
 // **Zero Wheels with the bolt head showing on the left when the front side(battery) is facing down/away from you**
 
@@ -186,6 +187,16 @@ public class Drive extends SubsystemBase {
 
   private Boolean useCameraInOdometry = true;
 
+  public enum DriveState { 
+    SHOOT,
+    AMP,
+    FEED,
+    DEFAULT,
+  }
+
+  private DriveState wantedState = DriveState.DEFAULT;
+  private DriveState systemState = DriveState.DEFAULT;
+
   /**
    * Creates a new instance of the Swerve Drive subsystem.
    * Initializes the Swerve Drive subsystem with the provided peripherals.
@@ -209,6 +220,10 @@ public class Drive extends SubsystemBase {
         new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
     mt2Odometry = new SwerveDrivePoseEstimator(m_kinematics,
         new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
+  }
+
+  public void setWantedState(DriveState wantedState) {
+    this.wantedState = wantedState;
   }
 
   /**
