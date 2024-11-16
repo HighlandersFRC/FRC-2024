@@ -20,7 +20,6 @@ import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 
 public class PresetAutoShoot extends Command {
-  private Drive drive;
   private Shooter shooter;
   private Feeder feeder;
   private Peripherals peripherals;
@@ -58,8 +57,7 @@ public class PresetAutoShoot extends Command {
 
   private boolean smartDashboardTuning;
 
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
-    this.drive = drive;
+  public PresetAutoShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset) {
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
@@ -69,14 +67,10 @@ public class PresetAutoShoot extends Command {
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     this.robotAngleOffset = robotAngleOffset;
-    if (this.drive.getFieldSide() == "blue"){
-      this.robotAngleOffset *= -1;
-    }
-    addRequirements(this.drive, this.shooter, this.feeder);
+    addRequirements(this.shooter, this.feeder);
   }
 
-  public PresetAutoShoot(Drive drive, Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
-    this.drive = drive;
+  public PresetAutoShoot(Shooter shooter, Feeder feeder, Peripherals peripherals, Lights lights, Proximity proximity, double shooterDegrees, double shooterRPM, double feederRPM, double robotAngleOffset, double timeout) {
     this.shooter = shooter;
     this.feeder = feeder;
     this.peripherals = peripherals;
@@ -86,11 +80,8 @@ public class PresetAutoShoot extends Command {
     this.shooterRPM = shooterRPM;
     this.feederRPM = feederRPM;
     this.robotAngleOffset = robotAngleOffset;
-    if (this.drive.getFieldSide() == "blue"){
-      this.robotAngleOffset *= -1;
-    }
     this.timeout = timeout;
-    addRequirements(this.drive, this.shooter, this.feeder);
+    addRequirements(this.shooter, this.feeder);
   }
 
   @Override
@@ -108,32 +99,6 @@ public class PresetAutoShoot extends Command {
 
   @Override
   public void execute() {
-    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
-
-    double id = this.peripherals.getFrontCamID();
-
-    boolean canSeeTag = false;
-    // for (double id : ids){
-      if (id == 7 || id == 4){
-        canSeeTag = true;
-      }
-    // }
-
-    if (canSeeTag){
-      lights.setStrobeGreen();
-      this.speakerAngleDegrees = this.peripherals.getFrontCamTargetTx();
-    }
-
-    this.pid.setSetPoint(pigeonAngleDegrees - this.speakerAngleDegrees + this.robotAngleOffset);
-    this.pid.updatePID(pigeonAngleDegrees);
-    double turnResult = -pid.getResult();    
-
-    if (canSeeTag && this.speakerAngleDegrees < 90){
-      this.drive.driveAutoAligned(turnResult);
-    } else {
-      this.drive.driveAutoAligned(0);
-    }
-
     this.shooter.set(this.shooterDegrees, this.shooterRPM);
 
     if (Math.abs(this.shooter.getAngleDegrees() - this.shooterDegrees) <= this.shooterDegreesAllowedError && Math.abs(this.shooter.getFlywheelMasterRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.shooter.getFlywheelFollowerRPM() - this.shooterRPM) <= this.shooterRPMAllowedError && Math.abs(this.speakerAngleDegrees - this.robotAngleOffset) <= this.driveAngleAllowedError){

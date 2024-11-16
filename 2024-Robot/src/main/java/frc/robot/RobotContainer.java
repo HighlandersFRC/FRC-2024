@@ -91,7 +91,7 @@ public class RobotContainer {
       put("Spin Up No Note", () -> new RunShooter(shooter, Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG, 5000));
       put("Wait", () -> new DoNothing());
       put("Subwoofer Preset",
-          () -> new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 58, 4900, 1200, 0));
+          () -> new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 58, 4900, 1200, 0));
     }
   };
 
@@ -214,47 +214,20 @@ public class RobotContainer {
     // cancelling on release.
     // m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
 
-    // COMPETITION CONTROLS
-    // Driver
-    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2)); // tests
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.driverLT.whileTrue(
-        new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
-    // OI.operatorLB.whileTrue(new LobShot(drive, shooter, feeder, peripherals,
-    // lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
-    OI.driverA.whileTrue(
-        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // DEMO CONTROLS
+    // All Driver
+    OI.driverX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
+    OI.driverB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
+    OI.driverY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
+    OI.driverA.whileTrue(new RunClimber(climber, feeder, -50, 1.0));
     OI.driverPOVDown
-        .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
     OI.driverPOVLeft
-        .whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
-
-    // Operator
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
-    OI.operatorA.whileTrue(new RunClimber(climber, feeder, -50, 1.0));
-    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
-    // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
-    OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
-    OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
-    // OI.operatorViewButton
-    // .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights,
-    // proximity, 1200, 22, 7000, false));
-    // OI.operatorLB.whileTrue(new PositionalLobShot(drive, shooter, feeder,
-    // peripherals, lights, proximity, 1200, 5));
-    OI.operatorLJ
-        .whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
-    OI.operatorRJ
-        .whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
-    // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
-    // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
-    OI.operatorLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.operatorViewButton.whileTrue(new RunFeeder(feeder, -300));
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 15, 7000, 1200, 0, 1.5));
+    OI.driverPOVRight
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 45, 5500, 1200, 0, 1.5));
+    OI.driverPOVUp
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 30, 5000, 1200, 0, 1.5));
   }
 
   /**
