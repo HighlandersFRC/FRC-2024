@@ -228,9 +228,9 @@ public class RobotContainer {
     OI.driverPOVDown
       .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
     OI.driverPOVLeft
-      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 15, 7000, 1200, 0, 1.5));
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 15, 8500, 1200, 0, 1.5));
     OI.driverPOVRight
-      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 45, 5500, 1200, 0, 1.5));
+      .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 35, 5000, 1200, 0, 1.5));
     OI.driverPOVUp
       .whileTrue(new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 30, 5000, 1200, 0, 1.5));
   }
