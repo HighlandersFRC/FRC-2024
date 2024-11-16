@@ -89,7 +89,7 @@ public class FourPieceCloseAuto extends SequentialCommandGroup {
 
     addCommands(
       new ParallelDeadlineGroup(
-        new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 3000, 1200, 13),
+        new PresetAutoShoot(shooter, feeder, peripherals, lights, proximity, 60, 3000, 1200, 13),
         new RunIntake(intake, Constants.SetPoints.IntakePosition.kDOWN, 1200)
       ),
       new ParallelDeadlineGroup(

@@ -216,6 +216,11 @@ public class RobotContainer {
 
     // DEMO CONTROLS
     // All Driver
+    OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
+    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
+      Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
+    OI.driverLT.whileTrue(
+      new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     OI.driverX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
     OI.driverB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
     OI.driverY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
