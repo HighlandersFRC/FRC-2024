@@ -18,6 +18,7 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -38,6 +39,7 @@ import frc.robot.commands.RunFeeder;
 import frc.robot.commands.RunFlywheel;
 import frc.robot.commands.RunIntakeAndFeeder;
 import frc.robot.commands.RunShooter;
+import frc.robot.commands.SetRobotState;
 import frc.robot.commands.ZeroAngleMidMatch;
 import frc.robot.commands.presets.AmpPreset;
 import frc.robot.commands.presets.TrapPreset;
@@ -50,6 +52,8 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Lights;
 import frc.robot.subsystems.Peripherals;
 import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
 
 // import edu.wpi.first.wpilibj2.command.Command;
 // import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -77,6 +81,8 @@ public class RobotContainer {
   Shooter shooter = new Shooter();
   Feeder feeder = new Feeder(tof, proximity, () -> getNoteInRobot());
   Climber climber = new Climber(lights, tof, proximity);
+  Superstructure superstructure = new Superstructure(drive, intake, shooter, feeder, lights, peripherals, climber,
+      proximity);
 
   HashMap<String, Supplier<Command>> commandMap = new HashMap<String, Supplier<Command>>() {
     {
@@ -216,45 +222,70 @@ public class RobotContainer {
 
     // COMPETITION CONTROLS
     // Driver
+
     OI.driverViewButton.whileTrue(new ZeroAngleMidMatch(drive));
-    OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 2)); // tests
-    OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.driverLT.whileTrue(
-        new RunIntakeAndFeeder(intake, feeder, climber, Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
+    // OI.driverB.whileTrue(new PositionalLobShot(drive, shooter, feeder,
+    // peripherals, lights, proximity, 1200, 2)); // tests
+    // OI.driverRT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
+    // proximity,
+    // Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
+    // OI.driverLT.whileTrue(
+    // new RunIntakeAndFeeder(intake, feeder, climber,
+    // Constants.SetPoints.IntakePosition.kUP, -800, -800, -0.4));
     // OI.operatorLB.whileTrue(new LobShot(drive, shooter, feeder, peripherals,
     // lights, proximity, 55, 4400, 1200, 0, 193, 149, 5));
-    OI.driverA.whileTrue(
-        new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 22, 7000, false));
-    OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    OI.driverPOVDown
-        .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights, proximity, 60, 4500, 1200, 0, 1.5));
-    OI.driverPOVLeft
-        .whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights, proximity, 10, 6200, 1200, 0, 0, 0, 5));
+    // OI.driverA.whileTrue(
+    // new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights,
+    // proximity, 1200, 22, 7000, false));
+    OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.INTAKE));
+    OI.driverLT.whileTrue(new SetRobotState(superstructure, SuperState.OUTAKING));
+    OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.SHOOT_SPEAKER));
+    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.FEEDING));
+    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.AMP));
+    // OI.driverA.onFalse(superstructure.setWantedSuperStateCommand(SuperState.CYCLING));
+    // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
+    // OI.driverPOVDown
+    // .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights,
+    // proximity, 60, 4500, 1200, 0, 1.5));
+    // OI.driverPOVLeft
+    // .whileTrue(new DipShot(drive, shooter, feeder, peripherals, lights,
+    // proximity, 10, 6200, 1200, 0, 0, 0, 5));
 
     // Operator
-    OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity, shooter));
-    OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
-    OI.operatorA.whileTrue(new RunClimber(climber, feeder, -50, 1.0));
-    OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
-    // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals, lights));
-    OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals, lights, proximity));
-    OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
+    OI.operatorA.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_DOWN));
+    OI.operatorY.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_UP));
+    OI.operatorB.whileTrue(new SetRobotState(superstructure, SuperState.TRAP));
+    OI.operatorX.whileTrue(new SetRobotState(superstructure, SuperState.AMP));
+    // OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity,
+    // shooter));
+    // OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity,
+    // shooter));
+    // OI.operatorY.whileTrue(new RunClimber(climber, feeder, 20, 1.0));
+    // OI.operatorA.whileTrue(new RunClimber(climber, feeder, -50, 1.0));
+    // OI.operatorRT.whileTrue(new AutoPrepForShot(shooter, proximity, 55, 4600));
+    // // OI.operatorRB.whileTrue(new SmartPrepForShot(shooter, peripherals,
+    // lights));
+    // OI.operatorRB.whileTrue(new PositionalSpinUp(drive, shooter, peripherals,
+    // lights, proximity));
+    // OI.operatorMenuButton.whileTrue(new RunFlywheel(shooter, 80, 0.2));
     // OI.operatorViewButton
     // .whileTrue(new AutoShoot(drive, shooter, feeder, peripherals, lights,
     // proximity, 1200, 22, 7000, false));
     // OI.operatorLB.whileTrue(new PositionalLobShot(drive, shooter, feeder,
     // peripherals, lights, proximity, 1200, 5));
-    OI.operatorLJ
-        .whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals, lights, proximity, 1200, 5));
-    OI.operatorRJ
-        .whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights, proximity, 5, 6200, 1200, 0, 5));
-    // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
-    // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
-    OI.operatorLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof, proximity,
-        Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
-    OI.operatorViewButton.whileTrue(new RunFeeder(feeder, -300));
+    // OI.operatorLJ
+    // .whileTrue(new PositionalFeederLobShot(drive, shooter, feeder, peripherals,
+    // lights, proximity, 1200, 5));
+    // OI.operatorRJ
+    // .whileTrue(new PositionalDipShot(drive, shooter, feeder, peripherals, lights,
+    // proximity, 5, 6200, 1200, 0, 5));
+    // // OI.operatorRB.whileTrue(new AutoIntake(intake, feeder, climber, lights,
+    // tof,
+    // // Constants.SetPoints.IntakePosition.kDOWN, 1200, 400));
+    // OI.operatorLT.whileTrue(new AutoIntake(intake, feeder, climber, lights, tof,
+    // proximity,
+    // Constants.SetPoints.IntakePosition.kDOWN, 1200, 450, true, true));
+    // OI.operatorViewButton.whileTrue(new RunFeeder(feeder, -300));
   }
 
   /**

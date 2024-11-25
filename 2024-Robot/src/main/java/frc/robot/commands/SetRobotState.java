@@ -6,25 +6,36 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.Superstructure;
+import frc.robot.subsystems.Superstructure.SuperState;
 
-public class SetShootingState extends Command {
+public class SetRobotState extends Command {
   Superstructure superstructure;
+  SuperState state;
+
   /** Creates a new SetShootingState. */
-  public SetShootingState() {
+  public SetRobotState(Superstructure superstructure, SuperState state) {
+    this.superstructure = superstructure;
+    this.state = state;
+    addRequirements(superstructure);
     // Use addRequirements() here to declare subsystem dependencies.
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {}
+  public void execute() {
+    superstructure.setWantedState(state);
+  }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    superstructure.setWantedState(SuperState.CYCLING);
+  }
 
   // Returns true when the command should end.
   @Override

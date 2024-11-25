@@ -15,6 +15,8 @@ import com.ctre.phoenix6.signals.GravityTypeValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
 import com.ctre.phoenix6.signals.SensorDirectionValue;
 
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
@@ -54,7 +56,11 @@ public class Shooter extends SubsystemBase {
 
   private final double kAngleFalconProfileScalarFactor = 1;
 
-  public enum ShooterState { 
+  private double setpointDegrees = 0;
+  private double setpointRPM = 0;
+  private double angleError = 0;
+
+  public enum ShooterState {
     SHOOT,
     FEED,
     OFF,
@@ -68,11 +74,36 @@ public class Shooter extends SubsystemBase {
    * ShooterDefault.
    */
   public Shooter() {
-    setDefaultCommand(new ShooterDefault(this));
+    // setDefaultCommand(new ShooterDefault(this));
   }
 
   public void setWantedState(ShooterState wantedState) {
     this.wantedState = wantedState;
+  }
+
+  public void setWantedState(ShooterState wantedState, double angle, double rpm, double shooterAngleError) {
+    this.wantedState = wantedState;
+    setSetpoint(rpm, angle, shooterAngleError);
+  }
+
+  public boolean shooterAtSetpoint() {
+    boolean result = false;
+    if (Math.abs(getAngleDegrees() - setpointDegrees) < angleError
+        && Math.abs(getFlywheelFollowerRPM() - setpointRPM) < 100
+        && Math.abs(getFlywheelMasterRPM() - setpointRPM) < 100) {
+      result = true;
+    }
+    // System.out.println("Shooter angle: " + getAngleDegrees() + " setpoint: " +
+    // setpointDegrees + "RPM: "
+    // + getFlywheelFollowerRPM() + " setpoint rpm: " + setpointRPM);
+    // System.out.println("result: " + result);
+    return result;
+  }
+
+  public void setSetpoint(double rpm, double angle, double error) {
+    this.setpointDegrees = angle;
+    this.setpointRPM = rpm;
+    this.angleError = error;
   }
 
   /**
@@ -192,8 +223,21 @@ public class Shooter extends SubsystemBase {
         .withVelocity(Constants.RPMToRPS(-RPM) * Constants.Ratios.SHOOTER_FLYWHEEL_GEAR_RATIO));
   }
 
-  public void feedState(){
+  public void feedState() {
 
+  }
+
+  public void defaultState() {
+    this.setFlywheelPercent(0);
+    // }
+
+    if (Math.abs(this.getAngleDegrees() - Constants.SetPoints.SHOOTER_DOWN_ANGLE_DEG) < 2) {
+      // System.out.println("stopped");
+      this.setAnglePercent(0);
+    } else {
+      // System.out.println("going down");
+      this.setAngleTorque(-15, 0.45);
+    }
   }
 
   /**
@@ -202,7 +246,8 @@ public class Shooter extends SubsystemBase {
    * @param degrees The desired elevation angle of the shooter in degrees.
    */
   public void setAngle(double degrees) {
-    double motionProfileScalar = (1 - this.kAngleFalconProfileScalarFactor) * Math.cos(Math.toRadians(getAngleDegrees()))
+    double motionProfileScalar = (1 - this.kAngleFalconProfileScalarFactor)
+        * Math.cos(Math.toRadians(getAngleDegrees()))
         + this.kAngleFalconProfileScalarFactor;
     if (degrees > Constants.SetPoints.SHOOTER_MAX_ANGLE_DEG) {
       this.angleFalcon.setControl(this.angleFalconMotionProfileRequest
@@ -338,7 +383,43 @@ public class Shooter extends SubsystemBase {
     SmartDashboard.putNumber("Flywheel %", this.flywheelFalconMaster.getTorqueCurrent().getValueAsDouble());
   }
 
+  private ShooterState handleStateTransition() {
+    switch (wantedState) {
+      case SHOOT:
+        return ShooterState.SHOOT;
+      case FEED:
+        return ShooterState.FEED;
+      case OFF:
+      default:
+        return ShooterState.OFF;
+    }
+  }
+
   @Override
   public void periodic() {
+    // process inputs
+    ShooterState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+
+    // Stop moving when disabled
+    if (DriverStation.isDisabled()) {
+      systemState = ShooterState.OFF;
+    }
+
+    switch (systemState) {
+      case FEED:
+        feedState();
+        break;
+      case SHOOT:
+        set(setpointDegrees, setpointRPM);
+        break;
+      case OFF:
+        defaultState();
+        break;
+      default:
+        defaultState();
+    }
   }
 }

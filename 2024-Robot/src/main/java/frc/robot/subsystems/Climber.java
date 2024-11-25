@@ -4,6 +4,8 @@
 
 package frc.robot.subsystems;
 
+import org.littletonrobotics.junction.Logger;
+
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.configs.TalonFXConfiguration;
 import com.ctre.phoenix6.controls.TorqueCurrentFOC;
@@ -17,21 +19,29 @@ import com.revrobotics.CANSparkBase.IdleMode;
 import com.revrobotics.CANSparkLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.commands.defaults.ClimberDefault;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
+import frc.robot.subsystems.Intake.IntakeState;
 import frc.robot.subsystems.Superstructure.SuperState;
 import frc.robot.tools.controlloops.PID;
 
 public class Climber extends SubsystemBase {
 
-  private final TalonFX elevatorFalconFollower = new TalonFX(Constants.CANInfo.ELEVATOR_FOLLOWER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+  private final TalonFX elevatorFalconFollower = new TalonFX(Constants.CANInfo.ELEVATOR_FOLLOWER_MOTOR_ID,
+      Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconFollowerConfiguration = new TalonFXConfiguration();
-  
-  private final TalonFX elevatorFalconMaster = new TalonFX(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, Constants.CANInfo.CANBUS_NAME);
+
+  private final TalonFX elevatorFalconMaster = new TalonFX(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID,
+      Constants.CANInfo.CANBUS_NAME);
   private final TalonFXConfiguration elevatorFalconMasterConfiguration = new TalonFXConfiguration();
   private final TorqueCurrentFOC elevatorFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
@@ -39,7 +49,8 @@ public class Climber extends SubsystemBase {
   private final TalonFXConfiguration trapRollerFalconConfiguration = new TalonFXConfiguration();
   private final TorqueCurrentFOC trapRollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
 
-  private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID, MotorType.kBrushless);
+  private final CANSparkMax carriageRotationNeo = new CANSparkMax(Constants.CANInfo.CARRIAGE_ROTATION_MOTOR_ID,
+      MotorType.kBrushless);
   private final CANcoder rotationCanCoder = new CANcoder(Constants.CANInfo.CARRIAGE_ROTATION_CANCODER_ID);
   DigitalInput elevatorLimitSwitch = new DigitalInput(0);
 
@@ -50,18 +61,26 @@ public class Climber extends SubsystemBase {
   private final double kD = 0.0;
   private final double kG = 0.015;
 
-  public enum ClimberState { 
+  public enum ClimberState {
     COLLECT,
     REJECT,
     EJECT,
     AMP,
     TRAP,
+    INDEXTOAMP,
+    INDEXTOTRAP,
+    ARMAMP,
+    ARMTRAP,
+    ELEVATORAMP,
+    ELEVATORTRAP,
+    CLIMBER_UP,
+    CLIMBER_DOWN,
     DEFAULT,
   }
 
-  
   private ClimberState wantedState = ClimberState.DEFAULT;
   private ClimberState systemState = ClimberState.DEFAULT;
+
   public void setWantedState(ClimberState wantedState) {
     this.wantedState = wantedState;
   }
@@ -69,22 +88,28 @@ public class Climber extends SubsystemBase {
   /**
    * Checks the status of various components related to the climber mechanism.
    *
-   * @return {@code true} if all components are functioning correctly; {@code false} otherwise.
-  */
+   * @return {@code true} if all components are functioning correctly;
+   *         {@code false} otherwise.
+   */
   public boolean getClimberCAN() {
-    if(elevatorFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK && elevatorFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK && trapRollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK && rotationCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK && carriageRotationNeo.setIdleMode(IdleMode.kBrake) == REVLibError.kOk) {
+    if (elevatorFalconFollower.clearStickyFault_BootDuringEnable() == StatusCode.OK
+        && elevatorFalconMaster.clearStickyFault_BootDuringEnable() == StatusCode.OK
+        && trapRollerFalcon.clearStickyFault_BootDuringEnable() == StatusCode.OK
+        && rotationCanCoder.clearStickyFault_BadMagnet() == StatusCode.OK
+        && carriageRotationNeo.setIdleMode(IdleMode.kBrake) == REVLibError.kOk) {
       return true;
-    } else return false;
+    } else
+      return false;
   }
 
   /**
    * Constructs a new instance of the Climber.
    * 
    * @param lights The lights subsystem.
-   * @param tof The Time-of-Flight (TOF) sensor used by the Climber.
+   * @param tof    The Time-of-Flight (TOF) sensor used by the Climber.
    */
   public Climber(Lights lights, TOF tof, Proximity proximity) {
-    setDefaultCommand(new ClimberDefault(this, proximity));
+    // setDefaultCommand(new ClimberDefault(this, proximity));
 
     this.rotationPID = new PID(this.kP, this.kI, this.kD);
     this.rotationPID.setMaxOutput(1);
@@ -93,7 +118,7 @@ public class Climber extends SubsystemBase {
     this.rotationPID.updatePID(getCarriageRotations());
   }
 
-  public void init(){
+  public void init() {
     double elevatorFalconP = 0;
     double elevatorFalconI = 0;
     double elevatorFalconD = 0;
@@ -132,7 +157,8 @@ public class Climber extends SubsystemBase {
     this.elevatorFalconMaster.setNeutralMode(NeutralModeValue.Brake);
     this.elevatorFalconMaster.setPosition(0);
 
-    // this.elevatorFalconFollower.setControl(new Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, false));
+    // this.elevatorFalconFollower.setControl(new
+    // Follower(Constants.CANInfo.ELEVATOR_MASTER_MOTOR_ID, false));
 
     this.trapRollerFalconConfiguration.Slot0.kP = 0;
     this.trapRollerFalconConfiguration.Slot0.kI = 0;
@@ -150,19 +176,19 @@ public class Climber extends SubsystemBase {
    * Sets the elevator position based on the specified position in meters.
    *
    * @param positionMeters The desired elevator position in meters.
-  */
-  public void setElevatorPositionMeters(double positionMeters){
+   */
+  public void setElevatorPositionMeters(double positionMeters) {
     // if (positionMeters > Constants.SetPoints.ELEVATOR_TOP_POSITION_M){
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
+    // this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_TOP_POSITION_M)));
     // } else if (positionMeters < Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M){
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
+    // this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(Constants.SetPoints.ELEVATOR_BOTTOM_POSITION_M)));
     // } else {
-    //   this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
+    // this.elevatorFalconMaster.setControl(this.elevatorFalconPositionRequest.withPosition(Constants.Ratios.elevatorMetersToRotations(positionMeters)));
     // }
-    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02){
+    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02) {
       setElevatorTorque(0.0, 0.0);
     } else {
-      if (positionMeters > getElevatorPositionMeters()){
+      if (positionMeters > getElevatorPositionMeters()) {
         setElevatorTorque(20, 0.5);
       } else {
         setElevatorTorque(-20, 0.5);
@@ -171,16 +197,17 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Sets the elevator position based on the specified elevator position in meters.
+   * Sets the elevator position based on the specified elevator position in
+   * meters.
    *
    * @param elevatorPosition The desired elevator position.
-  */
-  public void setElevatorPosition(Constants.SetPoints.ElevatorPosition elevatorPosition){
+   */
+  public void setElevatorPosition(Constants.SetPoints.ElevatorPosition elevatorPosition) {
     double positionMeters = elevatorPosition.meters;
-    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02){
+    if (positionMeters < getElevatorPositionMeters() + 0.02 && positionMeters > getElevatorPositionMeters() - 0.02) {
       setElevatorTorque(0.0, 0.0);
     } else {
-      if (positionMeters > getElevatorPositionMeters()){
+      if (positionMeters > getElevatorPositionMeters()) {
         setElevatorTorque(20, 0.5);
       } else {
         setElevatorTorque(-20, 0.5);
@@ -192,12 +219,12 @@ public class Climber extends SubsystemBase {
    * Sets the elevator position in rotations.
    *
    * @param positionRotations The desired position of the elevator in rotations.
-  */
-  public void setElevatorPositionRotations(double positionRotations){
-    if (positionRotations == getElevatorPositionRotations()){
+   */
+  public void setElevatorPositionRotations(double positionRotations) {
+    if (positionRotations == getElevatorPositionRotations()) {
       setElevatorTorque(0.0, 0.0);
     } else {
-      if (positionRotations > getElevatorPositionRotations()){
+      if (positionRotations > getElevatorPositionRotations()) {
         setElevatorTorque(-50, 0.5);
       } else {
         setElevatorTorque(20, 0.5);
@@ -206,22 +233,25 @@ public class Climber extends SubsystemBase {
   }
 
   /**
-   * Sets the torque control parameters for both the elevator Falcon Master and Follower.
+   * Sets the torque control parameters for both the elevator Falcon Master and
+   * Follower.
    *
-   * @param current The desired current output in amps.
+   * @param current    The desired current output in amps.
    * @param maxPercent The maximum absolute duty cycle percentage.
-  */
-  public void setElevatorTorque(double current, double maxPercent){
-    this.elevatorFalconMaster.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
-    this.elevatorFalconFollower.setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+   */
+  public void setElevatorTorque(double current, double maxPercent) {
+    this.elevatorFalconMaster
+        .setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+    this.elevatorFalconFollower
+        .setControl(this.elevatorFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   /**
    * Sets the output percentage of the elevator Falcon Master.
    *
    * @param percent The desired output percentage of the elevator Falcon Master.
-  */
-  public void setElevatorPercent(double percent){
+   */
+  public void setElevatorPercent(double percent) {
     this.elevatorFalconMaster.set(percent);
     this.elevatorFalconFollower.set(percent);
   }
@@ -230,8 +260,8 @@ public class Climber extends SubsystemBase {
    * Sets the encoder position for both the elevator Falcon Master and Follower.
    *
    * @param position The desired encoder position for the elevator.
-  */
-  public void setElevatorEncoderPosition(double position){
+   */
+  public void setElevatorEncoderPosition(double position) {
     this.elevatorFalconMaster.setPosition(position);
     this.elevatorFalconFollower.setPosition(position);
   }
@@ -240,27 +270,28 @@ public class Climber extends SubsystemBase {
    * Sets the output percentage of the trap roller Falcon.
    *
    * @param percent The desired output percentage of the trap roller Falcon.
-  */
-  public void setTrapRollerPercent(double percent){
+   */
+  public void setTrapRollerPercent(double percent) {
     this.trapRollerFalcon.set(percent);
   }
 
   /**
    * Sets the torque control parameters for the trap roller Falcon.
    *
-   * @param current The desired current output in amps.
+   * @param current    The desired current output in amps.
    * @param maxPercent The maximum absolute duty cycle percentage.
-  */
-  public void setTrapRollerTorque(double current, double maxPercent){
-    this.trapRollerFalcon.setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
+   */
+  public void setTrapRollerTorque(double current, double maxPercent) {
+    this.trapRollerFalcon
+        .setControl(this.trapRollerFalconTorqueRequest.withOutput(current).withMaxAbsDutyCycle(maxPercent));
   }
 
   /**
    * Sets the setpoint for the carriage rotation in degrees.
    *
    * @param degrees The desired angle for the carriage rotation in degrees.
-  */
-  public void setCarriageRotationDegrees(double degrees){
+   */
+  public void setCarriageRotationDegrees(double degrees) {
     this.m_carriageRotationSetpoint = degrees;
   }
 
@@ -268,16 +299,16 @@ public class Climber extends SubsystemBase {
    * Sets the setpoint for the carriage rotation.
    *
    * @param carriageRotation The desired carriage rotation setpoint.
-  */
-  public void setCarriageRotation(Constants.SetPoints.CarriageRotation carriageRotation){
+   */
+  public void setCarriageRotation(Constants.SetPoints.CarriageRotation carriageRotation) {
     double degrees = carriageRotation.degrees;
     this.m_carriageRotationSetpoint = degrees;
   }
 
   /**
    * Resets the position of the elevator to zero.
-  */
-  public void zeroElevator(){
+   */
+  public void zeroElevator() {
     this.elevatorFalconMaster.setPosition(0.0);
     this.elevatorFalconFollower.setPosition(0.0);
   }
@@ -286,8 +317,8 @@ public class Climber extends SubsystemBase {
    * Sets the percentage of rotation for the carriage.
    *
    * @param percent The desired percentage of rotation for the carriage.
-  */
-  public void setCarriageRotationPercent(double percent){
+   */
+  public void setCarriageRotationPercent(double percent) {
     this.carriageRotationNeo.set(percent);
   }
 
@@ -295,8 +326,8 @@ public class Climber extends SubsystemBase {
    * Retrieves the position of the elevator in meters.
    *
    * @return The position of the elevator in meters.
-  */
-  public double getElevatorPositionMeters(){
+   */
+  public double getElevatorPositionMeters() {
     return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getPosition().getValueAsDouble());
   }
 
@@ -304,8 +335,8 @@ public class Climber extends SubsystemBase {
    * Retrieves the position of the elevator in rotations.
    *
    * @return The position of the elevator in rotations.
-  */
-  public double getElevatorPositionRotations(){
+   */
+  public double getElevatorPositionRotations() {
     return this.elevatorFalconMaster.getPosition().getValueAsDouble();
   }
 
@@ -313,17 +344,17 @@ public class Climber extends SubsystemBase {
    * Retrieves the velocity of the trap roller in Rotations Per Second (RPS).
    *
    * @return The velocity of the trap roller in RPS.
-  */
-  public double getTrapRollerRPS(){
+   */
+  public double getTrapRollerRPS() {
     return this.trapRollerFalcon.getVelocity().getValueAsDouble() / Constants.Ratios.TRAP_ROLLER_GEAR_RATIO;
   }
-  
+
   /**
    * Retrieves the stator current of the elevator.
    *
    * @return The stator current of the elevator.
-  */
-  public double getElevatorCurrent(){
+   */
+  public double getElevatorCurrent() {
     return this.elevatorFalconMaster.getStatorCurrent().getValueAsDouble();
   }
 
@@ -331,8 +362,8 @@ public class Climber extends SubsystemBase {
    * Retrieves the velocity of the elevator in Meters Per Second (MPS).
    *
    * @return The velocity of the elevator in MPS.
-  */
-  public double getElevatorVelocityMPS(){
+   */
+  public double getElevatorVelocityMPS() {
     return Constants.Ratios.elevatorRotationsToMeters(this.elevatorFalconMaster.getVelocity().getValueAsDouble());
   }
 
@@ -340,8 +371,8 @@ public class Climber extends SubsystemBase {
    * Retrieves the velocity of the elevator in Rotations Per Second (RPS).
    *
    * @return The velocity of the elevator in RPS.
-  */
-  public double getElevatorVelocityRPS(){
+   */
+  public double getElevatorVelocityRPS() {
     return this.elevatorFalconMaster.getVelocity().getValueAsDouble();
   }
 
@@ -349,8 +380,8 @@ public class Climber extends SubsystemBase {
    * Retrieves the rotation angle of the carriage in rotations.
    *
    * @return The rotation angle of the carriage in rotations.
-  */
-  public double getCarriageRotations(){
+   */
+  public double getCarriageRotations() {
     return this.rotationCanCoder.getPosition().getValueAsDouble();
   }
 
@@ -358,61 +389,344 @@ public class Climber extends SubsystemBase {
    * Retrieves the rotation angle of the carriage in degrees.
    *
    * @return The rotation angle of the carriage in degrees.
-  */
-  public double getCarriageRotationDegrees(){
+   */
+  public double getCarriageRotationDegrees() {
     return getCarriageRotations() * 360.0;
   }
 
   /**
    * Retrieves the state of the elevator limit switch.
    *
-   * @return {@code true} if the elevator limit switch is not triggered, {@code false} otherwise.
-  */
-  public boolean getElevatorLimitSwitch(){
-    //default returns false when triggered so this flips it
+   * @return {@code true} if the elevator limit switch is not triggered,
+   *         {@code false} otherwise.
+   */
+  public boolean getElevatorLimitSwitch() {
+    // default returns false when triggered so this flips it
     return elevatorLimitSwitch.get();
     // if (elevatorLimitSwitch.get()){
-    //   return false;
+    // return false;
     // } else {
-    //   return true;
+    // return true;
     // }
+  }
+
+  public void indexNoteToCarriage(double seconds) {
+    boolean haveNote = false;
+    boolean noteInPlace = false;
+    boolean noteInMiddle = false;
+    double runbackTime;
+    double haveNoteTime;
+    haveNoteTime = 0.0;
+    haveNote = false;
+    noteInPlace = false;
+    noteInMiddle = false;
+    if (Proximity.getCarriageProximity() && !haveNote && !noteInPlace) {
+      haveNoteTime = Timer.getFPGATimestamp();
+      haveNote = true;
+      setTrapRollerTorque(-20, 0.5);
+      // System.out.println("1");
+    } else if (!Proximity.getCarriageProximity() && haveNote && !noteInPlace) {
+      noteInMiddle = true;
+      setTrapRollerTorque(-20, 0.5);
+      // System.out.println("2");
+    } else if (Proximity.getCarriageProximity() && noteInMiddle &&
+        !noteInPlace) {
+      noteInPlace = true;
+      setTrapRollerTorque(20, 0.5);
+      haveNoteTime = Timer.getFPGATimestamp();
+      // System.out.println("3");
+    } else if (noteInPlace) {
+      this.setTrapRollerTorque(20, 0.5);
+      // System.out.println("4");
+    } else {
+      this.setTrapRollerTorque(-20, 0.5);
+      // System.out.println("5");
+    }
+    // System.out.println("haveNote: " + this.haveNote);
+    // System.out.println("noteInPlace: " + this.noteInPlace);
+
+    this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees
+        - 5);
+    if (noteInPlace && Timer.getFPGATimestamp() - haveNoteTime > seconds) {
+      return;
+    }
+  }
+
+  public void ampPosition() {
+    double positionMeters = Constants.SetPoints.ElevatorPosition.kAMP.meters;
+    this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees);
+    if (positionMeters < this.getElevatorPositionMeters() + 0.02
+        && positionMeters > this.getElevatorPositionMeters() - 0.02) {
+      this.setElevatorTorque(0.0, 0.0);
+    } else {
+      if (positionMeters > this.getElevatorPositionMeters()) {
+        this.setElevatorTorque(20, 1.0);
+      } else {
+        this.setElevatorTorque(-20, 1.0);
+      }
+    }
+  }
+
+  public void defaultState() {
+    boolean isZeroed = false;
+    int numTimesHitBottom = 0;
+    boolean haveNote = false;
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    } else {
+      haveNote = false;
+    }
+    boolean haveCarriageNote = false;
+    boolean haveFeederNote = false;
+
+    setElevatorPercent(0.0);
+    if (Math.abs(getElevatorVelocityMPS()) < 0.01) {
+      numTimesHitBottom++;
+    }
+
+    if (!getElevatorLimitSwitch()) {
+      isZeroed = true;
+      numTimesHitBottom = 0;
+      zeroElevator();
+      // System.out.println("zero elevator");
+    } else {
+      isZeroed = false;
+    }
+
+    if (Math.abs(getElevatorPositionMeters()) > 0.05 && isZeroed) {
+      isZeroed = false;
+      numTimesHitBottom = 0;
+    }
+
+    if (Proximity.getCarriageProximity()) {
+      haveCarriageNote = true;
+    }
+
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    }
+
+    if (Proximity.getFeederProximity()) {
+      haveFeederNote = true;
+    }
+
+    // System.out.println("carriage proximity: " +
+    // Proximity.getCarriageProximity());
+    // System.out.println("have note " + haveNote);
+    // System.out.println("zeroed: " + isZeroed);
+    if (isZeroed) {
+      setElevatorTorque(0, 0.1);
+      if (OI.getOperatorLB()) {
+        setTrapRollerPercent(0);
+        setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+      } else if (!Proximity.getCarriageProximity() && Proximity.getFeederProximity()
+          && !Proximity.getShooterProximity() && haveNote) {
+        // System.out.println("1");
+        setTrapRollerPercent(0);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      } else if (Proximity.getCarriageProximity() && Proximity.getFeederProximity()
+          && Proximity.getShooterProximity()) {
+        // System.out.println("2");
+        setTrapRollerTorque(15, 0.1);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      } else if (haveNote && !Proximity.getShooterProximity()) {
+        // System.out.println("3");
+        setTrapRollerTorque(15, 0.1);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      } else if (haveCarriageNote && !haveNote && haveFeederNote) {
+        // System.out.println("4");
+        setTrapRollerTorque(15, 0.1);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      } else if (Proximity.getCarriageProximity() && !haveNote) {
+        // System.out.println("5");
+        setTrapRollerTorque(30, 0.4);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+      } else if (haveNote) {
+        // System.out.println("6");
+        setTrapRollerTorque(20, 0.2);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+      } else {
+        // System.out.println("7");
+        setTrapRollerTorque(20, 0.2);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      }
+    } else {
+      setTrapRollerTorque(30, 0.2);
+      setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+
+      if (Math.abs(getCarriageRotationDegrees() - Constants.SetPoints.CarriageRotation.kFEED.degrees) < 3) {
+        // System.out.println("8");
+        if (getElevatorPositionMeters() > 0.1) {
+          setElevatorTorque(-30, 0.85);
+        } else {
+          setElevatorTorque(-10, 0.6);
+        }
+      } else {
+        // System.out.println("9");
+        setElevatorTorque(0, 0);
+      }
+    }
+  }
+
+  public void intakeState() {
+    boolean haveNote = false;
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    }
+
+    if (!Proximity.getCarriageProximity() && !Proximity.getShooterProximity() && Proximity.getFeederProximity()) {
+      // System.out.println("1");
+      this.setTrapRollerTorque(15, 0.1);
+      this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees);
+      // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
+      // OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
+    } else if (haveNote && !Proximity.getShooterProximity()) {
+      // System.out.println("2");
+      this.setTrapRollerTorque(15, 0.1);
+      this.setCarriageRotation(Constants.SetPoints.CarriageRotation.kDOWN);
+    } else if (haveNote) {
+      // System.out.println("3");
+      this.setTrapRollerTorque(15, 0.1);
+      this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+      // OI.driverController.setRumble(RumbleType.kBothRumble, 0.6);
+      // OI.operatorController.setRumble(RumbleType.kBothRumble, 0.6);
+    } else {
+      // System.out.println("4");
+      this.setTrapRollerTorque(30, 0.50);
+      this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+    }
+  }
+
+  public void runClimber(double current, double maxPercent) {
+    boolean hitLimit = false;
+    int numTimesHitLimit = 0;
+    this.setTrapRollerPercent(0);
+    this.setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
+
+    if (Math.abs(this.getElevatorVelocityMPS()) < 0.01) {
+      numTimesHitLimit++;
+    }
+
+    if (numTimesHitLimit > 2) {
+      hitLimit = true;
+      numTimesHitLimit = 0;
+    }
+
+    if (hitLimit) {
+      setElevatorTorque(0, 0);
+    } else {
+      setElevatorTorque(current, maxPercent);
+    }
+  }
+
+  private ClimberState handleStateTransition() {
+    switch (wantedState) {
+      case REJECT:
+        return ClimberState.REJECT;
+      case EJECT:
+        return ClimberState.EJECT;
+      case AMP:
+        return ClimberState.AMP;
+      case TRAP:
+        return ClimberState.TRAP;
+      case CLIMBER_DOWN:
+        return ClimberState.CLIMBER_DOWN;
+      case CLIMBER_UP:
+        return ClimberState.CLIMBER_DOWN;
+      case COLLECT:
+        if ((!Proximity.getShooterProximity() && Proximity.getFeederProximity())) {
+          return ClimberState.DEFAULT;
+        }
+        return ClimberState.COLLECT;
+      case DEFAULT:
+      default:
+        return ClimberState.DEFAULT;
+    }
   }
 
   @Override
   public void periodic() {
+    // process inputs
+    ClimberState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+
+    // Stop moving when disabled
+    if (DriverStation.isDisabled()) {
+      systemState = ClimberState.DEFAULT;
+    }
+
+    switch (systemState) {
+      case COLLECT:
+        intakeState();
+        break;
+      case EJECT:
+        break;
+      case REJECT:
+        setTrapRollerPercent(-0.4);
+        break;
+      case INDEXTOAMP:
+        indexNoteToCarriage(0.2);
+        ampPosition();
+        break;
+      case ELEVATORAMP:
+        break;
+      case ARMAMP:
+        break;
+      case INDEXTOTRAP:
+        break;
+      case ELEVATORTRAP:
+        break;
+      case ARMTRAP:
+        break;
+      case CLIMBER_DOWN:
+        runClimber(-50, 1.0);
+        break;
+      case CLIMBER_UP:
+        runClimber(20, 1.0);
+        break;
+      case DEFAULT:
+        defaultState();
+        break;
+      default:
+        defaultState();
+    }
     // boolean climbMaster = false;
     // boolean climbFollower = false;
     // SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
-    // SmartDashboard.putNumber("Elevator Rotations", getElevatorPositionRotations());
+    // SmartDashboard.putNumber("Elevator Rotations",
+    // getElevatorPositionRotations());
     // Logger.recordOutput("Elevator Meters", getElevatorPositionMeters());
     // Logger.recordOutput("Elevator Rotations", getElevatorPositionRotations());
     // if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
-    //   climbMaster = true;
+    // climbMaster = true;
     // }
     // if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
-    //   climbFollower = true;
+    // climbFollower = true;
     // }
 
     SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
 
     // if (getElevatorLimitSwitch()){
-    //   setElevatorEncoderPosition(0.0);
+    // setElevatorEncoderPosition(0.0);
     // }
     // System.out.println("Carriage RPM: " + carriageEncoder.getVelocity());
-    // System.out.println("Carriage amps: " + carriageRotationNeo.getOutputCurrent());
+    // System.out.println("Carriage amps: " +
+    // carriageRotationNeo.getOutputCurrent());
     // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
     // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
 
-    //DO NOT REMOVE FOR COMP
+    // DO NOT REMOVE FOR COMP
     this.rotationPID.setSetPoint(this.m_carriageRotationSetpoint);
     this.rotationPID.updatePID(getCarriageRotationDegrees());
     double result = this.rotationPID.getResult() + Math.sin(Math.toRadians(getCarriageRotationDegrees())) * this.kG;
     setCarriageRotationPercent(result);
     SmartDashboard.putNumber("Carriage Rotation", getCarriageRotationDegrees());
-    //DO NOT REMOVE FOR COMP
+    // DO NOT REMOVE FOR COMP
   }
 
-  public void teleopPeriodic(){
-    
+  public void teleopPeriodic() {
+
   }
 }

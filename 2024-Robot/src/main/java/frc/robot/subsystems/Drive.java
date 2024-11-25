@@ -26,7 +26,10 @@ import frc.robot.OI;
 import frc.robot.tools.controlloops.PID;
 import frc.robot.tools.math.Vector;
 import frc.robot.commands.defaults.DriveDefault;
+import frc.robot.sensors.Proximity;
 import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Intake.IntakeState;
+import frc.robot.subsystems.Shooter.ShooterState;
 
 // **Zero Wheels with the bolt head showing on the left when the front side(battery) is facing down/away from you**
 
@@ -131,7 +134,6 @@ public class Drive extends SubsystemBase {
   Translation2d m_backLeftLocation = new Translation2d(-moduleX, moduleY);
   Translation2d m_backRightLocation = new Translation2d(-moduleX, -moduleY);
 
-
   // odometry
   private double m_currentX = 0;
   private double m_currentY = 0;
@@ -177,9 +179,14 @@ public class Drive extends SubsystemBase {
   private double kThetaI = 0.0;
   private double kThetaD = 2.0;
 
+  private double kTurningP = 0.04;
+  private double kTurningI = 0;
+  private double kTurningD = 0.06;
+
   private PID xPID = new PID(kXP, kXI, kXD);
   private PID yPID = new PID(kYP, kYI, kYD);
   private PID thetaPID = new PID(kThetaP, kThetaI, kThetaD);
+  private PID turningPID = new PID(kTurningP, kTurningI, kTurningD);
 
   private String m_fieldSide = "blue";
 
@@ -187,7 +194,9 @@ public class Drive extends SubsystemBase {
 
   private Boolean m_useCameraInOdometry = true;
 
-  public enum DriveState { 
+  private double angleSetpoint = 0;
+
+  public enum DriveState {
     SHOOT,
     AMP,
     FEED,
@@ -222,8 +231,28 @@ public class Drive extends SubsystemBase {
         new Rotation2d(Math.toRadians(peripherals.getPigeonAngle())), swerveModulePositions, m_pose);
   }
 
+  public boolean atSetpoint() {
+    double currentAngle = peripherals.getPigeonAngle();
+    if (getFieldSide().equals("red")) {
+      currentAngle -= 180;
+    }
+    // System.out.println("currentAngle: " + currentAngle + " setpoint: " +
+    // angleSetpoint);
+    return (Math.abs(Constants.SetPoints.standardizeAngleDegrees(currentAngle)
+        - Constants.SetPoints.standardizeAngleDegrees(angleSetpoint)) < 2);
+  }
+
   public void setWantedState(DriveState wantedState) {
     this.wantedState = wantedState;
+  }
+
+  public void setWantedState(DriveState wantedState, double angle) {
+    this.wantedState = wantedState;
+    setSetpointAngle(angle);
+  }
+
+  public void setSetpointAngle(double angle) {
+    this.angleSetpoint = angle;
   }
 
   /**
@@ -264,7 +293,10 @@ public class Drive extends SubsystemBase {
     thetaPID.setMinOutput(-3);
     thetaPID.setMaxOutput(3);
 
-    setDefaultCommand(new DriveDefault(this));
+    turningPID.setMinOutput(-3);
+    turningPID.setMaxOutput(3);
+
+    // setDefaultCommand(new DriveDefault(this));
   }
 
   public void useCameraInOdometry() {
@@ -1162,9 +1194,69 @@ public class Drive extends SubsystemBase {
     return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
   }
 
+  public void calculateAngleChange(double angle) {
+    double pigeonAngleDegrees = this.peripherals.getPigeonAngle();
+    double targetAngle = 0;
+    if (getFieldSide() == "red") {
+      targetAngle = angle + 180;
+    } else {
+      targetAngle = angle;
+    }
+
+    if (DriverStation.isAutonomousEnabled() && getFieldSide() == "red") {
+      pigeonAngleDegrees = 180 + pigeonAngleDegrees;
+    }
+    this.turningPID.setSetPoint(Constants.SetPoints.standardizeAngleDegrees(targetAngle));
+    this.turningPID.updatePID(Constants.SetPoints.standardizeAngleDegrees(pigeonAngleDegrees));
+    double turnResult = -turningPID.getResult();
+
+    this.driveAutoAligned(turnResult);
+  }
+
+  private DriveState handleStateTransition() {
+    switch (wantedState) {
+      case SHOOT:
+        return DriveState.SHOOT;
+      case FEED:
+        return DriveState.FEED;
+      case AMP:
+        return DriveState.AMP;
+      case DEFAULT:
+      default:
+        return DriveState.DEFAULT;
+    }
+  }
+
   @Override
   public void periodic() {
     updateOdometryFusedArray();
+    // System.out.println("drive angle setpoint: " + angleSetpoint);
+    // process inputs
+    DriveState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+
+    // Stop moving when disabled
+    if (DriverStation.isDisabled()) {
+      systemState = DriveState.DEFAULT;
+    }
+    switch (systemState) {
+      case SHOOT:
+        calculateAngleChange(angleSetpoint);
+        break;
+      case FEED:
+
+        break;
+      case AMP:
+
+        break;
+      case DEFAULT:
+        teleopDrive();
+        break;
+      default:
+        teleopDrive();
+    }
     // SmartDashboard.putNumber("dist",
     // Constants.getDistance(Constants.Physical.SPEAKER_X,
     // Constants.Physical.SPEAKER_Y, getMT2OdometryX(), getMT2OdometryY()));

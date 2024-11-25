@@ -10,9 +10,16 @@ import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.InvertedValue;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.GenericHID.RumbleType;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.commands.defaults.IntakeDefault;
+import frc.robot.sensors.Proximity;
+import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Feeder.FeederState;
 
 public class Intake extends SubsystemBase {
@@ -30,21 +37,26 @@ public class Intake extends SubsystemBase {
   private final VelocityTorqueCurrentFOC rollerFalconVelocityRequest = new VelocityTorqueCurrentFOC(0, 0, 0, 0, false,
       false, false);
 
-  public enum IntakeState { 
+  public enum IntakeState {
     COLLECT,
     REJECT,
     EJECT,
-    OFF
+    OFF,
+    AMPTRAP,
+    INDEX_TO_AMP,
+    INDEX_TO_TRAP
   }
+
+  boolean initRun = false;
 
   private IntakeState wantedState = IntakeState.OFF;
   private IntakeState systemState = IntakeState.OFF;
-  
+
   /**
    * Constructs a new instance of the Intake class.
    */
   public Intake() {
-    setDefaultCommand(new IntakeDefault(this));
+    // setDefaultCommand(new IntakeDefault(this));
   }
 
   public void setWantedState(IntakeState wantedState) {
@@ -285,8 +297,121 @@ public class Intake extends SubsystemBase {
 
   }
 
+  public void defaultState() {
+    boolean isZeroed = false;
+    int numTimesOverCurrentLimit = 0;
+    double initTime = 0;
+    if (!initRun) {
+      initTime = Timer.getFPGATimestamp();
+      initRun = true;
+    }
+    if (OI.getOperatorLB()) {
+      this.setRollers(0);
+    } else {
+      this.setRollers(250);
+    }
+    OI.driverController.setRumble(RumbleType.kBothRumble, 0);
+    OI.operatorController.setRumble(RumbleType.kBothRumble, 0);
+
+    if (Timer.getFPGATimestamp() - initTime < 0.6) {
+      this.setAngle(Constants.SetPoints.IntakePosition.kUP.degrees);
+    } else {
+      if (Math.abs(this.getAngleRPS()) < 0.01 && !isZeroed) {
+        this.setAngleTorqueCurrent(10, 0.1);
+        this.setAngleEncoderPosition(0);
+        numTimesOverCurrentLimit++;
+      } else if (!isZeroed) {
+        this.setAngleTorqueCurrent(45, 0.3);
+      } else {
+        this.setAngleTorqueCurrent(5, 0.1);
+      }
+
+      if (numTimesOverCurrentLimit > 3) {
+        isZeroed = true;
+        numTimesOverCurrentLimit = 0;
+      }
+
+      if (Math.abs(this.getAngleRotations()) > 0.05) {
+        isZeroed = false;
+      }
+    }
+  }
+
+  private IntakeState handleStateTransition() {
+    switch (wantedState) {
+      case REJECT:
+        return IntakeState.REJECT;
+      case EJECT:
+        return IntakeState.EJECT;
+      case COLLECT:
+        if ((!Proximity.getShooterProximity() && Proximity.getFeederProximity())) {
+          return IntakeState.OFF;
+        }
+        return IntakeState.COLLECT;
+      case OFF:
+      default:
+        return IntakeState.OFF;
+    }
+  }
+
+  public void intakeState() {
+    boolean buzzControllers = false;
+
+    boolean noteInIntake = false;
+    int numTimeNoteInIntake = 0;
+
+    if (getRollerCurrent() > Constants.SetPoints.INTAKE_CURRENT_THRESHOLD) {
+      numTimeNoteInIntake++;
+    }
+    if (numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD) {
+      noteInIntake = true;
+    }
+
+    set(Constants.SetPoints.IntakePosition.kDOWN, 1200);
+
+    if (buzzControllers) {
+      if (noteInIntake) {
+        OI.driverController.setRumble(RumbleType.kBothRumble, 1.0);
+        OI.operatorController.setRumble(RumbleType.kBothRumble, 1.0);
+      }
+    }
+  }
+
+  public void ampTrapState() {
+    this.setAngleTorqueCurrent(40, 0.5);
+    this.setRollers(60);
+  }
+
   @Override
   public void periodic() {
+    // process inputs
+    IntakeState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+
+    // Stop moving when disabled
+    if (DriverStation.isDisabled()) {
+      systemState = IntakeState.OFF;
+    }
+    switch (systemState) {
+      case COLLECT:
+        intakeState();
+        break;
+      case REJECT:
+        set(Constants.SetPoints.IntakePosition.kUP, -800);
+        break;
+      case EJECT:
+        break;
+      case AMPTRAP:
+        ampTrapState();
+        break;
+      case OFF:
+        defaultState();
+        break;
+      default:
+        defaultState();
+    }
     Logger.recordOutput("intakeRollerStator", this.rollerFalcon.getStatorCurrent().getValueAsDouble());
   }
 }

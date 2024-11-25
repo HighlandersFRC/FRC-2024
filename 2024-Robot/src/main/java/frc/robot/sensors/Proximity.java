@@ -7,22 +7,22 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
 
 public class Proximity {
-    public final DigitalInput shooterProximity = new DigitalInput(Constants.CANInfo.SHOOTER_PROXIMITY_PORT);
-    public final DigitalInput feederProximity = new DigitalInput(Constants.CANInfo.FEEDER_PROXIMITY_PORT);
-    public final DigitalInput carriageProximity = new DigitalInput(Constants.CANInfo.CARRIAGE_PROXIMITY_PORT);
+    public static DigitalInput shooterProximity = new DigitalInput(Constants.CANInfo.SHOOTER_PROXIMITY_PORT);
+    public static DigitalInput feederProximity = new DigitalInput(Constants.CANInfo.FEEDER_PROXIMITY_PORT);
+    public static DigitalInput carriageProximity = new DigitalInput(Constants.CANInfo.CARRIAGE_PROXIMITY_PORT);
 
     public Proximity(){}
 
-    public boolean getShooterProximity(){
-        return this.shooterProximity.get();
+    public static boolean getShooterProximity(){
+        return shooterProximity.get();
     }
 
-    public boolean getCarriageProximity(){
-        return this.carriageProximity.get();
+    public static boolean getCarriageProximity(){
+        return carriageProximity.get();
     }
      
-    public boolean getFeederProximity(){
-        return this.feederProximity.get();
+    public static boolean getFeederProximity(){
+        return feederProximity.get();
     }
 
     public void periodic(){

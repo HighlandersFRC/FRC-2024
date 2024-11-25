@@ -8,12 +8,19 @@ import com.ctre.phoenix6.controls.TorqueCurrentFOC;
 import com.ctre.phoenix6.controls.VelocityTorqueCurrentFOC;
 import com.ctre.phoenix6.hardware.TalonFX;
 import com.ctre.phoenix6.signals.NeutralModeValue;
+
+import edu.wpi.first.wpilibj.DigitalInput;
+import edu.wpi.first.wpilibj.DriverStation;
+import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
+import frc.robot.OI;
 import frc.robot.commands.defaults.FeederDefault;
 import frc.robot.sensors.Proximity;
 import frc.robot.sensors.TOF;
 import frc.robot.subsystems.Climber.ClimberState;
+import frc.robot.subsystems.Drive.DriveState;
+import frc.robot.subsystems.Intake.IntakeState;
 
 public class Feeder extends SubsystemBase {
   double startTime;
@@ -24,15 +31,19 @@ public class Feeder extends SubsystemBase {
       false, false);
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
   public BooleanSupplier m_noteInRobot;
+  boolean haveNote = false;
+  int ampTimeToCenterNote =
 
-  public enum FeederState { 
+  public enum FeederState {
     COLLECT,
     REJECT,
     EJECT,
-    IDLE
+    IDLE,
+    AMPTRAP,
+    INDEX_TO_AMP,
+    INDEX_TO_TRAP,
   }
 
-  
   private FeederState wantedState = FeederState.IDLE;
   private FeederState systemState = FeederState.IDLE;
 
@@ -42,7 +53,7 @@ public class Feeder extends SubsystemBase {
    * @param tof The Time-of-Flight (TOF) sensor used by the Feeder.
    */
   public Feeder(TOF tof, Proximity proximity, BooleanSupplier noteInRobot) {
-    setDefaultCommand(new FeederDefault(this, proximity));
+    // setDefaultCommand(new FeederDefault(this, proximity));
     this.m_noteInRobot = noteInRobot;
   }
 
@@ -117,10 +128,161 @@ public class Feeder extends SubsystemBase {
     return this.rollerFalcon.getRotorVelocity().getValue() / Constants.Ratios.FEEDER_ROLLER_GEAR_RATIO;
   }
 
+  public void defaultState() {
+    boolean haveNote = false;
+    boolean haveCarriageNote = false;
+    boolean haveFeederNote = false;
+    if (Proximity.getCarriageProximity()) {
+      haveCarriageNote = true;
+    }
+
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    }
+
+    if (Proximity.getFeederProximity()) {
+      haveFeederNote = true;
+    }
+
+    if (OI.getOperatorLB()) {
+      this.set(0);
+    } else if (!Proximity.getCarriageProximity() && !Proximity.getShooterProximity()
+        && !Proximity.getFeederProximity()) {
+      // System.out.println("first");
+      this.set(450);
+    } else if (!Proximity.getCarriageProximity() && !Proximity.getShooterProximity()
+        && Proximity.getFeederProximity()) {
+      this.setPercent(0);
+    } else if (haveNote && !Proximity.getShooterProximity()) {
+      this.setPercent(0);
+    } else if (haveCarriageNote && !haveNote && !haveFeederNote) {
+      // System.out.println("second");
+      this.set(450);
+    } else if (haveNote) {
+      // System.out.println("third");
+      this.set(100);
+    } else {
+      this.setPercent(0.0);
+    }
+  }
+
+  public void intakeState() {
+    boolean haveNote = false;
+    boolean haveCarriageNote = false;
+    boolean haveFeederNote = false;
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    }
+    if (Proximity.getCarriageProximity()) {
+      haveCarriageNote = true;
+    }
+
+    if (Proximity.getShooterProximity()) {
+      haveNote = true;
+    }
+
+    if (Proximity.getFeederProximity()) {
+      haveFeederNote = true;
+    }
+
+    if (OI.getOperatorLB()) {
+      this.set(0);
+    } else if (!Proximity.getCarriageProximity() && !Proximity.getShooterProximity()
+        && !Proximity.getFeederProximity()) {
+      // System.out.println("first");
+      this.set(450);
+    } else if (!Proximity.getCarriageProximity() && !Proximity.getShooterProximity()
+        && Proximity.getFeederProximity()) {
+      this.setPercent(0);
+    } else if (haveNote && !Proximity.getShooterProximity()) {
+      this.setPercent(0);
+    } else if (haveCarriageNote && !haveNote && !haveFeederNote) {
+      // System.out.println("second");
+      this.set(450);
+    } else if (haveNote) {
+      // System.out.println("third");
+      this.set(100);
+    } else {
+      this.setPercent(0.0);
+    }
+  }
+
+  public void indexNote(double seconds) {
+
+  }
+
   public void teleopPeriodic() {
+  }
+
+  public void ampState() {
+    double haveNoteTime = 0.0;
+    if (Proximity.getCarriageProximity()) {
+      if (!haveNote) {
+        haveNoteTime = Timer.getFPGATimestamp();
+        // System.out.println("1");
+      }
+      haveNote = true;
+    }
+
+    if (Timer.getFPGATimestamp() - haveNoteTime > ampTimeToCenterNote && haveNote) {
+      set(-150);
+    }
+  }
+
+  private FeederState handleStateTransition() {
+    switch (wantedState) {
+      case COLLECT:
+        return FeederState.COLLECT;
+      case REJECT:
+        return FeederState.REJECT;
+      case EJECT:
+        return FeederState.EJECT;
+      case AMPTRAP:
+        return FeederState.AMPTRAP;
+      case IDLE:
+      default:
+        return FeederState.IDLE;
+    }
   }
 
   @Override
   public void periodic() {
+    // System.out.println("System state: " + systemState + " wanted state: " +
+    // wantedState);
+    // process inputs
+    FeederState newState = handleStateTransition();
+    if (newState != systemState) {
+      systemState = newState;
+    }
+
+    // Stop moving when disabled
+    if (DriverStation.isDisabled()) {
+      systemState = FeederState.IDLE;
+    }
+
+    switch (systemState) {
+      case COLLECT:
+        intakeState();
+        break;
+      case INDEX_TO_AMP:
+        intakeState();
+        break;
+      case INDEX_TO_TRAP:
+        intakeState();
+        break;
+      case EJECT:
+        this.set(1200);
+        break;
+      case REJECT:
+        this.set(-800);
+        break;
+      case AMPTRAP:
+        ampState();
+        break;
+      case IDLE:
+        defaultState();
+        break;
+      default:
+    }
   }
 }
