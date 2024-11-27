@@ -141,6 +141,10 @@ public class Superstructure extends SubsystemBase {
         // Amp state
         ampState();
         break;
+      case TRAP:
+        // Amp state
+        trapState();
+        break;
       case CLIMBER_UP:
         climberUpState();
         // Climb state
@@ -189,6 +193,10 @@ public class Superstructure extends SubsystemBase {
       case AMP:
         // Amp state
         currentSuperState = SuperState.AMP;
+        break;
+      case TRAP:
+        // Amp state
+        currentSuperState = SuperState.TRAP;
         break;
       case CLIMBER_DOWN:
         currentSuperState = SuperState.CLIMBER_DOWN;
@@ -244,9 +252,15 @@ public class Superstructure extends SubsystemBase {
   }
 
   public void ampState() {
-    feeder.setWantedState(FeederState.INDEX_TO_AMP);
+    feeder.setWantedState(FeederState.AMPTRAP);
     climber.setWantedState(ClimberState.AMP);
-    intake.setWantedState(IntakeState.INDEX_TO_AMP);
+    intake.setWantedState(IntakeState.AMPTRAP);
+  }
+
+  public void trapState() {
+    feeder.setWantedState(FeederState.AMPTRAP);
+    climber.setWantedState(ClimberState.TRAP);
+    intake.setWantedState(IntakeState.AMPTRAP);
   }
 
   public void outakingState() {

@@ -241,7 +241,6 @@ public class RobotContainer {
     OI.driverLT.whileTrue(new SetRobotState(superstructure, SuperState.OUTAKING));
     OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.SHOOT_SPEAKER));
     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.FEEDING));
-    OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.AMP));
     // OI.driverA.onFalse(superstructure.setWantedSuperStateCommand(SuperState.CYCLING));
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
     // OI.driverPOVDown

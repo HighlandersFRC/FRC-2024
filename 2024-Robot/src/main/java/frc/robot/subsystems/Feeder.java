@@ -32,7 +32,6 @@ public class Feeder extends SubsystemBase {
   private final TorqueCurrentFOC rollerFalconTorqueRequest = new TorqueCurrentFOC(0, 0, 0, false, false, false);
   public BooleanSupplier m_noteInRobot;
   boolean haveNote = false;
-  int ampTimeToCenterNote =
 
   public enum FeederState {
     COLLECT,
@@ -215,18 +214,7 @@ public class Feeder extends SubsystemBase {
   }
 
   public void ampState() {
-    double haveNoteTime = 0.0;
-    if (Proximity.getCarriageProximity()) {
-      if (!haveNote) {
-        haveNoteTime = Timer.getFPGATimestamp();
-        // System.out.println("1");
-      }
-      haveNote = true;
-    }
-
-    if (Timer.getFPGATimestamp() - haveNoteTime > ampTimeToCenterNote && haveNote) {
-      set(-150);
-    }
+    set(-150);
   }
 
   private FeederState handleStateTransition() {

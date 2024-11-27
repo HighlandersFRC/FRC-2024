@@ -81,6 +81,12 @@ public class Climber extends SubsystemBase {
   private ClimberState wantedState = ClimberState.DEFAULT;
   private ClimberState systemState = ClimberState.DEFAULT;
 
+  double runbackTime = 0.2;
+  double haveNoteTime = 0.0;
+  boolean haveNote = false;
+  boolean noteInPlace = false;
+  boolean noteInMiddle = false;
+
   public void setWantedState(ClimberState wantedState) {
     this.wantedState = wantedState;
   }
@@ -452,22 +458,12 @@ public class Climber extends SubsystemBase {
     }
   }
 
-  public void ampPosition() {
-    double positionMeters = Constants.SetPoints.ElevatorPosition.kAMP.meters;
-    this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees);
-    if (positionMeters < this.getElevatorPositionMeters() + 0.02
-        && positionMeters > this.getElevatorPositionMeters() - 0.02) {
-      this.setElevatorTorque(0.0, 0.0);
-    } else {
-      if (positionMeters > this.getElevatorPositionMeters()) {
-        this.setElevatorTorque(20, 1.0);
-      } else {
-        this.setElevatorTorque(-20, 1.0);
-      }
-    }
-  }
-
   public void defaultState() {
+    runbackTime = 0.2;
+    haveNoteTime = 0.0;
+    haveNote = false;
+    noteInPlace = false;
+    noteInMiddle = false;
     boolean isZeroed = false;
     int numTimesHitBottom = 0;
     boolean haveNote = false;
@@ -488,7 +484,6 @@ public class Climber extends SubsystemBase {
       isZeroed = true;
       numTimesHitBottom = 0;
       zeroElevator();
-      // System.out.println("zero elevator");
     } else {
       isZeroed = false;
     }
@@ -509,17 +504,13 @@ public class Climber extends SubsystemBase {
     if (Proximity.getFeederProximity()) {
       haveFeederNote = true;
     }
-
-    // System.out.println("carriage proximity: " +
-    // Proximity.getCarriageProximity());
-    // System.out.println("have note " + haveNote);
-    // System.out.println("zeroed: " + isZeroed);
     if (isZeroed) {
-      setElevatorTorque(0, 0.1);
+      setElevatorTorque(0, 0.0);
       if (OI.getOperatorLB()) {
         setTrapRollerPercent(0);
         setCarriageRotation(Constants.SetPoints.CarriageRotation.kFEED);
-      } else if (!Proximity.getCarriageProximity() && Proximity.getFeederProximity()
+      } else if (!Proximity.getCarriageProximity() &&
+          Proximity.getFeederProximity()
           && !Proximity.getShooterProximity() && haveNote) {
         // System.out.println("1");
         setTrapRollerPercent(0);
@@ -540,11 +531,13 @@ public class Climber extends SubsystemBase {
       } else if (Proximity.getCarriageProximity() && !haveNote) {
         // System.out.println("5");
         setTrapRollerTorque(30, 0.4);
-        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees
+            - 5);
       } else if (haveNote) {
         // System.out.println("6");
         setTrapRollerTorque(20, 0.2);
-        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees - 5);
+        setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees
+            - 5);
       } else {
         // System.out.println("7");
         setTrapRollerTorque(20, 0.2);
@@ -619,6 +612,95 @@ public class Climber extends SubsystemBase {
     }
   }
 
+  public void ampState() {
+    double positionMeters = Constants.SetPoints.ElevatorPosition.kAMP.meters;
+    if (!(noteInPlace && Timer.getFPGATimestamp() - haveNoteTime > runbackTime)) {
+      if (Proximity.getCarriageProximity() && !haveNote && !noteInPlace) {
+        haveNoteTime = Timer.getFPGATimestamp();
+        haveNote = true;
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("1");
+      } else if (!Proximity.getCarriageProximity() && haveNote && !noteInPlace) {
+        noteInMiddle = true;
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("2");
+      } else if (Proximity.getCarriageProximity() && noteInMiddle && !noteInPlace) {
+        noteInPlace = true;
+        setTrapRollerTorque(20, 0.5);
+        haveNoteTime = Timer.getFPGATimestamp();
+        // System.out.println("3");
+      } else if (noteInPlace) {
+        setTrapRollerTorque(20, 0.5);
+        // System.out.println("4");
+      } else {
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("5");
+      }
+
+      setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
+    } else if (positionMeters < this.getElevatorPositionMeters() + 0.02
+        && positionMeters > this.getElevatorPositionMeters() - 0.02) {
+      this.setElevatorTorque(0.0, 0.0);
+      this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kAMP.degrees);
+      if (OI.getDriverRB()) {
+        this.setTrapRollerTorque(40, 0.7);
+      } else if (OI.getDriverLB()) {
+        this.setTrapRollerTorque(-30, 0.1);
+      }
+    } else {
+      if (positionMeters > this.getElevatorPositionMeters()) {
+        this.setElevatorTorque(20, 1.0);
+      } else {
+        this.setElevatorTorque(-20, 1.0);
+      }
+      this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees);
+      this.setTrapRollerPercent(0.0);
+    }
+  }
+
+  public void trapState() {
+    runbackTime = 0.15;
+    if (!(noteInPlace && Timer.getFPGATimestamp() - haveNoteTime > runbackTime)) {
+      if (Proximity.getCarriageProximity() && !haveNote && !noteInPlace) {
+        haveNoteTime = Timer.getFPGATimestamp();
+        haveNote = true;
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("1");
+      } else if (!Proximity.getCarriageProximity() && haveNote && !noteInPlace) {
+        noteInMiddle = true;
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("2");
+      } else if (Proximity.getCarriageProximity() && noteInMiddle && !noteInPlace) {
+        noteInPlace = true;
+        setTrapRollerTorque(20, 0.5);
+        haveNoteTime = Timer.getFPGATimestamp();
+        // System.out.println("3");
+      } else if (noteInPlace) {
+        setTrapRollerTorque(20, 0.5);
+        // System.out.println("4");
+      } else {
+        setTrapRollerTorque(-20, 0.5);
+        // System.out.println("5");
+      }
+      setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kDOWN.degrees - 5);
+    } else {
+      this.runClimber(40, 0.7);
+      if (getElevatorPositionMeters() > 0.22) {
+        this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kTRAP.degrees);
+      } else {
+        this.setCarriageRotationDegrees(Constants.SetPoints.CarriageRotation.kFEED.degrees);
+      }
+      if (OI.getDriverRB()) {
+        this.setTrapRollerTorque(40, 0.7);
+      } else if (OI.getDriverLB()) {
+        this.setTrapRollerTorque(-30, 0.1);
+      } else {
+        this.setTrapRollerPercent(0.0);
+      }
+    }
+
+  }
+
   private ClimberState handleStateTransition() {
     switch (wantedState) {
       case REJECT:
@@ -632,7 +714,7 @@ public class Climber extends SubsystemBase {
       case CLIMBER_DOWN:
         return ClimberState.CLIMBER_DOWN;
       case CLIMBER_UP:
-        return ClimberState.CLIMBER_DOWN;
+        return ClimberState.CLIMBER_UP;
       case COLLECT:
         if ((!Proximity.getShooterProximity() && Proximity.getFeederProximity())) {
           return ClimberState.DEFAULT;
@@ -646,6 +728,7 @@ public class Climber extends SubsystemBase {
 
   @Override
   public void periodic() {
+    // System.out.println("Climber state: " + systemState);
     // process inputs
     ClimberState newState = handleStateTransition();
     if (newState != systemState) {
@@ -666,19 +749,11 @@ public class Climber extends SubsystemBase {
       case REJECT:
         setTrapRollerPercent(-0.4);
         break;
-      case INDEXTOAMP:
-        indexNoteToCarriage(0.2);
-        ampPosition();
+      case TRAP:
+        trapState();
         break;
-      case ELEVATORAMP:
-        break;
-      case ARMAMP:
-        break;
-      case INDEXTOTRAP:
-        break;
-      case ELEVATORTRAP:
-        break;
-      case ARMTRAP:
+      case AMP:
+        ampState();
         break;
       case CLIMBER_DOWN:
         runClimber(-50, 1.0);
@@ -692,37 +767,11 @@ public class Climber extends SubsystemBase {
       default:
         defaultState();
     }
-    // boolean climbMaster = false;
-    // boolean climbFollower = false;
-    // SmartDashboard.putNumber("Elevator Meters", getElevatorPositionMeters());
-    // SmartDashboard.putNumber("Elevator Rotations",
-    // getElevatorPositionRotations());
-    // Logger.recordOutput("Elevator Meters", getElevatorPositionMeters());
-    // Logger.recordOutput("Elevator Rotations", getElevatorPositionRotations());
-    // if(elevatorFalconMaster.getMotorVoltage().getValue() != 0){
-    // climbMaster = true;
-    // }
-    // if(elevatorFalconFollower.getMotorVoltage().getValue() != 0){
-    // climbFollower = true;
-    // }
-
-    SmartDashboard.putBoolean("Elevator Limit Switch", elevatorLimitSwitch.get());
-
-    // if (getElevatorLimitSwitch()){
-    // setElevatorEncoderPosition(0.0);
-    // }
-    // System.out.println("Carriage RPM: " + carriageEncoder.getVelocity());
-    // System.out.println("Carriage amps: " +
-    // carriageRotationNeo.getOutputCurrent());
-    // SmartDashboard.putBoolean(" Climber Master Motor", climbMaster);
-    // SmartDashboard.putBoolean(" Climber Follower Motor", climbFollower);
-
     // DO NOT REMOVE FOR COMP
     this.rotationPID.setSetPoint(this.m_carriageRotationSetpoint);
     this.rotationPID.updatePID(getCarriageRotationDegrees());
     double result = this.rotationPID.getResult() + Math.sin(Math.toRadians(getCarriageRotationDegrees())) * this.kG;
     setCarriageRotationPercent(result);
-    SmartDashboard.putNumber("Carriage Rotation", getCarriageRotationDegrees());
     // DO NOT REMOVE FOR COMP
   }
 

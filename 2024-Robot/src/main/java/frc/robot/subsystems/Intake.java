@@ -47,6 +47,13 @@ public class Intake extends SubsystemBase {
     INDEX_TO_TRAP
   }
 
+  double timeToCenterNote = 0.7;
+  double runbackTime = 0.2;
+  double haveNoteTime = 0.0;
+  boolean haveNote = false;
+  boolean noteInPlace = false;
+  boolean noteInMiddle = false;
+
   boolean initRun = false;
 
   private IntakeState wantedState = IntakeState.OFF;
@@ -298,6 +305,12 @@ public class Intake extends SubsystemBase {
   }
 
   public void defaultState() {
+    timeToCenterNote = 0.7;
+    runbackTime = 0.2;
+    haveNoteTime = 0.0;
+    haveNote = false;
+    noteInPlace = false;
+    noteInMiddle = false;
     boolean isZeroed = false;
     int numTimesOverCurrentLimit = 0;
     double initTime = 0;
@@ -343,6 +356,8 @@ public class Intake extends SubsystemBase {
         return IntakeState.REJECT;
       case EJECT:
         return IntakeState.EJECT;
+      case AMPTRAP:
+        return IntakeState.AMPTRAP;
       case COLLECT:
         if ((!Proximity.getShooterProximity() && Proximity.getFeederProximity())) {
           return IntakeState.OFF;
@@ -378,8 +393,27 @@ public class Intake extends SubsystemBase {
   }
 
   public void ampTrapState() {
-    this.setAngleTorqueCurrent(40, 0.5);
-    this.setRollers(60);
+    if (!(noteInPlace && Timer.getFPGATimestamp() - haveNoteTime > runbackTime)) {
+      if (Proximity.getCarriageProximity() && !haveNote && !noteInPlace) {
+        haveNoteTime = Timer.getFPGATimestamp();
+        haveNote = true;
+        // System.out.println("1");
+      } else if (!Proximity.getCarriageProximity() && haveNote && !noteInPlace) {
+        noteInMiddle = true;
+        // System.out.println("2");
+      } else if (Proximity.getCarriageProximity() && noteInMiddle && !noteInPlace) {
+        noteInPlace = true;
+        haveNoteTime = Timer.getFPGATimestamp();
+        // System.out.println("3");
+      } else if (noteInPlace) {
+        // System.out.println("4");
+      }
+      this.setRollers(-150);
+      this.setAngle(Constants.SetPoints.IntakePosition.kUP);
+    } else {
+      this.setAngleTorqueCurrent(40, 0.5);
+      this.setRollers(60);
+    }
   }
 
   @Override
