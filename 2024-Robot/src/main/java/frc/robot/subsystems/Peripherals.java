@@ -2,9 +2,15 @@ package frc.robot.subsystems;
 
 import java.net.InetAddress;
 import java.util.ArrayList;
+import java.util.List;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.littletonrobotics.junction.Logger;
+import org.photonvision.PhotonCamera;
+import org.photonvision.targeting.PhotonPipelineResult;
+import org.photonvision.targeting.PhotonTrackedTarget;
+
 import com.ctre.phoenix6.configs.Pigeon2Configuration;
 import com.ctre.phoenix6.hardware.Pigeon2;
 import edu.wpi.first.networktables.NetworkTable;
@@ -45,6 +51,9 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
   private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
+  // private NetworkTable photonCam =
+  // NetworkTableInstance.getDefault().getTable("arducam-front");
+  private PhotonCamera photonCamera = new PhotonCamera("Microsoft_LifeCam_HD-3000");
 
   private double[] noTrackLimelightArray = new double[6];
 
@@ -102,6 +111,29 @@ public class Peripherals extends SubsystemBase {
 
     // Set the default command for the Peripherals subsystem
     setDefaultCommand(new PeripheralsDefault(this));
+  }
+
+  public double getPhotonYaw() {
+    double yaw = 0.0;
+    var result = photonCamera.getLatestResult();
+    Logger.recordOutput("has target", result.hasTargets());
+    if (result.hasTargets()) {
+      List<PhotonTrackedTarget> targets = result.getTargets();
+      PhotonTrackedTarget target = result.getBestTarget();
+      yaw = target.getYaw();
+    }
+    return yaw;
+  }
+
+  public double getPhotonPitch() {
+    double pitch = 0.0;
+    var result = photonCamera.getLatestResult();
+    if (result.hasTargets()) {
+      List<PhotonTrackedTarget> targets = result.getTargets();
+      PhotonTrackedTarget target = result.getBestTarget();
+      pitch = target.getPitch();
+    }
+    return pitch;
   }
 
   /**
@@ -642,10 +674,7 @@ public class Peripherals extends SubsystemBase {
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("ty", getFrontCamTargetTy());
-    SmartDashboard.putNumber("ty direct", frontCamTy.getDouble(0));
-    SmartDashboard.putNumber("device", getPigeonAngularVelocity());
-    SmartDashboard.putNumber("world", getPigeonAngularVelocityW());
-    SmartDashboard.putNumber("yaw", getPigeonAngle());
+    Logger.recordOutput("camera yaw", getPhotonYaw());
+    Logger.recordOutput("camera pitch", getPhotonPitch());
   }
 }
