@@ -59,6 +59,9 @@ public class Robot extends LoggedRobot {
     PortForwarder.add(5800, "limelight-right.local", 5800);
     PortForwarder.add(5801, "limelight-right.local", 5801);
 
+    PortForwarder.add(5800, "orangepi1.local", 5800);
+    PortForwarder.add(5801, "orangepi1.local", 5801);
+
     PortForwarder.add(5800, "10.44.99.41", 5800);
     PortForwarder.add(5801, "10.44.99.41", 5801);
 
@@ -70,6 +73,9 @@ public class Robot extends LoggedRobot {
 
     PortForwarder.add(5800, "10.44.99.44", 5800);
     PortForwarder.add(5801, "10.44.99.44", 5801);
+
+    PortForwarder.add(5800, "10.44.99.34", 5800);
+    PortForwarder.add(5801, "10.44.99.34", 5801);
 
     m_robotContainer.lights.clearAnimations();
     m_robotContainer.lights.setCommandRunning(true);

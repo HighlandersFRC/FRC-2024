@@ -64,7 +64,7 @@ public class Peripherals extends SubsystemBase {
   private NetworkTableEntry rightCamJSON = rightCam.getEntry("json");
   private NetworkTableEntry rightCamRobotFieldPose = rightCam.getEntry("botpose_wpiblue");
   private NetworkTableEntry rightCamRobotTagPose = rightCam.getEntry("botpose_targetspace");
-  private PhotonCamera photonCamera = new PhotonCamera("Arducam_OV9281_USB_Camera");
+  private PhotonCamera photonCamera = new PhotonCamera("9281_Front");
 
   private double[] noTrackLimelightArray = new double[6];
 
