@@ -165,6 +165,15 @@ public class Peripherals extends SubsystemBase {
     return pitch;
   }
 
+  /**
+   * Retrieves the latency of the front camera.
+   * 
+   * @return The latency of the front camera in seconds.
+   */
+  public double getPhotonFrontLatency() {
+    return photonCamera.getLatestResult().getLatencyMillis() / 1000.0;
+  }
+
   public Pose2d getRobotPoseViaTrig(PhotonTrackedTarget trackedTarget) {
     double pitch = trackedTarget.getPitch();
     double yaw = trackedTarget.getYaw();
