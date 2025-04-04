@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 import java.util.ArrayList;
 
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -46,6 +46,9 @@ public class Superstructure extends SubsystemBase {
     CYCLING,
     INTAKE,
     OUTAKING,
+    HIGH_SHOT,
+    LOW_SHOT,
+    HIGH_SLOW_SHOT
   }
 
   private SuperState wantedSuperState = SuperState.CYCLING;
@@ -103,7 +106,7 @@ public class Superstructure extends SubsystemBase {
 
     distToSpeakerMeters = Constants.getDistance(x, Constants.Physical.SPEAKER_Y, drive.getMT2OdometryX(),
         drive.getMT2OdometryY());
-    Logger.recordOutput("DistToSpeakerMeters", distToSpeakerMeters);
+   // Logger.recordOutput("DistToSpeakerMeters", distToSpeakerMeters);
     angleToSpeakerDegrees = Constants.getAngleToPoint(angleX, angleY, drive.getMT2OdometryX(), drive.getMT2OdometryY());
     shooterValues = Constants.SetPoints.getShooterValuesFromDistance(distToSpeakerMeters, false);
     shooterDegrees = shooterValues[0];
@@ -168,6 +171,15 @@ public class Superstructure extends SubsystemBase {
         // Outake state
         outakingState();
         break;
+        case LOW_SHOT:
+        handleLowShot();
+        break;
+        case HIGH_SHOT:
+        handleHighShot();
+        break;
+        case HIGH_SLOW_SHOT:
+        handleHighSlowShot();
+        break;
       default:
         handleCyclingState();
         break;
@@ -221,6 +233,15 @@ public class Superstructure extends SubsystemBase {
         // Intake state
         currentSuperState = SuperState.OUTAKING;
         break;
+      case LOW_SHOT:
+      currentSuperState = SuperState.LOW_SHOT;
+      break;
+      case HIGH_SHOT:
+      currentSuperState = SuperState.HIGH_SHOT;
+      break;
+      case HIGH_SLOW_SHOT:
+      currentSuperState = SuperState.HIGH_SLOW_SHOT;
+      break;
       default:
         currentSuperState = SuperState.CYCLING;
         break;
@@ -292,6 +313,30 @@ public class Superstructure extends SubsystemBase {
     shooter.setWantedState(ShooterState.SHOOT, aimingParameters[0], aimingParameters[1], aimingParameters[2]);
     drive.setWantedState(DriveState.SHOOT, aimingParameters[3]);
     feeder.setWantedState(FeederState.EJECT);
+  }
+
+  public void handleLowShot(){
+    System.out.println("Low Shot");
+    shooter.setWantedState(ShooterState.SHOOT, 25, 6000, 3);
+    if (Math.abs(shooter.getAngleDegrees() - 25) < 2 && Math.abs(shooter.getFlywheelRPM() - 6000) < 200) {
+          feeder.setWantedState(FeederState.EJECT);
+    }
+  }
+
+  public void handleHighShot(){
+    System.out.println("High Shot");
+    shooter.setWantedState(ShooterState.SHOOT, 55, 7000, 3);
+    if (Math.abs(shooter.getAngleDegrees() - 55) < 2 && Math.abs(shooter.getFlywheelRPM() - 7000) < 200) {
+          feeder.setWantedState(FeederState.EJECT);
+    }
+  }
+
+    public void handleHighSlowShot(){
+    System.out.println("High Shot");
+    shooter.setWantedState(ShooterState.SHOOT, 55, 6000, 3);
+    if (Math.abs(shooter.getAngleDegrees() - 55) < 2 && Math.abs(shooter.getFlywheelRPM() - 6000) < 200) {
+          feeder.setWantedState(FeederState.EJECT);
+    }
   }
 
   public void indexToAmp() {

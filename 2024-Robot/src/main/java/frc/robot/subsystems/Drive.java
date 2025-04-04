@@ -6,7 +6,7 @@ package frc.robot.subsystems;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import com.ctre.phoenix6.StatusCode;
 import com.ctre.phoenix6.hardware.CANcoder;
@@ -810,10 +810,10 @@ public class Drive extends SubsystemBase {
     double originalX = -(Math.copySign(OI.getDriverLeftY() * OI.getDriverLeftY(), OI.getDriverLeftY()));
     double originalY = -(Math.copySign(OI.getDriverLeftX() * OI.getDriverLeftX(), OI.getDriverLeftX()));
 
-    if (Math.abs(originalX) < 0.075) {
+    if (Math.abs(originalX) < 0.1) {
       originalX = 0;
     }
-    if (Math.abs(originalY) < 0.075) {
+    if (Math.abs(originalY) < 0.1) {
       originalY = 0;
     }
 
@@ -823,7 +823,7 @@ public class Drive extends SubsystemBase {
     double turn = turnLimit
         * (OI.getDriverRightX() * (Constants.Physical.TOP_SPEED) / (Constants.Physical.ROBOT_RADIUS));
 
-    if (Math.abs(turn) < 0.15) {
+    if (Math.abs(turn) < 0.3) {
       turn = 0.0;
     }
 
@@ -1175,22 +1175,22 @@ public class Drive extends SubsystemBase {
 
     double velocityMag = Math
         .sqrt(Math.pow(targetPoint.getDouble("x_velocity"), 2) + Math.pow(targetPoint.getDouble("y_velocity"), 2));
-    Logger.recordOutput("x-vel", velocityArray[0].doubleValue());
-    Logger.recordOutput("y-vel", velocityArray[1].doubleValue());
-    Logger.recordOutput("theta-vel", velocityArray[2].doubleValue());
-    Logger.recordOutput("wanted-theta-vel", targetPoint.getDouble("angular_velocity"));
-    Logger.recordOutput("pid-theta-vel", thetaVelNoFF);
-    Logger.recordOutput("FF-theta-vel", feedForwardTheta);
-    Logger.recordOutput("current point idx", currentIndex);
-    Logger.recordOutput("point idx", velocityArray[3].intValue());
-    Logger.recordOutput("look-ahead", Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
+    // Logger.recordOutput("x-vel", velocityArray[0].doubleValue());
+    // Logger.recordOutput("y-vel", velocityArray[1].doubleValue());
+    // Logger.recordOutput("theta-vel", velocityArray[2].doubleValue());
+    // Logger.recordOutput("wanted-theta-vel", targetPoint.getDouble("angular_velocity"));
+    // Logger.recordOutput("pid-theta-vel", thetaVelNoFF);
+    // Logger.recordOutput("FF-theta-vel", feedForwardTheta);
+    // Logger.recordOutput("current point idx", currentIndex);
+    // Logger.recordOutput("point idx", velocityArray[3].intValue());
+    // Logger.recordOutput("look-ahead", Constants.Autonomous.AUTONOMOUS_LOOKAHEAD_DISTANCE * velocityMag + 0.01);
     return velocityArray;
   }
 
   public boolean insideRadius(double deltaX, double deltaY, double deltaTheta, double radius) {
-    Logger.recordOutput("deltax", deltaX);
-    Logger.recordOutput("deltay", deltaY);
-    Logger.recordOutput("deltaTheta", deltaTheta);
+    // Logger.recordOutput("deltax", deltaX);
+    // Logger.recordOutput("deltay", deltaY);
+    // Logger.recordOutput("deltaTheta", deltaTheta);
     return Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2) + Math.pow(deltaTheta, 2)) < radius;
   }
 

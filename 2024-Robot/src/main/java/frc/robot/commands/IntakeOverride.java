@@ -1,6 +1,6 @@
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
@@ -80,7 +80,7 @@ public class IntakeOverride extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
-    Logger.recordOutput("Intaking: ", true);
+   // Logger.recordOutput("Intaking: ", true);
     // climber.intakeRunning = true;
   }
 
@@ -176,7 +176,7 @@ public class IntakeOverride extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(false);
     // climber.intakeRunning = false;
-    Logger.recordOutput("Intaking: ", false);
+   // Logger.recordOutput("Intaking: ", false);
   }
 
   @Override

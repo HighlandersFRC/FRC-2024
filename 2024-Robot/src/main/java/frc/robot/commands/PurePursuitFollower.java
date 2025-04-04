@@ -9,7 +9,7 @@ import java.util.ArrayList;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.tools.math.Vector;
@@ -123,9 +123,9 @@ public class PurePursuitFollower extends PolarTakeDrive {
     
 
     drive.autoDrive(velocityVector, desiredThetaChange);
-    Logger.recordOutput("pursuing?", true);
-    Logger.recordOutput("Path Time", path
-        .getJSONObject(getPathPointIndex()).getDouble("time"));
+   // Logger.recordOutput("pursuing?", true);
+    //Logger.recordOutput("Path Time", path
+    //    .getJSONObject(getPathPointIndex()).getDouble("time"));
   }
 
   @Override
@@ -144,7 +144,7 @@ public class PurePursuitFollower extends PolarTakeDrive {
     odometryFusedY = drive.getFusedOdometryY();
     odometryFusedTheta = drive.getFusedOdometryTheta();
     currentTime = Timer.getFPGATimestamp() - initTime;
-    Logger.recordOutput("pursuing?", false);
+   // Logger.recordOutput("pursuing?", false);
     if (this.record) {
       recordedOdometry.add(new double[] { currentTime, odometryFusedX, odometryFusedY, odometryFusedTheta });
       try {

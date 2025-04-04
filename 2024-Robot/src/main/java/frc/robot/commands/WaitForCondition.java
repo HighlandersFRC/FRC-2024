@@ -6,7 +6,7 @@ package frc.robot.commands;
 
 import java.util.function.BooleanSupplier;
 
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj2.command.Command;
 
@@ -30,7 +30,7 @@ public class WaitForCondition extends Command {
 
   @Override
   public boolean isFinished() {
-    Logger.recordOutput("started", condition.getAsBoolean());
+   // Logger.recordOutput("started", condition.getAsBoolean());
     return condition.getAsBoolean();
   }
 }

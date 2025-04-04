@@ -1,8 +1,5 @@
 package frc.robot.commands;
 
-import org.littletonrobotics.junction.Logger;
-
-import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -80,7 +77,7 @@ public class AutoIntake extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(true);
     lights.setStrobePurple();
-    Logger.recordOutput("Intaking: ", true);
+ //   Logger.recordOutput("Intaking: ", true);
     // climber.intakeRunning = true;
   }
 
@@ -119,7 +116,7 @@ public class AutoIntake extends Command {
     if (this.numTimeNoteInIntake > Constants.SetPoints.INTAKE_CURRENT_NUM_TIMES_IN_A_ROW_THRESHOLD){
       this.noteInIntake = true;
     }
-    Logger.recordOutput("numTimeNoteInIntake", numTimeNoteInIntake);
+   // Logger.recordOutput("numTimeNoteInIntake", numTimeNoteInIntake);
 
     // if (this.numTimeNoteInIntake >= 8 && this.tof.isIntakeTOFConnected() && this.moveUp5Inches){
     //   // System.out.println("1");
@@ -176,7 +173,7 @@ public class AutoIntake extends Command {
     lights.clearAnimations();
     lights.setCommandRunning(false);
     // climber.intakeRunning = false;
-    Logger.recordOutput("Intaking: ", false);
+  //  Logger.recordOutput("Intaking: ", false);
   }
 
   @Override

@@ -13,7 +13,7 @@ import java.util.function.Supplier;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.json.JSONTokener;
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.Timer;
@@ -133,7 +133,7 @@ public class RobotContainer {
       intakeTime = Timer.getFPGATimestamp();
     if (Timer.getFPGATimestamp() - intakeTime < Constants.SetPoints.TIME_EXTENSION_INTAKE_THRESHOLD)
       retval = true;
-    Logger.recordOutput("Note in Intake", retval);
+    //Logger.recordOutput("Note in Intake", retval);
     return retval;
   }
 
@@ -237,13 +237,14 @@ public class RobotContainer {
     // OI.driverA.whileTrue(
     // new AutoPositionalShoot(drive, shooter, feeder, peripherals, lights,
     // proximity, 1200, 22, 7000, false));
-    OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.INTAKE));
-    OI.driverLT.whileTrue(new SetRobotState(superstructure, SuperState.OUTAKING));
-    OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.SHOOT_SPEAKER));
-    OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.FEEDING));
-    // OI.driverA.onFalse(superstructure.setWantedSuperStateCommand(SuperState.CYCLING));
+     OI.driverRT.whileTrue(new SetRobotState(superstructure, SuperState.INTAKE));
+     OI.driverLT.whileTrue(new SetRobotState(superstructure, SuperState.OUTAKING));
+    OI.driverA.whileTrue(new SetRobotState(superstructure, SuperState.LOW_SHOT));
+     OI.driverB.whileTrue(new SetRobotState(superstructure, SuperState.HIGH_SHOT));
+    OI.driverY.whileTrue(new SetRobotState(superstructure, SuperState.HIGH_SLOW_SHOT));
+     // OI.driverA.onFalse(superstructure.setWantedSuperStateCommand(SuperState.CYCLING));
     // OI.driverX.whileTrue(new DriveAutoAligned(drive, peripherals));
-    // OI.driverPOVDown
+    // OI.driverPOVDown]\[]
     // .whileTrue(new PresetAutoShoot(drive, shooter, feeder, peripherals, lights,
     // proximity, 60, 4500, 1200, 0, 1.5));
     // OI.driverPOVLeft
@@ -251,10 +252,10 @@ public class RobotContainer {
     // proximity, 10, 6200, 1200, 0, 0, 0, 5));
 
     // Operator
-    OI.operatorA.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_DOWN));
-    OI.operatorY.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_UP));
-    OI.operatorB.whileTrue(new SetRobotState(superstructure, SuperState.TRAP));
-    OI.operatorX.whileTrue(new SetRobotState(superstructure, SuperState.AMP));
+    // OI.operatorA.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_DOWN));
+    // OI.operatorY.whileTrue(new SetRobotState(superstructure, SuperState.CLIMBER_UP));
+    // OI.operatorB.whileTrue(new SetRobotState(superstructure, SuperState.TRAP));
+     OI.driverX.whileTrue(new SetRobotState(superstructure, SuperState.AMP));
     // OI.operatorX.whileTrue(new AmpPreset(climber, feeder, intake, proximity,
     // shooter));
     // OI.operatorB.whileTrue(new TrapPreset(climber, feeder, intake, proximity,

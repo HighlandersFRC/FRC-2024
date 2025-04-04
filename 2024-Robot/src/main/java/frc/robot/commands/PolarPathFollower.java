@@ -11,7 +11,8 @@ import java.util.function.Supplier;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.littletonrobotics.junction.Logger;
+
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
@@ -176,8 +177,8 @@ public class PolarPathFollower extends ParallelCommandGroup {
       retval = pathJSON.getJSONArray("sampled_points")
           .getJSONObject(follower.getPathPointIndex()).getDouble("time");
     }
-    Logger.recordOutput("Path Time", retval);
-    Logger.recordOutput("Path Start Time", defaultFollower.pathStartTime);
+   // Logger.recordOutput("Path Time", retval);
+   // Logger.recordOutput("Path Start Time", defaultFollower.pathStartTime);
     return retval;
   }
 

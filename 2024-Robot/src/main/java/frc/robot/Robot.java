@@ -1,18 +1,19 @@
 package frc.robot;
 
-import org.littletonrobotics.junction.LoggedRobot;
-import org.littletonrobotics.junction.Logger;
-import org.littletonrobotics.junction.networktables.NT4Publisher;
-import org.littletonrobotics.junction.wpilog.WPILOGWriter;
+// import org.littletonrobotics.junction.LoggedRobot;
+// import org.littletonrobotics.junction.Logger;
+// import org.littletonrobotics.junction.networktables.NT4Publisher;
+// import org.littletonrobotics.junction.wpilog.WPILOGWriter;
 
 import edu.wpi.first.net.PortForwarder;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 
-public class Robot extends LoggedRobot {
+public class Robot extends TimedRobot {
   private RobotContainer m_robotContainer = new RobotContainer();
   private Command m_autonomousCommand;
 
@@ -28,9 +29,9 @@ public class Robot extends LoggedRobot {
   @Override
   public void robotInit() {
     System.out.println("Robot Init");
-    Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
-    Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
-    Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
+    // Logger.addDataReceiver(new WPILOGWriter()); // Log to a USB stick ("/U/logs")
+    // Logger.addDataReceiver(new NT4Publisher()); // Publish data to NetworkTables
+    // Logger.start(); // Start logging! No more data receivers, replay sources, or metadata values may
                     // be added.
     this.m_fieldSide = "blue";
     SmartDashboard.putNumber("Shooter Angle Degrees (tuning)", 0);
@@ -104,26 +105,26 @@ public class Robot extends LoggedRobot {
     CommandScheduler.getInstance().run();
 
     try {
-      Logger.recordOutput("Localization Odometry", m_robotContainer.drive.getLocalizationOdometry());
+      // Logger.recordOutput("Localization Odometry", m_robotContainer.drive.getLocalizationOdometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
 
     try {
-      Logger.recordOutput("Wheel Odometry", m_robotContainer.drive.getOdometry());
+      // Logger.recordOutput("Wheel Odometry", m_robotContainer.drive.getOdometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
 
     try {
-      Logger.recordOutput("MT2 Odometry", m_robotContainer.drive.getMT2Odometry());
+      // Logger.recordOutput("MT2 Odometry", m_robotContainer.drive.getMT2Odometry());
     } catch (Exception e) {
       System.out.println("Problem with logging");
     }
-    Logger.recordOutput("Swerve Module States", m_robotContainer.drive.getModuleStates());
-    Logger.recordOutput("Swerve Module Setpoints", m_robotContainer.drive.getModuleSetpoints());
-    Logger.recordOutput("IMU", m_robotContainer.peripherals.getPigeonAngle());
-    Logger.recordOutput("Note in Robot", m_robotContainer.getNoteInRobot());
+    // Logger.recordOutput("Swerve Module States", m_robotContainer.drive.getModuleStates());
+    // Logger.recordOutput("Swerve Module Setpoints", m_robotContainer.drive.getModuleSetpoints());
+    // Logger.recordOutput("IMU", m_robotContainer.peripherals.getPigeonAngle());
+    // Logger.recordOutput("Note in Robot", m_robotContainer.getNoteInRobot());
     Constants.periodic();
     m_robotContainer.lights.periodic();
     m_robotContainer.intake.periodic();

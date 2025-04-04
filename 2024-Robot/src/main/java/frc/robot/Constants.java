@@ -4,7 +4,7 @@
 
 package frc.robot;
 
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import frc.robot.tools.math.Vector;
 
@@ -67,9 +67,9 @@ public final class Constants {
   public static void periodic() {
     int index = Autonomous.getSelectedPathIndex();
     if (index == -1) {
-      Logger.recordOutput("Selected Auto", "Do Nothing");
+   //   Logger.recordOutput("Selected Auto", "Do Nothing");
     } else {
-      Logger.recordOutput("Selected Auto", Autonomous.paths[index]);
+     // Logger.recordOutput("Selected Auto", Autonomous.paths[index]);
     }
   }
 

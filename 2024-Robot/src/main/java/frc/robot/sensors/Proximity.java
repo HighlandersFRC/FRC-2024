@@ -1,6 +1,6 @@
 package frc.robot.sensors;
 
-import org.littletonrobotics.junction.Logger;
+//import org.littletonrobotics.junction.Logger;
 
 import edu.wpi.first.wpilibj.DigitalInput;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -29,8 +29,8 @@ public class Proximity {
         SmartDashboard.putBoolean("Shooter Proximity", getShooterProximity());
         SmartDashboard.putBoolean("Carriage Proximity", getCarriageProximity());
         SmartDashboard.putBoolean("Feeder Proximity", getFeederProximity());
-        Logger.recordOutput("Shooter Proximity", getShooterProximity());
-        Logger.recordOutput("Carriage Proximity", getCarriageProximity());
-        Logger.recordOutput("Feeder Proximity", getFeederProximity());
+        // Logger.recordOutput("Shooter Proximity", getShooterProximity());
+        // Logger.recordOutput("Carriage Proximity", getCarriageProximity());
+        // Logger.recordOutput("Feeder Proximity", getFeederProximity());
     }
 }
